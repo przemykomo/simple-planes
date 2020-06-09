@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.entity.item.minecart.FurnaceMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -29,6 +30,24 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class FurnacePlaneEntity extends Entity {
+    private static final DataParameter<Boolean> POWERED = EntityDataManager.createKey(FurnaceMinecartEntity.class, DataSerializers.BOOLEAN);
+    private int fuel;
+
+    public void addFuel() {
+        fuel = 400; //TODO: change to larger value
+    }
+
+    public int getFuel() {
+        return fuel;
+    }
+
+    public boolean isPowered() {
+        return dataManager.get(POWERED);
+    }
+
+    public void setPowered(boolean value) {
+        dataManager.set(POWERED, value);
+    }
 
     private static final DataParameter<Integer> PLANE_TYPE = EntityDataManager.createKey(BoatEntity.class, DataSerializers.VARINT);
 
@@ -44,6 +63,7 @@ public class FurnacePlaneEntity extends Entity {
     }
 
     @Override
+    //TODO: find a way to right click while flying, this method isn't called if player is passenger
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
         return !world.isRemote && player.startRiding(this);
     }
@@ -93,14 +113,19 @@ public class FurnacePlaneEntity extends Entity {
     public void tick() {
         super.tick();
         boolean gravity = true;
+        if (fuel > 0) {
+            --fuel;
+        }
 
-        // TODO: if isUser
+        setPowered(fuel > 0);
+
+        // maybe add later isUser() check? idk
         LivingEntity passenger = (LivingEntity) getControllingPassenger();
         if (passenger != null) {
             rotationYaw = passenger.rotationYaw;
+            fallDistance = 0;
+            passenger.fallDistance = 0;
             if (isPowered()) {
-                fallDistance = 0;
-                passenger.fallDistance = 0;
                 if (passenger.moveForward > 0.0F) {
                     Vec2f front = getHorizontalFrontPos();
                     this.setMotion(this.getMotion().add(0.02F * front.x, 0.005F, 0.02F * front.y));
@@ -141,25 +166,25 @@ public class FurnacePlaneEntity extends Entity {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    public boolean isPowered() {
-        return true; //TODO: fuel mechanics
-    }
-
     @Override
     protected void registerData() {
         dataManager.register(PLANE_TYPE, PlanesHelper.TYPE.OAK.ordinal());
+        dataManager.register(POWERED, false);
     }
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
-        if (compound.contains("Type", 99)) {
-            this.setPlaneType(PlanesHelper.TYPE.byId(compound.getInt("Type")));
-        }
+//        if (compound.contains("Type", 99)) {
+        setPlaneType(PlanesHelper.TYPE.byId(compound.getInt("Type")));
+//        }
+
+        fuel = compound.getInt("Fuel");
     }
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
         compound.putInt("Type", getPlaneType().ordinal());
+        compound.putInt("Fuel", fuel);
     }
 
     @Override

@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 // Exported for Minecraft version 1.15
 @SuppressWarnings("FieldCanBeLocal")
 public class FurnacePlaneModel extends EntityModel<FurnacePlaneEntity> {
+	public static final int TICKS_PER_PROPELLER_ROTATION = 5;
+
 	private final ModelRenderer Body;
 	private final ModelRenderer bone_propeller;
 	private final ModelRenderer bone3;
@@ -109,17 +111,16 @@ public class FurnacePlaneModel extends EntityModel<FurnacePlaneEntity> {
 
 	@Override
 	public void setRotationAngles(FurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		//previously the render function, render code was moved to a method below
+		if (entity.isPowered()) {
+			bone_propeller.rotateAngleZ = (entity.ticksExisted % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+		} else {
+			bone_propeller.rotateAngleZ = 1;
+		}
 	}
 
 	@Override
 	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
 		Body.render(matrixStack, buffer, packedLight, packedOverlay);
-	}
-
-	public void renderWithMovingPropeller(float propellerRotation, MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		setRotationAngle(bone_propeller, 0.0F, 0.0F, propellerRotation);
-		render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

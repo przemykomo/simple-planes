@@ -4,7 +4,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import xyz.przemyk.simpleplanes.entities.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.FurnacePlaneRenderer;
 
 @Mod(SimplePlanesMod.MODID)

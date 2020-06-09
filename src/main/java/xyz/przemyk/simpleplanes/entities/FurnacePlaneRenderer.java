@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 
 public class FurnacePlaneRenderer extends EntityRenderer<FurnacePlaneEntity> {
-    public static final int TICKS_PER_PROPELLER_ROTATION = 5;
 
     public static final ResourceLocation TEXTURE_OAK = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace/oak.png");
     public static final ResourceLocation TEXTURE_OAK_POWERED = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace_powered/oak.png");
@@ -42,10 +41,10 @@ public class FurnacePlaneRenderer extends EntityRenderer<FurnacePlaneEntity> {
         if (!entityIn.onGround) {
             matrixStackIn.rotate(Vector3f.XN.rotationDegrees(-15f));
         }
-        planeModel.setRotationAngles(entityIn, partialTicks, 0.0F, -0.1F, 0.0F, 0.0F);
         IVertexBuilder ivertexbuilder = bufferIn.getBuffer(this.planeModel.getRenderType(this.getEntityTexture(entityIn)));
         matrixStackIn.translate(0, -1.1, 0);
-        planeModel.renderWithMovingPropeller((entityIn.ticksExisted % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI),matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        planeModel.setRotationAngles(entityIn, partialTicks, 0, 0, 0, 0);
+        planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStackIn.pop();
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
