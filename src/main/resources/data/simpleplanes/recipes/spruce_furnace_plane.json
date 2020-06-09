@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "IF",
+        "IB",
+        "I "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "F": {
+            "item": "minecraft:furnace"
+        },
+        "B": {
+            "item": "minecraft:spruce_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:spruce_furnace_plane"
+    }
+}

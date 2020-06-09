@@ -13,6 +13,7 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import xyz.przemyk.simpleplanes.PlanesHelper;
 import xyz.przemyk.simpleplanes.entities.FurnacePlaneEntity;
 
 import java.util.List;
@@ -21,9 +22,11 @@ import java.util.function.Predicate;
 public class FurnacePlaneItem extends Item {
 
     private static final Predicate<Entity> entityPredicate = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
+    public final PlanesHelper.TYPE type;
 
-    public FurnacePlaneItem(Properties properties) {
-        super(properties);
+    public FurnacePlaneItem(PlanesHelper.TYPE typeIn, Properties properties) {
+        super(properties.maxStackSize(1));
+        type = typeIn;
     }
 
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
@@ -46,8 +49,7 @@ public class FurnacePlaneItem extends Item {
             }
 
             if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
-                FurnacePlaneEntity furnacePlaneEntity = new FurnacePlaneEntity(worldIn, raytraceresult.getHitVec().x, raytraceresult.getHitVec().y, raytraceresult.getHitVec().z);
-//                furnacePlaneEntity.setBoatType(BoatEntity.Type.OAK);
+                FurnacePlaneEntity furnacePlaneEntity = new FurnacePlaneEntity(type, worldIn, raytraceresult.getHitVec().x, raytraceresult.getHitVec().y, raytraceresult.getHitVec().z);
                 furnacePlaneEntity.rotationYaw = playerIn.rotationYaw;
                 if (!worldIn.hasNoCollisions(furnacePlaneEntity, furnacePlaneEntity.getBoundingBox().grow(-0.1D))) {
                     return ActionResult.resultFail(itemstack);

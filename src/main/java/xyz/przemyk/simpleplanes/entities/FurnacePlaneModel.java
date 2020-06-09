@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 // Exported for Minecraft version 1.15
 @SuppressWarnings("FieldCanBeLocal")
 public class FurnacePlaneModel extends EntityModel<FurnacePlaneEntity> {
-
 	private final ModelRenderer Body;
 	private final ModelRenderer bone_propeller;
 	private final ModelRenderer bone3;
@@ -27,7 +26,7 @@ public class FurnacePlaneModel extends EntityModel<FurnacePlaneEntity> {
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(Body, 0.0F, -1.5708F, -0.2618F);
+		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
 		Body.setTextureOffset(0, 0).addBox(-33.0F, -22.0F, -15.0F, 64.0F, 1.0F, 9.0F, 0.0F, false);
 
 		bone_propeller = new ModelRenderer(this);
@@ -116,6 +115,11 @@ public class FurnacePlaneModel extends EntityModel<FurnacePlaneEntity> {
 	@Override
 	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
 		Body.render(matrixStack, buffer, packedLight, packedOverlay);
+	}
+
+	public void renderWithMovingPropeller(float propellerRotation, MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+		setRotationAngle(bone_propeller, 0.0F, 0.0F, propellerRotation);
+		render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

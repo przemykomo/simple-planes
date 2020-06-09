@@ -26,12 +26,17 @@ public class SimplePlanesRegistries {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<FurnacePlaneItem> FURNACE_PLANE_ITEM = ITEMS.register("furnace_plane", () -> new FurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<FurnacePlaneItem> OAK_FURNACE_PLANE_ITEM = ITEMS.register("oak_furnace_plane", () -> new FurnacePlaneItem(PlanesHelper.TYPE.OAK, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<FurnacePlaneItem> SPRUCE_FURNACE_PLANE_ITEM = ITEMS.register("spruce_furnace_plane", () -> new FurnacePlaneItem(PlanesHelper.TYPE.SPRUCE, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<FurnacePlaneItem> BIRCH_FURNACE_PLANE_ITEM = ITEMS.register("birch_furnace_plane", () -> new FurnacePlaneItem(PlanesHelper.TYPE.BIRCH, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<FurnacePlaneItem> JUNGLE_FURNACE_PLANE_ITEM = ITEMS.register("jungle_furnace_plane", () -> new FurnacePlaneItem(PlanesHelper.TYPE.JUNGLE, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<FurnacePlaneItem> ACACIA_FURNACE_PLANE_ITEM = ITEMS.register("acacia_furnace_plane", () -> new FurnacePlaneItem(PlanesHelper.TYPE.ACACIA, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<FurnacePlaneItem> DARK_OAK_FURNACE_PLANE_ITEM = ITEMS.register("dark_oak_furnace_plane", () -> new FurnacePlaneItem(PlanesHelper.TYPE.DARK_OAK, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
 
     public static final RegistryObject<EntityType<FurnacePlaneEntity>> FURNACE_PLANE_ENTITY = registerEntity("furnace_plane", FurnacePlaneEntity::new);
 
     private static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String id, BiFunction<EntityType<T>, World, T> function)  {
-        EntityType<T> type = EntityType.Builder.create(function::apply, EntityClassification.MISC).size(1, 1).setShouldReceiveVelocityUpdates(true).build(id);
+        EntityType<T> type = EntityType.Builder.create(function::apply, EntityClassification.MISC).size(2f, 0.5f).setShouldReceiveVelocityUpdates(true).build(id);
         return ENTITIES.register(id, () -> type);
     }
 }
