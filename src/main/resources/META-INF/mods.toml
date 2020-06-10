@@ -14,7 +14,7 @@ loaderVersion="[31,)" #mandatory This is typically bumped every Minecraft versio
 # The modid of the mod
 modId="simpleplanes" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
+version="1.0" #mandatory
  # A display name for the mod
 displayName="Simple Planes" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
