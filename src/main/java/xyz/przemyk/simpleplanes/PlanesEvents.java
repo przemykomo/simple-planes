@@ -14,7 +14,7 @@ import xyz.przemyk.simpleplanes.entities.FurnacePlaneEntity;
 public class PlanesEvents {
     public static final ResourceLocation COAL_TAG = new ResourceLocation("minecraft", "coals");
 
-    @SubscribeEvent //TODO: change to rightClickItem?
+    @SubscribeEvent
     public static void interact(PlayerInteractEvent.RightClickItem event) {
         PlayerEntity player = event.getPlayer();
         Entity entity = player.getLowestRidingEntity();
