@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.entities;
+package xyz.przemyk.simpleplanes.entities.furnacePlane;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -29,8 +29,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class FurnacePlaneEntity extends Entity {
-    private static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> PLANE_TYPE = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
+    protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
+    protected static final DataParameter<Integer> PLANE_TYPE = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
 
@@ -52,14 +52,19 @@ public class FurnacePlaneEntity extends Entity {
         return dataManager.get(FUEL) > 0;
     }
 
-
     public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
         setPlaneType(PlanesHelper.TYPE.OAK);
     }
 
+    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, PlanesHelper.TYPE typeIn, World worldIn, double x, double y, double z) {
+        this(entityTypeIn, worldIn);
+        setPosition(x, y, z);
+        setPlaneType(typeIn);
+    }
+
     public FurnacePlaneEntity(PlanesHelper.TYPE typeIn, World worldIn, double x, double y, double z) {
-        super(SimplePlanesRegistries.FURNACE_PLANE_ENTITY.get(), worldIn);
+        this(SimplePlanesRegistries.FURNACE_PLANE_ENTITY.get(), worldIn);
         setPosition(x, y, z);
         setPlaneType(typeIn);
     }
@@ -81,29 +86,33 @@ public class FurnacePlaneEntity extends Entity {
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (!(source.getTrueSource() instanceof PlayerEntity && ((PlayerEntity)source.getTrueSource()).abilities.isCreativeMode)
             && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-            switch (getPlaneType()) {
-                case OAK:
-                    entityDropItem(SimplePlanesRegistries.OAK_FURNACE_PLANE_ITEM.get());
-                    break;
-                case SPRUCE:
-                    entityDropItem(SimplePlanesRegistries.SPRUCE_FURNACE_PLANE_ITEM.get());
-                    break;
-                case BIRCH:
-                    entityDropItem(SimplePlanesRegistries.BIRCH_FURNACE_PLANE_ITEM.get());
-                    break;
-                case JUNGLE:
-                    entityDropItem(SimplePlanesRegistries.JUNGLE_FURNACE_PLANE_ITEM.get());
-                    break;
-                case ACACIA:
-                    entityDropItem(SimplePlanesRegistries.ACACIA_FURNACE_PLANE_ITEM.get());
-                    break;
-                case DARK_OAK:
-                    entityDropItem(SimplePlanesRegistries.DARK_OAK_FURNACE_PLANE_ITEM.get());
-                    break;
-            }
+            dropItem();
         }
         remove();
         return true;
+    }
+
+    protected void dropItem() {
+        switch (getPlaneType()) {
+            case OAK:
+                entityDropItem(SimplePlanesRegistries.OAK_FURNACE_PLANE_ITEM.get());
+                break;
+            case SPRUCE:
+                entityDropItem(SimplePlanesRegistries.SPRUCE_FURNACE_PLANE_ITEM.get());
+                break;
+            case BIRCH:
+                entityDropItem(SimplePlanesRegistries.BIRCH_FURNACE_PLANE_ITEM.get());
+                break;
+            case JUNGLE:
+                entityDropItem(SimplePlanesRegistries.JUNGLE_FURNACE_PLANE_ITEM.get());
+                break;
+            case ACACIA:
+                entityDropItem(SimplePlanesRegistries.ACACIA_FURNACE_PLANE_ITEM.get());
+                break;
+            case DARK_OAK:
+                entityDropItem(SimplePlanesRegistries.DARK_OAK_FURNACE_PLANE_ITEM.get());
+                break;
+        }
     }
 
     public Vec2f getHorizontalFrontPos() {
@@ -120,13 +129,13 @@ public class FurnacePlaneEntity extends Entity {
         }
 
         // maybe add later isUser() check? idk
-        LivingEntity passenger = (LivingEntity) getControllingPassenger();
-        if (passenger != null) {
+        LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
+        if (controllingPassenger instanceof PlayerEntity) {
             fallDistance = 0;
-            passenger.fallDistance = 0;
+            controllingPassenger.fallDistance = 0;
 
             if (isPowered()) {
-                if (passenger.moveForward > 0.0F) {
+                if (controllingPassenger.moveForward > 0.0F) {
                     Vec2f front = getHorizontalFrontPos();
                     this.setMotion(this.getMotion().add(0.02F * front.x, 0.005F, 0.02F * front.y));
 
@@ -134,8 +143,10 @@ public class FurnacePlaneEntity extends Entity {
                 }
             }
 
-            rotationYaw -= passenger.moveStrafing * 3;
-            passenger.rotationYaw -= passenger.moveStrafing * 3;
+            rotationYaw -= controllingPassenger.moveStrafing * 3;
+            for (Entity passenger : getPassengers()) {
+                passenger.rotationYaw -= controllingPassenger.moveStrafing * 3;
+            }
         }
 
         if (gravity && !hasNoGravity()) {
@@ -143,12 +154,7 @@ public class FurnacePlaneEntity extends Entity {
         }
 
         if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote) {
-            Vec2f front = getHorizontalFrontPos();
-            ServerWorld serverWorld = (ServerWorld) world;
-            serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - front.x, getPosY() + 1.0, getPosZ() - front.y, 0, 0, 0, 0, 0.0);
-            if (fuel < 100) {
-                serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() + front.x, getPosY() + 1.5, getPosZ() + front.y, 5, 0, 0, 0, 0.0);
-            }
+            spawnParticles(fuel);
         }
 
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
@@ -164,6 +170,15 @@ public class FurnacePlaneEntity extends Entity {
             if (this.onGround) {
                 this.setMotion(this.getMotion().mul(1.0D, -0.5D, 1.0D));
             }
+        }
+    }
+
+    protected void spawnParticles(int fuel) {
+        Vec2f front = getHorizontalFrontPos();
+        ServerWorld serverWorld = (ServerWorld) world;
+        serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - front.x, getPosY() + 1.0, getPosZ() - front.y, 0, 0, 0, 0, 0.0);
+        if (fuel < 100) {
+            serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() + front.x, getPosY() + 1.5, getPosZ() + front.y, 5, 0, 0, 0, 0.0);
         }
     }
 

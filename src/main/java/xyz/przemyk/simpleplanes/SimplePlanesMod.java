@@ -7,7 +7,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import xyz.przemyk.simpleplanes.entities.FurnacePlaneRenderer;
+import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneRenderer;
+import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneRenderer;
 
 @Mod(SimplePlanesMod.MODID)
 public class SimplePlanesMod {
@@ -24,5 +25,6 @@ public class SimplePlanesMod {
 
     private void clientSetup(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesRegistries.FURNACE_PLANE_ENTITY.get(), FurnacePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesRegistries.LARGE_FURNACE_PLANE_ENTITY.get(), LargeFurnacePlaneRenderer::new);
     }
 }

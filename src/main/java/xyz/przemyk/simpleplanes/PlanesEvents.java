@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import xyz.przemyk.simpleplanes.entities.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 @Mod.EventBusSubscriber
 public class PlanesEvents {

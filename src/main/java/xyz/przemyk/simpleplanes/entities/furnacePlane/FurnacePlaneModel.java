@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.entities;
+package xyz.przemyk.simpleplanes.entities.furnacePlane;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
