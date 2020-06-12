@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.Config;
-import xyz.przemyk.simpleplanes.PlanesHelper;
+import xyz.przemyk.simpleplanes.PlaneType;
 import xyz.przemyk.simpleplanes.SimplePlanesRegistries;
 
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ public class FurnacePlaneEntity extends Entity {
     @Override
     protected void registerData() {
         dataManager.register(FUEL, 0);
-        dataManager.register(PLANE_TYPE, PlanesHelper.TYPE.OAK.ordinal());
+        dataManager.register(PLANE_TYPE, PlaneType.OAK.ordinal());
     }
 
     public void addFuel() {
@@ -54,16 +54,16 @@ public class FurnacePlaneEntity extends Entity {
 
     public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
-        setPlaneType(PlanesHelper.TYPE.OAK);
+        setPlaneType(PlaneType.OAK);
     }
 
-    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, PlanesHelper.TYPE typeIn, World worldIn, double x, double y, double z) {
+    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, PlaneType typeIn, World worldIn, double x, double y, double z) {
         this(entityTypeIn, worldIn);
         setPosition(x, y, z);
         setPlaneType(typeIn);
     }
 
-    public FurnacePlaneEntity(PlanesHelper.TYPE typeIn, World worldIn, double x, double y, double z) {
+    public FurnacePlaneEntity(PlaneType typeIn, World worldIn, double x, double y, double z) {
         this(SimplePlanesRegistries.FURNACE_PLANE_ENTITY.get(), worldIn);
         setPosition(x, y, z);
         setPlaneType(typeIn);
@@ -74,11 +74,11 @@ public class FurnacePlaneEntity extends Entity {
         return !world.isRemote && player.startRiding(this);
     }
 
-    public PlanesHelper.TYPE getPlaneType() {
-        return PlanesHelper.TYPE.byId(dataManager.get(PLANE_TYPE));
+    public PlaneType getPlaneType() {
+        return PlaneType.byId(dataManager.get(PLANE_TYPE));
     }
 
-    public void setPlaneType(PlanesHelper.TYPE type) {
+    public void setPlaneType(PlaneType type) {
         dataManager.set(PLANE_TYPE, type.ordinal());
     }
 
@@ -190,7 +190,7 @@ public class FurnacePlaneEntity extends Entity {
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
-        setPlaneType(PlanesHelper.TYPE.byId(compound.getInt("Type")));
+        setPlaneType(PlaneType.byId(compound.getInt("Type")));
         dataManager.set(FUEL, compound.getInt("Fuel"));
     }
 

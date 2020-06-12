@@ -3,7 +3,6 @@ package xyz.przemyk.simpleplanes.entities.largeFurnacePlane;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.EntityPredicates;
@@ -11,7 +10,7 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import xyz.przemyk.simpleplanes.PlanesHelper;
+import xyz.przemyk.simpleplanes.PlaneType;
 import xyz.przemyk.simpleplanes.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
@@ -23,11 +22,11 @@ public class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public LargeFurnacePlaneEntity(EntityType<? extends LargeFurnacePlaneEntity> entityTypeIn, PlanesHelper.TYPE typeIn, World worldIn, double x, double y, double z) {
+    public LargeFurnacePlaneEntity(EntityType<? extends LargeFurnacePlaneEntity> entityTypeIn, PlaneType typeIn, World worldIn, double x, double y, double z) {
         super(entityTypeIn, typeIn, worldIn, x, y, z);
     }
 
-    public LargeFurnacePlaneEntity(PlanesHelper.TYPE typeIn, World worldIn, double x, double y, double z) {
+    public LargeFurnacePlaneEntity(PlaneType typeIn, World worldIn, double x, double y, double z) {
         this(SimplePlanesRegistries.LARGE_FURNACE_PLANE_ENTITY.get(), typeIn, worldIn, x, y, z);
     }
 
@@ -75,6 +74,30 @@ public class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
         serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - (2 * front.x), getPosY() + 1.0, getPosZ() - (2 * front.y), 0, 0, 0, 0, 0.0);
         if (fuel < 100) {
             serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() + front.x, getPosY() + 1.5, getPosZ() + front.y, 5, 0, 0, 0, 0.0);
+        }
+    }
+
+    @Override
+    protected void dropItem() {
+        switch (getPlaneType()) {
+            case OAK:
+                entityDropItem(SimplePlanesRegistries.LARGE_OAK_FURNACE_PLANE_ITEM.get());
+                break;
+            case SPRUCE:
+                entityDropItem(SimplePlanesRegistries.LARGE_SPRUCE_FURNACE_PLANE_ITEM.get());
+                break;
+            case BIRCH:
+                entityDropItem(SimplePlanesRegistries.LARGE_BIRCH_FURNACE_PLANE_ITEM.get());
+                break;
+            case JUNGLE:
+                entityDropItem(SimplePlanesRegistries.LARGE_JUNGLE_FURNACE_PLANE_ITEM.get());
+                break;
+            case ACACIA:
+                entityDropItem(SimplePlanesRegistries.LARGE_ACACIA_FURNACE_PLANE_ITEM.get());
+                break;
+            case DARK_OAK:
+                entityDropItem(SimplePlanesRegistries.LARGE_DARK_OAK_FURNACE_PLANE_ITEM.get());
+                break;
         }
     }
 }

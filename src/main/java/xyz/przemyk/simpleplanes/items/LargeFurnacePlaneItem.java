@@ -2,12 +2,12 @@ package xyz.przemyk.simpleplanes.items;
 
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import xyz.przemyk.simpleplanes.PlanesHelper;
+import xyz.przemyk.simpleplanes.PlaneType;
 import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
 
 public class LargeFurnacePlaneItem extends AbstractFurnacePlaneItem<LargeFurnacePlaneEntity> {
 
-    public LargeFurnacePlaneItem(PlanesHelper.TYPE typeIn, Properties properties) {
+    public LargeFurnacePlaneItem(PlaneType typeIn, Properties properties) {
         super(typeIn, properties);
     }
 
