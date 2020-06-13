@@ -49,7 +49,7 @@ public class FurnacePlaneEntity extends Entity {
     }
 
     public boolean isPowered() {
-        return dataManager.get(FUEL) > 0;
+        return dataManager.get(FUEL) > 0 ||(getControllingPassenger() instanceof PlayerEntity && ((PlayerEntity)getControllingPassenger()).isCreative());
     }
 
     public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn) {
@@ -177,7 +177,7 @@ public class FurnacePlaneEntity extends Entity {
         Vec2f front = getHorizontalFrontPos();
         ServerWorld serverWorld = (ServerWorld) world;
         serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - front.x, getPosY() + 1.0, getPosZ() - front.y, 0, 0, 0, 0, 0.0);
-        if (fuel < 100) {
+        if (fuel > 4 && fuel < 100) {
             serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() + front.x, getPosY() + 1.5, getPosZ() + front.y, 5, 0, 0, 0, 0.0);
         }
     }
