@@ -13,6 +13,9 @@
     "item.simpleplanes.large_acacia_furnace_plane":   "Large Acacia Furnace Plane",
     "item.simpleplanes.large_dark_oak_furnace_plane": "Large Dark Oak Furnace Plane",
 
+    "item.simpleplanes.furnace_engine": "Furnace Engine",
+    "item.simpleplanes.propeller": "Propeller",
+
     "entity.simpleplanes.furnace_plane": "Furnace Plane",
     "entity.simpleplanes.large_furnace_plane": "Large Furnace Plane"
 }

@@ -1,19 +1,25 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "IF",
-        "IB",
-        "I "
+        " WF",
+        "PEB",
+        " W "
     ],
     "key": {
-        "I": {
-            "tag": "forge:ingots/iron"
+        "W": {
+            "item": "minecraft:birch_slab"
         },
         "F": {
             "item": "minecraft:furnace"
         },
         "B": {
             "item": "minecraft:birch_boat"
+        },
+        "E": {
+            "item": "simpleplanes:furnace_engine"
+        },
+        "P": {
+            "item": "simpleplanes:propeller"
         }
     },
     "result": {

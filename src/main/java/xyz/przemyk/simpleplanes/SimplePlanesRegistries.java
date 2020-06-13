@@ -42,6 +42,9 @@ public class SimplePlanesRegistries {
     public static final RegistryObject<LargeFurnacePlaneItem> LARGE_ACACIA_FURNACE_PLANE_ITEM   = ITEMS.register("large_acacia_furnace_plane", () -> new LargeFurnacePlaneItem(PlaneType.ACACIA, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
     public static final RegistryObject<LargeFurnacePlaneItem> LARGE_DARK_OAK_FURNACE_PLANE_ITEM = ITEMS.register("large_dark_oak_furnace_plane", () -> new LargeFurnacePlaneItem(PlaneType.DARK_OAK, new Item.Properties().group(ItemGroup.TRANSPORTATION)));
 
+    public static final RegistryObject<Item> PROPELLER_ITEM = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(ItemGroup.MATERIALS)));
+    public static final RegistryObject<Item> FURNACE_ENGINE_ITEM = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(ItemGroup.MATERIALS)));
+
     public static final RegistryObject<EntityType<FurnacePlaneEntity>> FURNACE_PLANE_ENTITY = registerEntity("furnace_plane", FurnacePlaneEntity::new);
     public static final RegistryObject<EntityType<LargeFurnacePlaneEntity>> LARGE_FURNACE_PLANE_ENTITY = registerEntity("large_furnace_plane", LargeFurnacePlaneEntity::new);
 
