@@ -8,9 +8,10 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.Entity;
+import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
-public abstract class AbstractPlaneRenderer<T extends Entity> extends EntityRenderer<T> {
+// I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
+public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extends EntityRenderer<T> {
 
     protected AbstractPlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
@@ -25,6 +26,10 @@ public abstract class AbstractPlaneRenderer<T extends Entity> extends EntityRend
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
         if (!entityIn.onGround) {
             matrixStackIn.rotate(Vector3f.XN.rotationDegrees(getInAirRotation()));
+            int rotationRight = entityIn.getDataManager().get(FurnacePlaneEntity.MOVEMENT_RIGHT);
+            if (rotationRight != 0) {
+                matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(rotationRight));
+            }
         }
         EntityModel<T> planeModel = getModel();
         IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(entityIn)));

@@ -32,12 +32,16 @@ public class FurnacePlaneEntity extends Entity {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
     protected static final DataParameter<Integer> PLANE_TYPE = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
 
+    //negative values mean left
+    public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
+
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
 
     @Override
     protected void registerData() {
         dataManager.register(FUEL, 0);
         dataManager.register(PLANE_TYPE, PlaneType.OAK.ordinal());
+        dataManager.register(MOVEMENT_RIGHT, 0);
     }
 
     public void addFuel() {
@@ -119,6 +123,7 @@ public class FurnacePlaneEntity extends Entity {
         return new Vec2f(-MathHelper.sin(rotationYaw * ((float)Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float)Math.PI / 180F)));
     }
 
+    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     @Override
     public void tick() {
         super.tick();
@@ -143,9 +148,28 @@ public class FurnacePlaneEntity extends Entity {
                 }
             }
 
-            rotationYaw -= controllingPassenger.moveStrafing * 3;
+//            rotationYaw -= controllingPassenger.moveStrafing * 3;
+//            for (Entity passenger : getPassengers()) {
+//                passenger.rotationYaw -= controllingPassenger.moveStrafing * 3;
+//            }
+            int movementRight = dataManager.get(MOVEMENT_RIGHT);
+            if (controllingPassenger.moveStrafing > 0) {
+                if (movementRight < 10) {
+                    dataManager.set(MOVEMENT_RIGHT, movementRight + 1);
+                }
+            } else if (controllingPassenger.moveStrafing < 0) {
+                if (movementRight > -10) {
+                    dataManager.set(MOVEMENT_RIGHT, movementRight - 1);
+                }
+            } else if (movementRight > 0) {
+                dataManager.set(MOVEMENT_RIGHT, movementRight - 1);
+            } else if (movementRight < 0) {
+                dataManager.set(MOVEMENT_RIGHT, movementRight + 1);
+            }
+
+            rotationYaw -= movementRight / 4;
             for (Entity passenger : getPassengers()) {
-                passenger.rotationYaw -= controllingPassenger.moveStrafing * 3;
+                passenger.rotationYaw -= movementRight / 4;
             }
         }
 
