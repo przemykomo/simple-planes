@@ -1,9 +1,10 @@
-package xyz.przemyk.simpleplanes.entities.largeFurnacePlane;
+package xyz.przemyk.simpleplanes.render.largeFurnacePlane;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class LargeFurnacePlaneModel extends EntityModel<LargeFurnacePlaneEntity> {

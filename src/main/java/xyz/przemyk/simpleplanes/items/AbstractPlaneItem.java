@@ -13,20 +13,17 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import xyz.przemyk.simpleplanes.PlaneType;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractFurnacePlaneItem<T extends FurnacePlaneEntity> extends Item {
+public abstract class AbstractPlaneItem<T extends FurnacePlaneEntity> extends Item {
 
     private static final Predicate<Entity> entityPredicate = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
-    public final PlaneType type;
 
-    public AbstractFurnacePlaneItem(PlaneType typeIn, Properties properties) {
+    public AbstractPlaneItem(Properties properties) {
         super(properties.maxStackSize(1));
-        type = typeIn;
     }
 
     @Override

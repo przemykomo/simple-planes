@@ -23,15 +23,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.Config;
-import xyz.przemyk.simpleplanes.PlaneType;
 import xyz.przemyk.simpleplanes.SimplePlanesRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FurnacePlaneEntity extends Entity {
+public abstract class FurnacePlaneEntity extends Entity {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
-    protected static final DataParameter<Integer> PLANE_TYPE = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
 
     //negative values mean left
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
@@ -41,7 +39,6 @@ public class FurnacePlaneEntity extends Entity {
     @Override
     protected void registerData() {
         dataManager.register(FUEL, 0);
-        dataManager.register(PLANE_TYPE, PlaneType.OAK.ordinal());
         dataManager.register(MOVEMENT_RIGHT, 0);
     }
 
@@ -59,32 +56,16 @@ public class FurnacePlaneEntity extends Entity {
 
     public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
-        setPlaneType(PlaneType.OAK);
     }
 
-    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, PlaneType typeIn, World worldIn, double x, double y, double z) {
+    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
         this(entityTypeIn, worldIn);
         setPosition(x, y, z);
-        setPlaneType(typeIn);
-    }
-
-    public FurnacePlaneEntity(PlaneType typeIn, World worldIn, double x, double y, double z) {
-        this(SimplePlanesRegistries.FURNACE_PLANE_ENTITY.get(), worldIn);
-        setPosition(x, y, z);
-        setPlaneType(typeIn);
     }
 
     @Override
     public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
         return !world.isRemote && player.startRiding(this) ? ActionResultType.SUCCESS : ActionResultType.FAIL;
-    }
-
-    public PlaneType getPlaneType() {
-        return PlaneType.byId(dataManager.get(PLANE_TYPE));
-    }
-
-    public void setPlaneType(PlaneType type) {
-        dataManager.set(PLANE_TYPE, type.ordinal());
     }
 
     @Override
@@ -97,28 +78,7 @@ public class FurnacePlaneEntity extends Entity {
         return true;
     }
 
-    protected void dropItem() {
-        switch (getPlaneType()) {
-            case OAK:
-                entityDropItem(SimplePlanesRegistries.OAK_FURNACE_PLANE_ITEM.get());
-                break;
-            case SPRUCE:
-                entityDropItem(SimplePlanesRegistries.SPRUCE_FURNACE_PLANE_ITEM.get());
-                break;
-            case BIRCH:
-                entityDropItem(SimplePlanesRegistries.BIRCH_FURNACE_PLANE_ITEM.get());
-                break;
-            case JUNGLE:
-                entityDropItem(SimplePlanesRegistries.JUNGLE_FURNACE_PLANE_ITEM.get());
-                break;
-            case ACACIA:
-                entityDropItem(SimplePlanesRegistries.ACACIA_FURNACE_PLANE_ITEM.get());
-                break;
-            case DARK_OAK:
-                entityDropItem(SimplePlanesRegistries.DARK_OAK_FURNACE_PLANE_ITEM.get());
-                break;
-        }
-    }
+    protected abstract void dropItem();
 
     public Vector2f getHorizontalFrontPos() {
         return new Vector2f(-MathHelper.sin(rotationYaw * ((float)Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float)Math.PI / 180F)));
@@ -134,7 +94,6 @@ public class FurnacePlaneEntity extends Entity {
             dataManager.set(FUEL, fuel - 1);
         }
 
-        // maybe add later isUser() check? idk
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
             fallDistance = 0;
@@ -149,10 +108,6 @@ public class FurnacePlaneEntity extends Entity {
                 }
             }
 
-//            rotationYaw -= controllingPassenger.moveStrafing * 3;
-//            for (Entity passenger : getPassengers()) {
-//                passenger.rotationYaw -= controllingPassenger.moveStrafing * 3;
-//            }
             int movementRight = dataManager.get(MOVEMENT_RIGHT);
             if (controllingPassenger.moveStrafing > 0) {
                 if (movementRight < 10) {
@@ -215,13 +170,11 @@ public class FurnacePlaneEntity extends Entity {
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
-        setPlaneType(PlaneType.byId(compound.getInt("Type")));
         dataManager.set(FUEL, compound.getInt("Fuel"));
     }
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
-        compound.putInt("Type", getPlaneType().ordinal());
         compound.putInt("Fuel", dataManager.get(FUEL));
     }
 
