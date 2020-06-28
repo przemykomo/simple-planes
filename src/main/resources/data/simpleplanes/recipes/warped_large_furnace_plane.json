@@ -2,7 +2,7 @@
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "I  ",
-        "IPB",
+        "IPW",
         "I  "
     ],
     "key": {
@@ -13,7 +13,7 @@
             "item": "simpleplanes:warped_furnace_plane"
         },
         "B": {
-            "item": "minecraft:warped_boat"
+            "item": "minecraft:warped_slab"
         }
     },
     "result": {

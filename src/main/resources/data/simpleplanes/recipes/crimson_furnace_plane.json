@@ -2,7 +2,7 @@
     "type": "minecraft:crafting_shaped",
     "pattern": [
         " WF",
-        "PEB",
+        "PEW",
         " W "
     ],
     "key": {
@@ -11,9 +11,6 @@
         },
         "F": {
             "item": "minecraft:furnace"
-        },
-        "B": {
-            "item": "minecraft:crimson_boat"
         },
         "E": {
             "item": "simpleplanes:furnace_engine"
