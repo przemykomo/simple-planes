@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.ResourceLocation;
 import xyz.przemyk.simpleplanes.entities.AbstractPlaneRenderer;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 public class LargeFurnacePlaneRenderer extends AbstractPlaneRenderer<LargeFurnacePlaneEntity> {
 

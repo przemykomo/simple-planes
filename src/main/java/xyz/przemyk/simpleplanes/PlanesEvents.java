@@ -20,7 +20,8 @@ public class PlanesEvents {
         Entity entity = player.getLowestRidingEntity();
         if (entity instanceof FurnacePlaneEntity && ((FurnacePlaneEntity) entity).getFuel() < 200) {
             ItemStack itemStack = player.getHeldItem(event.getHand());
-            if (ItemTags.getCollection().getOrCreate(COAL_TAG).contains(itemStack.getItem())) {
+            //func_230235_a_ - contains
+            if (ItemTags.getCollection().getOrCreate(COAL_TAG).func_230235_a_(itemStack.getItem())) {
                 ((FurnacePlaneEntity) entity).addFuel();
                 if (!player.isCreative()) {
                     itemStack.shrink(1);

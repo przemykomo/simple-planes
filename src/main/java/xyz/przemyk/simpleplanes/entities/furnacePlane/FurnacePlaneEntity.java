@@ -11,12 +11,13 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -74,8 +75,8 @@ public class FurnacePlaneEntity extends Entity {
     }
 
     @Override
-    public boolean processInitialInteract(PlayerEntity player, Hand hand) {
-        return !world.isRemote && player.startRiding(this);
+    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
+        return !world.isRemote && player.startRiding(this) ? ActionResultType.SUCCESS : ActionResultType.FAIL;
     }
 
     public PlaneType getPlaneType() {
@@ -119,8 +120,8 @@ public class FurnacePlaneEntity extends Entity {
         }
     }
 
-    public Vec2f getHorizontalFrontPos() {
-        return new Vec2f(-MathHelper.sin(rotationYaw * ((float)Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float)Math.PI / 180F)));
+    public Vector2f getHorizontalFrontPos() {
+        return new Vector2f(-MathHelper.sin(rotationYaw * ((float)Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float)Math.PI / 180F)));
     }
 
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
@@ -141,7 +142,7 @@ public class FurnacePlaneEntity extends Entity {
 
             if (isPowered()) {
                 if (controllingPassenger.moveForward > 0.0F) {
-                    Vec2f front = getHorizontalFrontPos();
+                    Vector2f front = getHorizontalFrontPos();
                     this.setMotion(this.getMotion().add(0.02F * front.x, 0.005F, 0.02F * front.y));
 
                     gravity = false;
@@ -198,7 +199,7 @@ public class FurnacePlaneEntity extends Entity {
     }
 
     protected void spawnParticles(int fuel) {
-        Vec2f front = getHorizontalFrontPos();
+        Vector2f front = getHorizontalFrontPos();
         ServerWorld serverWorld = (ServerWorld) world;
         serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - front.x, getPosY() + 1.0, getPosZ() - front.y, 0, 0, 0, 0, 0.0);
         if (fuel > 4 && fuel < 100) {
