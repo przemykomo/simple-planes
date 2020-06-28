@@ -17,6 +17,6 @@ public class OakLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
 
     @Override
     protected void dropItem() {
-        entityDropItem(new ItemStack(SimplePlanesRegistries.LARGE_OAK_FURNACE_PLANE_ITEM.get()));
+        entityDropItem(new ItemStack(SimplePlanesRegistries.OAK_LARGE_FURNACE_PLANE_ITEM.get()));
     }
 }

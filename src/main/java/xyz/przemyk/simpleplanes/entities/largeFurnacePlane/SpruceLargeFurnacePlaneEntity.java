@@ -17,6 +17,6 @@ public class SpruceLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
 
     @Override
     protected void dropItem() {
-        entityDropItem(new ItemStack(SimplePlanesRegistries.LARGE_SPRUCE_FURNACE_PLANE_ITEM.get()));
+        entityDropItem(new ItemStack(SimplePlanesRegistries.SPRUCE_LARGE_FURNACE_PLANE_ITEM.get()));
     }
 }

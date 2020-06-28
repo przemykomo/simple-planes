@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:crimson_furnace_plane"
+        },
+        "B": {
+            "item": "minecraft:crimson_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:crimson_large_furnace_plane"
+    }
+}

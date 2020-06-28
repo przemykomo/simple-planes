@@ -34,13 +34,17 @@ public class SimplePlanesRegistries {
     public static final RegistryObject<JungleFurnacePlaneItem> JUNGLE_FURNACE_PLANE_ITEM = ITEMS.register("jungle_furnace_plane", () -> new JungleFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
     public static final RegistryObject<AcaciaFurnacePlaneItem> ACACIA_FURNACE_PLANE_ITEM = ITEMS.register("acacia_furnace_plane", () -> new AcaciaFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
     public static final RegistryObject<DarkOakFurnacePlaneItem> DARK_OAK_FURNACE_PLANE_ITEM = ITEMS.register("dark_oak_furnace_plane", () -> new DarkOakFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<CrimsonFurnacePlaneItem> CRIMSON_FURNACE_PLANE_ITEM = ITEMS.register("crimson_furnace_plane", () -> new CrimsonFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<WarpedFurnacePlaneItem> WARPED_FURNACE_PLANE_ITEM = ITEMS.register("warped_furnace_plane", () -> new WarpedFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
 
-    public static final RegistryObject<OakLargeFurnacePlaneItem> LARGE_OAK_FURNACE_PLANE_ITEM = ITEMS.register("large_oak_furnace_plane", () -> new OakLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
-    public static final RegistryObject<SpruceLargeFurnacePlaneItem> LARGE_SPRUCE_FURNACE_PLANE_ITEM = ITEMS.register("large_spruce_furnace_plane", () -> new SpruceLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
-    public static final RegistryObject<BirchLargeFurnacePlaneItem> LARGE_BIRCH_FURNACE_PLANE_ITEM = ITEMS.register("large_birch_furnace_plane", () -> new BirchLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
-    public static final RegistryObject<JungleLargeFurnacePlaneItem> LARGE_JUNGLE_FURNACE_PLANE_ITEM = ITEMS.register("large_jungle_furnace_plane", () -> new JungleLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
-    public static final RegistryObject<AcaciaLargeFurnacePlaneItem> LARGE_ACACIA_FURNACE_PLANE_ITEM = ITEMS.register("large_acacia_furnace_plane", () -> new AcaciaLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
-    public static final RegistryObject<DarkOakLargeFurnacePlaneItem> LARGE_DARK_OAK_FURNACE_PLANE_ITEM = ITEMS.register("large_dark_oak_furnace_plane", () -> new DarkOakLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<OakLargeFurnacePlaneItem> OAK_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("oak_large_furnace_plane", () -> new OakLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<SpruceLargeFurnacePlaneItem> SPRUCE_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("spruce_large_furnace_plane", () -> new SpruceLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<BirchLargeFurnacePlaneItem> BIRCH_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("birch_large_furnace_plane", () -> new BirchLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<JungleLargeFurnacePlaneItem> JUNGLE_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("jungle_large_furnace_plane", () -> new JungleLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<AcaciaLargeFurnacePlaneItem> ACACIA_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("acacia_large_furnace_plane", () -> new AcaciaLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<DarkOakLargeFurnacePlaneItem> DARK_OAK_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("dark_oak_large_furnace_plane", () -> new DarkOakLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<CrimsonLargeFurnacePlaneItem> CRIMSON_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("crimson_large_furnace_plane", () -> new CrimsonLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<WarpedLargeFurnacePlaneItem> WARPED_LARGE_FURNACE_PLANE_ITEM = ITEMS.register("warped_large_furnace_plane", () -> new WarpedLargeFurnacePlaneItem(new Item.Properties().group(ItemGroup.TRANSPORTATION)));
 
     public static final RegistryObject<Item> PROPELLER_ITEM = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(ItemGroup.MATERIALS)));
     public static final RegistryObject<Item> FURNACE_ENGINE_ITEM = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(ItemGroup.MATERIALS)));
@@ -51,6 +55,8 @@ public class SimplePlanesRegistries {
     public static final RegistryObject<EntityType<JungleFurnacePlaneEntity>> JUNGLE_FURNACE_PLANE_ENTITY = registerEntity("jungle_furnace_plane", JungleFurnacePlaneEntity::new);
     public static final RegistryObject<EntityType<AcaciaFurnacePlaneEntity>> ACACIA_FURNACE_PLANE_ENTITY = registerEntity("acacia_furnace_plane", AcaciaFurnacePlaneEntity::new);
     public static final RegistryObject<EntityType<DarkOakFurnacePlaneEntity>> DARK_OAK_FURNACE_PLANE_ENTITY = registerEntity("dark_oak_furnace_plane", DarkOakFurnacePlaneEntity::new);
+    public static final RegistryObject<EntityType<CrimsonFurnacePlaneEntity>> CRIMSON_FURNACE_PLANE_ENTITY = registerImmuneToFireEntity("crimson_furnace_plane", CrimsonFurnacePlaneEntity::new);
+    public static final RegistryObject<EntityType<WarpedFurnacePlaneEntity>> WARPED_FURNACE_PLANE_ENTITY = registerImmuneToFireEntity("warped_furnace_plane", WarpedFurnacePlaneEntity::new);
 
     public static final RegistryObject<EntityType<OakLargeFurnacePlaneEntity>> OAK_LARGE_FURNACE_PLANE_ENTITY = registerEntity("oak_large_furnace_plane", OakLargeFurnacePlaneEntity::new);
     public static final RegistryObject<EntityType<SpruceLargeFurnacePlaneEntity>> SPRUCE_LARGE_FURNACE_PLANE_ENTITY = registerEntity("spruce_large_furnace_plane", SpruceLargeFurnacePlaneEntity::new);
@@ -58,9 +64,16 @@ public class SimplePlanesRegistries {
     public static final RegistryObject<EntityType<JungleLargeFurnacePlaneEntity>> JUNGLE_LARGE_FURNACE_PLANE_ENTITY = registerEntity("jungle_large_furnace_plane", JungleLargeFurnacePlaneEntity::new);
     public static final RegistryObject<EntityType<AcaciaLargeFurnacePlaneEntity>> ACACIA_LARGE_FURNACE_PLANE_ENTITY = registerEntity("acacia_large_furnace_plane", AcaciaLargeFurnacePlaneEntity::new);
     public static final RegistryObject<EntityType<DarkOakLargeFurnacePlaneEntity>> DARK_OAK_LARGE_FURNACE_PLANE_ENTITY = registerEntity("dark_oak_large_furnace_plane", DarkOakLargeFurnacePlaneEntity::new);
+    public static final RegistryObject<EntityType<CrimsonLargeFurnacePlaneEntity>> CRIMSON_LARGE_FURNACE_PLANE_ENTITY = registerImmuneToFireEntity("crimson_large_furnace_plane", CrimsonLargeFurnacePlaneEntity::new);
+    public static final RegistryObject<EntityType<WarpedLargeFurnacePlaneEntity>> WARPED_LARGE_FURNACE_PLANE_ENTITY = registerImmuneToFireEntity("warped_large_furnace_plane", WarpedLargeFurnacePlaneEntity::new);
 
     private static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String id, BiFunction<EntityType<T>, World, T> function)  {
         EntityType<T> type = EntityType.Builder.create(function::apply, EntityClassification.MISC).size(2f, 0.5f).setShouldReceiveVelocityUpdates(true).build(id);
+        return ENTITIES.register(id, () -> type);
+    }
+
+    private static <T extends Entity> RegistryObject<EntityType<T>> registerImmuneToFireEntity(String id, BiFunction<EntityType<T>, World, T> function)  {
+        EntityType<T> type = EntityType.Builder.create(function::apply, EntityClassification.MISC).size(2f, 0.5f).setShouldReceiveVelocityUpdates(true).immuneToFire().build(id);
         return ENTITIES.register(id, () -> type);
     }
 }

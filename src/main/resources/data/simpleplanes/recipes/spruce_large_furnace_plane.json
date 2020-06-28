@@ -10,13 +10,13 @@
             "tag": "forge:ingots/iron"
         },
         "P": {
-            "item": "simpleplanes:birch_furnace_plane"
+            "item": "simpleplanes:spruce_furnace_plane"
         },
         "B": {
-            "item": "minecraft:birch_boat"
+            "item": "minecraft:spruce_boat"
         }
     },
     "result": {
-        "item": "simpleplanes:large_birch_furnace_plane"
+        "item": "simpleplanes:spruce_large_furnace_plane"
     }
 }

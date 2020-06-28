@@ -5,17 +5,18 @@
     "item.simpleplanes.jungle_furnace_plane":   "Jungle Furnace Plane",
     "item.simpleplanes.acacia_furnace_plane":   "Acacia Furnace Plane",
     "item.simpleplanes.dark_oak_furnace_plane": "Dark Oak Furnace Plane",
+    "item.simpleplanes.crimson_furnace_plane":  "Crimson Furnace Plane",
+    "item.simpleplanes.warped_furnace_plane":   "Warped Furnace Plane",
 
-    "item.simpleplanes.large_oak_furnace_plane":      "Large Oak Furnace Plane",
-    "item.simpleplanes.large_spruce_furnace_plane":   "Large Spruce Furnace Plane",
-    "item.simpleplanes.large_birch_furnace_plane":    "Large Birch Furnace Plane",
-    "item.simpleplanes.large_jungle_furnace_plane":   "Large Jungle Furnace Plane",
-    "item.simpleplanes.large_acacia_furnace_plane":   "Large Acacia Furnace Plane",
-    "item.simpleplanes.large_dark_oak_furnace_plane": "Large Dark Oak Furnace Plane",
+    "item.simpleplanes.oak_large_furnace_plane":      "Large Oak Furnace Plane",
+    "item.simpleplanes.spruce_large_furnace_plane":   "Large Spruce Furnace Plane",
+    "item.simpleplanes.birch_large_furnace_plane":    "Large Birch Furnace Plane",
+    "item.simpleplanes.jungle_large_furnace_plane":   "Large Jungle Furnace Plane",
+    "item.simpleplanes.acacia_large_furnace_plane":   "Large Acacia Furnace Plane",
+    "item.simpleplanes.dark_oak_large_furnace_plane": "Large Dark Oak Furnace Plane",
+    "item.simpleplanes.crimson_large_furnace_plane":  "Large Crimson Furnace Plane",
+    "item.simpleplanes.warped_large_furnace_plane":   "Large Warped Furnace Plane",
 
     "item.simpleplanes.furnace_engine": "Furnace Engine",
-    "item.simpleplanes.propeller": "Propeller",
-
-    "entity.simpleplanes.furnace_plane": "Furnace Plane",
-    "entity.simpleplanes.large_furnace_plane": "Large Furnace Plane"
+    "item.simpleplanes.propeller": "Propeller"
 }

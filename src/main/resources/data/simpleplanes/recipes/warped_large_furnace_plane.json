@@ -10,13 +10,13 @@
             "tag": "forge:ingots/iron"
         },
         "P": {
-            "item": "simpleplanes:oak_furnace_plane"
+            "item": "simpleplanes:warped_furnace_plane"
         },
         "B": {
-            "item": "minecraft:oak_boat"
+            "item": "minecraft:warped_boat"
         }
     },
     "result": {
-        "item": "simpleplanes:large_oak_furnace_plane"
+        "item": "simpleplanes:warped_large_furnace_plane"
     }
 }

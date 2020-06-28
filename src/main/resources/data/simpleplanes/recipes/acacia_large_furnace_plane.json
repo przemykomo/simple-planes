@@ -10,13 +10,13 @@
             "tag": "forge:ingots/iron"
         },
         "P": {
-            "item": "simpleplanes:dark_oak_furnace_plane"
+            "item": "simpleplanes:acacia_furnace_plane"
         },
         "B": {
-            "item": "minecraft:dark_oak_boat"
+            "item": "minecraft:acacia_boat"
         }
     },
     "result": {
-        "item": "simpleplanes:large_dark_oak_furnace_plane"
+        "item": "simpleplanes:acacia_large_furnace_plane"
     }
 }

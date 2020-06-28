@@ -17,6 +17,6 @@ public class AcaciaLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
 
     @Override
     protected void dropItem() {
-        entityDropItem(new ItemStack(SimplePlanesRegistries.LARGE_ACACIA_FURNACE_PLANE_ITEM.get()));
+        entityDropItem(new ItemStack(SimplePlanesRegistries.ACACIA_LARGE_FURNACE_PLANE_ITEM.get()));
     }
 }
