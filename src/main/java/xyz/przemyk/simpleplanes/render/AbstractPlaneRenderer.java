@@ -16,13 +16,10 @@ import java.util.ArrayList;
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extends EntityRenderer<T> {
 
-    private ArrayList<EntityModel<? extends FurnacePlaneEntity>> addonModels = new ArrayList<>();
+    protected final ArrayList<EntityModel<T>> addonModels = new ArrayList<>();
 
     protected AbstractPlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
-
-        //TODO: make this not hardcoded
-        addonModels.add(new SprayModel());
     }
 
     @Override
@@ -45,8 +42,9 @@ public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extend
         planeModel.setRotationAngles(entityIn, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
-        for (EntityModel<?> addonModel : addonModels) {
+        for (EntityModel<T> addonModel : addonModels) {
             addonModel.setRotationAngles(entityIn, packedLightIn, 0, 0, 0, 0);
+            addonModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
         matrixStackIn.pop();
 

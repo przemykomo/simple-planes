@@ -12,6 +12,8 @@ public abstract class FurnacePlaneRenderer extends AbstractPlaneRenderer<Furnace
     public FurnacePlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
         shadowSize = 0.6F;
+
+        addonModels.add(new SprayModel());
     }
 
     @Override
