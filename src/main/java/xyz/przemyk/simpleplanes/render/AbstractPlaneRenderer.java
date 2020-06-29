@@ -9,12 +9,20 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.math.vector.Vector3f;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.render.furnacePlane.SprayModel;
+
+import java.util.ArrayList;
 
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extends EntityRenderer<T> {
 
+    private ArrayList<EntityModel<? extends FurnacePlaneEntity>> addonModels = new ArrayList<>();
+
     protected AbstractPlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
+
+        //TODO: make this not hardcoded
+        addonModels.add(new SprayModel());
     }
 
     @Override
@@ -36,6 +44,10 @@ public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extend
         matrixStackIn.translate(0, -1.1, 0);
         planeModel.setRotationAngles(entityIn, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+
+        for (EntityModel<?> addonModel : addonModels) {
+            addonModel.setRotationAngles(entityIn, packedLightIn, 0, 0, 0, 0);
+        }
         matrixStackIn.pop();
 
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);

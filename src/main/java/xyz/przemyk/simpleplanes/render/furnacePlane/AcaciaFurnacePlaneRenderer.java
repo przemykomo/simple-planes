@@ -6,8 +6,8 @@ import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 public class AcaciaFurnacePlaneRenderer extends FurnacePlaneRenderer {
 
-    public static final ResourceLocation TEXTURE_ACACIA           = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace/acacia.png");
-    public static final ResourceLocation TEXTURE_ACACIA_POWERED   = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace_powered/acacia.png");
+    public static final ResourceLocation TEXTURE_ACACIA = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace/acacia.png");
+    public static final ResourceLocation TEXTURE_ACACIA_POWERED = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace_powered/acacia.png");
 
     public AcaciaFurnacePlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
