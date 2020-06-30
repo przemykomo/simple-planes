@@ -6,7 +6,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -34,8 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class FurnacePlaneEntity extends Entity {
-    protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.COMPOUND_NBT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
 
@@ -54,6 +54,7 @@ public abstract class FurnacePlaneEntity extends Entity {
     protected void registerData() {
         dataManager.register(FUEL, 0);
         dataManager.register(MOVEMENT_RIGHT, 0);
+        dataManager.register(UPGRADES_NBT, new CompoundNBT());
     }
 
     public void addFuel() {
@@ -180,8 +181,12 @@ public abstract class FurnacePlaneEntity extends Entity {
     @Override
     protected void readAdditional(CompoundNBT compound) {
         dataManager.set(FUEL, compound.getInt("Fuel"));
-
         CompoundNBT upgradesNBT = compound.getCompound("upgrades");
+        dataManager.set(UPGRADES_NBT, upgradesNBT);
+        deserializeUpgrades(upgradesNBT);
+    }
+
+    private void deserializeUpgrades(CompoundNBT upgradesNBT) {
         for (String key : upgradesNBT.keySet()) {
             ResourceLocation resourceLocation = new ResourceLocation(key);
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
@@ -231,5 +236,13 @@ public abstract class FurnacePlaneEntity extends Entity {
     @Override
     public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void notifyDataManagerChange(DataParameter<?> key) {
+        super.notifyDataManagerChange(key);
+        if (UPGRADES_NBT.equals(key) && world.isRemote()) {
+            deserializeUpgrades(dataManager.get(UPGRADES_NBT));
+        }
     }
 }

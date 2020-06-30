@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
@@ -21,14 +22,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
 
 import java.util.List;
 
 public class SprayerUpgrade extends Upgrade {
-    public static final SprayerModel model = new SprayerModel();
+    public static final SprayerModel SPRAYER_MODEL = new SprayerModel();
+    public static final LargeSprayerModel LARGE_SPRAYER_MODEL = new LargeSprayerModel();
     //TODO: different texture
-    public static final ResourceLocation TEXTURE_ACACIA = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace/acacia.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/sprayer.png");
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
     public SprayerUpgrade(UpgradeType type, FurnacePlaneEntity planeEntity) {
@@ -38,6 +42,26 @@ public class SprayerUpgrade extends Upgrade {
     private int ticks = 0;
     private int fluid = 0;
     private Effect effect = null;
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT compoundNBT = new CompoundNBT();
+        compoundNBT.putInt("fluid", fluid);
+        compoundNBT.putString("effect", effect == null ? "empty" : effect.getRegistryName().toString());
+        return compoundNBT;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT compoundNBT) {
+        fluid = compoundNBT.getInt("fluid");
+        String effectName = compoundNBT.getString("effect");
+        if (effectName.equals("empty")) {
+            effect = null;
+        } else {
+            effect = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectName));
+        }
+    }
 
     @Override
     public void tick() {
@@ -102,13 +126,19 @@ public class SprayerUpgrade extends Upgrade {
             } else {
                 effect = effectInstances.get(0).getPotion();
             }
-            itemStack.shrink(1);
+            if (!event.getPlayer().isCreative()) {
+                event.getPlayer().setHeldItem(event.getHand(), new ItemStack(Items.GLASS_BOTTLE));
+            }
         }
     }
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(model.getRenderType(TEXTURE_ACACIA));
-        model.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(SPRAYER_MODEL.getRenderType(TEXTURE));
+        if (planeEntity instanceof LargeFurnacePlaneEntity) {
+            LARGE_SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        } else {
+            SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        }
     }
 }
