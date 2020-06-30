@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 import java.util.List;
@@ -38,6 +40,26 @@ public class SprayerUpgrade extends Upgrade {
     private int ticks = 0;
     private int fluid = 0;
     private Effect effect = null;
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT compoundNBT = new CompoundNBT();
+        compoundNBT.putInt("fluid", fluid);
+        compoundNBT.putString("effect", effect == null ? "empty" : effect.getRegistryName().toString());
+        return compoundNBT;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT compoundNBT) {
+        fluid = compoundNBT.getInt("fluid");
+        String effectName = compoundNBT.getString("effect");
+        if (effectName.equals("empty")) {
+            effect = null;
+        } else {
+            effect = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectName));
+        }
+    }
 
     @Override
     public void tick() {
@@ -102,7 +124,9 @@ public class SprayerUpgrade extends Upgrade {
             } else {
                 effect = effectInstances.get(0).getPotion();
             }
-            itemStack.shrink(1);
+            if (!event.getPlayer().isCreative()) {
+                event.getPlayer().setHeldItem(event.getHand(), new ItemStack(Items.GLASS_BOTTLE));
+            }
         }
     }
 
