@@ -3,7 +3,8 @@ package xyz.przemyk.simpleplanes.entities.largeFurnacePlane;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import xyz.przemyk.simpleplanes.SimplePlanesRegistries;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 public class OakLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
 
@@ -12,11 +13,11 @@ public class OakLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
     }
 
     public OakLargeFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesRegistries.OAK_LARGE_FURNACE_PLANE_ENTITY.get(), worldIn, x, y, z);
+        super(SimplePlanesEntities.OAK_LARGE_FURNACE_PLANE.get(), worldIn, x, y, z);
     }
 
     @Override
     protected void dropItem() {
-        entityDropItem(new ItemStack(SimplePlanesRegistries.OAK_LARGE_FURNACE_PLANE_ITEM.get()));
+        entityDropItem(new ItemStack(SimplePlanesItems.OAK_LARGE_FURNACE_PLANE.get()));
     }
 }

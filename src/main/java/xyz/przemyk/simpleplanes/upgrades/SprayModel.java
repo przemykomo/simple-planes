@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.render.furnacePlane;
+package xyz.przemyk.simpleplanes.upgrades;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -20,7 +20,6 @@ public class SprayModel extends EntityModel<FurnacePlaneEntity> {
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
 		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
-		Body.setTextureOffset(0, 0).addBox(-33.0F, -22.0F, -15.0F, 64.0F, 1.0F, 9.0F, 0.0F, false);
 
 		spray = new ModelRenderer(this);
 		spray.setRotationPoint(0.0F, 0.0F, 0.0F);

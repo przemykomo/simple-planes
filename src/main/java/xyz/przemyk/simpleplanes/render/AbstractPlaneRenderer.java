@@ -9,14 +9,12 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.math.vector.Vector3f;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
-import xyz.przemyk.simpleplanes.render.furnacePlane.SprayModel;
-
-import java.util.ArrayList;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extends EntityRenderer<T> {
 
-    protected final ArrayList<EntityModel<T>> addonModels = new ArrayList<>();
+//    protected final ArrayList<EntityModel<T>> addonModels = new ArrayList<>();
 
     protected AbstractPlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
@@ -42,10 +40,10 @@ public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extend
         planeModel.setRotationAngles(entityIn, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
-        for (EntityModel<T> addonModel : addonModels) {
-            addonModel.setRotationAngles(entityIn, packedLightIn, 0, 0, 0, 0);
-            addonModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        for (Upgrade upgrade : entityIn.upgrades.values()) {
+            upgrade.render(matrixStackIn, bufferIn, packedLightIn);
         }
+
         matrixStackIn.pop();
 
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);

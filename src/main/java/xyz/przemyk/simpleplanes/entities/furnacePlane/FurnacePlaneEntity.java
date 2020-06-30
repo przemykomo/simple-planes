@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -14,6 +15,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -23,18 +25,30 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.Config;
-import xyz.przemyk.simpleplanes.SimplePlanesRegistries;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class FurnacePlaneEntity extends Entity {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
-
-    //negative values mean left
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
+
+    public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
+
+    public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn) {
+        super(entityTypeIn, worldIn);
+    }
+
+    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
+        this(entityTypeIn, worldIn);
+        setPosition(x, y, z);
+    }
 
     @Override
     protected void registerData() {
@@ -52,15 +66,6 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     public boolean isPowered() {
         return dataManager.get(FUEL) > 0 ||(getControllingPassenger() instanceof PlayerEntity && ((PlayerEntity)getControllingPassenger()).isCreative());
-    }
-
-    public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn) {
-        super(entityTypeIn, worldIn);
-    }
-
-    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
-        this(entityTypeIn, worldIn);
-        setPosition(x, y, z);
     }
 
     @Override
@@ -137,6 +142,10 @@ public abstract class FurnacePlaneEntity extends Entity {
             spawnParticles(fuel);
         }
 
+        for (Upgrade upgrade : upgrades.values()) {
+            upgrade.tick();
+        }
+
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
         if (!this.onGround || horizontalMag(this.getMotion()) > (double)1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) {
             this.move(MoverType.SELF, this.getMotion());
@@ -171,11 +180,30 @@ public abstract class FurnacePlaneEntity extends Entity {
     @Override
     protected void readAdditional(CompoundNBT compound) {
         dataManager.set(FUEL, compound.getInt("Fuel"));
+
+        CompoundNBT upgradesNBT = compound.getCompound("upgrades");
+        for (String key : upgradesNBT.keySet()) {
+            ResourceLocation resourceLocation = new ResourceLocation(key);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
+            if (upgradeType != null) {
+                Upgrade upgrade = upgradeType.createUpgradeInstance(this);
+                upgrade.deserializeNBT(upgradesNBT.getCompound(key));
+                upgrades.put(resourceLocation, upgrade);
+            }
+        }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void writeAdditional(CompoundNBT compound) {
         compound.putInt("Fuel", dataManager.get(FUEL));
+
+        CompoundNBT upgradesNBT = new CompoundNBT();
+        for (Upgrade upgrade : upgrades.values()) {
+            upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
+        }
+
+        compound.put("upgrades", upgradesNBT);
     }
 
     @Override
