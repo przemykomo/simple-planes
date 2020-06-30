@@ -4,8 +4,19 @@ import net.minecraft.item.Item;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
-public abstract class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
+import java.util.function.Function;
 
-    public abstract Upgrade createUpgradeInstance(FurnacePlaneEntity planeEntity);
-    public abstract Item getUpgradeItem();
+public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
+
+    protected Item upgradeItem;
+    public final Function<FurnacePlaneEntity, Upgrade> instanceSupplier;
+
+    public UpgradeType(Item upgradeItem, Function<FurnacePlaneEntity, Upgrade> instanceSupplier) {
+        this.upgradeItem = upgradeItem;
+        this.instanceSupplier = instanceSupplier;
+    }
+
+    public Item getUpgradeItem() {
+        return upgradeItem;
+    }
 }

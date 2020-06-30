@@ -48,8 +48,10 @@ public class PlanesEvents {
 
             for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
                 if (itemStack.getItem() == upgradeType.getUpgradeItem() && !furnacePlaneEntity.upgrades.containsKey(upgradeType.getRegistryName())) {
-                    itemStack.shrink(1);
-                    furnacePlaneEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.createUpgradeInstance(furnacePlaneEntity));
+                    if (!player.isCreative()) {
+                        itemStack.shrink(1);
+                    }
+                    furnacePlaneEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(furnacePlaneEntity));
                 }
             }
         }

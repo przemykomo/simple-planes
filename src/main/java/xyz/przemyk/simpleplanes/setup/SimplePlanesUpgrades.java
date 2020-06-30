@@ -1,10 +1,11 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.upgrades.SprayerUpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.SprayerUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 @SuppressWarnings("unused")
@@ -16,5 +17,5 @@ public class SimplePlanesUpgrades {
         UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<SprayerUpgradeType> SPRAYER_UPGRADE_TYPE = UPGRADE_TYPES.register("sprayer", SprayerUpgradeType::new);
+    public static final RegistryObject<UpgradeType> SPRAYER_UPGRADE_TYPE = UPGRADE_TYPES.register("sprayer", () -> new UpgradeType(Items.STICK, SprayerUpgrade::new));
 }
