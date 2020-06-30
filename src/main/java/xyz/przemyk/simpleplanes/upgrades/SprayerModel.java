@@ -8,12 +8,12 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class SprayModel extends EntityModel<FurnacePlaneEntity> {
+public class SprayerModel extends EntityModel<FurnacePlaneEntity> {
 	private final ModelRenderer Body;
 	private final ModelRenderer spray;
 	private final ModelRenderer spray_left;
 
-	public SprayModel() {
+	public SprayerModel() {
 		textureWidth = 256;
 		textureHeight = 256;
 

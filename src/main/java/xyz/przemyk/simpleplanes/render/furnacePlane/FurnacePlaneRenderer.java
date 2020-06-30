@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import xyz.przemyk.simpleplanes.render.AbstractPlaneRenderer;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
-import xyz.przemyk.simpleplanes.upgrades.SprayModel;
 
 public abstract class FurnacePlaneRenderer extends AbstractPlaneRenderer<FurnacePlaneEntity> {
 
