@@ -191,7 +191,7 @@ public abstract class FurnacePlaneEntity extends Entity {
             ResourceLocation resourceLocation = new ResourceLocation(key);
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
             if (upgradeType != null) {
-                Upgrade upgrade = upgradeType.createUpgradeInstance(this);
+                Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                 upgrade.deserializeNBT(upgradesNBT.getCompound(key));
                 upgrades.put(resourceLocation, upgrade);
             }
