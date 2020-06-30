@@ -24,11 +24,13 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
 
 import java.util.List;
 
 public class SprayerUpgrade extends Upgrade {
-    public static final SprayerModel model = new SprayerModel();
+    public static final SprayerModel SPRAYER_MODEL = new SprayerModel();
+    public static final LargeSprayerModel LARGE_SPRAYER_MODEL = new LargeSprayerModel();
     //TODO: different texture
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/sprayer.png");
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
@@ -132,7 +134,11 @@ public class SprayerUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(model.getRenderType(TEXTURE));
-        model.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(SPRAYER_MODEL.getRenderType(TEXTURE));
+        if (planeEntity instanceof LargeFurnacePlaneEntity) {
+            LARGE_SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        } else {
+            SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        }
     }
 }
