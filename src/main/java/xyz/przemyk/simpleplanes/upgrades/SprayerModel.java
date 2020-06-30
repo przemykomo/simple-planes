@@ -10,31 +10,42 @@ import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 @SuppressWarnings("FieldCanBeLocal")
 public class SprayerModel extends EntityModel<FurnacePlaneEntity> {
 	private final ModelRenderer Body;
-	private final ModelRenderer spray;
+	private final ModelRenderer sprayer;
 	private final ModelRenderer spray_left;
+	private final ModelRenderer spray_right;
 
 	public SprayerModel() {
 		textureWidth = 256;
-		textureHeight = 256;
+		textureWidth = 64;
+		textureHeight = 64;
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
 		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
 
-		spray = new ModelRenderer(this);
-		spray.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(spray);
-		setRotationAngle(spray, 0.0F, 0.0F, 0.0873F);
-		spray.setTextureOffset(43, 11).addBox(-31.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
-		spray.setTextureOffset(34, 7).addBox(-16.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		sprayer = new ModelRenderer(this);
+		sprayer.setRotationPoint(0.0F, 7.0F, 0.0F);
+		Body.addChild(sprayer);
+
 
 		spray_left = new ModelRenderer(this);
-		spray_left.setRotationPoint(0.0F, 0.0F, 0.0F);
-		Body.addChild(spray_left);
+		spray_left.setRotationPoint(0.0F, -7.0F, 0.0F);
+		sprayer.addChild(spray_left);
 		setRotationAngle(spray_left, 0.0F, 0.0F, -0.0873F);
-		spray_left.setTextureOffset(26, 6).addBox(13.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
-		spray_left.setTextureOffset(18, 2).addBox(28.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+		spray_left.setTextureOffset(9, 11).addBox(13.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+		spray_left.setTextureOffset(0, 8).addBox(28.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+		spray_left.setTextureOffset(0, 4).addBox(8.0F, -2.0F, -12.0F, 23.0F, 1.0F, 3.0F, 0.0F, false);
+
+		spray_right = new ModelRenderer(this);
+		spray_right.setRotationPoint(0.0F, -7.0F, 0.0F);
+		sprayer.addChild(spray_right);
+		setRotationAngle(spray_right, 0.0F, 0.0F, 0.0873F);
+		spray_right.setTextureOffset(9, 17).addBox(-31.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+		spray_right.setTextureOffset(0, 0).addBox(-31.0F, -2.0F, -12.0F, 23.0F, 1.0F, 3.0F, 0.0F, false);
+		spray_right.setTextureOffset(0, 14).addBox(-16.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
 	}
+
 
 	@Override
 	public void setRotationAngles(FurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){

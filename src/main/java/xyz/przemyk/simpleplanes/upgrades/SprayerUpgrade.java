@@ -30,7 +30,7 @@ import java.util.List;
 public class SprayerUpgrade extends Upgrade {
     public static final SprayerModel model = new SprayerModel();
     //TODO: different texture
-    public static final ResourceLocation TEXTURE_ACACIA = new ResourceLocation("simpleplanes", "textures/entity/plane/furnace/acacia.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/sprayer.png");
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
     public SprayerUpgrade(UpgradeType type, FurnacePlaneEntity planeEntity) {
@@ -132,7 +132,7 @@ public class SprayerUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(model.getRenderType(TEXTURE_ACACIA));
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(model.getRenderType(TEXTURE));
         model.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 }
