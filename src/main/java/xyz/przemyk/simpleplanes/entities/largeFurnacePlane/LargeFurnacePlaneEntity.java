@@ -40,7 +40,7 @@ public abstract class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
 
     @Override
     protected boolean canFitPassenger(Entity passenger) {
-        return getPassengers().size() < 2;
+            return getPassengers().size() < 2 && passenger.getRidingEntity() != this;
     }
 
     @Override

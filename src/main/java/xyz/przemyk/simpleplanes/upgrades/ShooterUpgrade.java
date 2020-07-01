@@ -75,7 +75,7 @@ public class ShooterUpgrade extends Upgrade {
         double x = planeEntity.getPosX() + 1 * front.x;
         double z = planeEntity.getPosZ() + 1 * front.y;
         double y = planeEntity.getPosY() + 0.5;
-        if(random.nextBoolean()){
+        if(shootSide){
             z+= 1*front.x;
             x+= 1*front.y;
         }
