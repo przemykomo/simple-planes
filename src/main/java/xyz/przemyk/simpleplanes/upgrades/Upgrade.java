@@ -26,7 +26,9 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
      * @param event The right click event
      * @return Should this upgrade be removed after this event is called?
      */
-    public abstract boolean onItemRightClick(PlayerInteractEvent.RightClickItem event);
+    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+        return false;
+    }
 
     /**
      * Called every tick by plane entity.

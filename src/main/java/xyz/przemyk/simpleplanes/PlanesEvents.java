@@ -5,6 +5,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -64,6 +66,14 @@ public class PlanesEvents {
                     furnacePlaneEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(furnacePlaneEntity));
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void dismountPlane(EntityMountEvent event) {
+        if (event.isDismounting() && event.getEntityBeingMounted() instanceof FurnacePlaneEntity) {
+            Vector3d position = event.getEntityMounting().getPositionVec();
+            event.getEntityBeingMounted().setPositionAndUpdate(position.x, position.y, position.z);
         }
     }
 }

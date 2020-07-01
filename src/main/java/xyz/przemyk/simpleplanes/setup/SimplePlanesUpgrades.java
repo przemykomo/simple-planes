@@ -9,6 +9,7 @@ import xyz.przemyk.simpleplanes.upgrades.RocketUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.SprayerUpgrade;
 import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.sprayer.SprayerUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
@@ -22,6 +23,7 @@ public class SimplePlanesUpgrades {
         UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
+    //TODO: Change upgrades items
     public static final RegistryObject<UpgradeType> SPRAYER_UPGRADE_TYPE =
             UPGRADE_TYPES.register("sprayer", () ->
                     new UpgradeType(Items.STICK, SprayerUpgrade::new, planeEntity -> true));
@@ -34,4 +36,7 @@ public class SimplePlanesUpgrades {
                     new UpgradeType(Items.TNT, TNTUpgrade::new,
                             planeEntity -> planeEntity instanceof LargeFurnacePlaneEntity && planeEntity.getPassengers().size() < 2,
                             true));
+
+    public static final RegistryObject<UpgradeType> FLOATING_UPGRADE_TYPE =
+            UPGRADE_TYPES.register("floating", () -> new UpgradeType(Items.WHITE_WOOL, FloatingUpgrade::new, planeEntity -> true));
 }
