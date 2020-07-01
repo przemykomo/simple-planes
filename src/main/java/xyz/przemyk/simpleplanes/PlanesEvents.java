@@ -5,6 +5,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,6 +14,8 @@ import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+
+import java.util.HashSet;
 
 @Mod.EventBusSubscriber
 public class PlanesEvents {
@@ -38,22 +42,38 @@ public class PlanesEvents {
                 }
             }
 
+            HashSet<Upgrade> upgradesToRemove = new HashSet<>();
             for (Upgrade upgrade : furnacePlaneEntity.upgrades.values()) {
-                upgrade.onItemRightClick(event);
+                if (upgrade.onItemRightClick(event)) {
+                    upgradesToRemove.add(upgrade);
+                }
             }
+
+            for (Upgrade upgrade : upgradesToRemove) {
+                furnacePlaneEntity.upgrades.remove(upgrade.getType().getRegistryName());
+            }
+
             // some upgrade may shrink itemStack so we need to check if it's empty
             if (itemStack.isEmpty()) {
                 return;
             }
 
             for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-                if (itemStack.getItem() == upgradeType.getUpgradeItem() && !furnacePlaneEntity.upgrades.containsKey(upgradeType.getRegistryName())) {
+                if (itemStack.getItem() == upgradeType.getUpgradeItem() && furnacePlaneEntity.canAddUpgrade(upgradeType)) {
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
                     }
                     furnacePlaneEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(furnacePlaneEntity));
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void dismountPlane(EntityMountEvent event) {
+        if (event.isDismounting() && event.getEntityBeingMounted() instanceof FurnacePlaneEntity) {
+            Vector3d position = event.getEntityMounting().getPositionVec();
+            event.getEntityBeingMounted().setPositionAndUpdate(position.x, position.y, position.z);
         }
     }
 }
