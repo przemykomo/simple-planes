@@ -14,12 +14,18 @@ public class Config {
     public static ForgeConfigSpec CONFIG;
 
     public static ForgeConfigSpec.IntValue FLY_TICKS_PER_COAL;
+    public static ForgeConfigSpec.BooleanValue EASY_FLIGHT;
+    public static ForgeConfigSpec.BooleanValue PLANE_CRUSH;
 
     static {
         BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);
 
         FLY_TICKS_PER_COAL = BUILDER.comment("Ticks of flying per one coal (furnace planes)")
                 .defineInRange("flyTicksPerCoal", 600, 0, Integer.MAX_VALUE);
+        EASY_FLIGHT = BUILDER.comment("easier flight mode")
+                .define("easyFlight", true);
+        PLANE_CRUSH = BUILDER.comment("planes crash on bad landings")
+                .define("planeCrush", false);
 
         BUILDER.pop();
         CONFIG = BUILDER.build();

@@ -6,9 +6,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.upgrades.RocketUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.ShooterUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.sprayer.SprayerUpgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 @SuppressWarnings("unused")
@@ -33,4 +35,7 @@ public class SimplePlanesUpgrades {
 
     public static final RegistryObject<UpgradeType> FLOATING_UPGRADE_TYPE =
             UPGRADE_TYPES.register("floating", () -> new UpgradeType(Items.WHITE_WOOL, FloatingUpgrade::new, planeEntity -> true));
+
+    public static final RegistryObject<UpgradeType> ROCKET_UPGRADE_TYPE = UPGRADE_TYPES.register("rocket", () -> new UpgradeType(Items.FIREWORK_STAR, RocketUpgrade::new, planeEntity -> true));
+    public static final RegistryObject<UpgradeType> SHOOTER_UPGRADE_TYPE= UPGRADE_TYPES.register("shooter", () -> new UpgradeType(Items.DISPENSER, ShooterUpgrade::new, planeEntity -> true));
 }
