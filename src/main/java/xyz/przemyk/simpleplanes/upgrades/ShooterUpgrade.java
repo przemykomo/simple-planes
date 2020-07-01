@@ -47,7 +47,7 @@ public class ShooterUpgrade extends Upgrade {
     public static final ShooterModel SHOOTER_MODEL = new ShooterModel();
     //TODO: different texture
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/shooter.png");
-
+    private boolean shootSide = false;
     public ShooterUpgrade(FurnacePlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SHOOTER_UPGRADE_TYPE.get(),planeEntity);
     }
@@ -65,7 +65,6 @@ public class ShooterUpgrade extends Upgrade {
         Random random = event.getWorld().rand;
         Vector2f front = this.planeEntity.getHorizontalFrontPos();
         float factor = 0.5f;
-
         float pitch = planeEntity.getPitch(motion);
         if(planeEntity.getOnGround())
         {
@@ -73,18 +72,21 @@ public class ShooterUpgrade extends Upgrade {
         }
         motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
                 .scale(Math.max(0.25,motion.length()));
-
+        double x = planeEntity.getPosX() + 1 * front.x;
+        double z = planeEntity.getPosZ() + 1 * front.y;
+        double y = planeEntity.getPosY() + 0.5;
+        if(random.nextBoolean()){
+            z+= 1*front.x;
+            x+= 1*front.y;
+        }
+        else
+        {
+            z-= 1*front.x;
+            x-= 1*front.y;
+        }
+        shootSide=!shootSide;
         if (itemStack.getItem().equals(FIREWORK_ROCKET)) {
-            double x = planeEntity.getPosX() + 1 * front.x;
-            double z = planeEntity.getPosZ() + 1 * front.y;
-            double y = planeEntity.getPosY() + 1;
-            if(random.nextBoolean()){
-                z+= 2*front.y;
-            }
-            else
-            {
-                z-= 2*front.y;
-            }
+            shootSide=!shootSide;
             FireworkRocketEntity fireworkrocketentity = new FireworkRocketEntity(event.getWorld(), itemStack,
                     x, y, z, true);
             fireworkrocketentity.shoot(-motion.x, -motion.y, -motion.z, -(float) Math.max(0.5F, motion.length() * 1.5), 1.0F);
@@ -92,24 +94,9 @@ public class ShooterUpgrade extends Upgrade {
             if (!event.getPlayer().isCreative()) {
                 itemStack.shrink(1);
             }
-            {
-                Vector3d m = planeEntity.getMotion();
-                planeEntity.setMotion(m.add(motion.scale(0.2/motion.length())));
-            }
         }
         if (itemStack.getItem().equals(FIRE_CHARGE)) {
-            double x = planeEntity.getPosX() + 1 * front.x;
-            double z = planeEntity.getPosZ() + 1 * front.y;
-            double y = planeEntity.getPosY() + 0.5;
-            if(random.nextBoolean()){
-                z+= 1*front.x;
-                x+= 1*front.y;
-            }
-            else
-            {
-                z-= 1*front.x;
-                x-= 1*front.y;
-            }
+
             double d3 = random.nextGaussian() * 0.05D+2*motion.x;
             double d4 = random.nextGaussian() * 0.05D;
             double d5 = random.nextGaussian() * 0.05D+2*motion.z;

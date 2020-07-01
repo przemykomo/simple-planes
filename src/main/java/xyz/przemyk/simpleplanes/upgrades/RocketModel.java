@@ -23,7 +23,9 @@ public class RocketModel extends EntityModel<FurnacePlaneEntity> {
 		body.setRotationPoint(0.0F, 17.0F, 0.0F);
 		setRotationAngle(body, -0.2618F, 0.0F, 0.0F);
 
-		body.setTextureOffset(0, 0).addBox(0.0F, 0.0F, 0.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
+		body.setTextureOffset(0, 0);
+		body.addBox(1.0F, -11.0F, 23.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
+		body.addBox(-4.0F, -11.0F, 23.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
 
 	}
 
@@ -35,7 +37,6 @@ public class RocketModel extends EntityModel<FurnacePlaneEntity> {
 
 	@Override
 	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		body.render(matrixStack, buffer, packedLight, packedOverlay);
 		body.render(matrixStack, buffer, packedLight, packedOverlay);
 
 	}
