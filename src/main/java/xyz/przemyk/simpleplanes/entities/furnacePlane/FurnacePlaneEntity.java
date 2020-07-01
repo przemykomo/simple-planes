@@ -9,7 +9,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -77,6 +76,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         return !world.isRemote && player.startRiding(this);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (this.isInvulnerableTo(source)) {
@@ -187,7 +187,6 @@ public abstract class FurnacePlaneEntity extends Entity {
             }
 
             Vec3d vec = new Vec3d(-Math.sin(Math.toRadians(rotationYaw)), 0, Math.cos(Math.toRadians(rotationYaw)));
-            Vec3d vec1 = getVec(rotationYaw, 0);
             vec = vec.scale(0.02);
             Vec3d motion = getMotion();
             vec = getVec(getYaw(motion.add(vec)), getPitch(motion));
@@ -342,6 +341,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         return super.isInvulnerableTo(source);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
         if (onGroundIn && !isCreative() && Config.PLANE_CRUSH.get()) {
@@ -365,13 +365,6 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     public boolean isCreative() {
         return getControllingPassenger() instanceof PlayerEntity && ((PlayerEntity) getControllingPassenger()).isCreative();
-    }
-    @Nullable
-    public PlayerEntity getPlayer() {
-        if (getControllingPassenger() instanceof PlayerEntity) {
-            return ((PlayerEntity) getControllingPassenger());
-        }
-        return null;
     }
 
     public boolean getOnGround() {
