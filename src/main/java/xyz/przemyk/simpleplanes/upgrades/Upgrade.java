@@ -21,8 +21,20 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
         return type;
     }
 
-    public abstract void tick();
-    public abstract void onItemRightClick(PlayerInteractEvent.RightClickItem event);
+    /**
+     * Called when passenger right clicks with item.
+     * @param event The right click event
+     * @return Should this upgrade be removed after this event is called?
+     */
+    public abstract boolean onItemRightClick(PlayerInteractEvent.RightClickItem event);
+
+    /**
+     * Called every tick by plane entity.
+     * @return Should this upgrade be removed after this event is called?
+     */
+    public boolean tick() {
+        return false;
+    }
     public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight);
 
     @Override

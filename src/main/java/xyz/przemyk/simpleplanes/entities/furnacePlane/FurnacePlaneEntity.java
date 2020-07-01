@@ -30,6 +30,7 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public abstract class FurnacePlaneEntity extends Entity {
@@ -78,6 +79,9 @@ public abstract class FurnacePlaneEntity extends Entity {
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (!(source.getTrueSource() instanceof PlayerEntity && ((PlayerEntity)source.getTrueSource()).abilities.isCreativeMode)
             && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+            for (Upgrade upgrade : upgrades.values()) {
+                entityDropItem(upgrade.getType().getUpgradeItem());
+            }
             dropItem();
         }
         remove();
@@ -143,8 +147,17 @@ public abstract class FurnacePlaneEntity extends Entity {
             spawnParticles(fuel);
         }
 
-        for (Upgrade upgrade : upgrades.values()) {
-            upgrade.tick();
+        {
+            HashSet<Upgrade> upgradesToRemove = new HashSet<>();
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade.tick()) {
+                    upgradesToRemove.add(upgrade);
+                }
+            }
+
+            for (Upgrade upgrade : upgradesToRemove) {
+                upgrades.remove(upgrade.getType().getRegistryName());
+            }
         }
 
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
@@ -244,5 +257,9 @@ public abstract class FurnacePlaneEntity extends Entity {
         if (UPGRADES_NBT.equals(key) && world.isRemote()) {
             deserializeUpgrades(dataManager.get(UPGRADES_NBT));
         }
+    }
+
+    public boolean canAddUpgrade(UpgradeType upgradeType) {
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable.test(this);
     }
 }
