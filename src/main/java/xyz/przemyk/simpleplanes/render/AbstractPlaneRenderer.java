@@ -33,6 +33,8 @@ public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extend
             if (rotationRight != 0) {
                 matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(rotationRight));
             }
+            matrixStackIn.rotate(Vector3f.XN.rotationDegrees(entityIn.rotationPitch));
+
         }
         EntityModel<T> planeModel = getModel();
         IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(entityIn)));
