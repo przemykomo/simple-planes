@@ -11,6 +11,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.List;
 
@@ -40,7 +42,19 @@ public abstract class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
 
     @Override
     protected boolean canFitPassenger(Entity passenger) {
-        return getPassengers().size() < 2;
+        if (getPassengers().size() > 1) {
+            return false;
+        }
+
+        if (getPassengers().size() == 1) {
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade.getType().occupyBackSeat) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -69,5 +83,20 @@ public abstract class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
         if (fuel > 4 && fuel < 100) {
             serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() + front.x, getPosY() + 1.5, getPosZ() + front.y, 5, 0, 0, 0, 0.0);
         }
+    }
+
+    @Override
+    public boolean canAddUpgrade(UpgradeType upgradeType) {
+        if (upgradeType.occupyBackSeat) {
+            if (getPassengers().size() > 1) {
+                return false;
+            }
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade.getType().occupyBackSeat) {
+                    return false;
+                }
+            }
+        }
+        return super.canAddUpgrade(upgradeType);
     }
 }

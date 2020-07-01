@@ -13,6 +13,8 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
+import java.util.HashSet;
+
 @Mod.EventBusSubscriber
 public class PlanesEvents {
     public static final ResourceLocation COAL_TAG = new ResourceLocation("minecraft", "coals");
@@ -38,18 +40,24 @@ public class PlanesEvents {
                 }
             }
 
+            HashSet<Upgrade> upgradesToRemove = new HashSet<>();
             for (Upgrade upgrade : furnacePlaneEntity.upgrades.values()) {
-                upgrade.onItemRightClick(event);
+                if (upgrade.onItemRightClick(event)) {
+                    upgradesToRemove.add(upgrade);
+                }
             }
+
+            for (Upgrade upgrade : upgradesToRemove) {
+                furnacePlaneEntity.upgrades.remove(upgrade.getType().getRegistryName());
+            }
+
             // some upgrade may shrink itemStack so we need to check if it's empty
             if (itemStack.isEmpty()) {
                 return;
             }
 
             for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-                if (itemStack.getItem() == upgradeType.getUpgradeItem()
-                        && upgradeType.isPlaneApplicable.test(furnacePlaneEntity)
-                        && !furnacePlaneEntity.upgrades.containsKey(upgradeType.getRegistryName())) {
+                if (itemStack.getItem() == upgradeType.getUpgradeItem() && furnacePlaneEntity.canAddUpgrade(upgradeType)) {
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
                     }

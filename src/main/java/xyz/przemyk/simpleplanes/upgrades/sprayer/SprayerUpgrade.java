@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades;
+package xyz.przemyk.simpleplanes.upgrades.sprayer;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -26,6 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class SprayerUpgrade extends Upgrade {
     }
 
     @Override
-    public void tick() {
+    public boolean tick() {
         if (fluid > 0) {
             --fluid;
 
@@ -134,10 +135,12 @@ public class SprayerUpgrade extends Upgrade {
                 }
             }
         }
+
+        return false;
     }
 
     @Override
-    public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
         if (itemStack.getItem() == Items.POTION && fluid < 20) {
             fluid = 60;
@@ -151,6 +154,8 @@ public class SprayerUpgrade extends Upgrade {
                 event.getPlayer().setHeldItem(event.getHand(), new ItemStack(Items.GLASS_BOTTLE));
             }
         }
+
+        return false;
     }
 
     @Override
