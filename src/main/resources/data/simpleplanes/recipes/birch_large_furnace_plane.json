@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:birch_furnace_plane"
+        },
+        "B": {
+            "item": "minecraft:birch_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:birch_large_furnace_plane"
+    }
+}

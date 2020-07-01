@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:jungle_furnace_plane"
+        },
+        "B": {
+            "item": "minecraft:jungle_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:jungle_large_furnace_plane"
+    }
+}
