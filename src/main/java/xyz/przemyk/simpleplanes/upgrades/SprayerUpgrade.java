@@ -29,6 +29,9 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 import java.util.List;
 
+import static net.minecraft.block.Blocks.AIR;
+import static net.minecraft.block.Blocks.FIRE;
+
 public class SprayerUpgrade extends Upgrade {
     public static final SprayerModel SPRAYER_MODEL = new SprayerModel();
     public static final LargeSprayerModel LARGE_SPRAYER_MODEL = new LargeSprayerModel();
@@ -104,7 +107,25 @@ public class SprayerUpgrade extends Upgrade {
                     } else {
                         blockPos.move(Direction.DOWN);
                     }
+                    if (block == FIRE) {
+                        planeEntity.world.removeBlock(blockPos, false);
+                    }
                 }
+                blockPos.setPos(planeEntity.getPosition());
+                for (int j1 = -1; j1 < 2; ++j1) {
+                    for (int j2 = -3; j2 < 1; ++j2) {
+                        for (int j3 = -1; j3 < 2; ++j3) {
+                            BlockPos blockPos1 = blockPos.toImmutable().add(j1, j2, j3);
+                            BlockState blockState = planeEntity.world.getBlockState(blockPos1);
+                            Block block = blockState.getBlock();
+                            if (block == FIRE) {
+                                planeEntity.world.removeBlock(blockPos, false);
+                            }
+                            blockPos.move(Direction.DOWN);
+                        }
+                    }
+                }
+
 
                 if (effect != null) {
                     for (LivingEntity entity : planeEntity.world.getEntitiesWithinAABB(LivingEntity.class, AFFECT_ENTITIES.offset(planeEntity.getPositionVec()))) {

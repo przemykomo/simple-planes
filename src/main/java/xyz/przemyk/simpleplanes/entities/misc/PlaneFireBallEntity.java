@@ -7,6 +7,6 @@ import net.minecraft.world.World;
 public class PlaneFireBallEntity extends SmallFireballEntity {
     public PlaneFireBallEntity(World worldIn, LivingEntity entity, double x, double y, double z, double accelX, double accelY, double accelZ) {
         super(worldIn, x, y, z, accelX, accelY, accelZ);
-        this.setShooter(entity);
+        shootingEntity = (entity);
     }
 }

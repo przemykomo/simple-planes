@@ -24,7 +24,7 @@ public class SimplePlanesMod {
 
         SimplePlanesEntities.init();
         SimplePlanesItems.init();
-        SimplePlanesUpgrades.init();
+//        SimplePlanesUpgrades.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }

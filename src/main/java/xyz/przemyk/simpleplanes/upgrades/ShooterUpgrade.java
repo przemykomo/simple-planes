@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.FireworkRocketEntity;
 import net.minecraft.entity.projectile.AbstractFireballEntity;
 import net.minecraft.entity.projectile.FireballEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,8 +27,8 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -61,9 +61,9 @@ public class ShooterUpgrade extends Upgrade {
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
-        Vector3d motion = planeEntity.getMotion();
+        Vec3d motion = planeEntity.getMotion();
         Random random = event.getWorld().rand;
-        Vector2f front = this.planeEntity.getHorizontalFrontPos();
+        Vec2f front = this.planeEntity.getHorizontalFrontPos();
         float factor = 0.5f;
         float pitch = planeEntity.getPitch(motion);
         if(planeEntity.getOnGround())
@@ -75,7 +75,7 @@ public class ShooterUpgrade extends Upgrade {
         double x = planeEntity.getPosX() + 1 * front.x;
         double z = planeEntity.getPosZ() + 1 * front.y;
         double y = planeEntity.getPosY() + 0.5;
-        if(random.nextBoolean()){
+        if(shootSide){
             z+= 1*front.x;
             x+= 1*front.y;
         }
@@ -117,7 +117,7 @@ public class ShooterUpgrade extends Upgrade {
         SHOOTER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    private Vector3d getPos(Random random){
-        return Vector3d.ZERO;
+    private Vec3d getPos(Random random){
+        return Vec3d.ZERO;
     }
 }

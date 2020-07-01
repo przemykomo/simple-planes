@@ -6,8 +6,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
@@ -53,7 +53,7 @@ public abstract class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
                 float offset = -1.0f;
                 float offsetY = (float) (this.getMountedYOffset() + passenger.getYOffset());
 
-                Vector3d vec3d = (new Vector3d(offset, 0.0D, 0.0D)).rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F) - ((float)Math.PI / 2F));
+                Vec3d vec3d = (new Vec3d(offset, 0.0D, 0.0D)).rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F) - ((float)Math.PI / 2F));
                 passenger.setPosition(this.getPosX() + vec3d.x, this.getPosY() + offsetY, this.getPosZ() + vec3d.z);
             }
         } else {
@@ -63,7 +63,7 @@ public abstract class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
 
     @Override
     protected void spawnParticles(int fuel) {
-        Vector2f front = getHorizontalFrontPos();
+        Vec2f front = getHorizontalFrontPos();
         ServerWorld serverWorld = (ServerWorld) world;
         serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - (2 * front.x), getPosY() + 1.0, getPosZ() - (2 * front.y), 0, 0, 0, 0, 0.0);
         if (fuel > 4 && fuel < 100) {

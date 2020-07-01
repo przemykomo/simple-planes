@@ -13,7 +13,7 @@ import xyz.przemyk.simpleplanes.items.largeFurnacePlane.*;
 @SuppressWarnings("unused")
 public class SimplePlanesItems {
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, SimplePlanesMod.MODID);
+    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, SimplePlanesMod.MODID);
 
     public static void init() {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());

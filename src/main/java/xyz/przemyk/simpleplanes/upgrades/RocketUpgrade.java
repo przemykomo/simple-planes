@@ -5,13 +5,12 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.projectile.AbstractFireballEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
+
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -39,7 +38,7 @@ public class RocketUpgrade extends Upgrade {
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
-        Vector3d motion = planeEntity.getMotion();
+        Vec3d motion = planeEntity.getMotion();
 
         float pitch = planeEntity.getPitch(motion);
         if(planeEntity.getOnGround())
@@ -54,7 +53,7 @@ public class RocketUpgrade extends Upgrade {
                 itemStack.shrink(1);
             }
             {
-                Vector3d m = planeEntity.getMotion();
+                Vec3d m = planeEntity.getMotion();
                 planeEntity.setMotion(m.add(motion.scale(0.2/motion.length())));
             }
         }
@@ -67,7 +66,7 @@ public class RocketUpgrade extends Upgrade {
         ROCKET_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    private Vector3d getPos(Random random){
-        return Vector3d.ZERO;
+    private Vec3d getPos(Random random){
+        return Vec3d.ZERO;
     }
 }

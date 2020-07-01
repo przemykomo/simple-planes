@@ -2,8 +2,11 @@ package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.RocketUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.ShooterUpgrade;
@@ -13,7 +16,7 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 @SuppressWarnings("unused")
 public class SimplePlanesUpgrades {
 
-    public static final DeferredRegister<UpgradeType> UPGRADE_TYPES = DeferredRegister.create(UpgradeType.class, SimplePlanesMod.MODID);
+    public static final DeferredRegister<UpgradeType> UPGRADE_TYPES =new DeferredRegister<>(SimplePlanesRegistries.UPGRADE_TYPES, SimplePlanesMod.MODID);
 
     public static void init() {
         UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());

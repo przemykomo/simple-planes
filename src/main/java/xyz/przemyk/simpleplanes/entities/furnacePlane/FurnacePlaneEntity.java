@@ -13,11 +13,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -50,7 +46,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         super(entityTypeIn, worldIn);
     }
 
-    public FurnacePlaneEntity(EntityType<? extends  FurnacePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
+    public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
         this(entityTypeIn, worldIn);
         setPosition(x, y, z);
     }
@@ -77,8 +73,8 @@ public abstract class FurnacePlaneEntity extends Entity {
 
 
     @Override
-    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
-        return !world.isRemote && player.startRiding(this) ? ActionResultType.SUCCESS : ActionResultType.FAIL;
+    public boolean processInitialInteract(PlayerEntity player, Hand hand) {
+        return !world.isRemote && player.startRiding(this);
     }
 
     @Override
@@ -90,7 +86,7 @@ public abstract class FurnacePlaneEntity extends Entity {
                 && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
             dropItem();
         }
-        if(!this.world.isRemote && !this.removed) {
+        if (!this.world.isRemote && !this.removed) {
             remove();
             return true;
         }
@@ -99,8 +95,8 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     protected abstract void dropItem();
 
-    public Vector2f getHorizontalFrontPos() {
-        return new Vector2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
+    public Vec2f getHorizontalFrontPos() {
+        return new Vec2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
     }
 
     @Override
@@ -133,7 +129,7 @@ public abstract class FurnacePlaneEntity extends Entity {
                 controllingPassenger.fallDistance = 0;
                 if (isPowered() || (momentum > 0 && controllingPassenger.moveForward > 0)) {
                     gravity = false;
-                    Vector2f front = getHorizontalFrontPos();
+                    Vec2f front = getHorizontalFrontPos();
                     float y = -0.005F;
                     float x = 0.02F;
                     if (controllingPassenger.moveForward > 0.0F) {
@@ -154,7 +150,7 @@ public abstract class FurnacePlaneEntity extends Entity {
             } else {
                 if (isPowered() || momentum > 0) {
                     if (controllingPassenger.moveForward > 0.0F) {
-                        Vector2f front = getHorizontalFrontPos();
+                        Vec2f front = getHorizontalFrontPos();
                         this.setMotion(this.getMotion().add(0.02F * front.x, 0.005F, 0.02F * front.y));
 
                         gravity = false;
@@ -190,10 +186,10 @@ public abstract class FurnacePlaneEntity extends Entity {
                 passenger.rotationYaw -= movementRight / 4;
             }
 
-            Vector3d vec = new Vector3d(-Math.sin(Math.toRadians(rotationYaw)), 0,  Math.cos(Math.toRadians(rotationYaw)));
-            Vector3d vec1 = getVec(rotationYaw,0);
+            Vec3d vec = new Vec3d(-Math.sin(Math.toRadians(rotationYaw)), 0, Math.cos(Math.toRadians(rotationYaw)));
+            Vec3d vec1 = getVec(rotationYaw, 0);
             vec = vec.scale(0.02);
-            Vector3d motion = getMotion();
+            Vec3d motion = getMotion();
             vec = getVec(getYaw(motion.add(vec)), getPitch(motion));
             vec = vec.scale(motion.length());
             setMotion(vec);
@@ -230,33 +226,28 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     }
 
-    public static float getPitch(Vector3d motion) {
+    public static float getPitch(Vec3d motion) {
         double y = motion.y;
-        return (float) Math.toDegrees(Math.atan2(y,Math.sqrt(motion.x*motion.x+motion.z*motion.z)));
+        return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
     }
 
-    public static float getYaw(Vector3d motion){
-        return (float)Math.toDegrees(Math.atan2(-motion.x,motion.z));
+    public static float getYaw(Vec3d motion) {
+        return (float) Math.toDegrees(Math.atan2(-motion.x, motion.z));
     }
 
-    public Vector3d getVec(double yaw,double pitch){
-        yaw=Math.toRadians(yaw);
-        pitch=Math.toRadians(pitch);
+    public Vec3d getVec(double yaw, double pitch) {
+        yaw = Math.toRadians(yaw);
+        pitch = Math.toRadians(pitch);
         double xzLen = Math.cos(pitch);
         double x = -xzLen * Math.sin(yaw);
         double y = Math.sin(pitch);
         double z = xzLen * Math.cos(-yaw);
-        return new Vector3d(x,y,z);
+        return new Vec3d(x, y, z);
     }
 
 
-
-
-
-
-
     protected void spawnParticles(int fuel) {
-        Vector2f front = getHorizontalFrontPos();
+        Vec2f front = getHorizontalFrontPos();
         ServerWorld serverWorld = (ServerWorld) world;
         serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - front.x, getPosY() + 1.0, getPosZ() - front.y, 0, 0, 0, 0, 0.0);
         if (fuel > 4 && fuel < 100) {
@@ -329,6 +320,7 @@ public abstract class FurnacePlaneEntity extends Entity {
     public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+
     @Override
     public void notifyDataManagerChange(DataParameter<?> key) {
         super.notifyDataManagerChange(key);
@@ -344,7 +336,7 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        if (source.getTrueSource()!=null&&source.getTrueSource().isRidingSameEntity(this)) {
+        if (source.getTrueSource() != null && source.getTrueSource().isRidingSameEntity(this)) {
             return true;
         }
         return super.isInvulnerableTo(source);
@@ -355,7 +347,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         if (onGroundIn && !isCreative() && Config.PLANE_CRUSH.get()) {
             if (getPitch(this.getMotion()) < -MAX_PITCH && this.lastYd < -0.5) {
 
-                this.onLivingFall(10 , 1.0F);
+                this.onLivingFall(10, 1.0F);
                 if (!this.world.isRemote && !this.removed) {
                     if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
                         dropItem();
@@ -371,8 +363,15 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     }
 
-    public boolean isCreative(){
+    public boolean isCreative() {
         return getControllingPassenger() instanceof PlayerEntity && ((PlayerEntity) getControllingPassenger()).isCreative();
+    }
+    @Nullable
+    public PlayerEntity getPlayer() {
+        if (getControllingPassenger() instanceof PlayerEntity) {
+            return ((PlayerEntity) getControllingPassenger());
+        }
+        return null;
     }
 
     public boolean getOnGround() {
