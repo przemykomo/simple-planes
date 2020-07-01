@@ -17,5 +17,7 @@ public class SimplePlanesUpgrades {
         UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<UpgradeType> SPRAYER_UPGRADE_TYPE = UPGRADE_TYPES.register("sprayer", () -> new UpgradeType(Items.STICK, SprayerUpgrade::new));
+    public static final RegistryObject<UpgradeType> SPRAYER_UPGRADE_TYPE =
+            UPGRADE_TYPES.register("sprayer", () ->
+                    new UpgradeType(Items.STICK, SprayerUpgrade::new, planeEntity -> true));
 }

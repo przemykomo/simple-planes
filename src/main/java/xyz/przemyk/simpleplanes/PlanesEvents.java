@@ -47,7 +47,9 @@ public class PlanesEvents {
             }
 
             for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-                if (itemStack.getItem() == upgradeType.getUpgradeItem() && !furnacePlaneEntity.upgrades.containsKey(upgradeType.getRegistryName())) {
+                if (itemStack.getItem() == upgradeType.getUpgradeItem()
+                        && upgradeType.isPlaneApplicable.test(furnacePlaneEntity)
+                        && !furnacePlaneEntity.upgrades.containsKey(upgradeType.getRegistryName())) {
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
                     }
