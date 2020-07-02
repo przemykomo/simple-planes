@@ -8,9 +8,13 @@ import net.minecraft.entity.projectile.AbstractFireballEntity;
 
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -21,7 +25,6 @@ import static net.minecraft.item.Items.*;
 public class RocketUpgrade extends Upgrade {
 
     public static final RocketModel ROCKET_MODEL = new RocketModel();
-    //TODO: different texture
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
 
     public RocketUpgrade(FurnacePlaneEntity planeEntity) {
@@ -47,7 +50,21 @@ public class RocketUpgrade extends Upgrade {
             }
             {
                 Vec3d m = planeEntity.getMotion();
-                planeEntity.setMotion(m.add(motion.scale(0.2/motion.length())));
+                planeEntity.setMotion(m.add(motion.scale(0.2 / motion.length())));
+
+                if (!planeEntity.world.isRemote()) {
+                    ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.FLAME,
+                            planeEntity.getPosX() + 1.2 * MathHelper.sin((planeEntity.rotationYaw - 20) * ((float) Math.PI / 180F)),
+                            planeEntity.getPosY() + 0.5,
+                            planeEntity.getPosZ() - 1.2 * MathHelper.cos((planeEntity.rotationYaw - 20) * ((float) Math.PI / 180F)),
+                            5, 0, 0, 0, 0.0);
+
+                    ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.FLAME,
+                            planeEntity.getPosX() + 1.2 * MathHelper.sin((planeEntity.rotationYaw + 20) * ((float) Math.PI / 180F)),
+                            planeEntity.getPosY() + 0.5,
+                            planeEntity.getPosZ() - 1.2 * MathHelper.cos((planeEntity.rotationYaw + 20) * ((float) Math.PI / 180F)),
+                            5, 0, 0, 0, 0.0);
+                }
             }
         }
         return false;
