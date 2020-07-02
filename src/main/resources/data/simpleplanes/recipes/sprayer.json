@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I I",
+        "IWI",
+        "I I"
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "W": {
+            "item": "minecraft:bucket"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:sprayer"
+    }
+}

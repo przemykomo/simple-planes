@@ -27,10 +27,9 @@ public class SimplePlanesUpgrades {
         UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    //TODO: Change upgrades items
     public static final RegistryObject<UpgradeType> SPRAYER_UPGRADE_TYPE =
             UPGRADE_TYPES.register("sprayer", () ->
-                    new UpgradeType(Items.STICK, SprayerUpgrade::new));
+                    new UpgradeType(SimplePlanesItems.SPRAYER.get(), SprayerUpgrade::new));
 
     public static final RegistryObject<UpgradeType> TNT_UPGRADE_TYPE =
             UPGRADE_TYPES.register("tnt", () ->
