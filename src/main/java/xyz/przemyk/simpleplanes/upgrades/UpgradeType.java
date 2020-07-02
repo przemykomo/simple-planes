@@ -19,7 +19,8 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
      * @param upgradeItem After right clicking with this item, stack shrinks and plane gets this upgrade.
      * @param instanceSupplier Supplier of Upgrade instances
      * @param isPlaneApplicable Upgrade is given to plane only if this Predicate returns true.
-     * @param occupyBackSeat Used only in large planes.
+     * @param occupyBackSeat Upgrade occupying back seat can only be applied to large plane.
+     *                       Large plane can have only 1 upgrade occupying back seat.
      */
     public UpgradeType(Item upgradeItem, Function<FurnacePlaneEntity, Upgrade> instanceSupplier, Predicate<FurnacePlaneEntity> isPlaneApplicable, boolean occupyBackSeat) {
         this.upgradeItem = upgradeItem;
@@ -30,6 +31,10 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
 
     public UpgradeType(Item upgradeItem, Function<FurnacePlaneEntity, Upgrade> instanceSupplier, Predicate<FurnacePlaneEntity> isPlaneApplicable) {
         this(upgradeItem, instanceSupplier, isPlaneApplicable, false);
+    }
+
+    public UpgradeType(Item upgradeItem, Function<FurnacePlaneEntity, Upgrade> instanceSupplier) {
+        this(upgradeItem, instanceSupplier, planeEntity -> true);
     }
 
     public Item getUpgradeItem() {

@@ -35,7 +35,7 @@ import java.util.List;
 public abstract class FurnacePlaneEntity extends Entity {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
     protected static final DataParameter<Integer> MOMENTUM = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
-    public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 2F);
+    public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
 
     //negative values mean left
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
@@ -81,6 +81,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         return !world.isRemote && player.startRiding(this) ? ActionResultType.SUCCESS : ActionResultType.FAIL;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (this.isInvulnerableTo(source)) {
@@ -363,6 +364,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         return super.isInvulnerableTo(source);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
         if (onGroundIn && !isCreative() && Config.PLANE_CRUSH.get()) {
@@ -393,6 +395,10 @@ public abstract class FurnacePlaneEntity extends Entity {
     }
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable.test(this);
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && !upgradeType.occupyBackSeat && upgradeType.isPlaneApplicable.test(this);
+    }
+
+    public boolean isLarge() {
+        return false;
     }
 }

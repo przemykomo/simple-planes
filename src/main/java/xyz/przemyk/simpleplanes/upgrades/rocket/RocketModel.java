@@ -1,31 +1,31 @@
-package xyz.przemyk.simpleplanes.upgrades;
+package xyz.przemyk.simpleplanes.upgrades.rocket;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.vector.Quaternion;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class ShooterModel extends EntityModel<FurnacePlaneEntity> {
-	private  ModelRenderer shooter;
+public class RocketModel extends EntityModel<FurnacePlaneEntity> {
+	private  ModelRenderer body;
 
-	public ShooterModel() {
+	public RocketModel() {
 		rebuild();
 	}
 
 	private void rebuild() {
-		textureWidth = 256;
 		textureWidth = 64;
 		textureHeight = 64;
 
-		shooter = new ModelRenderer(this);
-		shooter.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(shooter, -0.2618F, 0.0F, 0.0F);
+		body = new ModelRenderer(this);
+		body.setRotationPoint(0.0F, 17.0F, 0.0F);
+		setRotationAngle(body, -0.2618F, 0.0F, 0.0F);
 
-		shooter.setTextureOffset(0, 0).addBox(0.0F, 0.0F, -12.0F, 16.0F, 16.0F, 16.0F, 0.0F, false);
+		body.setTextureOffset(0, 0);
+		body.addBox(1.0F, -11.0F, 23.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
+		body.addBox(-4.0F, -11.0F, 23.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
 
 	}
 
@@ -37,14 +37,7 @@ public class ShooterModel extends EntityModel<FurnacePlaneEntity> {
 
 	@Override
 	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		matrixStack.push();
-		matrixStack.scale(0.5f,0.5f,0.5f);
-		matrixStack.translate(-2,-0.35,-0.75);
-		shooter.render(matrixStack, buffer, packedLight, packedOverlay);
-		matrixStack.translate(3,0,0);
-
-		shooter.render(matrixStack, buffer, packedLight, packedOverlay);
-		matrixStack.pop();
+		body.render(matrixStack, buffer, packedLight, packedOverlay);
 
 	}
 
