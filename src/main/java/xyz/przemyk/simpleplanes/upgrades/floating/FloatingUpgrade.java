@@ -1,9 +1,11 @@
 package xyz.przemyk.simpleplanes.upgrades.floating;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
@@ -22,16 +24,16 @@ public class FloatingUpgrade extends Upgrade {
 
     @Override
     public boolean tick() {
-        if (planeEntity.isInWater()) {
+        if (planeEntity.world.getBlockState(new BlockPos(planeEntity.getPositionVec().add(0, 0.4, 0))).getBlock() == Blocks.WATER) {
             Vector3d motion = planeEntity.getMotion();
-            planeEntity.setMotion(motion.x, Math.max(motion.y, 0), motion.z);
+            planeEntity.setMotion(motion.x * 0.9, Math.max(motion.y, 0), motion.z * 0.9);
         }
         return false;
     }
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
-        if (planeEntity instanceof LargeFurnacePlaneEntity) {
+        if (planeEntity.isLarge()) {
             LARGE_MODEL.render(matrixStack, buffer.getBuffer(LARGE_MODEL.getRenderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else {
             MODEL.render(matrixStack, buffer.getBuffer(MODEL.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

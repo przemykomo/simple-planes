@@ -97,6 +97,11 @@ public abstract class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
                 }
             }
         }
-        return super.canAddUpgrade(upgradeType);
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable.test(this);
+    }
+
+    @Override
+    public boolean isLarge() {
+        return true;
     }
 }

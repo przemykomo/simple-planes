@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades;
+package xyz.przemyk.simpleplanes.upgrades.rocket;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 import com.mojang.blaze3d.matrix.MatrixStack;
