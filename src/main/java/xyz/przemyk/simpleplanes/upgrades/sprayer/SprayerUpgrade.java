@@ -24,7 +24,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
-import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -37,7 +36,7 @@ public class SprayerUpgrade extends Upgrade {
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
     public SprayerUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SPRAYER_UPGRADE_TYPE.get(), planeEntity);
+        super(SimplePlanesUpgrades.SPRAYER.get(), planeEntity);
     }
 
     private int fluid = 0;

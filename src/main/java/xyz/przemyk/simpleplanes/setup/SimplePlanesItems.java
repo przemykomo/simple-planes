@@ -46,8 +46,10 @@ public class SimplePlanesItems {
     public static final RegistryObject<PlaneItem> CRIMSON_LARGE_FURNACE_PLANE = ITEMS.register("crimson_large_furnace_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), CrimsonLargeFurnacePlaneEntity::new));
     public static final RegistryObject<PlaneItem> WARPED_LARGE_FURNACE_PLANE = ITEMS.register("warped_large_furnace_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), WarpedLargeFurnacePlaneEntity::new));
 
-    public static final RegistryObject<Item> PROPELLER_ITEM = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
-    public static final RegistryObject<Item> FURNACE_ENGINE_ITEM = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
+    public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
+    public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
     public static final RegistryObject<Item> SPRAYER = ITEMS.register("sprayer", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
     public static final RegistryObject<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
+    public static final RegistryObject<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
+    public static final RegistryObject<Item> SHOOTER = ITEMS.register("shooter", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
 }
