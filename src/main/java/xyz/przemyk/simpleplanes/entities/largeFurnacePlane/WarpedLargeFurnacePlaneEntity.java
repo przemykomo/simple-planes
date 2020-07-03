@@ -12,8 +12,8 @@ public class WarpedLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public WarpedLargeFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.WARPED_LARGE_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public WarpedLargeFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.WARPED_LARGE_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override

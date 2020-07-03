@@ -12,8 +12,8 @@ public class BirchLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public BirchLargeFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.BIRCH_LARGE_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public BirchLargeFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.BIRCH_LARGE_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override

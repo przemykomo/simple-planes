@@ -12,8 +12,8 @@ public class SpruceLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public SpruceLargeFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.SPRUCE_LARGE_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public SpruceLargeFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.SPRUCE_LARGE_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override

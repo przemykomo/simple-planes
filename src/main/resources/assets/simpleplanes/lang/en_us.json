@@ -18,5 +18,9 @@
     "item.simpleplanes.warped_large_furnace_plane":   "Large Warped Furnace Plane",
 
     "item.simpleplanes.furnace_engine": "Furnace Engine",
-    "item.simpleplanes.propeller": "Propeller"
+    "item.simpleplanes.propeller": "Propeller",
+    "item.simpleplanes.sprayer": "Sprayer",
+    "item.simpleplanes.booster": "Rocket Booster",
+
+    "itemGroup.simpleplanes": "Simple Planes"
 }

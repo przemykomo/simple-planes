@@ -12,8 +12,8 @@ public class AcaciaFurnacePlaneEntity extends FurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public AcaciaFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.ACACIA_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public AcaciaFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.ACACIA_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override
