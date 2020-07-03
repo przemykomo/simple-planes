@@ -8,6 +8,7 @@ import java.nio.file.Path;
 
 public class Config {
     public static final String CATEGORY_GENERAL = "general";
+    public static final ForgeConfigSpec.BooleanValue THIEF;
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
@@ -26,6 +27,8 @@ public class Config {
                 .define("easyFlight", true);
         PLANE_CRUSH = BUILDER.comment("planes crash on bad landings")
                 .define("planeCrush", false);
+        THIEF = BUILDER.comment("can players steal planes")
+                .define("plane_heist", true);
 
         BUILDER.pop();
         CONFIG = BUILDER.build();
