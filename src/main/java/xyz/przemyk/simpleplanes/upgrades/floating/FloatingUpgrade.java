@@ -24,12 +24,16 @@ public class FloatingUpgrade extends Upgrade {
 
     @Override
     public boolean tick() {
-        if (planeEntity.world.getBlockState(new BlockPos(planeEntity.getPositionVec().add(0, 0.4, 0))).getBlock() == Blocks.WATER) {
+        if (planeEntity.isAboveWater()) {
             Vector3d motion = planeEntity.getMotion();
             planeEntity.setMotion(motion.x * 0.9, Math.max(motion.y, 0), motion.z * 0.9);
+            if (planeEntity.getPosY() % 1 <0.5){
+                planeEntity.setMotion(motion.x * 0.9, Math.max(motion.y, 0.01), motion.z * 0.9);
+            }
         }
         return false;
     }
+
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
