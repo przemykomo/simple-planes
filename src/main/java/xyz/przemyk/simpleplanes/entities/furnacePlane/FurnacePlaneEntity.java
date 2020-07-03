@@ -24,6 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -45,6 +46,7 @@ public abstract class FurnacePlaneEntity extends Entity {
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
     public static final int MAX_PITCH = 20;
     private double lastYd;
+    protected int poweredTicks;
 
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
 
@@ -81,11 +83,10 @@ public abstract class FurnacePlaneEntity extends Entity {
     public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
         if (player.isSneaking() && player.getHeldItem(hand).isEmpty()) {
             boolean hasplayer = false;
-            for (Entity passenger :
-                    getPassengers()) {
-
+            for (Entity passenger : getPassengers()) {
                 if ((passenger instanceof PlayerEntity)) {
                     hasplayer = true;
+                    break;
                 }
             }
             if ((!hasplayer) || Config.THIEF.get()) {
@@ -135,6 +136,16 @@ public abstract class FurnacePlaneEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
+
+        if (isPowered()) {
+            if (poweredTicks % 50 == 0) {
+                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.1F, 1.0F);
+            }
+            ++poweredTicks;
+        } else {
+            poweredTicks = 0;
+        }
+
         this.tickLerp();
         Vector3d oldMotion = getMotion();
         recalculateSize();
@@ -142,7 +153,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         int fuel = dataManager.get(FUEL);
         int momentum = dataManager.get(MOMENTUM);
         if (fuel > 0) {
-            fuel -= 1;
+            --fuel;
             dataManager.set(FUEL, fuel);
         }
         if (this.onGround) {
@@ -175,7 +186,6 @@ public abstract class FurnacePlaneEntity extends Entity {
                     }
                     this.setMotion(this.getMotion().add(x * front.x, y, x * front.y));
                 }
-
             } else {
                 if (isPowered() || momentum > 0) {
                     if (controllingPassenger.moveForward > 0.0F) {
@@ -187,13 +197,12 @@ public abstract class FurnacePlaneEntity extends Entity {
                 }
             }
             if (controllingPassenger.moveForward == 0.0F) {
-                momentum += 1;
+                ++momentum;
                 dataManager.set(MOMENTUM, Math.min(momentum, 600));
             } else if (momentum > 0) {
-                momentum -= 1;
+                --momentum;
                 dataManager.set(MOMENTUM, momentum);
             }
-
 
             int movementRight = dataManager.get(MOVEMENT_RIGHT);
             if (controllingPassenger.moveStrafing > 0) {
@@ -216,7 +225,6 @@ public abstract class FurnacePlaneEntity extends Entity {
             }
 
             Vector3d vec = new Vector3d(-Math.sin(Math.toRadians(rotationYaw)), 0, Math.cos(Math.toRadians(rotationYaw)));
-            Vector3d vec1 = getVec(rotationYaw, 0);
             vec = vec.scale(0.02);
             Vector3d motion = getMotion();
             vec = getVec(getYaw(motion.add(vec)), getPitch(motion));
@@ -431,7 +439,7 @@ public abstract class FurnacePlaneEntity extends Entity {
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
         setPositionAndUpdate(this.getPosX(), this.getPosY(), this.getPosZ());
 
-        Vector3d vector3d = func_233559_a_((double) (this.getWidth() * MathHelper.SQRT_2), (double) livingEntity.getWidth(), this.rotationYaw);
+        Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, livingEntity.getWidth(), this.rotationYaw);
         double d0 = this.getPosX() + vector3d.x;
         double d1 = this.getPosZ() + vector3d.z;
         BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);
@@ -494,8 +502,8 @@ public abstract class FurnacePlaneEntity extends Entity {
         this.lerpX = x;
         this.lerpY = y;
         this.lerpZ = z;
-        this.lerpYaw = (double) yaw;
-        this.lerpPitch = (double) pitch;
+        this.lerpYaw = yaw;
+        this.lerpPitch = pitch;
         this.lerpSteps = 10;
 
     }

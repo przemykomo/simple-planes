@@ -9,10 +9,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import xyz.przemyk.simpleplanes.render.furnacePlane.*;
 import xyz.przemyk.simpleplanes.render.largeFurnacePlane.*;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.setup.*;
 
 @Mod(SimplePlanesMod.MODID)
 public class SimplePlanesMod {
@@ -25,6 +22,7 @@ public class SimplePlanesMod {
         SimplePlanesEntities.init();
         SimplePlanesItems.init();
         SimplePlanesUpgrades.init();
+        SimplePlanesSounds.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }
