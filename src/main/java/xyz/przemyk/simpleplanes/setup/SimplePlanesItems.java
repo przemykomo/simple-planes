@@ -3,6 +3,7 @@ package xyz.przemyk.simpleplanes.setup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -10,6 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.*;
 import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.*;
+import xyz.przemyk.simpleplanes.items.InformationItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
 
 @SuppressWarnings("unused")
@@ -48,8 +50,9 @@ public class SimplePlanesItems {
 
     public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
     public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
-    public static final RegistryObject<Item> SPRAYER = ITEMS.register("sprayer", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
-    public static final RegistryObject<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
-    public static final RegistryObject<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
-    public static final RegistryObject<Item> SHOOTER = ITEMS.register("shooter", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
+
+    public static final RegistryObject<Item> SPRAYER = ITEMS.register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
+    public static final RegistryObject<Item> BOOSTER = ITEMS.register("booster", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.booster")));
+    public static final RegistryObject<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.floaty_bedding")));
+    public static final RegistryObject<Item> SHOOTER = ITEMS.register("shooter", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.shooter")));
 }
