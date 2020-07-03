@@ -27,6 +27,7 @@ public class PlanesEvents {
         Entity entity = player.getLowestRidingEntity();
         if (entity instanceof FurnacePlaneEntity) {
             ItemStack itemStack = player.getHeldItem(event.getHand());
+
             if (itemStack.isEmpty()) {
                 return;
             }
@@ -69,11 +70,6 @@ public class PlanesEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void dismountPlane(EntityMountEvent event) {
-        if (event.isDismounting() && event.getEntityBeingMounted() instanceof FurnacePlaneEntity) {
-            Vector3d position = event.getEntityMounting().getPositionVec();
-            event.getEntityBeingMounted().setPositionAndUpdate(position.x, position.y, position.z);
-        }
-    }
+
+
 }
