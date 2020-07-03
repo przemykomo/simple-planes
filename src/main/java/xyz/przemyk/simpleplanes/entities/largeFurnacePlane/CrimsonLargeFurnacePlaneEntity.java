@@ -12,8 +12,8 @@ public class CrimsonLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public CrimsonLargeFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.CRIMSON_LARGE_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public CrimsonLargeFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.CRIMSON_LARGE_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override

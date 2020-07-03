@@ -12,8 +12,8 @@ public class DarkOakLargeFurnacePlaneEntity extends LargeFurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public DarkOakLargeFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.DARK_OAK_LARGE_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public DarkOakLargeFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.DARK_OAK_LARGE_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override

@@ -16,14 +16,17 @@ import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-public abstract class AbstractPlaneItem<T extends FurnacePlaneEntity> extends Item {
+public class PlaneItem extends Item {
 
-    private static final Predicate<Entity> entityPredicate = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
+    private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
+    private final Function<World, FurnacePlaneEntity> planeSupplier;
 
-    public AbstractPlaneItem(Properties properties) {
+    public PlaneItem(Properties properties, Function<World, FurnacePlaneEntity> planeSupplier) {
         super(properties.maxStackSize(1));
+        this.planeSupplier = planeSupplier;
     }
 
     @Override
@@ -34,7 +37,7 @@ public abstract class AbstractPlaneItem<T extends FurnacePlaneEntity> extends It
             return ActionResult.resultPass(itemstack);
         } else {
             Vector3d vec3d = playerIn.getLook(1.0F);
-            List<Entity> list = worldIn.getEntitiesInAABBexcluding(playerIn, playerIn.getBoundingBox().expand(vec3d.scale(5.0D)).grow(1.0D), entityPredicate);
+            List<Entity> list = worldIn.getEntitiesInAABBexcluding(playerIn, playerIn.getBoundingBox().expand(vec3d.scale(5.0D)).grow(1.0D), ENTITY_PREDICATE);
             if (!list.isEmpty()) {
                 Vector3d vec3d1 = playerIn.getEyePosition(1.0F);
 
@@ -47,7 +50,8 @@ public abstract class AbstractPlaneItem<T extends FurnacePlaneEntity> extends It
             }
 
             if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
-                T furnacePlaneEntity = createPlane(worldIn, raytraceresult);
+                FurnacePlaneEntity furnacePlaneEntity = planeSupplier.apply(worldIn);
+                furnacePlaneEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
                 furnacePlaneEntity.rotationYaw = playerIn.rotationYaw;
                 if (!worldIn.hasNoCollisions(furnacePlaneEntity, furnacePlaneEntity.getBoundingBox().grow(-0.1D))) {
                     return ActionResult.resultFail(itemstack);
@@ -66,6 +70,4 @@ public abstract class AbstractPlaneItem<T extends FurnacePlaneEntity> extends It
             }
         }
     }
-
-    protected abstract T createPlane(World worldIn, RayTraceResult raytraceresult);
 }

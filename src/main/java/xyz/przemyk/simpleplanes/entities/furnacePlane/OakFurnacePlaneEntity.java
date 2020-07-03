@@ -12,8 +12,8 @@ public class OakFurnacePlaneEntity extends FurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public OakFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.OAK_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public OakFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.OAK_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override

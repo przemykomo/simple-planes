@@ -33,6 +33,6 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> FLOATING_UPGRADE_TYPE =
             UPGRADE_TYPES.register("floating", () -> new UpgradeType(Items.WHITE_WOOL, FloatingUpgrade::new));
 
-    public static final RegistryObject<UpgradeType> ROCKET_UPGRADE_TYPE = UPGRADE_TYPES.register("rocket", () -> new UpgradeType(Items.FIREWORK_STAR, RocketUpgrade::new, planeEntity -> !planeEntity.isLarge()));
+    public static final RegistryObject<UpgradeType> ROCKET_UPGRADE_TYPE = UPGRADE_TYPES.register("booster", () -> new UpgradeType(SimplePlanesItems.BOOSTER.get(), RocketUpgrade::new, planeEntity -> !planeEntity.isLarge()));
     public static final RegistryObject<UpgradeType> SHOOTER_UPGRADE_TYPE= UPGRADE_TYPES.register("shooter", () -> new UpgradeType(Items.DISPENSER, ShooterUpgrade::new));
 }

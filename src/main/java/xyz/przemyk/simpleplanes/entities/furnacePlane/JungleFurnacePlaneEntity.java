@@ -12,8 +12,8 @@ public class JungleFurnacePlaneEntity extends FurnacePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public JungleFurnacePlaneEntity(World worldIn, double x, double y, double z) {
-        super(SimplePlanesEntities.JUNGLE_FURNACE_PLANE.get(), worldIn, x, y, z);
+    public JungleFurnacePlaneEntity(World worldIn) {
+        super(SimplePlanesEntities.JUNGLE_FURNACE_PLANE.get(), worldIn);
     }
 
     @Override
