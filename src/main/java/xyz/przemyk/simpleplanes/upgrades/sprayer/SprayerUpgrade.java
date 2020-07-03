@@ -40,7 +40,6 @@ public class SprayerUpgrade extends Upgrade {
         super(SimplePlanesUpgrades.SPRAYER_UPGRADE_TYPE.get(), planeEntity);
     }
 
-    private int ticks = 0;
     private int fluid = 0;
     private Effect effect = null;
 
@@ -69,7 +68,7 @@ public class SprayerUpgrade extends Upgrade {
         if (fluid > 0) {
             --fluid;
 
-            if (!planeEntity.world.isRemote() && ++ticks % 5 == 0) {
+            if (!planeEntity.world.isRemote() && planeEntity.ticksExisted % 5 == 0) {
                 ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.CLOUD,
                         planeEntity.getPosX() - MathHelper.sin((planeEntity.rotationYaw - 50) * ((float) Math.PI / 180F)),
                         planeEntity.getPosY() + 0.5,
@@ -140,7 +139,7 @@ public class SprayerUpgrade extends Upgrade {
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(SPRAYER_MODEL.getRenderType(TEXTURE));
-        if (planeEntity instanceof LargeFurnacePlaneEntity) {
+        if (planeEntity.isLarge()) {
             LARGE_SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else {
             SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

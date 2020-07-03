@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades;
+package xyz.przemyk.simpleplanes.upgrades.rocket;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -7,28 +7,23 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class RocketModel extends EntityModel<FurnacePlaneEntity> {
-	private  ModelRenderer body;
+	private final ModelRenderer Body;
 
 	public RocketModel() {
-		rebuild();
+		textureWidth = 32;
+		textureHeight = 32;
+
+		Body = new ModelRenderer(this);
+		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
+		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
+
+		ModelRenderer booster = new ModelRenderer(this);
+		booster.setRotationPoint(0.0F, 0.0F, 0.0F);
+		Body.addChild(booster);
+		booster.setTextureOffset(0, 0).addBox(8.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
+		booster.setTextureOffset(0, 13).addBox(-12.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
 	}
-
-	private void rebuild() {
-		textureWidth = 64;
-		textureHeight = 64;
-
-		body = new ModelRenderer(this);
-		body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(body, -0.2618F, 0.0F, 0.0F);
-
-		body.setTextureOffset(0, 0);
-		body.addBox(1.0F, -11.0F, 23.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
-		body.addBox(-4.0F, -11.0F, 23.0F, 3.0F, 3.0F, 9.0F, 0.0F, false);
-
-	}
-
 
 	@Override
 	public void setRotationAngles(FurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
@@ -37,8 +32,7 @@ public class RocketModel extends EntityModel<FurnacePlaneEntity> {
 
 	@Override
 	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		body.render(matrixStack, buffer, packedLight, packedOverlay);
-
+		Body.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
