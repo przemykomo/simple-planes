@@ -18,6 +18,5 @@ public class SimplePlanesRegistries {
     @SubscribeEvent
     public static void registerRegistries(final RegistryEvent.NewRegistry event) {
         UPGRADE_TYPES = new RegistryBuilder<UpgradeType>().setName(new ResourceLocation(SimplePlanesMod.MODID, "upgrade_types")).setType(UpgradeType.class).create();
-        SimplePlanesUpgrades.init();
     }
 }

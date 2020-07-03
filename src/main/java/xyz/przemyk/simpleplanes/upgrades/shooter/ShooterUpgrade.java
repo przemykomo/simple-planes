@@ -29,7 +29,7 @@ public class ShooterUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/shooter.png");
     private boolean shootSide = false;
     public ShooterUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SHOOTER.get(),planeEntity);
+        super(SimplePlanesUpgrades.SHOOTER, planeEntity);
     }
 
     @Override

@@ -1,7 +1,11 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.item.Items;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -13,25 +17,30 @@ import xyz.przemyk.simpleplanes.upgrades.sprayer.SprayerUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 @SuppressWarnings("unused")
+@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SimplePlanesUpgrades {
 
-    public static final DeferredRegister<UpgradeType> UPGRADE_TYPES = new DeferredRegister<>(SimplePlanesRegistries.UPGRADE_TYPES, SimplePlanesMod.MODID);
+    public static UpgradeType SPRAYER;
+    public static UpgradeType TNT;
+    public static UpgradeType FLOATING;
+    public static UpgradeType BOOSTER;
+    public static UpgradeType SHOOTER;
 
-    public static void init() {
-        UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+    // forge doesn't support custom registries in DeferredRegister on 1.15.2 yet
+    @SubscribeEvent
+    public static void registerUpgrades(RegistryEvent.Register<UpgradeType> event) {
+        SPRAYER = new UpgradeType(SimplePlanesItems.SPRAYER.get(), SprayerUpgrade::new).setRegistryName("sprayer");
+        TNT = new UpgradeType(Items.TNT, TNTUpgrade::new, planeEntity -> true, true).setRegistryName("tnt");
+        FLOATING = new UpgradeType(SimplePlanesItems.FLOATY_BEDDING.get(), FloatingUpgrade::new).setRegistryName("floating");
+        BOOSTER = new UpgradeType(SimplePlanesItems.BOOSTER.get(), RocketUpgrade::new, planeEntity -> !planeEntity.isLarge()).setRegistryName("booster");
+        SHOOTER = new UpgradeType(SimplePlanesItems.SHOOTER.get(), ShooterUpgrade::new).setRegistryName("shooter");
+
+        event.getRegistry().registerAll(
+                SPRAYER,
+                TNT,
+                FLOATING,
+                BOOSTER,
+                SHOOTER
+        );
     }
-
-    public static final RegistryObject<UpgradeType> SPRAYER =
-            UPGRADE_TYPES.register("sprayer", () ->
-                    new UpgradeType(SimplePlanesItems.SPRAYER.get(), SprayerUpgrade::new));
-
-    public static final RegistryObject<UpgradeType> TNT =
-            UPGRADE_TYPES.register("tnt", () ->
-                    new UpgradeType(Items.TNT, TNTUpgrade::new, planeEntity -> true,true));
-
-    public static final RegistryObject<UpgradeType> FLOATING =
-            UPGRADE_TYPES.register("floating", () -> new UpgradeType(SimplePlanesItems.FLOATY_BEDDING.get(), FloatingUpgrade::new));
-
-    public static final RegistryObject<UpgradeType> BOOSTER = UPGRADE_TYPES.register("booster", () -> new UpgradeType(SimplePlanesItems.BOOSTER.get(), RocketUpgrade::new, planeEntity -> !planeEntity.isLarge()));
-    public static final RegistryObject<UpgradeType> SHOOTER = UPGRADE_TYPES.register("shooter", () -> new UpgradeType(SimplePlanesItems.SHOOTER.get(), ShooterUpgrade::new));
 }

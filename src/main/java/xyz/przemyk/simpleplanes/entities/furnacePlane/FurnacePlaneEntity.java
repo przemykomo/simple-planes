@@ -435,6 +435,7 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     //TODO:
     // all code down is from boat, copyright???
+    /*
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
         setPositionAndUpdate(this.getPosX(), this.getPosY(), this.getPosZ());
 
@@ -468,7 +469,7 @@ public abstract class FurnacePlaneEntity extends Entity {
 
         return super.func_230268_c_(livingEntity);
     }
-
+    */
 
     private int lerpSteps;
     private double lerpX;

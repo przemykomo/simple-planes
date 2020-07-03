@@ -23,7 +23,7 @@ public class RocketUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
 
     public RocketUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.BOOSTER.get(),planeEntity);
+        super(SimplePlanesUpgrades.BOOSTER,planeEntity);
     }
 
     @Override

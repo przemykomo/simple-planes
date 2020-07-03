@@ -18,7 +18,7 @@ public class TNTUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/tnt.png");
 
     public TNTUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.TNT.get(), planeEntity);
+        super(SimplePlanesUpgrades.TNT, planeEntity);
     }
 
     @Override

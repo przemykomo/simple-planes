@@ -39,7 +39,7 @@ public class SprayerUpgrade extends Upgrade {
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
     public SprayerUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SPRAYER.get(), planeEntity);
+        super(SimplePlanesUpgrades.SPRAYER, planeEntity);
     }
 
     private int fluid = 0;
