@@ -23,6 +23,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -45,6 +46,7 @@ public abstract class FurnacePlaneEntity extends Entity {
     public static final int MAX_PITCH = 20;
     private double lastYd;
     protected int poweredTicks;
+    public boolean gravity = true;
 
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
 
@@ -66,7 +68,11 @@ public abstract class FurnacePlaneEntity extends Entity {
     }
 
     public void addFuel() {
-        dataManager.set(FUEL, getFuel() + Config.FLY_TICKS_PER_COAL.get());
+        addFuel(Config.FLY_TICKS_PER_COAL.get());
+    }
+
+    public void addFuel(Integer fuel) {
+        dataManager.set(FUEL, Math.max(getFuel(), fuel));
     }
 
     public int getFuel() {
@@ -147,7 +153,6 @@ public abstract class FurnacePlaneEntity extends Entity {
         this.tickLerp();
         Vec3d oldMotion = getMotion();
         recalculateSize();
-        boolean gravity = true;
         int fuel = dataManager.get(FUEL);
         int momentum = dataManager.get(MOMENTUM);
         if (fuel > 0) {
@@ -158,6 +163,7 @@ public abstract class FurnacePlaneEntity extends Entity {
             momentum = 0;
             dataManager.set(MOMENTUM, 0);
         }
+        gravity = true;
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
             if (Config.EASY_FLIGHT.get()) {
@@ -194,12 +200,16 @@ public abstract class FurnacePlaneEntity extends Entity {
                     }
                 }
             }
-            if (controllingPassenger.moveForward == 0.0F) {
-                ++momentum;
-                dataManager.set(MOMENTUM, Math.min(momentum, 600));
-            } else if (momentum > 0) {
-                --momentum;
-                dataManager.set(MOMENTUM, momentum);
+            if (isAboveWater() || onGround) {
+                dataManager.set(MOMENTUM, 0);
+            } else {
+                if (rotationPitch < -10) {
+                    ++momentum;
+                    dataManager.set(MOMENTUM, Math.min(momentum, 150));
+                } else if (momentum > 0) {
+                    --momentum;
+                    dataManager.set(MOMENTUM, momentum);
+                }
             }
 
             int movementRight = dataManager.get(MOVEMENT_RIGHT);
@@ -230,13 +240,6 @@ public abstract class FurnacePlaneEntity extends Entity {
             setMotion(vec);
         }
 
-        if (gravity && !hasNoGravity()) {
-            setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
-        }
-
-        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote) {
-            spawnParticles(fuel);
-        }
 
         {
             HashSet<Upgrade> upgradesToRemove = new HashSet<>();
@@ -250,19 +253,28 @@ public abstract class FurnacePlaneEntity extends Entity {
                 upgrades.remove(upgrade.getType().getRegistryName());
             }
         }
+        if (gravity && !hasNoGravity()) {
+            setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
+        }
+
+        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote) {
+            spawnParticles(fuel);
+        }
 
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
         double l = 0.02;
-        if (oldMotion.length() >= getMotion().length()&&oldMotion.length()<l ) {
+        if (oldMotion.length() >= getMotion().length() && oldMotion.length() < l) {
             this.setMotion(Vec3d.ZERO);
         }
 
         if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) {
-            this.move(MoverType.SELF, this.getMotion());
+            if (getMotion().length() > 0)
+                this.move(MoverType.SELF, this.getMotion());
             float f = 0.98F;
             if (this.onGround) {
                 BlockPos pos = new BlockPos(this.getPosX(), this.getPosY() - 1.0D, this.getPosZ());
                 f = this.world.getBlockState(pos).getSlipperiness(this.world, pos, this) * 0.98F;
+                f = Math.max(f, 0.90F);
             }
 
             this.setMotion(this.getMotion().mul(f, 0.98D, f));
@@ -270,8 +282,15 @@ public abstract class FurnacePlaneEntity extends Entity {
                 this.setMotion(this.getMotion().mul(1.0D, -0.25D, 1.0D));
             }
         }
+        float pitch;
 
-        rotationPitch = 0.95F * rotationPitch + 0.05F * Math.min(Math.max(getPitch(this.getMotion()), -MAX_PITCH), MAX_PITCH);
+        if (this.onGround) {
+            pitch = isLarge() ? 10 : 15;
+        } else {
+            pitch = Math.min(Math.max(getPitch(this.getMotion()), -MAX_PITCH), MAX_PITCH);
+        }
+        rotationPitch = 0.95F * rotationPitch + 0.05F * pitch;
+
     }
 
     public static float getPitch(Vec3d motion) {
@@ -345,6 +364,11 @@ public abstract class FurnacePlaneEntity extends Entity {
     @Override
     protected boolean canBeRidden(Entity entityIn) {
         return true;
+    }
+
+    @Override
+    public boolean canBeRiddenInWater() {
+        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING_UPGRADE_TYPE.getId());
     }
 
     @Override
@@ -439,7 +463,7 @@ public abstract class FurnacePlaneEntity extends Entity {
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
         setPositionAndUpdate(this.getPosX(), this.getPosY(), this.getPosZ());
 
-        Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, livingEntity.getWidth(), this.rotationYaw);
+        Vector3d vector3d = func_233559_a_((double) (this.getWidth() * MathHelper.SQRT_2), (double) livingEntity.getWidth(), this.rotationYaw);
         double d0 = this.getPosX() + vector3d.x;
         double d1 = this.getPosZ() + vector3d.z;
         BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);
@@ -517,4 +541,9 @@ public abstract class FurnacePlaneEntity extends Entity {
         }
     }
 
+    public PlayerEntity getPlayer() {
+        if (getControllingPassenger() instanceof PlayerEntity)
+            return (PlayerEntity) getControllingPassenger();
+        return null;
+    }
 }

@@ -27,13 +27,14 @@ public abstract class AbstractPlaneRenderer<T extends FurnacePlaneEntity> extend
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
 
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
-        if (!entityIn.getOnGround()) {
-            matrixStackIn.rotate(Vector3f.XN.rotationDegrees(getInAirRotation()));
+        matrixStackIn.rotate(Vector3f.XN.rotationDegrees(getInAirRotation()));
+        matrixStackIn.rotate(Vector3f.XN.rotationDegrees(entityIn.rotationPitch));
+
+        if (!entityIn.onGround) {
             int rotationRight = entityIn.getDataManager().get(FurnacePlaneEntity.MOVEMENT_RIGHT);
             if (rotationRight != 0) {
                 matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(rotationRight));
             }
-            matrixStackIn.rotate(Vector3f.XN.rotationDegrees(entityIn.rotationPitch));
 
         }
         EntityModel<T> planeModel = getModel();

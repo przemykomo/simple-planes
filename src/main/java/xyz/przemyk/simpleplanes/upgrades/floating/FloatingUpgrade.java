@@ -3,6 +3,7 @@ package xyz.przemyk.simpleplanes.upgrades.floating;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
@@ -22,9 +23,14 @@ public class FloatingUpgrade extends Upgrade {
     @Override
     public boolean tick() {
         if (planeEntity.isAboveWater()) {
+
             Vec3d motion = planeEntity.getMotion();
+            if(motion.length()<0.01){
+                motion = Vec3d.ZERO;
+            }
             planeEntity.setMotion(motion.x * 0.9, Math.max(motion.y, 0), motion.z * 0.9);
-            if (planeEntity.getPosY() % 1 <0.5){
+            planeEntity.gravity = false;
+            if (planeEntity.areEyesInFluid(FluidTags.WATER) || planeEntity.getPosY() % 1 < 0.5) {
                 planeEntity.setMotion(motion.x * 0.9, Math.max(motion.y, 0.01), motion.z * 0.9);
             }
         }
