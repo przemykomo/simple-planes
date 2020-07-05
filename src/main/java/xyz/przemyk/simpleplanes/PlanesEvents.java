@@ -5,8 +5,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -70,6 +68,27 @@ public class PlanesEvents {
         }
     }
 
+    /* TODO: rotate player with plane?
 
+    public static boolean playerRotationNeedToPop = false;
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderPre(RenderPlayerEvent.Pre event) {
+        Entity entity = event.getPlayer().getLowestRidingEntity();
+        if (entity instanceof FurnacePlaneEntity) {
+            MatrixStack matrixStack = event.getMatrixStack();
+            matrixStack.push();
+            matrixStack.rotate(Vector3f.XN.rotationDegrees(((FurnacePlaneEntity) entity).getPitch()));
+            playerRotationNeedToPop = true;
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderPost(RenderPlayerEvent.Post event) {
+        if (playerRotationNeedToPop) {
+            playerRotationNeedToPop = false;
+            event.getMatrixStack().pop();
+        }
+    }
+     */
 }

@@ -276,6 +276,10 @@ public abstract class FurnacePlaneEntity extends Entity {
         rotationPitch = 0.95F * rotationPitch + 0.05F * Math.min(Math.max(getPitch(this.getMotion()), -MAX_PITCH), MAX_PITCH);
     }
 
+    public float getPitch() {
+        return getPitch(getMotion());
+    }
+
     public static float getPitch(Vector3d motion) {
         double y = motion.y;
         return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
