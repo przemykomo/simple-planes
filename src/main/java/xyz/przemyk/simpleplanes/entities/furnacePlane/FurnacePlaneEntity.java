@@ -153,6 +153,7 @@ public abstract class FurnacePlaneEntity extends Entity {
         this.tickLerp();
         Vec3d oldMotion = getMotion();
         recalculateSize();
+        gravity = true;
         int fuel = dataManager.get(FUEL);
         int momentum = dataManager.get(MOMENTUM);
         if (fuel > 0) {
@@ -163,7 +164,6 @@ public abstract class FurnacePlaneEntity extends Entity {
             momentum = 0;
             dataManager.set(MOMENTUM, 0);
         }
-        gravity = true;
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
             if (Config.EASY_FLIGHT.get()) {
@@ -200,16 +200,12 @@ public abstract class FurnacePlaneEntity extends Entity {
                     }
                 }
             }
-            if (isAboveWater() || onGround) {
-                dataManager.set(MOMENTUM, 0);
-            } else {
-                if (rotationPitch < -10) {
-                    ++momentum;
-                    dataManager.set(MOMENTUM, Math.min(momentum, 150));
-                } else if (momentum > 0) {
-                    --momentum;
-                    dataManager.set(MOMENTUM, momentum);
-                }
+            if (controllingPassenger.moveForward == 0.0F) {
+                ++momentum;
+                dataManager.set(MOMENTUM, Math.min(momentum, 600));
+            } else if (momentum > 0) {
+                --momentum;
+                dataManager.set(MOMENTUM, momentum);
             }
 
             int movementRight = dataManager.get(MOVEMENT_RIGHT);
@@ -240,6 +236,13 @@ public abstract class FurnacePlaneEntity extends Entity {
             setMotion(vec);
         }
 
+        if (gravity && !hasNoGravity()) {
+            setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
+        }
+
+        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote) {
+            spawnParticles(fuel);
+        }
 
         {
             HashSet<Upgrade> upgradesToRemove = new HashSet<>();
@@ -252,13 +255,6 @@ public abstract class FurnacePlaneEntity extends Entity {
             for (Upgrade upgrade : upgradesToRemove) {
                 upgrades.remove(upgrade.getType().getRegistryName());
             }
-        }
-        if (gravity && !hasNoGravity()) {
-            setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
-        }
-
-        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote) {
-            spawnParticles(fuel);
         }
 
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
@@ -290,7 +286,10 @@ public abstract class FurnacePlaneEntity extends Entity {
             pitch = Math.min(Math.max(getPitch(this.getMotion()), -MAX_PITCH), MAX_PITCH);
         }
         rotationPitch = 0.95F * rotationPitch + 0.05F * pitch;
+    }
 
+    public float getPitch() {
+        return getPitch(getMotion());
     }
 
     public static float getPitch(Vec3d motion) {
@@ -463,7 +462,7 @@ public abstract class FurnacePlaneEntity extends Entity {
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
         setPositionAndUpdate(this.getPosX(), this.getPosY(), this.getPosZ());
 
-        Vector3d vector3d = func_233559_a_((double) (this.getWidth() * MathHelper.SQRT_2), (double) livingEntity.getWidth(), this.rotationYaw);
+        Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, livingEntity.getWidth(), this.rotationYaw);
         double d0 = this.getPosX() + vector3d.x;
         double d1 = this.getPosZ() + vector3d.z;
         BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);

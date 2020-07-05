@@ -68,6 +68,27 @@ public class PlanesEvents {
         }
     }
 
+    /* TODO: rotate player with plane?
 
+    public static boolean playerRotationNeedToPop = false;
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderPre(RenderPlayerEvent.Pre event) {
+        Entity entity = event.getPlayer().getLowestRidingEntity();
+        if (entity instanceof FurnacePlaneEntity) {
+            MatrixStack matrixStack = event.getMatrixStack();
+            matrixStack.push();
+            matrixStack.rotate(Vector3f.XN.rotationDegrees(((FurnacePlaneEntity) entity).getPitch()));
+            playerRotationNeedToPop = true;
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onRenderPost(RenderPlayerEvent.Post event) {
+        if (playerRotationNeedToPop) {
+            playerRotationNeedToPop = false;
+            event.getMatrixStack().pop();
+        }
+    }
+     */
 }
