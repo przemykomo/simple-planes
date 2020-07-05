@@ -65,6 +65,7 @@ public class PlanesEvents {
                         itemStack.shrink(1);
                     }
                     furnacePlaneEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(furnacePlaneEntity));
+                    furnacePlaneEntity.upgradeChanged();
                 }
             }
         }

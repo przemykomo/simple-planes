@@ -223,6 +223,7 @@ public abstract class FurnacePlaneEntity extends Entity {
             rotationYaw -= movementRight / 4;
             for (Entity passenger : getPassengers()) {
                 passenger.rotationYaw -= movementRight / 4;
+
             }
 
             Vector3d vec = new Vector3d(-Math.sin(Math.toRadians(rotationYaw)), 0, Math.cos(Math.toRadians(rotationYaw)));
@@ -347,12 +348,17 @@ public abstract class FurnacePlaneEntity extends Entity {
     protected void writeAdditional(CompoundNBT compound) {
         compound.putInt("Fuel", dataManager.get(FUEL));
 
+        CompoundNBT upgradesNBT = getUpgradesNBT();
+
+        compound.put("upgrades", upgradesNBT);
+    }
+
+    private CompoundNBT getUpgradesNBT() {
         CompoundNBT upgradesNBT = new CompoundNBT();
         for (Upgrade upgrade : upgrades.values()) {
             upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
         }
-
-        compound.put("upgrades", upgradesNBT);
+        return upgradesNBT;
     }
 
     @Override
@@ -537,5 +543,9 @@ public abstract class FurnacePlaneEntity extends Entity {
         if (getControllingPassenger() instanceof PlayerEntity)
             return (PlayerEntity) getControllingPassenger();
         return null;
+    }
+
+    public void upgradeChanged() {
+        this.dataManager.set(UPGRADES_NBT, getUpgradesNBT());
     }
 }
