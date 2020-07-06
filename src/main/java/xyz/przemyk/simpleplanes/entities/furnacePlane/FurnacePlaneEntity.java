@@ -176,6 +176,8 @@ public abstract class FurnacePlaneEntity extends Entity {
                         }
                     } else if (controllingPassenger.moveForward < 0.0F) {
                         y = -0.02F;
+                        if (onGround || isAboveWater())
+                            x = -x;
                     } else if (this.onGround || this.inWater) {
                         x = 0;
                     }
@@ -223,13 +225,22 @@ public abstract class FurnacePlaneEntity extends Entity {
             rotationYaw -= movementRight / 4;
             for (Entity passenger : getPassengers()) {
                 passenger.rotationYaw -= movementRight / 4;
-
+            }
+            Vector3d motion = getMotion();
+            float d = getYaw(motion) - rotationYaw;
+            if (d > 180)
+                d -= 360;
+            if (d < -180)
+                d += 360;
+            d= Math.abs(d);
+            Vector3d vec;
+            if (d > 120) {
+                vec = Vector3d.ZERO;
+            } else {
+                vec = getVec(rotationYaw, 0);
             }
 
-            Vector3d vec = new Vector3d(-Math.sin(Math.toRadians(rotationYaw)), 0, Math.cos(Math.toRadians(rotationYaw)));
-            Vector3d vec1 = getVec(rotationYaw, 0);
             vec = vec.scale(0.02);
-            Vector3d motion = getMotion();
             vec = getVec(getYaw(motion.add(vec)), getPitch(motion));
             vec = vec.scale(motion.length());
             setMotion(vec);
