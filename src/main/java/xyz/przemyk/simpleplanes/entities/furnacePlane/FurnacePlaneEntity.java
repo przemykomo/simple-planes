@@ -164,6 +164,7 @@ public abstract class FurnacePlaneEntity extends Entity {
             momentum = 0;
             dataManager.set(MOMENTUM, 0);
         }
+        gravity = true;
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
             if (Config.EASY_FLIGHT.get()) {
@@ -185,6 +186,8 @@ public abstract class FurnacePlaneEntity extends Entity {
                         }
                     } else if (controllingPassenger.moveForward < 0.0F) {
                         y = -0.02F;
+                        if (onGround || isAboveWater())
+                            x = -x;
                     } else if (this.onGround || this.inWater) {
                         x = 0;
                     }
@@ -200,12 +203,16 @@ public abstract class FurnacePlaneEntity extends Entity {
                     }
                 }
             }
-            if (controllingPassenger.moveForward == 0.0F) {
-                ++momentum;
-                dataManager.set(MOMENTUM, Math.min(momentum, 600));
-            } else if (momentum > 0) {
-                --momentum;
-                dataManager.set(MOMENTUM, momentum);
+            if (isAboveWater() || onGround) {
+                dataManager.set(MOMENTUM, 0);
+            } else {
+                if (rotationPitch < -10) {
+                    momentum += 1;
+                    dataManager.set(MOMENTUM, Math.min(momentum, 150));
+                } else if (momentum > 0) {
+                    momentum -= 1;
+                    dataManager.set(MOMENTUM, momentum);
+                }
             }
 
             int movementRight = dataManager.get(MOVEMENT_RIGHT);
@@ -226,12 +233,22 @@ public abstract class FurnacePlaneEntity extends Entity {
             rotationYaw -= movementRight / 4;
             for (Entity passenger : getPassengers()) {
                 passenger.rotationYaw -= movementRight / 4;
-
+            }
+            Vec3d motion = getMotion();
+            float d = getYaw(motion) - rotationYaw;
+            if (d > 180)
+                d -= 360;
+            if (d < -180)
+                d += 360;
+            d= Math.abs(d);
+            Vec3d vec;
+            if (d > 120) {
+                vec = Vec3d.ZERO;
+            } else {
+                vec = getVec(rotationYaw, 0);
             }
 
-            Vec3d vec = new Vec3d(-Math.sin(Math.toRadians(rotationYaw)), 0, Math.cos(Math.toRadians(rotationYaw)));
             vec = vec.scale(0.02);
-            Vec3d motion = getMotion();
             vec = getVec(getYaw(motion.add(vec)), getPitch(motion));
             vec = vec.scale(motion.length());
             setMotion(vec);
