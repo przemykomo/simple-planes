@@ -25,7 +25,7 @@ public class RocketUpgrade extends Upgrade {
 
     public static final RocketModel ROCKET_MODEL = new RocketModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
-    public static int FUEL_PER_GUNPOWDER = 30;
+    public static int FUEL_PER_GUNPOWDER = 15;
 
     private int fuel = 0;
 
@@ -56,7 +56,7 @@ public class RocketUpgrade extends Upgrade {
     @Override
     public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
-        Vector3d motion = planeEntity.getMotion();
+        Vec3d motion = planeEntity.getMotion();
 
         float pitch = PlaneEntity.getPitch(motion);
         if(planeEntity.getOnGround())
