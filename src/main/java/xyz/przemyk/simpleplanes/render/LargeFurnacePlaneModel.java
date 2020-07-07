@@ -1,13 +1,13 @@
-package xyz.przemyk.simpleplanes.render.largeFurnacePlane;
+package xyz.przemyk.simpleplanes.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class LargeFurnacePlaneModel extends EntityModel<LargeFurnacePlaneEntity> {
+public class LargeFurnacePlaneModel extends EntityModel<LargePlaneEntity> {
     public static final int TICKS_PER_PROPELLER_ROTATION = 5; //TODO: move to config
 
     private final ModelRenderer Body;
@@ -109,7 +109,7 @@ public class LargeFurnacePlaneModel extends EntityModel<LargeFurnacePlaneEntity>
     }
 
     @Override
-    public void setRotationAngles(LargeFurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+    public void setRotationAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
         if (entity.isPowered()) {
             bone_propeller.rotateAngleZ = (entity.ticksExisted % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
         } else {

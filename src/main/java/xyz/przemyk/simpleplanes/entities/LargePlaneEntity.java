@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.entities.largeFurnacePlane;
+package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -10,19 +10,18 @@ import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.List;
 
-public abstract class LargeFurnacePlaneEntity extends FurnacePlaneEntity {
+public class LargePlaneEntity extends PlaneEntity {
 
-    public LargeFurnacePlaneEntity(EntityType<? extends LargeFurnacePlaneEntity> entityTypeIn, World worldIn) {
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
     }
 
-    public LargeFurnacePlaneEntity(EntityType<? extends LargeFurnacePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
         super(entityTypeIn, worldIn, x, y, z);
     }
 

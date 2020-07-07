@@ -13,7 +13,7 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -28,7 +28,7 @@ public class ShooterUpgrade extends Upgrade {
     //TODO: different texture
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/shooter.png");
     private boolean shootSide = false;
-    public ShooterUpgrade(FurnacePlaneEntity planeEntity) {
+    public ShooterUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SHOOTER.get(),planeEntity);
     }
 
@@ -38,7 +38,7 @@ public class ShooterUpgrade extends Upgrade {
         Vector3d motion = planeEntity.getMotion();
         Random random = event.getWorld().rand;
         Vector2f front = this.planeEntity.getHorizontalFrontPos();
-        float pitch = FurnacePlaneEntity.getPitch(motion);
+        float pitch = PlaneEntity.getPitch(motion);
         if(planeEntity.getOnGround())
         {
             pitch = 30;

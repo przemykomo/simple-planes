@@ -11,7 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -22,7 +22,7 @@ public class RocketUpgrade extends Upgrade {
     public static final RocketModel ROCKET_MODEL = new RocketModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
 
-    public RocketUpgrade(FurnacePlaneEntity planeEntity) {
+    public RocketUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BOOSTER.get(),planeEntity);
     }
 
@@ -31,7 +31,7 @@ public class RocketUpgrade extends Upgrade {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
         Vector3d motion = planeEntity.getMotion();
 
-        float pitch = FurnacePlaneEntity.getPitch(motion);
+        float pitch = PlaneEntity.getPitch(motion);
         if(planeEntity.getOnGround())
         {
             pitch = 30;

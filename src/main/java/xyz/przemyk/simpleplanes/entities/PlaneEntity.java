@@ -1,9 +1,10 @@
-package xyz.przemyk.simpleplanes.entities.furnacePlane;
+package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
@@ -33,15 +34,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public abstract class FurnacePlaneEntity extends Entity {
-    protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
-    protected static final DataParameter<Integer> MOMENTUM = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
+public class PlaneEntity extends Entity {
+    protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
+    protected static final DataParameter<Integer> MOMENTUM = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
     public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(2F, 2F);
 
     //negative values mean left
-    public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.VARINT);
-    public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(FurnacePlaneEntity.class, DataSerializers.COMPOUND_NBT);
+    public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
     public static final int MAX_PITCH = 20;
@@ -50,11 +51,12 @@ public abstract class FurnacePlaneEntity extends Entity {
 
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
 
-    public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn) {
+    //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
+    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
     }
 
-    public FurnacePlaneEntity(EntityType<? extends FurnacePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
+    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
         this(entityTypeIn, worldIn);
         setPosition(x, y, z);
     }
@@ -117,7 +119,10 @@ public abstract class FurnacePlaneEntity extends Entity {
         return false;
     }
 
-    protected abstract void dropItem();
+    @SuppressWarnings("rawtypes")
+    protected void dropItem() {
+        entityDropItem(new ItemStack(((AbstractPlaneEntityType) getType()).dropItem));
+    }
 
     public Vector2f getHorizontalFrontPos() {
         return new Vector2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
@@ -274,10 +279,6 @@ public abstract class FurnacePlaneEntity extends Entity {
         }
 
         rotationPitch = 0.95F * rotationPitch + 0.05F * Math.min(Math.max(getPitch(this.getMotion()), -MAX_PITCH), MAX_PITCH);
-    }
-
-    public float getPitch() {
-        return getPitch(getMotion());
     }
 
     public static float getPitch(Vector3d motion) {

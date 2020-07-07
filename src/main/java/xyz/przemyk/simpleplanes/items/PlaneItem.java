@@ -13,7 +13,7 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.List;
 import java.util.function.Function;
@@ -22,9 +22,9 @@ import java.util.function.Predicate;
 public class PlaneItem extends Item {
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
-    private final Function<World, FurnacePlaneEntity> planeSupplier;
+    private final Function<World, PlaneEntity> planeSupplier;
 
-    public PlaneItem(Properties properties, Function<World, FurnacePlaneEntity> planeSupplier) {
+    public PlaneItem(Properties properties, Function<World, PlaneEntity> planeSupplier) {
         super(properties.maxStackSize(1));
         this.planeSupplier = planeSupplier;
     }
@@ -50,14 +50,14 @@ public class PlaneItem extends Item {
             }
 
             if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
-                FurnacePlaneEntity furnacePlaneEntity = planeSupplier.apply(worldIn);
-                furnacePlaneEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
-                furnacePlaneEntity.rotationYaw = playerIn.rotationYaw;
-                if (!worldIn.hasNoCollisions(furnacePlaneEntity, furnacePlaneEntity.getBoundingBox().grow(-0.1D))) {
+                PlaneEntity planeEntity = planeSupplier.apply(worldIn);
+                planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
+                planeEntity.rotationYaw = playerIn.rotationYaw;
+                if (!worldIn.hasNoCollisions(planeEntity, planeEntity.getBoundingBox().grow(-0.1D))) {
                     return ActionResult.resultFail(itemstack);
                 } else {
                     if (!worldIn.isRemote) {
-                        worldIn.addEntity(furnacePlaneEntity);
+                        worldIn.addEntity(planeEntity);
                         if (!playerIn.abilities.isCreativeMode) {
                             itemstack.shrink(1);
                         }
