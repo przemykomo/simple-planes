@@ -14,7 +14,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -32,18 +32,18 @@ public class RocketUpgrade extends Upgrade {
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT compoundNBT = new CompoundNBT();
-        compoundNBT.putInt("fluid", fuel);
+        compoundNBT.putInt("fuel", fuel);
         return compoundNBT;
     }
 
     @Override
     public void deserializeNBT(CompoundNBT compoundNBT) {
-        fuel = compoundNBT.getInt("fluid");
+        fuel = compoundNBT.getInt("fuel");
         String effectName = compoundNBT.getString("effect");
     }
 
-    public RocketUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.ROCKET_UPGRADE_TYPE.get(), planeEntity);
+    public RocketUpgrade(PlaneEntity planeEntity) {
+        super(SimplePlanesUpgrades.BOOSTER.get(),planeEntity);
     }
 
     @Override

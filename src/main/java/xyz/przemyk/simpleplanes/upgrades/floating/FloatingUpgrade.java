@@ -1,15 +1,12 @@
 package xyz.przemyk.simpleplanes.upgrades.floating;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
-import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -19,8 +16,8 @@ public class FloatingUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/floating.png");
     public static final ResourceLocation LARGE_TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/floating_large.png");
 
-    public FloatingUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.FLOATING_UPGRADE_TYPE.get(), planeEntity);
+    public FloatingUpgrade(PlaneEntity planeEntity) {
+        super(SimplePlanesUpgrades.FLOATING.get(), planeEntity);
     }
 
     @Override

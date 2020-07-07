@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "SSS",
+        "CCC"
+    ],
+    "key": {
+        "S": {
+            "tag": "forge:slimeballs"
+        },
+        "C": {
+            "item": "minecraft:white_carpet"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:floaty_bedding"
+    }
+}

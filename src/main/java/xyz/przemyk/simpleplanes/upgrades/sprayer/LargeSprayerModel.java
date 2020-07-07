@@ -5,10 +5,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import xyz.przemyk.simpleplanes.entities.largeFurnacePlane.LargeFurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class LargeSprayerModel extends EntityModel<LargeFurnacePlaneEntity> {
+public class LargeSprayerModel extends EntityModel<LargePlaneEntity> {
 	private final ModelRenderer Body;
 	private final ModelRenderer sprayer;
 	private final ModelRenderer spray_lest;
@@ -46,7 +46,7 @@ public class LargeSprayerModel extends EntityModel<LargeFurnacePlaneEntity> {
 	}
 
 	@Override
-	public void setRotationAngles(LargeFurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+	public void setRotationAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
 		//previously the render function, render code was moved to a method below
 	}
 
