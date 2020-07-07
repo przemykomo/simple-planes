@@ -24,7 +24,7 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -51,7 +51,7 @@ public class ShooterUpgrade extends Upgrade {
 
     private boolean shootSide = false;
 
-    public ShooterUpgrade(FurnacePlaneEntity planeEntity) {
+    public ShooterUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SHOOTER, planeEntity);
     }
 
@@ -63,7 +63,7 @@ public class ShooterUpgrade extends Upgrade {
         World world = event.getWorld();
         Random random = world.rand;
         Vec2f front = this.planeEntity.getHorizontalFrontPos();
-        float pitch = FurnacePlaneEntity.getPitch(motion);
+        float pitch = PlaneEntity.getPitch(motion);
         motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
                 .scale(Math.max(0.25, motion.length()));
         double x = planeEntity.getPosX() + 1 * front.x;

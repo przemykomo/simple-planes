@@ -15,6 +15,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -42,7 +43,7 @@ public class RocketUpgrade extends Upgrade {
         String effectName = compoundNBT.getString("effect");
     }
 
-    public RocketUpgrade(FurnacePlaneEntity planeEntity) {
+    public RocketUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BOOSTER, planeEntity);
     }
 
@@ -55,13 +56,19 @@ public class RocketUpgrade extends Upgrade {
     @Override
     public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
-        if (fuel <= 140) {
-            if (itemStack.getItem().equals(GUNPOWDER)) {
-                if (!event.getPlayer().isCreative()) {
-                    itemStack.shrink(1);
-                }
-                fuel = FUEL_PER_GUNPOWDER;
-                planeEntity.addFuel(FUEL_PER_GUNPOWDER*4);
+        Vector3d motion = planeEntity.getMotion();
+
+        float pitch = PlaneEntity.getPitch(motion);
+        if(planeEntity.getOnGround())
+        {
+            pitch = 30;
+        }
+        motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
+                .scale(Math.max(0.25,motion.length()));
+
+        if (itemStack.getItem().equals(GUNPOWDER)) {
+            if (!event.getPlayer().isCreative()) {
+                itemStack.shrink(1);
             }
         }
         push();

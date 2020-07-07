@@ -5,9 +5,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class RocketModel extends EntityModel<FurnacePlaneEntity> {
+public class RocketModel extends EntityModel<PlaneEntity> {
 	private final ModelRenderer Body;
 
 	public RocketModel() {
@@ -26,7 +26,7 @@ public class RocketModel extends EntityModel<FurnacePlaneEntity> {
 	}
 
 	@Override
-	public void setRotationAngles(FurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+	public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
 		//previously the render function, render code was moved to a method below
 	}
 

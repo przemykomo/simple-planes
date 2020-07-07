@@ -5,10 +5,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class ShooterModel extends EntityModel<FurnacePlaneEntity> {
+public class ShooterModel extends EntityModel<PlaneEntity> {
 	private  ModelRenderer shooter;
 
 	public ShooterModel() {
@@ -30,7 +30,7 @@ public class ShooterModel extends EntityModel<FurnacePlaneEntity> {
 
 
 	@Override
-	public void setRotationAngles(FurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+	public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
 		//previously the render function, render code was moved to a method below
 	}
 

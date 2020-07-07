@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -17,7 +17,7 @@ public class TNTUpgrade extends Upgrade {
     public static final TNTModel TNT_MODEL = new TNTModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/tnt.png");
 
-    public TNTUpgrade(FurnacePlaneEntity planeEntity) {
+    public TNTUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.TNT, planeEntity);
     }
 

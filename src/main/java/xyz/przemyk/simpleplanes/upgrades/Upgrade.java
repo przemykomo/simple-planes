@@ -5,14 +5,14 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
 
     private final UpgradeType type;
-    protected final FurnacePlaneEntity planeEntity;
+    protected final PlaneEntity planeEntity;
 
-    public Upgrade(UpgradeType type, FurnacePlaneEntity planeEntity) {
+    public Upgrade(UpgradeType type, PlaneEntity planeEntity) {
         this.type = type;
         this.planeEntity = planeEntity;
     }

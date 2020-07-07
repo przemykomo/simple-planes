@@ -1,15 +1,15 @@
-package xyz.przemyk.simpleplanes.render.furnacePlane;
+package xyz.przemyk.simpleplanes.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 @SuppressWarnings("FieldCanBeLocal")
-public class FurnacePlaneModel extends EntityModel<FurnacePlaneEntity> {
+public class FurnacePlaneModel extends EntityModel<PlaneEntity> {
 	public static final int TICKS_PER_PROPELLER_ROTATION = 5;
 
 	private final ModelRenderer Body;
@@ -111,7 +111,7 @@ public class FurnacePlaneModel extends EntityModel<FurnacePlaneEntity> {
 	}
 
 	@Override
-	public void setRotationAngles(FurnacePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+	public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
 		if (entity.isPowered()) {
 			bone_propeller.rotateAngleZ = (entity.ticksExisted % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
 		} else {
