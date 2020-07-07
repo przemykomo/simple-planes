@@ -1,11 +1,15 @@
 package xyz.przemyk.simpleplanes;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -62,24 +66,25 @@ public class PlanesEvents {
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
                     }
-                    planeEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(furnacePlaneEntity));
+                    planeEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(planeEntity));
                     planeEntity.upgradeChanged();
                 }
             }
         }
     }
 
-    /* TODO: rotate player with plane?
+    // TODO: rotate player with plane?
 
     public static boolean playerRotationNeedToPop = false;
 
+/*
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderPlayerEvent.Pre event) {
         Entity entity = event.getPlayer().getLowestRidingEntity();
-        if (entity instanceof FurnacePlaneEntity) {
+        if (entity instanceof PlaneEntity) {
             MatrixStack matrixStack = event.getMatrixStack();
             matrixStack.push();
-            matrixStack.rotate(Vector3f.XN.rotationDegrees(((FurnacePlaneEntity) entity).getPitch()));
+            matrixStack.rotate(Vector3f.XP.rotationDegrees(((PlaneEntity) entity).rotationPitch));
             playerRotationNeedToPop = true;
         }
     }
@@ -91,5 +96,6 @@ public class PlanesEvents {
             event.getMatrixStack().pop();
         }
     }
-     */
+*/
+
 }

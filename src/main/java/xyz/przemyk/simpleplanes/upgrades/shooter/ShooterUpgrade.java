@@ -39,7 +39,7 @@ public class ShooterUpgrade extends Upgrade {
     private static final Map<Item, IShooterBehavior> SHOOTER_BEHAVIOR_MAP = Util.make(new Object2ObjectOpenHashMap<>(), (p_212564_0_) -> {
         p_212564_0_.defaultReturnValue(new IShooterBehavior() {
             @Override
-            public void shoot(FurnacePlaneEntity planeEntity, ItemStack itemStack) {
+            public void shoot(PlaneEntity planeEntity, ItemStack itemStack) {
 
             }
         });
@@ -48,8 +48,8 @@ public class ShooterUpgrade extends Upgrade {
 
     private boolean shootSide = false;
 
-    public ShooterUpgrade(FurnacePlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SHOOTER_UPGRADE_TYPE.get(), planeEntity);
+    public ShooterUpgrade(PlaneEntity planeEntity) {
+        super(SimplePlanesUpgrades.SHOOTER.get(), planeEntity);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ShooterUpgrade extends Upgrade {
         World world = event.getWorld();
         Random random = world.rand;
         Vector2f front = this.planeEntity.getHorizontalFrontPos();
-        float pitch = FurnacePlaneEntity.getPitch(motion);
+        float pitch = PlaneEntity.getPitch(motion);
         motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
                 .scale(Math.max(0.25, motion.length()));
         double x = planeEntity.getPosX() + 1 * front.x;

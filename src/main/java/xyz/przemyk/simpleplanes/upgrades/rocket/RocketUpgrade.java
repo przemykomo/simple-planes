@@ -76,7 +76,7 @@ public class RocketUpgrade extends Upgrade {
 
         Vector3d m = planeEntity.getMotion();
         Vector3d motion = planeEntity.getMotion();
-        float pitch = FurnacePlaneEntity.getPitch(motion);
+        float pitch = PlaneEntity.getPitch(motion);
         PlayerEntity player = planeEntity.getPlayer();
         if (player != null) {
             if (player.moveForward > 0.0F) {

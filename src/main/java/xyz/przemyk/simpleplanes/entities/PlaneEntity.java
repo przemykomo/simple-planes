@@ -212,16 +212,18 @@ public class PlaneEntity extends Entity {
             }
             if (isAboveWater() || onGround) {
                 dataManager.set(MOMENTUM, 0);
-            } if (controllingPassenger.moveForward == 0.0F) {
+            }
+            if (controllingPassenger.moveForward == 0.0F) {
                 ++momentum;
                 dataManager.set(MOMENTUM, Math.min(momentum, 600));
             } else if (momentum > 0) {
                 --momentum;
                 dataManager.set(MOMENTUM, momentum);
             }
-            }
+        }
 
-            int movementRight = dataManager.get(MOVEMENT_RIGHT);
+        int movementRight = dataManager.get(MOVEMENT_RIGHT);
+        if(controllingPassenger instanceof PlayerEntity) {
             if (controllingPassenger.moveStrafing > 0) {
                 if (movementRight < 10) {
                     dataManager.set(MOVEMENT_RIGHT, movementRight + 1);
@@ -246,7 +248,7 @@ public class PlaneEntity extends Entity {
                 d -= 360;
             if (d < -180)
                 d += 360;
-            d= Math.abs(d);
+            d = Math.abs(d);
             Vector3d vec;
             if (d > 120) {
                 vec = Vector3d.ZERO;
@@ -254,25 +256,24 @@ public class PlaneEntity extends Entity {
                 vec = getVec(rotationYaw, 0);
             }
 
-            vec = vec.scale(0.02);
+            vec = vec.scale(0.2);
             vec = getVec(getYaw(motion.add(vec)), getPitch(motion));
             vec = vec.scale(motion.length());
             setMotion(vec);
         }
 
-
-        {
-            HashSet<Upgrade> upgradesToRemove = new HashSet<>();
-            for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade.tick()) {
-                    upgradesToRemove.add(upgrade);
-                }
-            }
-
-            for (Upgrade upgrade : upgradesToRemove) {
-                upgrades.remove(upgrade.getType().getRegistryName());
+        HashSet<Upgrade> upgradesToRemove = new HashSet<>();
+        for (Upgrade upgrade : upgrades.values()) {
+            if (upgrade.tick()) {
+                upgradesToRemove.add(upgrade);
             }
         }
+
+        for (Upgrade upgrade : upgradesToRemove) {
+            upgrades.remove(upgrade.getType().getRegistryName());
+        }
+
+
         if (gravity && !hasNoGravity()) {
             setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
         }
@@ -393,7 +394,7 @@ public class PlaneEntity extends Entity {
 
     @Override
     public boolean canBeRiddenInWater() {
-        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING_UPGRADE_TYPE.getId());
+        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING.getId());
     }
 
     @Override
