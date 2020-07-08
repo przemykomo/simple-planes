@@ -8,17 +8,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import static net.minecraft.item.Items.*;
+import static xyz.przemyk.simpleplanes.MathUtil.getVec;
 
 public class RocketUpgrade extends Upgrade {
 
@@ -72,24 +75,23 @@ public class RocketUpgrade extends Upgrade {
         if (fuel < 0)
             return;
         fuel -= 1;
-        planeEntity.gravity = false;
 
         Vector3d m = planeEntity.getMotion();
-        Vector3d motion = planeEntity.getMotion();
-        float pitch = PlaneEntity.getPitch(motion);
+        float pitch = 0;
         PlayerEntity player = planeEntity.getPlayer();
         if (player != null) {
             if (player.moveForward > 0.0F) {
-                pitch += 10;
+                pitch += 1;
                 if (player.isSprinting()) {
-                    pitch += 5;
+                    pitch += 2;
                 }
             } else if (player.moveForward < 0.0F) {
-                pitch -= 10;
+                pitch -= 2;
             }
         }
-        motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
-                .scale(0.1);
+        planeEntity.rotationPitch+=pitch;
+        Vector3d motion = getVec(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.1);
+
         planeEntity.setMotion(m.add(motion));
 
         if (!planeEntity.world.isRemote()) {

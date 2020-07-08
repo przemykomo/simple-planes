@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -77,14 +77,26 @@ public class PlanesEvents {
 
     public static boolean playerRotationNeedToPop = false;
 
-/*
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderPlayerEvent.Pre event) {
         Entity entity = event.getPlayer().getLowestRidingEntity();
         if (entity instanceof PlaneEntity) {
+            PlaneEntity planeEntity = (PlaneEntity) entity;
             MatrixStack matrixStack = event.getMatrixStack();
             matrixStack.push();
-            matrixStack.rotate(Vector3f.XP.rotationDegrees(((PlaneEntity) entity).rotationPitch));
+
+            Quaternion quaternion = new Quaternion(MathUtil.getVecf(planeEntity.rotationYaw+90, 0), planeEntity.rotationPitch, true);
+//            matrixStack.rotate(Vector3f.XP.rotationDegrees(((PlaneEntity) entity).rotationPitch));
+            matrixStack.rotate(quaternion);
+            if (!planeEntity.getOnGround()) {
+                int rotationRight = planeEntity.getDataManager().get(PlaneEntity.MOVEMENT_RIGHT);
+                if (rotationRight != 0) {
+                    Quaternion quaternion2 = new Quaternion(MathUtil.getVecf(planeEntity.rotationYaw, 0), -rotationRight, true);
+                    matrixStack.rotate(quaternion2);
+                }
+
+            }
+
             playerRotationNeedToPop = true;
         }
     }
@@ -96,6 +108,5 @@ public class PlanesEvents {
             event.getMatrixStack().pop();
         }
     }
-*/
 
 }

@@ -30,7 +30,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         matrixStackIn.rotate(Vector3f.XN.rotationDegrees(getInAirRotation()));
         matrixStackIn.rotate(Vector3f.XN.rotationDegrees(entityIn.rotationPitch));
 
-        if (!entityIn.func_233570_aj_()) {
+        if (!entityIn.getOnGround()) {
             int rotationRight = entityIn.getDataManager().get(PlaneEntity.MOVEMENT_RIGHT);
             if (rotationRight != 0) {
                 matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(rotationRight));

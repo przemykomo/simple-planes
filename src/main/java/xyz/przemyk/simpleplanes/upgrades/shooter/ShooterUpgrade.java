@@ -3,13 +3,8 @@ package xyz.przemyk.simpleplanes.upgrades.shooter;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.DispenserBlock;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.IDispenseItemBehavior;
-import net.minecraft.dispenser.IPosition;
-import net.minecraft.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.item.Item;
@@ -21,6 +16,7 @@ import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -30,6 +26,7 @@ import java.util.Random;
 
 import static net.minecraft.item.Items.FIREWORK_ROCKET;
 import static net.minecraft.item.Items.FIRE_CHARGE;
+import static xyz.przemyk.simpleplanes.MathUtil.getVec;
 
 public class ShooterUpgrade extends Upgrade {
 
@@ -60,8 +57,8 @@ public class ShooterUpgrade extends Upgrade {
         World world = event.getWorld();
         Random random = world.rand;
         Vector2f front = this.planeEntity.getHorizontalFrontPos();
-        float pitch = PlaneEntity.getPitch(motion);
-        motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
+        float pitch = MathUtil.getPitch(motion);
+        motion = getVec(planeEntity.rotationYaw, pitch)
                 .scale(Math.max(0.25, motion.length()));
         double x = planeEntity.getPosX() + 1 * front.x;
         double z = planeEntity.getPosZ() + 1 * front.y;

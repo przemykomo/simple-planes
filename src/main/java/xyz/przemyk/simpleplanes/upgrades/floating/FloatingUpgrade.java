@@ -25,14 +25,12 @@ public class FloatingUpgrade extends Upgrade {
         if (planeEntity.isAboveWater()) {
 
             Vector3d motion = planeEntity.getMotion();
-            if(motion.length()<0.01){
-                motion = Vector3d.ZERO;
-            }
-            planeEntity.setMotion(motion.x * 0.9, Math.max(motion.y, 0), motion.z * 0.9);
-            planeEntity.gravity = false;
+            double f = 0.98;
+            planeEntity.setMotion(motion.x * f, Math.max(motion.y, 0), motion.z * f);
             if (planeEntity.areEyesInFluid(FluidTags.WATER) || planeEntity.getPosY() % 1 < 0.5) {
-                planeEntity.setMotion(motion.x * 0.9, Math.max(motion.y, 0.01), motion.z * 0.9);
+                planeEntity.setMotion(planeEntity.getMotion().add(0,0.02,0));
             }
+
 
 
         }
