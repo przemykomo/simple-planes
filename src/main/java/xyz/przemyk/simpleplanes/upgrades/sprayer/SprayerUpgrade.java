@@ -120,6 +120,7 @@ public class SprayerUpgrade extends Upgrade {
     public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
         if (itemStack.getItem() == Items.POTION && fluid < 20) {
+            planeEntity.upgradeChanged();
             fluid = 60;
             List<EffectInstance> effectInstances = PotionUtils.getEffectsFromStack(itemStack);
             if (effectInstances.size() == 0) {

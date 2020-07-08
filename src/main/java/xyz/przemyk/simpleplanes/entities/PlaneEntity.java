@@ -26,6 +26,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -48,6 +49,7 @@ public class PlaneEntity extends Entity {
     public static final int MAX_PITCH = 20;
     private double lastYd;
     protected int poweredTicks;
+    public boolean gravity = true;
 
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
 
@@ -70,7 +72,11 @@ public class PlaneEntity extends Entity {
     }
 
     public void addFuel() {
-        dataManager.set(FUEL, getFuel() + Config.FLY_TICKS_PER_COAL.get());
+        addFuel(Config.FLY_TICKS_PER_COAL.get());
+    }
+
+    public void addFuel(Integer fuel) {
+        dataManager.set(FUEL, Math.max(getFuel(), fuel));
     }
 
     public int getFuel() {
@@ -154,7 +160,6 @@ public class PlaneEntity extends Entity {
         this.tickLerp();
         Vector3d oldMotion = getMotion();
         recalculateSize();
-        boolean gravity = true;
         int fuel = dataManager.get(FUEL);
         int momentum = dataManager.get(MOMENTUM);
         if (fuel > 0) {
@@ -165,6 +170,7 @@ public class PlaneEntity extends Entity {
             momentum = 0;
             dataManager.set(MOMENTUM, 0);
         }
+        gravity = true;
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
             if (Config.EASY_FLIGHT.get()) {
@@ -186,11 +192,14 @@ public class PlaneEntity extends Entity {
                         }
                     } else if (controllingPassenger.moveForward < 0.0F) {
                         y = -0.02F;
+                        if (onGround || isAboveWater())
+                            x = -x;
                     } else if (this.onGround || this.inWater) {
                         x = 0;
                     }
                     this.setMotion(this.getMotion().add(x * front.x, y, x * front.y));
                 }
+
             } else {
                 if (isPowered() || momentum > 0) {
                     if (controllingPassenger.moveForward > 0.0F) {
@@ -201,6 +210,9 @@ public class PlaneEntity extends Entity {
                     }
                 }
             }
+            if (isAboveWater() || onGround) {
+                dataManager.set(MOMENTUM, 0);
+            }
             if (controllingPassenger.moveForward == 0.0F) {
                 ++momentum;
                 dataManager.set(MOMENTUM, Math.min(momentum, 600));
@@ -208,8 +220,10 @@ public class PlaneEntity extends Entity {
                 --momentum;
                 dataManager.set(MOMENTUM, momentum);
             }
+        }
 
-            int movementRight = dataManager.get(MOVEMENT_RIGHT);
+        int movementRight = dataManager.get(MOVEMENT_RIGHT);
+        if(controllingPassenger instanceof PlayerEntity) {
             if (controllingPassenger.moveStrafing > 0) {
                 if (movementRight < 10) {
                     dataManager.set(MOVEMENT_RIGHT, movementRight + 1);
@@ -228,14 +242,37 @@ public class PlaneEntity extends Entity {
             for (Entity passenger : getPassengers()) {
                 passenger.rotationYaw -= movementRight / 4;
             }
-
-            Vector3d vec = new Vector3d(-Math.sin(Math.toRadians(rotationYaw)), 0, Math.cos(Math.toRadians(rotationYaw)));
-            vec = vec.scale(0.02);
             Vector3d motion = getMotion();
+            float d = getYaw(motion) - rotationYaw;
+            if (d > 180)
+                d -= 360;
+            if (d < -180)
+                d += 360;
+            d = Math.abs(d);
+            Vector3d vec;
+            if (d > 120) {
+                vec = Vector3d.ZERO;
+            } else {
+                vec = getVec(rotationYaw, 0);
+            }
+
+            vec = vec.scale(0.2);
             vec = getVec(getYaw(motion.add(vec)), getPitch(motion));
             vec = vec.scale(motion.length());
             setMotion(vec);
         }
+
+        HashSet<Upgrade> upgradesToRemove = new HashSet<>();
+        for (Upgrade upgrade : upgrades.values()) {
+            if (upgrade.tick()) {
+                upgradesToRemove.add(upgrade);
+            }
+        }
+
+        for (Upgrade upgrade : upgradesToRemove) {
+            upgrades.remove(upgrade.getType().getRegistryName());
+        }
+
 
         if (gravity && !hasNoGravity()) {
             setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
@@ -245,31 +282,20 @@ public class PlaneEntity extends Entity {
             spawnParticles(fuel);
         }
 
-        {
-            HashSet<Upgrade> upgradesToRemove = new HashSet<>();
-            for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade.tick()) {
-                    upgradesToRemove.add(upgrade);
-                }
-            }
-
-            for (Upgrade upgrade : upgradesToRemove) {
-                upgrades.remove(upgrade.getType().getRegistryName());
-            }
-        }
-
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
         double l = 0.02;
-        if (oldMotion.length() >= getMotion().length()&&oldMotion.length()<l ) {
+        if (oldMotion.length() >= getMotion().length() && oldMotion.length() < l) {
             this.setMotion(Vector3d.ZERO);
         }
 
         if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) {
-            this.move(MoverType.SELF, this.getMotion());
+            if (getMotion().length() > 0)
+                this.move(MoverType.SELF, this.getMotion());
             float f = 0.98F;
             if (this.onGround) {
                 BlockPos pos = new BlockPos(this.getPosX(), this.getPosY() - 1.0D, this.getPosZ());
                 f = this.world.getBlockState(pos).getSlipperiness(this.world, pos, this) * 0.98F;
+                f = Math.max(f, 0.90F);
             }
 
             this.setMotion(this.getMotion().mul(f, 0.98D, f));
@@ -277,8 +303,15 @@ public class PlaneEntity extends Entity {
                 this.setMotion(this.getMotion().mul(1.0D, -0.25D, 1.0D));
             }
         }
+        float pitch;
 
-        rotationPitch = 0.95F * rotationPitch + 0.05F * Math.min(Math.max(getPitch(this.getMotion()), -MAX_PITCH), MAX_PITCH);
+        if (this.onGround) {
+            pitch = isLarge() ? 10 : 15;
+        } else {
+            pitch = Math.min(Math.max(getPitch(this.getMotion()), -MAX_PITCH), MAX_PITCH);
+        }
+        rotationPitch = 0.95F * rotationPitch + 0.05F * pitch;
+
     }
 
     public static float getPitch(Vector3d motion) {
@@ -341,17 +374,27 @@ public class PlaneEntity extends Entity {
     protected void writeAdditional(CompoundNBT compound) {
         compound.putInt("Fuel", dataManager.get(FUEL));
 
+        CompoundNBT upgradesNBT = getUpgradesNBT();
+
+        compound.put("upgrades", upgradesNBT);
+    }
+
+    private CompoundNBT getUpgradesNBT() {
         CompoundNBT upgradesNBT = new CompoundNBT();
         for (Upgrade upgrade : upgrades.values()) {
             upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
         }
-
-        compound.put("upgrades", upgradesNBT);
+        return upgradesNBT;
     }
 
     @Override
     protected boolean canBeRidden(Entity entityIn) {
         return true;
+    }
+
+    @Override
+    public boolean canBeRiddenInWater() {
+        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING.getId());
     }
 
     @Override
@@ -522,4 +565,13 @@ public class PlaneEntity extends Entity {
         }
     }
 
+    public PlayerEntity getPlayer() {
+        if (getControllingPassenger() instanceof PlayerEntity)
+            return (PlayerEntity) getControllingPassenger();
+        return null;
+    }
+
+    public void upgradeChanged() {
+        this.dataManager.set(UPGRADES_NBT, getUpgradesNBT());
+    }
 }
