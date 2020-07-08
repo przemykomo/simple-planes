@@ -9,6 +9,8 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class ShooterModel extends EntityModel<PlaneEntity> {
+	public static final ShooterModel INSTANCE = new ShooterModel();
+
 	private  ModelRenderer shooter;
 
 	public ShooterModel() {
