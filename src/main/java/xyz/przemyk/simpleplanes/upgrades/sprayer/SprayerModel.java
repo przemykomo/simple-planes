@@ -9,6 +9,8 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class SprayerModel extends EntityModel<PlaneEntity> {
+	public static final SprayerModel INSTANCE = new SprayerModel();
+
 	private final ModelRenderer Body;
 	private final ModelRenderer sprayer;
 	private final ModelRenderer spray_left;

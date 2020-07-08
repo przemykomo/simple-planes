@@ -9,6 +9,8 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class FloatingModel extends EntityModel<PlaneEntity> {
+	public static final FloatingModel INSTANCE = new FloatingModel();
+
 	private final ModelRenderer Body;
 	private final ModelRenderer balloon;
 	private final ModelRenderer left_wing;

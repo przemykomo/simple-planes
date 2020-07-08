@@ -37,6 +37,13 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     public boolean tick() {
         return false;
     }
+
+    /**
+     * Called to render upgrade model. Loading model outside of this method may crash server.
+     * @param matrixStack matrix stack. Don't modify it.
+     * @param buffer Render type buffer
+     * @param packedLight packed light
+     */
     public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight);
 
     @Override

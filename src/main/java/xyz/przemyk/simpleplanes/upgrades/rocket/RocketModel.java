@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class RocketModel extends EntityModel<PlaneEntity> {
+	public static final RocketModel INSTANCE = new RocketModel();
+
 	private final ModelRenderer Body;
 
 	public RocketModel() {

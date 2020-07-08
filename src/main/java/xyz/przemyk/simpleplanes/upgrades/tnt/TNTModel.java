@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 public class TNTModel extends EntityModel<LargePlaneEntity> {
+	public static final TNTModel INSTANCE = new TNTModel();
+
 	private final ModelRenderer Body;
 
 	public TNTModel() {
