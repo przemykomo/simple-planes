@@ -13,8 +13,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -52,19 +50,13 @@ public class RocketUpgrade extends Upgrade {
     @Override
     public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
-        Vec3d motion = planeEntity.getMotion();
-
-        float pitch = PlaneEntity.getPitch(motion);
-        if(planeEntity.getOnGround())
-        {
-            pitch = 30;
-        }
-        motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
-                .scale(Math.max(0.25,motion.length()));
-
-        if (itemStack.getItem().equals(GUNPOWDER)) {
-            if (!event.getPlayer().isCreative()) {
-                itemStack.shrink(1);
+        if (fuel <= 0) {
+            if (itemStack.getItem().equals(GUNPOWDER)) {
+                if (!event.getPlayer().isCreative()) {
+                    itemStack.shrink(1);
+                }
+                fuel = FUEL_PER_GUNPOWDER;
+                planeEntity.addFuel(FUEL_PER_GUNPOWDER * 4);
             }
         }
         push();
@@ -79,7 +71,7 @@ public class RocketUpgrade extends Upgrade {
 
         Vec3d m = planeEntity.getMotion();
         Vec3d motion = planeEntity.getMotion();
-        float pitch = FurnacePlaneEntity.getPitch(motion);
+        float pitch = PlaneEntity.getPitch(motion);
         PlayerEntity player = planeEntity.getPlayer();
         if (player != null) {
             if (player.moveForward > 0.0F) {

@@ -21,10 +21,6 @@ public class LargePlaneEntity extends PlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
-        super(entityTypeIn, worldIn, x, y, z);
-    }
-
     @Override
     public void tick() {
         super.tick();

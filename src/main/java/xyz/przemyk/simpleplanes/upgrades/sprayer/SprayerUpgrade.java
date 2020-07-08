@@ -29,7 +29,6 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.List;
 
-import static net.minecraft.block.Blocks.AIR;
 import static net.minecraft.block.Blocks.FIRE;
 
 public class SprayerUpgrade extends Upgrade {

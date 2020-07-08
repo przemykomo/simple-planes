@@ -2,9 +2,9 @@ package xyz.przemyk.simpleplanes.upgrades.shooter;
 
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.item.ItemStack;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public interface IShooterBehavior {
-    void shoot(FurnacePlaneEntity planeEntity, ItemStack itemStack);
+    void shoot(PlaneEntity planeEntity, ItemStack itemStack);
 
 }

@@ -366,7 +366,6 @@ public class PlaneEntity extends Entity {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void writeAdditional(CompoundNBT compound) {
         compound.putInt("Fuel", dataManager.get(FUEL));
@@ -376,6 +375,7 @@ public class PlaneEntity extends Entity {
         compound.put("upgrades", upgradesNBT);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private CompoundNBT getUpgradesNBT() {
         CompoundNBT upgradesNBT = new CompoundNBT();
         for (Upgrade upgrade : upgrades.values()) {
@@ -390,8 +390,8 @@ public class PlaneEntity extends Entity {
     }
 
     @Override
-    public boolean canBeRiddenInWater() {
-        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING_UPGRADE_TYPE.getId());
+    public boolean canBeRiddenInWater(Entity rider) {
+        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING.getRegistryName());
     }
 
     @Override
@@ -461,10 +461,6 @@ public class PlaneEntity extends Entity {
 
     public boolean isCreative() {
         return getControllingPassenger() instanceof PlayerEntity && ((PlayerEntity) getControllingPassenger()).isCreative();
-    }
-
-    public boolean getOnGround() {
-        return onGround;
     }
 
     public boolean isAboveWater() {

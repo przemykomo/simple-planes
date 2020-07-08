@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
-import xyz.przemyk.simpleplanes.entities.furnacePlane.FurnacePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;

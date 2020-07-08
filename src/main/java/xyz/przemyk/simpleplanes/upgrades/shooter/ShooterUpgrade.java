@@ -40,7 +40,7 @@ public class ShooterUpgrade extends Upgrade {
     private static final Map<Item, IShooterBehavior> SHOOTER_BEHAVIOR_MAP = Util.make(new Object2ObjectOpenHashMap<>(), (p_212564_0_) -> {
         p_212564_0_.defaultReturnValue(new IShooterBehavior() {
             @Override
-            public void shoot(FurnacePlaneEntity planeEntity, ItemStack itemStack) {
+            public void shoot(PlaneEntity planeEntity, ItemStack itemStack) {
 
             }
         });
