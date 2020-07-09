@@ -46,10 +46,45 @@ public class SimplePlanesMod {
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.CRIMSON_LARGE_PLANE.get(), LargePlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.WARPED_LARGE_PLANE.get(), LargePlaneRenderer::new);
 
-        // Mod compatibility:
+        ////////////////////// Mod compatibility
+        // Fruit trees
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FT_CHERRY_PLANE.get(), PlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FT_CITRUS_PLANE.get(), PlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FT_CHERRY_LARGE_PLANE.get(), LargePlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FR_CITRUS_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        // Biomes O' Plenty
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_CHERRY_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_CHERRY_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_DEAD_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_DEAD_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_FIR_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_FIR_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_HELLBARK_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_HELLBARK_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_JACARANDA_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_JACARANDA_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_MAGIC_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_MAGIC_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_MAHOGANY_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_MAHOGANY_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_PALM_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_PALM_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_REDWOOD_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_REDWOOD_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_UMBRAN_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_UMBRAN_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_WILLOW_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_WILLOW_LARGE_PLANE.get(), LargePlaneRenderer::new);
     }
 }
