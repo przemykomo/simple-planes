@@ -29,5 +29,13 @@
     "description.simpleplanes.floaty_bedding": "Makes plane float on water.",
     "description.simpleplanes.shooter": "Shoots fireworks or fire charges.",
 
-    "itemGroup.simpleplanes": "Simple Planes"
+    "itemGroup.simpleplanes": "Simple Planes",
+
+
+    "_planes_comment": "Everything below is for mod compatibility",
+
+    "item.simpleplanes.ft_cherry_plane": "Cherry Furnace Plane",
+    "item.simpleplanes.ft_cherry_large_plane": "Large Cherry Furnace Plane",
+    "item.simpleplanes.ft_citrus_plane": "Citrus Furnace Plane",
+    "item.simpleplanes.ft_citrus_large_plane": "Large Citrus Furnace Plane"
 }

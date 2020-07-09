@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:ft_cherry_plane"
+        },
+        "B": {
+            "item": "fruittrees:cherry_slab"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:ft_cherry_large_plane"
+    }
+}

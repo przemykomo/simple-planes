@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " WF",
+        "PEW",
+        " W "
+    ],
+    "key": {
+        "W": {
+            "item": "fruittrees:cherry_slab"
+        },
+        "F": {
+            "item": "minecraft:furnace"
+        },
+        "E": {
+            "item": "simpleplanes:furnace_engine"
+        },
+        "P": {
+            "item": "simpleplanes:propeller"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:ft_cherry_plane"
+    }
+}

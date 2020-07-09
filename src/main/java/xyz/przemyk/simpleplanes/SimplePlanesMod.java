@@ -27,23 +27,29 @@ public class SimplePlanesMod {
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.OAK_FURNACE_PLANE.get(), PlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ACACIA_FURNACE_PLANE.get(), PlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BIRCH_FURNACE_PLANE.get(), PlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.SPRUCE_FURNACE_PLANE.get(), PlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.JUNGLE_FURNACE_PLANE.get(), PlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.DARK_OAK_FURNACE_PLANE.get(), PlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.CRIMSON_FURNACE_PLANE.get(), PlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.WARPED_FURNACE_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.OAK_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ACACIA_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BIRCH_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.SPRUCE_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.JUNGLE_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.DARK_OAK_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.CRIMSON_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.WARPED_PLANE.get(), PlaneRenderer::new);
 
 
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.OAK_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ACACIA_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BIRCH_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.SPRUCE_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.JUNGLE_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.DARK_OAK_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.CRIMSON_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.WARPED_LARGE_FURNACE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.OAK_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ACACIA_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BIRCH_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.SPRUCE_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.JUNGLE_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.DARK_OAK_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.CRIMSON_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.WARPED_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        // Mod compatibility:
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FT_CHERRY_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FT_CITRUS_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FT_CHERRY_LARGE_PLANE.get(), LargePlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.FR_CITRUS_LARGE_PLANE.get(), LargePlaneRenderer::new);
     }
 }
