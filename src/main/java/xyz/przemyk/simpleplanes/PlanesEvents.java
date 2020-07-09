@@ -57,15 +57,7 @@ public class PlanesEvents {
                 return;
             }
 
-            for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-                if (itemStack.getItem() == upgradeType.getUpgradeItem() && planeEntity.canAddUpgrade(upgradeType)) {
-                    if (!player.isCreative()) {
-                        itemStack.shrink(1);
-                    }
-                    planeEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(planeEntity));
-                    planeEntity.upgradeChanged();
-                }
-            }
+            planeEntity.tryToAddUpgrade(player, itemStack);
         }
     }
 

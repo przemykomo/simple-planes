@@ -87,6 +87,9 @@ public class PlaneEntity extends Entity {
 
     @Override
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
+        if (tryToAddUpgrade(player, player.getHeldItem(hand))) {
+            return true;
+        }
         if (player.isSneaking() && player.getHeldItem(hand).isEmpty()) {
             boolean hasplayer = false;
             for (Entity passenger : getPassengers()) {
@@ -101,6 +104,20 @@ public class PlaneEntity extends Entity {
             return true;
         }
         return !world.isRemote && player.startRiding(this);
+    }
+
+    public boolean tryToAddUpgrade(PlayerEntity player, ItemStack itemStack) {
+        for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
+            if (itemStack.getItem() == upgradeType.getUpgradeItem() && canAddUpgrade(upgradeType)) {
+                if (!player.isCreative()) {
+                    itemStack.shrink(1);
+                }
+                upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(this));
+                upgradeChanged();
+                return true;
+            }
+        }
+        return false;
     }
 
     @SuppressWarnings("deprecation")
@@ -369,10 +386,7 @@ public class PlaneEntity extends Entity {
     @Override
     protected void writeAdditional(CompoundNBT compound) {
         compound.putInt("Fuel", dataManager.get(FUEL));
-
-        CompoundNBT upgradesNBT = getUpgradesNBT();
-
-        compound.put("upgrades", upgradesNBT);
+        compound.put("upgrades", getUpgradesNBT());
     }
 
     @SuppressWarnings("ConstantConditions")
