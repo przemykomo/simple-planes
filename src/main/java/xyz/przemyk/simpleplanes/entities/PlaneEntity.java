@@ -167,7 +167,7 @@ public class PlaneEntity extends Entity {
 
         if (isPowered()) {
             if (poweredTicks % 50 == 0) {
-                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.1F, 1.0F);
+                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
             }
             ++poweredTicks;
         } else {
