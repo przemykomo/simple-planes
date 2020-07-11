@@ -27,7 +27,7 @@ public class LargeFurnacePlaneModel extends EntityModel<LargePlaneEntity> {
 
         Body = new ModelRenderer(this);
         Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-        setRotationAngle(Body, -0.1745F, 0.0F, 0.0F);
+//        setRotationAngle(Body, -0.1745F, 0.0F, 0.0F);
         Body.setTextureOffset(0, 0).addBox(-42.0F, -22.0F, -15.0F, 84.0F, 1.0F, 9.0F, 0.0F, false);
 
         bone_propeller = new ModelRenderer(this);

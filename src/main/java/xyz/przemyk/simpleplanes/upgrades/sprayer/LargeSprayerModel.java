@@ -20,7 +20,7 @@ public class LargeSprayerModel extends EntityModel<LargePlaneEntity> {
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(Body, -0.1745F, 0.0F, 0.0F);
+		setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
 		
 
 		sprayer = new ModelRenderer(this);

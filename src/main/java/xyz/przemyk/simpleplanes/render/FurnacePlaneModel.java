@@ -29,7 +29,7 @@ public class FurnacePlaneModel extends EntityModel<PlaneEntity> {
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
+//		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
 		Body.setTextureOffset(0, 0).addBox(-33.0F, -22.0F, -15.0F, 64.0F, 1.0F, 9.0F, 0.0F, false);
 
 		bone_propeller = new ModelRenderer(this);

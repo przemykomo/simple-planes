@@ -1,13 +1,19 @@
 package xyz.przemyk.simpleplanes;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CEntityActionPacket;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,6 +24,8 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.HashSet;
+
+import static xyz.przemyk.simpleplanes.MathUtil.ToEulerAngles;
 
 @Mod.EventBusSubscriber
 public class PlanesEvents {
@@ -81,23 +89,21 @@ public class PlanesEvents {
     public static void onRenderPre(RenderPlayerEvent.Pre event) {
         Entity entity = event.getPlayer().getLowestRidingEntity();
         if (entity instanceof PlaneEntity) {
+
             PlaneEntity planeEntity = (PlaneEntity) entity;
             MatrixStack matrixStack = event.getMatrixStack();
             matrixStack.push();
-
-            Quaternion quaternion = new Quaternion(MathUtil.getVecf(planeEntity.rotationYaw+90, 0), planeEntity.rotationPitch, true);
-//            matrixStack.rotate(Vector3f.XP.rotationDegrees(((PlaneEntity) entity).rotationPitch));
-            matrixStack.rotate(quaternion);
-            if (!planeEntity.getOnGround()) {
-                int rotationRight = planeEntity.getDataManager().get(PlaneEntity.MOVEMENT_RIGHT);
-                if (rotationRight != 0) {
-                    Quaternion quaternion2 = new Quaternion(MathUtil.getVecf(planeEntity.rotationYaw, 0), -rotationRight, true);
-                    matrixStack.rotate(quaternion2);
-                }
-
-            }
-
             playerRotationNeedToPop = true;
+            matrixStack.translate(0, 0.7, 0);
+            Quaternion q =MathUtil.lerpQ(event.getPartialRenderTick(),planeEntity.getQ_Prev(),planeEntity.getQ_Lerp());
+//            Quaternion q =planeEntity.getQ();
+            q.set(q.getX(),-q.getY(),-q.getZ(),q.getW());
+            matrixStack.rotate(q);
+            final float rotationYaw = MathHelper.lerp(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);;
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(rotationYaw));
+            matrixStack.translate(0, -0.7, 0);
+
+
         }
     }
 
@@ -108,5 +114,25 @@ public class PlanesEvents {
             event.getMatrixStack().pop();
         }
     }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onClientPlayerTick(TickEvent.PlayerTickEvent event) {
+        final PlayerEntity player = event.player;
+        if (player instanceof ClientPlayerEntity &&
+                player.getRidingEntity() instanceof PlaneEntity &&
+                event.phase == TickEvent.Phase.END) {
+            boolean flag = Minecraft.getInstance().gameSettings.keyBindSprint.isKeyDown();
+            final ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) player;
+            clientPlayerEntity.setSprinting(flag);
+//            clientPlayerEntity.
+            if (flag != clientPlayerEntity.serverSprintState||Math.random()<0.1) {
+                CEntityActionPacket.Action centityactionpacket$action = flag ? CEntityActionPacket.Action.START_SPRINTING : CEntityActionPacket.Action.STOP_SPRINTING;
+                clientPlayerEntity.connection.sendPacket(new CEntityActionPacket(player, centityactionpacket$action));
+                clientPlayerEntity.serverSprintState = flag;
+            }
+
+        }
+    }
+
 
 }

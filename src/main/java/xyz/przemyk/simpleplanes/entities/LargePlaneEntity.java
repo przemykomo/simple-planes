@@ -75,7 +75,7 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     @Override
-    protected void spawnParticles(int fuel) {
+    protected void spawnSmokeParticles(int fuel) {
         Vector2f front = getHorizontalFrontPos();
         ServerWorld serverWorld = (ServerWorld) world;
         serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - (2 * front.x), getPosY() + 1.0, getPosZ() - (2 * front.y), 0, 0, 0, 0, 0.0);

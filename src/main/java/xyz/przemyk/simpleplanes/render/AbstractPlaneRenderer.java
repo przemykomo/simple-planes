@@ -7,9 +7,13 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+
+import static xyz.przemyk.simpleplanes.MathUtil.ToEulerAngles;
 
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
@@ -24,22 +28,27 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
         matrixStackIn.push();
         matrixStackIn.translate(0.0D, 0.375D, 0.0D);
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
+//        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
 
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
-        matrixStackIn.rotate(Vector3f.XN.rotationDegrees(getInAirRotation()));
-        matrixStackIn.rotate(Vector3f.XN.rotationDegrees(entityIn.rotationPitch));
+//        matrixStackIn.rotate(Vector3f.XN.rotationDegrees(entityIn.rotationPitch));
+//
+//        if (!entityIn.getOnGround()) {
+//            int rotationRight = entityIn.getDataManager().get(PlaneEntity.MOVEMENT_RIGHT);
+//            if (rotationRight != 0) {
+//                matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(rotationRight));
+//            }
+//
+//        }
+        matrixStackIn.translate(0, -0.5, 0);
 
-        if (!entityIn.getOnGround()) {
-            int rotationRight = entityIn.getDataManager().get(PlaneEntity.MOVEMENT_RIGHT);
-            if (rotationRight != 0) {
-                matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(rotationRight));
-            }
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
+        Quaternion q = MathUtil.lerpQ(partialTicks,entityIn.getQ_Prev(),entityIn.getQ_Lerp());
 
-        }
+        matrixStackIn.rotate(q);
+        matrixStackIn.translate(0, -0.6, 0);
         EntityModel<T> planeModel = getModel();
         IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(entityIn)));
-        matrixStackIn.translate(0, -1.1, 0);
         planeModel.setRotationAngles(entityIn, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -49,7 +58,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
 
         matrixStackIn.pop();
 
-        super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        super.render(entityIn, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
     protected abstract EntityModel<T> getModel();

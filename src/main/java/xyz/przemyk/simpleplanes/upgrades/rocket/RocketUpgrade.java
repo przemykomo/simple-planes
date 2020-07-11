@@ -8,14 +8,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -46,7 +42,7 @@ public class RocketUpgrade extends Upgrade {
     }
 
     public RocketUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.BOOSTER.get(),planeEntity);
+        super(SimplePlanesUpgrades.BOOSTER.get(), planeEntity);
     }
 
     @Override
@@ -64,7 +60,7 @@ public class RocketUpgrade extends Upgrade {
                     itemStack.shrink(1);
                 }
                 fuel = FUEL_PER_GUNPOWDER;
-                planeEntity.addFuel(FUEL_PER_GUNPOWDER*4);
+                planeEntity.addFuel(FUEL_PER_GUNPOWDER * 4);
             }
         }
         push();
@@ -72,6 +68,8 @@ public class RocketUpgrade extends Upgrade {
     }
 
     private void push() {
+
+
         if (fuel < 0)
             return;
         fuel -= 1;
@@ -89,24 +87,14 @@ public class RocketUpgrade extends Upgrade {
                 pitch -= 2;
             }
         }
-        planeEntity.rotationPitch+=pitch;
+//        planeEntity.rotationPitch+=pitch;
         Vector3d motion = getVec(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.1);
 
         planeEntity.setMotion(m.add(motion));
-
         if (!planeEntity.world.isRemote()) {
+            planeEntity.spawnParticle(ParticleTypes.FLAME,new Vector3f(-0.6f, 0f, -1.3f), 5);
+            planeEntity.spawnParticle(ParticleTypes.FLAME,new Vector3f(0.6f, 0f, -1.3f), 5);
 
-            ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.FLAME,
-                    planeEntity.getPosX() + 1.2 * MathHelper.sin((planeEntity.rotationYaw - 20) * ((float) Math.PI / 180F)),
-                    planeEntity.getPosY() + 0.5,
-                    planeEntity.getPosZ() - 1.2 * MathHelper.cos((planeEntity.rotationYaw - 20) * ((float) Math.PI / 180F)),
-                    5, 0, 0, 0, 0.0);
-
-            ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.FLAME,
-                    planeEntity.getPosX() + 1.2 * MathHelper.sin((planeEntity.rotationYaw + 20) * ((float) Math.PI / 180F)),
-                    planeEntity.getPosY() + 0.5,
-                    planeEntity.getPosZ() - 1.2 * MathHelper.cos((planeEntity.rotationYaw + 20) * ((float) Math.PI / 180F)),
-                    5, 0, 0, 0, 0.0);
         }
 
 
