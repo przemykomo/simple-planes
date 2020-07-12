@@ -194,6 +194,15 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     @Override
     public void tick() {
         super.tick();
+        double max_speed = 0.8;
+        double lift_factor = 1 / 12.0;
+        final double gravity = -0.10;
+        final double drag_mul = 0.99;
+        final double drag = 0.01;
+        final double drag_above_max = 0.05;
+        final double take_off_speed = 0.5;
+
+
         if (Double.isNaN(getMotion().length()))
             setMotion(Vector3d.ZERO);
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
@@ -247,7 +256,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
                     && moveForward > 0.0F && isPowered()) {
                 Vector3f m = transformPos(new Vector3f(0.00f, 0, 0.06f));
                 setMotion(getMotion().add(m.getX(), m.getY(), m.getZ()));
-                if (getMotion().length() > 0.4) {
+                if (getMotion().length() > take_off_speed) {
                     setMotion(getMotion().add(0, 0.05, 0));
                 }
             } else if (moveForward < 0) {
@@ -256,7 +265,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             }
         } else {
             groundTicks--;
-            float pitch = -0.1f;
+            float pitch = 0f;
             float x = 0.01f;
             if (moveForward > 0.0F) {
                 pitch = passengerSprinting ? 2 : 0.5f;
@@ -264,17 +273,6 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             } else if (moveForward < 0.0F) {
                 pitch = passengerSprinting ? -2 : -1;
 
-            } else {
-                if (MathUtil.degreesDifferenceAbs(180, rotationPitch) < 90) {
-                    pitch = 0.05f;
-                }
-                if (!isPowered()) {
-                    pitch *= 2;
-                }
-                //upside down
-                if (MathHelper.degreesDifferenceAbs(rotationRoll, 180) < 45) {
-                    pitch = 0.5f;
-                }
             }
             if (passengerSprinting && isPowered()) {
                 x *= 2;
@@ -291,39 +289,38 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
             rotationPitch += pitch;
             Vector3d motion = this.getMotion();
-            float maxspeed = 1.5f;
             double speed = motion.length();
             final double speed_x = getHorizontalLength(motion);
 
-            float neg = (float) Math.signum(motion.dotProduct(getVec(rotationYaw, rotationPitch)));
-            speed *= 0.995;
-            speed -= 0.001;
-            speed = Math.max(speed, 0);
-            if (speed > maxspeed) {
-                speed = MathHelper.lerp(0.1, speed, maxspeed);
-            }
-            Vector3f v = transformPos(new Vector3f(0, 0, (0.05f * neg)));
 
-            motion = motion.add(v.getX(), v.getY(), v.getZ());
+            speed *= drag_mul;
+            speed -= drag;
+            speed = Math.max(speed, 0);
+            if (speed > max_speed) {
+                speed = MathHelper.lerp(drag_above_max, speed, max_speed);
+            }
+            if (speed > 2 * max_speed) {
+                speed = MathHelper.lerp(2 * drag_above_max, speed, max_speed);
+            }
             if (speed == 0) {
                 motion = Vector3d.ZERO;
             }
             if (motion.length() > 0)
                 motion = motion.scale(speed / motion.length());
 
-            v = transformPos(new Vector3f(0, (float) (speed_x / 15), x * 2));
+            Vector3f v = transformPos(new Vector3f(0, (float) (speed_x * lift_factor), x * 2));
 
             motion = motion.add(v.getX(), v.getY(), v.getZ());
 
 
             pitch = MathUtil.getPitch(motion);
-            if (!getOnGround() && !isAboveWater()&&motion.length()>0.5) {
+            if (!getOnGround() && !isAboveWater() && motion.length() > 0.5) {
                 rotationPitch = lerpAngle180(0.05f, rotationPitch, pitch);
 
                 motion = MathUtil.getVec(MathUtil.getYaw(motion), lerpAngle180(0.2f, pitch, rotationPitch), motion.length());
 
             }
-            motion = motion.add(0, -0.15, 0);
+            motion = motion.add(0, gravity, 0);
 
             this.setMotion(motion);
 
@@ -455,7 +452,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
     protected void spawnSmokeParticles(int fuel) {
         spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.5f, -1), 0);
-        if (fuel > 4 && fuel < 100) {
+        if ((fuel > 4 && fuel < 100) || dataManager.get(BOOST_TICKS) > 0) {
             spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.5f, -1), 5);
         }
     }
@@ -748,7 +745,10 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
     @Override
     public void handleStartJump(int perc) {
-        dataManager.set(BOOST_TICKS, perc / 10 - 2);
+        dataManager.set(FUEL, getFuel() - 10);
+        if (perc > 80) {
+            dataManager.set(BOOST_TICKS, 20);
+        }
     }
 
     @Override
