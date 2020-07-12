@@ -196,8 +196,12 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         super.tick();
         if (Double.isNaN(getMotion().length()))
             setMotion(Vector3d.ZERO);
+        LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
 
-        Quaternion q = world.isRemote ? getQ_Lerp() : getQ();
+        Quaternion q;
+        if (world.isRemote && controllingPassenger == Minecraft.getInstance().player) {
+            q = getQ_Lerp();
+        } else q = getQ();
         Angels angels1 = ToEulerAngles(q);
         rotationPitch = (float) angels1.pitch;
         rotationYaw = (float) angels1.yaw;
@@ -219,7 +223,6 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             --fuel;
             dataManager.set(FUEL, fuel);
         }
-        LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         float moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
         final boolean passengerSprinting = controllingPassenger != null && controllingPassenger.isSprinting();
 
@@ -241,7 +244,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             setMotion(motion);
             rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
             if (((MathUtil.degreesDifferenceAbs(rotationPitch, 0) < 5) || (getMotion().length() > 0.4))
-                    && moveForward > 0.0F&&isPowered()) {
+                    && moveForward > 0.0F && isPowered()) {
                 Vector3f m = transformPos(new Vector3f(0.00f, 0, 0.06f));
                 setMotion(getMotion().add(m.getX(), m.getY(), m.getZ()));
                 if (getMotion().length() > 0.4) {
@@ -288,28 +291,42 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
             rotationPitch += pitch;
             Vector3d motion = this.getMotion();
-            int maxspeed = 1;
+            float maxspeed = 1.5f;
             double speed = motion.length();
             final double speed_x = getHorizontalLength(motion);
 
             float neg = (float) Math.signum(motion.dotProduct(getVec(rotationYaw, rotationPitch)));
-            speed *= 0.99;
+            speed *= 0.995;
+            speed -= 0.001;
+            speed = Math.max(speed, 0);
             if (speed > maxspeed) {
-                speed = MathHelper.lerp(0.2, speed, maxspeed);
+                speed = MathHelper.lerp(0.1, speed, maxspeed);
             }
             Vector3f v = transformPos(new Vector3f(0, 0, (0.05f * neg)));
 
             motion = motion.add(v.getX(), v.getY(), v.getZ());
-
+            if (speed == 0) {
+                motion = Vector3d.ZERO;
+            }
             if (motion.length() > 0)
                 motion = motion.scale(speed / motion.length());
-            v = transformPos(new Vector3f(0, (float) (speed_x / 10), x * 2));
+
+            v = transformPos(new Vector3f(0, (float) (speed_x / 15), x * 2));
 
             motion = motion.add(v.getX(), v.getY(), v.getZ());
 
-            motion = motion.add(0, -0.1, 0);
+
+            pitch = MathUtil.getPitch(motion);
+            if (!getOnGround() && !isAboveWater()&&motion.length()>0.5) {
+                rotationPitch = lerpAngle180(0.05f, rotationPitch, pitch);
+
+                motion = MathUtil.getVec(MathUtil.getYaw(motion), lerpAngle180(0.2f, pitch, rotationPitch), motion.length());
+
+            }
+            motion = motion.add(0, -0.15, 0);
 
             this.setMotion(motion);
+
         }
 
         //rotating (roll + yaw)
@@ -381,17 +398,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             passenger.rotationYaw -= turn;
         }
         Vector3d motion = getMotion();
-        double d = MathUtil.degreesDifferenceAbs(MathUtil.getYaw(motion), rotationYaw);
-        Vector3d vec;
-        if (d > 120) {
-            vec = Vector3d.ZERO;
-        } else {
-            vec = getVec(rotationYaw, 0);
-        }
-        vec = vec.scale(0.2);
-        vec = getVec(MathUtil.getYaw(motion.add(vec)), MathUtil.getPitch(motion));
-        vec = vec.scale(motion.length());
-        setMotion(vec);
+        setMotion(MathUtil.getVec(lerpAngle180(0.1f, MathUtil.getYaw(motion), rotationYaw), MathUtil.getPitch(motion), motion.length()));
+
 
         //upgrades
         HashSet<Upgrade> upgradesToRemove = new HashSet<>();

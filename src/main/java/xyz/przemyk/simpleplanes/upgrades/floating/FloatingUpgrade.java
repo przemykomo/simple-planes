@@ -1,11 +1,14 @@
 package xyz.przemyk.simpleplanes.upgrades.floating;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -26,9 +29,14 @@ public class FloatingUpgrade extends Upgrade {
 
             Vector3d motion = planeEntity.getMotion();
             double f = 0.98;
-            planeEntity.setMotion(motion.x * f, Math.max(motion.y, 0), motion.z * f);
-            if (planeEntity.areEyesInFluid(FluidTags.WATER) || planeEntity.getPosY() % 1 < 0.5) {
-                planeEntity.setMotion(planeEntity.getMotion().add(0,0.02,0));
+            double y = MathUtil.lerp(0.9,motion.y,Math.max(motion.y, 0));
+            planeEntity.setMotion(motion.x * f, y, motion.z * f);
+            if (planeEntity.world.getBlockState(new BlockPos(planeEntity.getPositionVec().add(0, 0.6, 0))).getBlock() == Blocks.WATER) {
+                planeEntity.setMotion(planeEntity.getMotion().add(0,0.005,0));
+            }
+            else
+            {
+                planeEntity.setMotion(planeEntity.getMotion().add(0,0.001,0));
             }
 
 
