@@ -137,7 +137,7 @@ public class SprayerUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(SPRAYER_MODEL.getRenderType(TEXTURE));
         if (planeEntity.isLarge()) {
             LARGE_SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

@@ -3,17 +3,17 @@ package xyz.przemyk.simpleplanes.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-
-import static xyz.przemyk.simpleplanes.MathUtil.ToEulerAngles;
 
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
@@ -28,18 +28,8 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
         matrixStackIn.push();
         matrixStackIn.translate(0.0D, 0.375D, 0.0D);
-//        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - entityYaw));
 
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
-//        matrixStackIn.rotate(Vector3f.XN.rotationDegrees(entityIn.rotationPitch));
-//
-//        if (!entityIn.getOnGround()) {
-//            int rotationRight = entityIn.getDataManager().get(PlaneEntity.MOVEMENT_RIGHT);
-//            if (rotationRight != 0) {
-//                matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(rotationRight));
-//            }
-//
-//        }
         matrixStackIn.translate(0, -0.5, 0);
 
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
@@ -53,7 +43,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
         for (Upgrade upgrade : entityIn.upgrades.values()) {
-            upgrade.render(matrixStackIn, bufferIn, packedLightIn);
+            upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
         }
 
         matrixStackIn.pop();

@@ -211,6 +211,9 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         if (world.isRemote && controllingPassenger == Minecraft.getInstance().player) {
             q = getQ_Lerp();
         } else q = getQ();
+
+        prevRotationYaw = rotationYaw;
+        prevRotationPitch = rotationPitch;
         Angels angels1 = ToEulerAngles(q);
         rotationPitch = (float) angels1.pitch;
         rotationYaw = (float) angels1.yaw;

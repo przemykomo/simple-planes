@@ -36,7 +36,7 @@ public class TNTUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         IVertexBuilder iVertexBuilder = buffer.getBuffer(TNT_MODEL.getRenderType(TEXTURE));
         TNT_MODEL.render(matrixStack, iVertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }

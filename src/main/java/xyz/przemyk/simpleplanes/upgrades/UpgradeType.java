@@ -37,7 +37,8 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
         this(upgradeItem, instanceSupplier, planeEntity -> true);
     }
 
-    public Item getUpgradeItem() {
-        return upgradeItem;
+    public boolean IsThisItem(Item item){
+        return item == this.upgradeItem;
     }
+
 }

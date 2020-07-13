@@ -2,6 +2,8 @@ package xyz.przemyk.simpleplanes.upgrades;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -37,7 +39,7 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     public boolean tick() {
         return false;
     }
-    public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight);
+    public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight,float partialticks);
 
     @Override
     public CompoundNBT serializeNBT() {
@@ -46,4 +48,6 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {}
+
+    public void onApply(ItemStack itemStack, PlayerEntity playerEntity){}
 }

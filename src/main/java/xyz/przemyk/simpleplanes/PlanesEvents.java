@@ -70,11 +70,13 @@ public class PlanesEvents {
             }
 
             for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-                if (itemStack.getItem() == upgradeType.getUpgradeItem() && planeEntity.canAddUpgrade(upgradeType)) {
+                if (upgradeType.IsThisItem(itemStack.getItem()) && planeEntity.canAddUpgrade(upgradeType)) {
+                    final Upgrade upgrade = upgradeType.instanceSupplier.apply(planeEntity);
+                    planeEntity.upgrades.put(upgradeType.getRegistryName(), upgrade);
+                    upgrade.onApply(itemStack,player);
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
                     }
-                    planeEntity.upgrades.put(upgradeType.getRegistryName(), upgradeType.instanceSupplier.apply(planeEntity));
                     planeEntity.upgradeChanged();
                 }
             }
