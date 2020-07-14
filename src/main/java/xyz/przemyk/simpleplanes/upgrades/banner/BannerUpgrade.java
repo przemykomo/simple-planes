@@ -43,6 +43,11 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
+    public ItemStack getItem() {
+        return banner;
+    }
+
+    @Override
     public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
         if (itemStack.getItem() instanceof BannerItem) {
             banner = itemStack;

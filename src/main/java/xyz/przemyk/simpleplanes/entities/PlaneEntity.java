@@ -156,11 +156,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             return false;
         }
         if (!(source.getTrueSource() instanceof PlayerEntity && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode)
-                && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+                && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)&& !this.removed) {
 
-//            for (Upgrade upgrade : upgrades.values()) {
-//                entityDropItem(upgrade.getType().getUpgradeItem());
-//            }
             dropItem();
         }
         if (!this.world.isRemote && !this.removed) {
@@ -173,7 +170,16 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     @SuppressWarnings("rawtypes")
     protected void dropItem() {
         ItemStack itemStack = new ItemStack(((AbstractPlaneEntityType) getType()).dropItem);
-        itemStack.setTagInfo("EntityTag", serializeNBT());
+        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+            itemStack.setTagInfo("EntityTag", serializeNBT());
+        } else {
+            for (Upgrade upgrade : upgrades.values()) {
+                final ItemStack item = upgrade.getItem();
+                if (item != null) {
+                    entityDropItem(item);
+                }
+            }
+        }
         entityDropItem(itemStack);
     }
 
@@ -201,6 +207,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         final double drag = 0.01;
         final double drag_above_max = 0.05;
         final double take_off_speed = 0.5;
+        final float push = 0.05f;
 
 
         if (Double.isNaN(getMotion().length()))
@@ -272,7 +279,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             float x = 0.01f;
             if (moveForward > 0.0F) {
                 pitch = passengerSprinting ? 2 : 0.5f;
-                x = 0.05f;
+                x = push;
             } else if (moveForward < 0.0F) {
                 pitch = passengerSprinting ? -2 : -1;
 
@@ -470,7 +477,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
                 particleCount, 0, 0, 0, 0.0);
     }
 
-    private Vector3f transformPos(Vector3f relPos) {
+    public Vector3f transformPos(Vector3f relPos) {
         Angels angels = MathUtil.ToEulerAngles(getQ());
         angels.yaw = -angels.yaw;
         angels.roll = -angels.roll;
@@ -631,6 +638,19 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
     // all code down is from boat, copyright???
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
+        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+            if (livingEntity instanceof PlayerEntity) {
+                final PlayerEntity playerEntity = (PlayerEntity) livingEntity;
+                if (this.getPassengers().size() == 0&& this.isAlive()) {
+                    ItemStack itemStack = getItemStack();
+
+                    playerEntity.addItemStackToInventory(itemStack);
+                    this.remove();
+                    return super.func_230268_c_(livingEntity);
+                }
+            }
+        }
+
         setPositionAndUpdate(this.getPosX(), this.getPosY(), this.getPosZ());
 
         Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, livingEntity.getWidth(), this.rotationYaw);
@@ -662,6 +682,14 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         }
 
         return super.func_230268_c_(livingEntity);
+    }
+
+    private ItemStack getItemStack() {
+        ItemStack itemStack = new ItemStack(((AbstractPlaneEntityType) getType()).dropItem);
+        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+            itemStack.setTagInfo("EntityTag", serializeNBT());
+        }
+        return itemStack;
     }
 
 

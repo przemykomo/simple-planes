@@ -3,6 +3,7 @@ package xyz.przemyk.simpleplanes.upgrades;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -23,6 +24,11 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
         return type;
     }
 
+    public ItemStack getItem() {
+        return type.upgradeItem.getDefaultInstance();
+    }
+
+
     /**
      * Called when passenger right clicks with item.
      * @param event The right click event
@@ -39,7 +45,7 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     public boolean tick() {
         return false;
     }
-    public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight,float partialticks);
+    public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks);
 
     @Override
     public CompoundNBT serializeNBT() {

@@ -70,7 +70,7 @@ public class PlanesEvents {
             }
 
             for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-                if (upgradeType.IsThisItem(itemStack.getItem()) && planeEntity.canAddUpgrade(upgradeType)) {
+                if (upgradeType.IsThisItem(itemStack) && planeEntity.canAddUpgrade(upgradeType)) {
                     final Upgrade upgrade = upgradeType.instanceSupplier.apply(planeEntity);
                     planeEntity.upgrades.put(upgradeType.getRegistryName(), upgrade);
                     upgrade.onApply(itemStack,player);

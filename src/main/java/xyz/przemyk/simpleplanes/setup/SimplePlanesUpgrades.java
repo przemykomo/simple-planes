@@ -1,6 +1,10 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.BannerItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -8,6 +12,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.TypedUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -37,7 +42,9 @@ public class SimplePlanesUpgrades {
 
     public static final RegistryObject<UpgradeType> BOOSTER = UPGRADE_TYPES.register("booster", () -> new UpgradeType(SimplePlanesItems.BOOSTER.get(), RocketUpgrade::new, planeEntity -> !planeEntity.isLarge()));
     public static final RegistryObject<UpgradeType> SHOOTER = UPGRADE_TYPES.register("shooter", () -> new UpgradeType(SimplePlanesItems.SHOOTER.get(), ShooterUpgrade::new));
+    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType.Custom(
+            itemStack -> itemStack.getItem() == Items.ELYTRA && EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING,itemStack)>0, FoldingUpgrade::new));
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", () -> {
-        return new TypedUpgradeType<>(BannerItem.class, planeEntity -> new BannerUpgrade(planeEntity));
+        return new UpgradeType.Custom(itemStack -> itemStack.getItem().getClass()== BannerItem.class, planeEntity -> new BannerUpgrade(planeEntity));
     });
 }
