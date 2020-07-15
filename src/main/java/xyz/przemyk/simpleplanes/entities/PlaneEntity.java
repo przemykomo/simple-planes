@@ -441,6 +441,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             }
             setMotion(MathUtil.getVec(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion, pitch, rotationPitch), motion.length()));
         }
+        double d3 = Math.sqrt(horizontalMag(this.getMotion()));
 
         if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) {
             if (getMotion().length() > 0)
@@ -452,10 +453,18 @@ public class PlaneEntity extends Entity implements IJumpingMount {
                 f = Math.max(f, 0.90F);
                 this.setMotion(this.getMotion().mul(f, 0.98D, f));
             }
+            if (this.collidedHorizontally && !this.world.isRemote && Config.PLANE_CRUSH.get()) {
+                double d10 = Math.sqrt(horizontalMag(this.getMotion()));
+                double d6 = d3 - d10;
+                float f2 = (float)(d6 * 10.0D - 5.0D);
+                if (f2 > 5.0F) {
+                    crush(f2);
+                }
+            }
+
         }
 
         //back to q
-//        q= ToQuaternion(rotationYaw,rotationPitch,rotationRoll);
         q.multiply(Vector3f.ZP.rotationDegrees((float) (rotationRoll - angelsOld.roll)));
         q.multiply(Vector3f.YP.rotationDegrees((float) (rotationYaw - angelsOld.yaw)));
         q.multiply(Vector3f.XN.rotationDegrees((float) (rotationPitch - angelsOld.pitch)));
@@ -612,20 +621,25 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 //        if (onGroundIn||isAboveWater()) {
             final float y1 = transformPos(new Vector3f(0, -1, 0)).getY();
             if (y1 > -0.5) {
-
-                this.onLivingFall(10, 1.0F);
-                if (!this.world.isRemote && !this.removed) {
-                    if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-                        dropItem();
-                    }
-                    this.remove();
-                }
+                crush((float) (getMotion().length()*5));
             }
 
             this.fallDistance = 0.0F;
         }
 
         this.lastYd = this.getMotion().y;
+    }
+
+    private void crush(float damage) {
+        if (!this.world.isRemote && !this.removed) {
+            for (Entity entity:getPassengers()){
+                entity.attackEntityFrom(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH,damage);
+            }
+            if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+                dropItem();
+            }
+            this.remove();
+        }
     }
 
     public boolean isCreative() {

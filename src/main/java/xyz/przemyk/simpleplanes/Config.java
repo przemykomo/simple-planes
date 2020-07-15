@@ -26,7 +26,7 @@ public class Config {
         EASY_FLIGHT = BUILDER.comment("easier flight mode")
                 .define("easyFlight", true);
         PLANE_CRUSH = BUILDER.comment("planes crash on bad landings")
-                .define("planeCrush", false);
+                .define("planeCrush", true);
         THIEF = BUILDER.comment("can players steal planes")
                 .define("plane_heist", true);
 

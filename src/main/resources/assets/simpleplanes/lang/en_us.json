@@ -30,5 +30,7 @@
     "description.simpleplanes.shooter": "Shoots fireworks or fire charges.",
     "description.simpleplanes.folding": "Plane returns to players inventory upon departure.",
 
-    "itemGroup.simpleplanes": "Simple Planes"
+    "itemGroup.simpleplanes": "Simple Planes",
+
+    "death.attack.plane_crush": "Died in a plane crush"
 }

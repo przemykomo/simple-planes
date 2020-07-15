@@ -50,7 +50,8 @@ public class BannerUpgrade extends Upgrade {
     @Override
     public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
         if (itemStack.getItem() instanceof BannerItem) {
-            banner = itemStack;
+            banner = itemStack.copy();
+            banner.setCount(1);
             planeEntity.upgradeChanged();
         }
     }
