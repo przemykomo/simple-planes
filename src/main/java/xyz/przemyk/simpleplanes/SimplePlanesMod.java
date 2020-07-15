@@ -7,6 +7,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.render.LargePlaneRenderer;
 import xyz.przemyk.simpleplanes.render.PlaneRenderer;
 import xyz.przemyk.simpleplanes.setup.*;
@@ -23,7 +24,7 @@ public class SimplePlanesMod {
         SimplePlanesItems.init();
         SimplePlanesUpgrades.init();
         SimplePlanesSounds.init();
-
+        PlaneNetworking.init();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }
 

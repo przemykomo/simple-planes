@@ -25,7 +25,7 @@ public class RocketUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
     public static int FUEL_PER_GUNPOWDER = 15;
 
-    private int fuel = 0;
+    public int fuel = 0;
 
     @SuppressWarnings("ConstantConditions")
     @Override

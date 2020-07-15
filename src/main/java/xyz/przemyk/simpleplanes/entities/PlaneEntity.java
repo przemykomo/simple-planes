@@ -3,7 +3,6 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,11 +29,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -156,7 +158,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             return false;
         }
         if (!(source.getTrueSource() instanceof PlayerEntity && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode)
-                && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)&& !this.removed) {
+                && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS) && !this.removed) {
 
             dropItem();
         }
@@ -200,14 +202,20 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     @Override
     public void tick() {
         super.tick();
-        double max_speed = 0.8;
-        double lift_factor = 1 / 12.0;
-        final double gravity = -0.10;
+        double max_speed = 0.5;
+        double lift_factor = 1 / 20.0;
+        float max_lift = 0.5f;
+        final double gravity = -0.06;
         final double drag_mul = 0.99;
         final double drag = 0.01;
         final double drag_above_max = 0.05;
         final double take_off_speed = 0.5;
         final float push = 0.05f;
+        float ground_push = 0.06f;
+        float passive_engine_push = 0.02f;
+
+        float motion_to_pitch = 0.05f;
+        float pitch_to_motion = 0.05f;
 
 
         if (Double.isNaN(getMotion().length()))
@@ -264,7 +272,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
             if (((MathUtil.degreesDifferenceAbs(rotationPitch, 0) < 5) || (getMotion().length() > 0.4))
                     && moveForward > 0.0F && isPowered()) {
-                Vector3f m = transformPos(new Vector3f(0.00f, 0, 0.06f));
+                Vector3f m = transformPos(new Vector3f(0.00f, 0, ground_push));
                 setMotion(getMotion().add(m.getX(), m.getY(), m.getZ()));
                 if (getMotion().length() > take_off_speed) {
                     setMotion(getMotion().add(0, 0.05, 0));
@@ -276,7 +284,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         } else {
             groundTicks--;
             float pitch = 0f;
-            float x = 0.01f;
+            float x = passive_engine_push;
             if (moveForward > 0.0F) {
                 pitch = passengerSprinting ? 2 : 0.5f;
                 x = push;
@@ -307,10 +315,9 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             speed -= drag;
             speed = Math.max(speed, 0);
             if (speed > max_speed) {
-                speed = MathHelper.lerp(drag_above_max, speed, max_speed);
-            }
-            if (speed > 2 * max_speed) {
-                speed = MathHelper.lerp(2 * drag_above_max, speed, max_speed);
+                double i = (speed / max_speed);
+//                i = i * i;
+                speed = MathHelper.lerp(drag_above_max * i, speed, max_speed);
             }
             if (speed == 0) {
                 motion = Vector3d.ZERO;
@@ -318,18 +325,11 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             if (motion.length() > 0)
                 motion = motion.scale(speed / motion.length());
 
-            Vector3f v = transformPos(new Vector3f(0, (float) (speed_x * lift_factor), x * 2));
+            Vector3f v = transformPos(new Vector3f(0, Math.min((float) (speed_x * lift_factor), max_lift), x * 2));
 
             motion = motion.add(v.getX(), v.getY(), v.getZ());
 
 
-            pitch = MathUtil.getPitch(motion);
-            if (!getOnGround() && !isAboveWater() && motion.length() > 0.5) {
-                rotationPitch = lerpAngle180(0.05f, rotationPitch, pitch);
-
-                motion = MathUtil.getVec(MathUtil.getYaw(motion), lerpAngle180(0.2f, pitch, rotationPitch), motion.length());
-
-            }
             motion = motion.add(0, gravity, 0);
 
             this.setMotion(motion);
@@ -404,8 +404,6 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         for (Entity passenger : getPassengers()) {
             passenger.rotationYaw -= turn;
         }
-        Vector3d motion = getMotion();
-        setMotion(MathUtil.getVec(lerpAngle180(0.1f, MathUtil.getYaw(motion), rotationYaw), MathUtil.getPitch(motion), motion.length()));
 
 
         //upgrades
@@ -430,6 +428,19 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         if (oldMotion.length() >= getMotion().length() && oldMotion.length() < l) {
             this.setMotion(Vector3d.ZERO);
         }
+        Vector3d motion = getMotion();
+        if (!getOnGround() && !isAboveWater() && motion.length() > 0.5) {
+            float yaw = MathUtil.getYaw(motion);
+            float pitch = MathUtil.getPitch(motion);
+            if(degreesDifferenceAbs(rotationRoll,0)<70)
+                rotationPitch = lerpAngle180(motion_to_pitch,rotationPitch,pitch);
+            else if(degreesDifferenceAbs(rotationRoll,0)<70)
+            {
+                rotationPitch = lerpAngle180(motion_to_pitch,rotationPitch,-pitch);
+
+            }
+            setMotion(MathUtil.getVec(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion, pitch, rotationPitch), motion.length()));
+        }
 
         if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) {
             if (getMotion().length() > 0)
@@ -444,6 +455,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         }
 
         //back to q
+//        q= ToQuaternion(rotationYaw,rotationPitch,rotationRoll);
         q.multiply(Vector3f.ZP.rotationDegrees((float) (rotationRoll - angelsOld.roll)));
         q.multiply(Vector3f.YP.rotationDegrees((float) (rotationYaw - angelsOld.yaw)));
         q.multiply(Vector3f.XN.rotationDegrees((float) (rotationPitch - angelsOld.pitch)));
@@ -453,6 +465,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         if (world.isRemote) {
             setQ_lerp(q);
+            PlaneNetworking.INSTANCE.sendToServer(getQ());
         }
 
         this.tickLerp();
@@ -641,7 +654,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
             if (livingEntity instanceof PlayerEntity) {
                 final PlayerEntity playerEntity = (PlayerEntity) livingEntity;
-                if (this.getPassengers().size() == 0&& this.isAlive()) {
+
+                if (!playerEntity.isCreative() && this.getPassengers().size() == 0 && this.isAlive()) {
                     ItemStack itemStack = getItemStack();
 
                     playerEntity.addItemStackToInventory(itemStack);
@@ -771,14 +785,15 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
     @Override
     public boolean canJump() {
-        return true;
+        return upgrades.containsKey(SimplePlanesUpgrades.BOOSTER.getId());
     }
 
     @Override
     public void handleStartJump(int perc) {
         dataManager.set(FUEL, getFuel() - 10);
         if (perc > 80) {
-            dataManager.set(BOOST_TICKS, 20);
+            RocketUpgrade upgrade = (RocketUpgrade) upgrades.get(SimplePlanesUpgrades.BOOSTER.getId());
+            upgrade.fuel = 20;
         }
     }
 

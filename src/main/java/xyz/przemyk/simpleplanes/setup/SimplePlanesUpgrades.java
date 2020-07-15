@@ -1,16 +1,13 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.BannerItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.upgrades.TypedUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
