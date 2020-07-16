@@ -12,6 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -130,6 +131,19 @@ public class PlanesEvents {
                 clientPlayerEntity.serverSprintState = flag;
             }
 
+        }
+    }
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
+        final Entity entity = event.getInfo().getRenderViewEntity();
+        if (entity instanceof ClientPlayerEntity &&
+                entity.getRidingEntity() instanceof PlaneEntity && !event.getInfo().isThirdPerson()) {
+            PlaneEntity planeEntity = (PlaneEntity) entity.getRidingEntity();
+            ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
+            double partialTicks = event.getRenderPartialTicks();
+            event.setPitch(-(float) MathUtil.lerpAngle(partialTicks,planeEntity.prevRotationPitch,planeEntity.rotationPitch));
+            event.setYaw((float) MathUtil.lerpAngle(partialTicks,planeEntity.prevRotationYaw,planeEntity.rotationYaw));
+            event.setRoll(-(float) MathUtil.lerpAngle(partialTicks,planeEntity.prevRotationRoll,planeEntity.rotationRoll));
         }
     }
 

@@ -72,6 +72,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
     private float nextStepDistance;
     private float nextFlap;
+    public float rotationRoll;
+    public float prevRotationRoll;
 
 
     //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
@@ -111,6 +113,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     public float getMaxSpeed() {
         return dataManager.get(MAX_SPEED);
     }
+
     public void setMaxSpeed(float max_speed) {
         dataManager.set(MAX_SPEED, max_speed);
     }
@@ -118,6 +121,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     public Quaternion getQ() {
         return dataManager.get(Q).copy();
     }
+
     public void setQ(Quaternion q) {
         dataManager.set(Q, q);
     }
@@ -137,7 +141,6 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     public void setQ_prev(Quaternion q) {
         Q_Prev = q;
     }
-
 
 
     public boolean isPowered() {
@@ -213,6 +216,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     @Override
     public void tick() {
         super.tick();
+
         if (Double.isNaN(getMotion().length()))
             setMotion(Vector3d.ZERO);
 
@@ -224,12 +228,17 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             return;
         }
         double max_speed = getMaxSpeed();
-        double take_off_speed = max_speed*0.9;
+        double take_off_speed = max_speed * 0.9;
         float max_lift = 0.05f;
 
         double lift_factor = 1 / 15.0;
 
-        final double gravity = -0.06;
+        double gravity = -0.06;
+        if (this.hasNoGravity()) {
+            gravity = 0;
+            max_lift = 0;
+        }
+
         final double drag_mul = 0.99;
         final double drag = 0.01;
         final double drag_above_max = 0.05;
@@ -242,6 +251,9 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
 
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
+        float moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
+        boolean passengerSprinting = controllingPassenger != null && controllingPassenger.isSprinting();
+        Boolean easy = Config.EASY_FLIGHT.get();
 
         Quaternion q;
         if (world.isRemote) {
@@ -250,10 +262,11 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
+        prevRotationRoll = rotationRoll;
         Angels angels1 = ToEulerAngles(q);
         rotationPitch = (float) angels1.pitch;
         rotationYaw = (float) angels1.yaw;
-        float rotationRoll = (float) angels1.roll;
+        rotationRoll = (float) angels1.roll;
         Angels angelsOld = angels1.copy();
         if (isPowered()) {
             if (poweredTicks % 50 == 0) {
@@ -271,8 +284,6 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             --fuel;
             dataManager.set(FUEL, fuel);
         }
-        float moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
-        final boolean passengerSprinting = controllingPassenger != null && controllingPassenger.isSprinting();
 
         //pitch + movement speed
         if (getOnGround() || isAboveWater()) {
@@ -364,7 +375,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         float f1 = 1f;
         double turn = 0;
 
-        if (getOnGround() || isAboveWater() || !passengerSprinting) {
+        if (getOnGround() || isAboveWater() || !passengerSprinting||easy) {
             int yawdiff = 2;
             float roll = rotationRoll;
             if (degreesDifferenceAbs(rotationPitch, 0) < 45) {
@@ -450,7 +461,11 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             float pitch = MathUtil.getPitch(motion);
             if (degreesDifferenceAbs(rotationRoll, 0) < 70)
                 rotationPitch = lerpAngle180(motion_to_pitch, rotationPitch, pitch);
-            setMotion(MathUtil.getVec(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion*motion.length(), pitch, rotationPitch), motion.length()));
+            if(easy)
+            {
+                rotationPitch = MathUtil.clamp(rotationPitch,-70,70);
+            }
+            setMotion(MathUtil.getVec(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch), motion.length()));
         }
         //do not move
         double l = 0.02;
@@ -463,7 +478,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             double speed_before = Math.sqrt(horizontalMag(this.getMotion()));
             if (getMotion().length() > l) {
                 boolean b = this.onGround;
-                this.onGround =true;
+                this.onGround = true;
                 this.move(MoverType.SELF, this.getMotion());
             }
             if (this.onGround) {
@@ -473,7 +488,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
                 f = Math.max(f, 0.90F);
                 this.setMotion(this.getMotion().mul(f, 0.98D, f));
             }
-            if (this.collidedHorizontally && !this.world.isRemote && Config.PLANE_CRUSH.get()&&groundTicks<=0) {
+            if (this.collidedHorizontally && !this.world.isRemote && Config.PLANE_CRUSH.get() && groundTicks <= 0) {
                 double speed_after = Math.sqrt(horizontalMag(this.getMotion()));
                 double speed_diff = speed_before - speed_after;
                 float f2 = (float) (speed_diff * 10.0D - 5.0D);
@@ -492,7 +507,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         setQ_prev(getQ_Client());
         setQ(q);
 
-        if (world.isRemote&&canPassengerSteer()) {
+        if (world.isRemote && canPassengerSteer()) {
             setQ_Client(q);
 
             PlaneNetworking.INSTANCE.sendToServer(getQ());
@@ -737,7 +752,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         ItemStack itemStack = new ItemStack(((AbstractPlaneEntityType) getType()).dropItem);
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
             itemStack.setTagInfo("EntityTag", serializeNBT());
-            itemStack.addEnchantment(Enchantments.MENDING,1);
+            itemStack.addEnchantment(Enchantments.MENDING, 1);
         }
         return itemStack;
     }
@@ -770,9 +785,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             setQ_prev(getQ_Client());
             setQ_Client(lerpQ(1f / lerpStepsQ, getQ_Client(), getQ()));
             --this.lerpStepsQ;
-        }
-        else if(this.lerpStepsQ==0)
-        {
+        } else if (this.lerpStepsQ == 0) {
             setQ_prev(getQ_Client());
             setQ_Client(getQ());
             --this.lerpStepsQ;
@@ -833,10 +846,14 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
     @Override
     public void handleStartJump(int perc) {
-        dataManager.set(FUEL, getFuel() - 10);
-        if (perc > 80) {
-            RocketUpgrade upgrade = (RocketUpgrade) upgrades.get(SimplePlanesUpgrades.BOOSTER.getId());
-            upgrade.fuel = 20;
+        int cost = 10;
+        int fuel = getFuel();
+        if (fuel > cost) {
+            dataManager.set(FUEL, fuel - cost);
+            if (perc > 80) {
+                RocketUpgrade upgrade = (RocketUpgrade) upgrades.get(SimplePlanesUpgrades.BOOSTER.getId());
+                upgrade.fuel = 20;
+            }
         }
     }
 

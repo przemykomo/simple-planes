@@ -23,7 +23,7 @@ public class RocketUpgrade extends Upgrade {
 
     public static final RocketModel ROCKET_MODEL = new RocketModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
-    public static int FUEL_PER_GUNPOWDER = 15;
+    public static int FUEL_PER_GUNPOWDER = 30;
 
     public int fuel = 0;
 
@@ -60,7 +60,7 @@ public class RocketUpgrade extends Upgrade {
                     itemStack.shrink(1);
                 }
                 fuel = FUEL_PER_GUNPOWDER;
-                planeEntity.addFuel(FUEL_PER_GUNPOWDER * 4);
+                planeEntity.addFuel(FUEL_PER_GUNPOWDER * 2);
             }
         }
         push();
@@ -79,7 +79,6 @@ public class RocketUpgrade extends Upgrade {
         PlayerEntity player = planeEntity.getPlayer();
         if (player != null) {
             if (player.moveForward > 0.0F) {
-                pitch += 1;
                 if (player.isSprinting()) {
                     pitch += 2;
                 }
@@ -87,8 +86,8 @@ public class RocketUpgrade extends Upgrade {
                 pitch -= 2;
             }
         }
-//        planeEntity.rotationPitch+=pitch;
-        Vector3d motion = getVec(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.1);
+        planeEntity.rotationPitch+=pitch;
+        Vector3d motion = getVec(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.2);
 
         planeEntity.setMotion(m.add(motion));
         if (!planeEntity.world.isRemote()) {
