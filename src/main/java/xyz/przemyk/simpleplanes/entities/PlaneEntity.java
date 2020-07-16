@@ -56,6 +56,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     //negative values mean left
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Integer> BOOST_TICKS = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
     public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, QUATERNION_SERIALIZER);
     public Quaternion Q_Client = Quaternion.ONE.copy();
     public Quaternion Q_Prev = Quaternion.ONE.copy();
@@ -77,6 +78,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
         this.stepHeight = 1.5f;
+        setMaxSpeed(0.25f);
     }
 
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
@@ -91,6 +93,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         dataManager.register(BOOST_TICKS, 0);
         dataManager.register(UPGRADES_NBT, new CompoundNBT());
         dataManager.register(Q, Quaternion.ONE);
+        dataManager.register(MAX_SPEED, 0.25f);
     }
 
     public void addFuel() {
@@ -105,8 +108,18 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         return dataManager.get(FUEL);
     }
 
+    public float getMaxSpeed() {
+        return dataManager.get(MAX_SPEED);
+    }
+    public void setMaxSpeed(float max_speed) {
+        dataManager.set(MAX_SPEED, max_speed);
+    }
+
     public Quaternion getQ() {
         return dataManager.get(Q).copy();
+    }
+    public void setQ(Quaternion q) {
+        dataManager.set(Q, q);
     }
 
     public Quaternion getQ_Client() {
@@ -125,9 +138,6 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         Q_Prev = q;
     }
 
-    public void setQ(Quaternion q) {
-        dataManager.set(Q, q);
-    }
 
 
     public boolean isPowered() {
@@ -213,14 +223,16 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
             return;
         }
-        double max_speed = 0.5;
-        double lift_factor = 1 / 20.0;
-        float max_lift = 0.5f;
+        double max_speed = getMaxSpeed();
+        double take_off_speed = max_speed*0.9;
+        float max_lift = 0.05f;
+
+        double lift_factor = 1 / 15.0;
+
         final double gravity = -0.06;
         final double drag_mul = 0.99;
         final double drag = 0.01;
         final double drag_above_max = 0.05;
-        final double take_off_speed = 0.5;
         final float push = 0.05f;
         float ground_push = 0.06f;
         float passive_engine_push = 0.02f;

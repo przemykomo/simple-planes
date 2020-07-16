@@ -20,10 +20,12 @@ public class LargePlaneEntity extends PlaneEntity {
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
+        setMaxSpeed(0.2f);
     }
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z) {
         super(entityTypeIn, worldIn, x, y, z);
+        setMaxSpeed(0.2f);
     }
 
     @Override

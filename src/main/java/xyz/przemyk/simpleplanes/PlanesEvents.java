@@ -124,7 +124,6 @@ public class PlanesEvents {
             boolean flag = Minecraft.getInstance().gameSettings.keyBindSprint.isKeyDown();
             final ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) player;
             clientPlayerEntity.setSprinting(flag);
-//            clientPlayerEntity.
             if (flag != clientPlayerEntity.serverSprintState||Math.random()<0.1) {
                 CEntityActionPacket.Action centityactionpacket$action = flag ? CEntityActionPacket.Action.START_SPRINTING : CEntityActionPacket.Action.STOP_SPRINTING;
                 clientPlayerEntity.connection.sendPacket(new CEntityActionPacket(player, centityactionpacket$action));
