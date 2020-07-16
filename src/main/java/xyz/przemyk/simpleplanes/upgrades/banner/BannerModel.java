@@ -30,6 +30,9 @@ public class BannerModel {
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90));
             matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
             matrixStackIn.translate(0.7, 2.35, 0.05);
+            if(planeEntity.isLarge()) {
+                matrixStackIn.translate(0, 1.1, 0);
+            }
             matrixStackIn.scale(0.5f, 0.5f, 0.5f);
             final BannerItem item = (BannerItem) banner.getItem();
             BANNER_TE.loadFromItemStack(banner, item.getColor());

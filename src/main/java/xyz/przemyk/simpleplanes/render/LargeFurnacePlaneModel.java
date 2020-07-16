@@ -111,7 +111,7 @@ public class LargeFurnacePlaneModel extends EntityModel<LargePlaneEntity> {
     @Override
     public void setRotationAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
         if (entity.isPowered()) {
-            bone_propeller.rotateAngleZ = (entity.ticksExisted % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+            bone_propeller.rotateAngleZ = ((entity.ticksExisted+limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
         } else {
             bone_propeller.rotateAngleZ = 1;
         }

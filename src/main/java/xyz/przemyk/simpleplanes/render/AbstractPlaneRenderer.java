@@ -31,7 +31,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         matrixStackIn.translate(0, -0.5, 0);
 
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
-        Quaternion q = MathUtil.lerpQ(partialTicks,entityIn.getQ_Prev(),entityIn.getQ_Lerp());
+        Quaternion q = MathUtil.lerpQ(partialTicks,entityIn.getQ_Prev(),entityIn.getQ_Client());
 
         matrixStackIn.rotate(q);
         matrixStackIn.translate(0, -0.6, 0);

@@ -30,7 +30,9 @@ public class PlaneNetworking {
             PlayerEntity ServerPlayerEntity = ctx.get().getSender(); // the client that sent this packet
             if (ServerPlayerEntity != null && ServerPlayerEntity.getRidingEntity() instanceof PlaneEntity) {
                 PlaneEntity planeEntity = (PlaneEntity) ServerPlayerEntity.getRidingEntity();
+
                 planeEntity.setQ(msg);
+                planeEntity.setQ_Client(msg);
             }
         });
         ctx.get().setPacketHandled(true);

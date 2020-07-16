@@ -8,6 +8,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -63,11 +64,12 @@ public class LargePlaneEntity extends PlaneEntity {
             if (passengers.indexOf(passenger) == 0) {
                 super.updatePassenger(passenger);
             } else {
-                float offset = -1.0f;
-                float offsetY = (float) (this.getMountedYOffset() + passenger.getYOffset());
-
-                Vector3d vec3d = (new Vector3d(offset, 0.0D, 0.0D)).rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F) - ((float)Math.PI / 2F));
-                passenger.setPosition(this.getPosX() + vec3d.x, this.getPosY() + offsetY, this.getPosZ() + vec3d.z);
+                Vector3f pos = transformPos(new Vector3f(0, 0, -1));
+//                float offset = -1.0f;
+//                float offsetY = (float) (this.getMountedYOffset() + passenger.getYOffset());
+//
+//                Vector3d vec3d = (new Vector3d(offset, 0.0D, 0.0D)).rotateYaw(-this.rotationYaw * ((float)Math.PI / 180F) - ((float)Math.PI / 2F));
+                passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
             }
         } else {
             super.updatePassenger(passenger);

@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -24,8 +24,6 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.HashSet;
-
-import static xyz.przemyk.simpleplanes.MathUtil.ToEulerAngles;
 
 @Mod.EventBusSubscriber
 public class PlanesEvents {
@@ -88,8 +86,8 @@ public class PlanesEvents {
     public static boolean playerRotationNeedToPop = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPre(RenderPlayerEvent.Pre event) {
-        Entity entity = event.getPlayer().getLowestRidingEntity();
+    public static void onRenderPre(RenderLivingEvent.Pre event) {
+        Entity entity = event.getEntity().getLowestRidingEntity();
         if (entity instanceof PlaneEntity) {
 
             PlaneEntity planeEntity = (PlaneEntity) entity;
@@ -97,7 +95,7 @@ public class PlanesEvents {
             matrixStack.push();
             playerRotationNeedToPop = true;
             matrixStack.translate(0, 0.7, 0);
-            Quaternion q =MathUtil.lerpQ(event.getPartialRenderTick(),planeEntity.getQ_Prev(),planeEntity.getQ_Lerp());
+            Quaternion q =MathUtil.lerpQ(event.getPartialRenderTick(),planeEntity.getQ_Prev(),planeEntity.getQ_Client());
 //            Quaternion q =planeEntity.getQ();
             q.set(q.getX(),-q.getY(),-q.getZ(),q.getW());
             matrixStack.rotate(q);
@@ -110,7 +108,7 @@ public class PlanesEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPost(RenderPlayerEvent.Post event) {
+    public static void onRenderPost(RenderLivingEvent.Post event) {
         if (playerRotationNeedToPop) {
             playerRotationNeedToPop = false;
             event.getMatrixStack().pop();
