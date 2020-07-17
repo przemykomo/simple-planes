@@ -49,7 +49,8 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
 
         double y1 = -0.7D;
-        boolean fpv = Minecraft.getInstance().player != null && Minecraft.getInstance().player == entityIn.getControllingPassenger() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
+//        boolean fpv = Minecraft.getInstance().player != null && Minecraft.getInstance().player == entityIn.getControllingPassenger() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
+        boolean fpv = Minecraft.getInstance().player != null &&entityIn.isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
         if (fpv) {
             matrixStackIn.translate(0.0D, y1, 0.0D);
         }

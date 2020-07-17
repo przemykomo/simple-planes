@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -74,6 +75,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     private float nextFlap;
     public float rotationRoll;
     public float prevRotationRoll;
+    private float deltaRotation;
+    private float deltaRotationLeft;
 
 
     //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
@@ -219,11 +222,31 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         if (Double.isNaN(getMotion().length()))
             setMotion(Vector3d.ZERO);
+        prevRotationYaw = rotationYaw;
+        prevRotationPitch = rotationPitch;
+        prevRotationRoll = rotationRoll;
 
         if (world.isRemote && !canPassengerSteer()) {
 
             tickLerp();
             this.setMotion(Vector3d.ZERO);
+            Angels angels1 = ToEulerAngles(getQ_Client());
+            rotationPitch = (float) angels1.pitch;
+            rotationYaw = (float) angels1.yaw;
+            rotationRoll = (float) angels1.roll;
+
+            float d =MathUtil.wrapSubtractDegrees(prevRotationYaw,this.rotationYaw);
+            if(rotationRoll>=90&&prevRotationRoll<=90){
+                d=0;
+            }
+            deltaRotationLeft+=d;
+            deltaRotationLeft = wrapDegrees(deltaRotationLeft);
+            int diff = 5;
+            if(world.isRemote && canPassengerSteer() && (Minecraft.getInstance()).gameSettings.thirdPersonView==0){
+                diff=180;
+            }
+            deltaRotation = Math.min(abs(deltaRotationLeft), diff)*Math.signum(deltaRotationLeft);
+            deltaRotationLeft-=deltaRotation;
 
             return;
         }
@@ -243,7 +266,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         final double drag = 0.01;
         final double drag_above_max = 0.05;
         final float push = 0.05f;
-        float ground_push = 0.06f;
+        float ground_push = 0.03f;
         float passive_engine_push = 0.02f;
 
         float motion_to_pitch = 0.05f;
@@ -260,14 +283,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             q = getQ_Client();
         } else q = getQ();
 
-        prevRotationYaw = rotationYaw;
-        prevRotationPitch = rotationPitch;
-        prevRotationRoll = rotationRoll;
-        Angels angels1 = ToEulerAngles(q);
-        rotationPitch = (float) angels1.pitch;
-        rotationYaw = (float) angels1.yaw;
-        rotationRoll = (float) angels1.roll;
-        Angels angelsOld = angels1.copy();
+
+        Angels angelsOld = ToEulerAngles(q).copy();
         if (isPowered()) {
             if (poweredTicks % 50 == 0) {
                 playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.1F, 1.0F);
@@ -287,9 +304,9 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         //pitch + movement speed
         if (getOnGround() || isAboveWater()) {
-            if (groundTicks == 0)
-                groundTicks = 20;
-            else {
+            if (groundTicks < 0)
+                groundTicks = 10;
+            else if (groundTicks >= 0){
                 groundTicks--;
             }
             float pitch = isLarge() ? 10 : 15;
@@ -307,10 +324,10 @@ public class PlaneEntity extends Entity implements IJumpingMount {
                 Vector3f m = transformPos(new Vector3f(0.00f, 0, ground_push));
                 setMotion(getMotion().add(m.getX(), m.getY(), m.getZ()));
                 if (getMotion().length() > take_off_speed) {
-                    setMotion(getMotion().add(0, 0.05, 0));
+                    setMotion(getMotion().add(0, 0.01, 0));
                 }
             } else if (moveForward < 0) {
-                Vector3d m = getVec(rotationYaw, 0, -0.05);
+                Vector3d m = getVec(rotationYaw, 0, -ground_push);
                 setMotion(getMotion().add(m));
             }
         } else {
@@ -433,9 +450,6 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         rotationYaw -= turn;
         if (MathUtil.degreesDifferenceAbs(rotationRoll, 180) < 45)
             turn = -turn;
-        for (Entity passenger : getPassengers()) {
-            passenger.rotationYaw -= turn;
-        }
 
 
         //upgrades
@@ -506,6 +520,24 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         q.normalize();
         setQ_prev(getQ_Client());
         setQ(q);
+        Angels angels1 = ToEulerAngles(q);
+        rotationPitch = (float) angels1.pitch;
+        rotationYaw = (float) angels1.yaw;
+        rotationRoll = (float) angels1.roll;
+
+        float d =MathUtil.wrapSubtractDegrees(prevRotationYaw,this.rotationYaw);
+        if(rotationRoll>=90&&prevRotationRoll<=90){
+            d=0;
+        }
+        deltaRotationLeft+=d;
+        deltaRotationLeft = wrapDegrees(deltaRotationLeft);
+        int diff = 5;
+        if(world.isRemote && canPassengerSteer() && (Minecraft.getInstance()).gameSettings.thirdPersonView==0){
+            diff=180;
+        }
+        deltaRotation = Math.min(abs(deltaRotationLeft), diff)*Math.signum(deltaRotationLeft);
+        deltaRotationLeft-=deltaRotation;
+
 
         if (world.isRemote && canPassengerSteer()) {
             setQ_Client(q);
@@ -536,7 +568,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     }
 
     public Vector3f transformPos(Vector3f relPos) {
-        Angels angels = MathUtil.ToEulerAngles(getQ());
+        Angels angels = MathUtil.ToEulerAngles(getQ_Client());
         angels.yaw = -angels.yaw;
         angels.roll = -angels.roll;
         relPos.transform(MathUtil.ToQuaternion(angels.yaw, angels.pitch, angels.roll));
@@ -682,7 +714,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     }
 
     public boolean getOnGround() {
-        return onGround || groundTicks > 0;
+        return onGround || groundTicks > 1;
     }
 
     public boolean isAboveWater() {
@@ -697,6 +729,43 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         return false;
     }
 
+    public void updatePassenger(Entity passenger) {
+        if (this.isPassenger(passenger)) {
+            super.updatePassenger(passenger);
+//            if (1 == 1) {
+//                return;
+//            }
+
+            passenger.rotationYaw += this.deltaRotation;
+            passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotation);
+
+            this.applyYawToEntity(passenger);
+            if (passenger instanceof AnimalEntity && this.getPassengers().size() > 1) {
+                int j = passenger.getEntityId() % 2 == 0 ? 90 : 270;
+                passenger.setRenderYawOffset(((AnimalEntity)passenger).renderYawOffset + (float)j);
+                passenger.setRotationYawHead(passenger.getRotationYawHead() + (float)j);
+            }
+
+        }
+    }
+    /**
+     * Applies this boat's yaw to the given entity. Used to update the orientation of its passenger.
+     */
+    protected void applyYawToEntity(Entity entityToUpdate) {
+//        entityToUpdate.setRenderYawOffset(lerpAngle(0.01f,((LivingEntity)entityToUpdate).renderYawOffset,entityToUpdate.rotationYaw));
+
+        entityToUpdate.setRenderYawOffset(this.rotationYaw);
+
+        float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
+        float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
+        float perc = (f1 - f) * 0.5f;
+
+        entityToUpdate.prevRotationYaw =(entityToUpdate.prevRotationYaw + perc);
+        entityToUpdate.rotationYaw = (entityToUpdate.rotationYaw + perc);
+
+//        entityToUpdate.setRotationYawHead(lerpAngle180(0.9f,entityToUpdate.getRotationYawHead(),entityToUpdate.rotationYaw));
+//        entityToUpdate.setRotationYawHead(entityToUpdate.rotationYaw);
+    }
 
     // all code down is from boat, copyright???
     public Vector3d func_230268_c_(LivingEntity livingEntity) {

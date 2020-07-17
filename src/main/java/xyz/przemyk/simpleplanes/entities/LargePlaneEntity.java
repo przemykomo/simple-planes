@@ -66,6 +66,8 @@ public class LargePlaneEntity extends PlaneEntity {
             if (passengers.indexOf(passenger) == 0) {
                 super.updatePassenger(passenger);
             } else {
+                super.updatePassenger(passenger);
+
                 Vector3f pos = transformPos(new Vector3f(0, 0, -1));
 //                float offset = -1.0f;
 //                float offsetY = (float) (this.getMountedYOffset() + passenger.getYOffset());
