@@ -13,6 +13,11 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
 
     private final UpgradeType type;
+
+    public PlaneEntity getPlaneEntity() {
+        return planeEntity;
+    }
+
     protected final PlaneEntity planeEntity;
 
     public Upgrade(UpgradeType type, PlaneEntity planeEntity) {

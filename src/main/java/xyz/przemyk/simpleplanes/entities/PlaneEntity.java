@@ -82,7 +82,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
-        this.stepHeight = 1.5f;
+        this.stepHeight = 0.99f;
         setMaxSpeed(0.25f);
     }
 
@@ -235,18 +235,18 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             rotationYaw = (float) angels1.yaw;
             rotationRoll = (float) angels1.roll;
 
-            float d =MathUtil.wrapSubtractDegrees(prevRotationYaw,this.rotationYaw);
-            if(rotationRoll>=90&&prevRotationRoll<=90){
-                d=0;
+            float d = MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
+            if (rotationRoll >= 90 && prevRotationRoll <= 90) {
+                d = 0;
             }
-            deltaRotationLeft+=d;
+            deltaRotationLeft += d;
             deltaRotationLeft = wrapDegrees(deltaRotationLeft);
             int diff = 5;
-            if(world.isRemote && canPassengerSteer() && (Minecraft.getInstance()).gameSettings.thirdPersonView==0){
-                diff=180;
+            if (world.isRemote && canPassengerSteer() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
+                diff = 180;
             }
-            deltaRotation = Math.min(abs(deltaRotationLeft), diff)*Math.signum(deltaRotationLeft);
-            deltaRotationLeft-=deltaRotation;
+            deltaRotation = Math.min(abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
+            deltaRotationLeft -= deltaRotation;
 
             return;
         }
@@ -269,7 +269,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         float ground_push = 0.03f;
         float passive_engine_push = 0.02f;
 
-        float motion_to_pitch = 0.05f;
+        float motion_to_pitch = 0.1f;
         float pitch_to_motion = 0.05f;
 
 
@@ -306,7 +306,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         if (getOnGround() || isAboveWater()) {
             if (groundTicks < 0)
                 groundTicks = 10;
-            else if (groundTicks >= 0){
+            else if (groundTicks >= 0) {
                 groundTicks--;
             }
             float pitch = isLarge() ? 10 : 15;
@@ -392,7 +392,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         float f1 = 1f;
         double turn = 0;
 
-        if (getOnGround() || isAboveWater() || !passengerSprinting||easy) {
+        if (getOnGround() || isAboveWater() || !passengerSprinting || easy) {
             int yawdiff = 2;
             float roll = rotationRoll;
             if (degreesDifferenceAbs(rotationPitch, 0) < 45) {
@@ -470,14 +470,13 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         }
 
         Vector3d motion = getMotion();
-        if (!getOnGround() && !isAboveWater() && motion.length() > 0.5) {
+        if (!getOnGround() && !isAboveWater() && motion.length() > 0.1) {
             float yaw = MathUtil.getYaw(motion);
             float pitch = MathUtil.getPitch(motion);
             if (degreesDifferenceAbs(rotationRoll, 0) < 70)
                 rotationPitch = lerpAngle180(motion_to_pitch, rotationPitch, pitch);
-            if(easy)
-            {
-                rotationPitch = MathUtil.clamp(rotationPitch,-70,70);
+            if (easy) {
+                rotationPitch = MathUtil.clamp(rotationPitch, -70, 70);
             }
             setMotion(MathUtil.getVec(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch), motion.length()));
         }
@@ -525,18 +524,18 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         rotationYaw = (float) angels1.yaw;
         rotationRoll = (float) angels1.roll;
 
-        float d =MathUtil.wrapSubtractDegrees(prevRotationYaw,this.rotationYaw);
-        if(rotationRoll>=90&&prevRotationRoll<=90){
-            d=0;
+        float d = MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
+        if (rotationRoll >= 90 && prevRotationRoll <= 90) {
+            d = 0;
         }
-        deltaRotationLeft+=d;
+        deltaRotationLeft += d;
         deltaRotationLeft = wrapDegrees(deltaRotationLeft);
-        int diff = 5;
-        if(world.isRemote && canPassengerSteer() && (Minecraft.getInstance()).gameSettings.thirdPersonView==0){
-            diff=180;
+        int diff = 3;
+        if (world.isRemote && canPassengerSteer() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
+            diff = 180;
         }
-        deltaRotation = Math.min(abs(deltaRotationLeft), diff)*Math.signum(deltaRotationLeft);
-        deltaRotationLeft-=deltaRotation;
+        deltaRotation = Math.min(abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
+        deltaRotationLeft -= deltaRotation;
 
 
         if (world.isRemote && canPassengerSteer()) {
@@ -738,16 +737,17 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
             passenger.rotationYaw += this.deltaRotation;
             passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotation);
-
-            this.applyYawToEntity(passenger);
+            if (deltaRotationLeft == 0)
+                this.applyYawToEntity(passenger);
             if (passenger instanceof AnimalEntity && this.getPassengers().size() > 1) {
                 int j = passenger.getEntityId() % 2 == 0 ? 90 : 270;
-                passenger.setRenderYawOffset(((AnimalEntity)passenger).renderYawOffset + (float)j);
-                passenger.setRotationYawHead(passenger.getRotationYawHead() + (float)j);
+                passenger.setRenderYawOffset(((AnimalEntity) passenger).renderYawOffset + (float) j);
+                passenger.setRotationYawHead(passenger.getRotationYawHead() + (float) j);
             }
 
         }
     }
+
     /**
      * Applies this boat's yaw to the given entity. Used to update the orientation of its passenger.
      */
@@ -758,13 +758,15 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
         float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
-        float perc = (f1 - f) * 0.5f;
 
-        entityToUpdate.prevRotationYaw =(entityToUpdate.prevRotationYaw + perc);
-        entityToUpdate.rotationYaw = (entityToUpdate.rotationYaw + perc);
+        float perc =deltaRotation>0? 0.1f:1;
+        float diff = (f1 - f) * perc;
+
+        entityToUpdate.prevRotationYaw += diff;
+        entityToUpdate.rotationYaw += diff;
 
 //        entityToUpdate.setRotationYawHead(lerpAngle180(0.9f,entityToUpdate.getRotationYawHead(),entityToUpdate.rotationYaw));
-//        entityToUpdate.setRotationYawHead(entityToUpdate.rotationYaw);
+        entityToUpdate.setRotationYawHead(entityToUpdate.rotationYaw);
     }
 
     // all code down is from boat, copyright???
