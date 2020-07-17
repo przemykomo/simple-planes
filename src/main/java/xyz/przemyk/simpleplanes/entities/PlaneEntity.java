@@ -257,21 +257,24 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         double lift_factor = 1 / 15.0;
 
         double gravity = -0.06;
-        if (this.hasNoGravity()) {
-            gravity = 0;
-            max_lift = 0;
-        }
 
         final double drag_mul = 0.99;
         final double drag = 0.01;
         final double drag_above_max = 0.05;
-        final float push = 0.05f;
+        float push = 0.05f;
         float ground_push = 0.03f;
         float passive_engine_push = 0.02f;
 
         float motion_to_pitch = 0.1f;
         float pitch_to_motion = 0.05f;
 
+        if (this.hasNoGravity()) {
+            gravity = 0;
+            max_lift = 0;
+            push = 0.00f;
+
+            passive_engine_push=0;
+        }
 
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         float moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
@@ -514,8 +517,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         //back to q
         q.multiply(Vector3f.ZP.rotationDegrees((float) (rotationRoll - angelsOld.roll)));
-        q.multiply(Vector3f.YP.rotationDegrees((float) (rotationYaw - angelsOld.yaw)));
         q.multiply(Vector3f.XN.rotationDegrees((float) (rotationPitch - angelsOld.pitch)));
+        q.multiply(Vector3f.YP.rotationDegrees((float) (rotationYaw - angelsOld.yaw)));
         q.normalize();
         setQ_prev(getQ_Client());
         setQ(q);
@@ -528,12 +531,15 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         if (rotationRoll >= 90 && prevRotationRoll <= 90) {
             d = 0;
         }
-        deltaRotationLeft += d;
-        deltaRotationLeft = wrapDegrees(deltaRotationLeft);
         int diff = 3;
-        if (world.isRemote && canPassengerSteer() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
+        if (world.isRemote && isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
             diff = 180;
         }
+        else {
+            deltaRotationLeft = 0;
+        }
+        deltaRotationLeft += d;
+        deltaRotationLeft = wrapDegrees(deltaRotationLeft);
         deltaRotation = Math.min(abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
         deltaRotationLeft -= deltaRotation;
 
@@ -759,7 +765,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
         float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
 
-        float perc =deltaRotation>0? 0.1f:1;
+        float perc = deltaRotation > 0.1 ? 0.1f : 1f;
         float diff = (f1 - f) * perc;
 
         entityToUpdate.prevRotationYaw += diff;

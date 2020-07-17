@@ -13,6 +13,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -101,7 +102,7 @@ public class PlanesEvents {
             matrixStack.push();
             playerRotationNeedToPop = true;
             double y1 = 0.7D;
-            boolean fpv = Minecraft.getInstance().player != null &&planeEntity.isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
+            boolean fpv = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
             if (fpv) {
                 matrixStack.translate(0.0D, y1, 0.0D);
             }
@@ -118,7 +119,15 @@ public class PlanesEvents {
             if (fpv) {
                 matrixStack.translate(0.0D, -y1, 0.0D);
             }
-
+            if(MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll,0)>90){
+                event.getEntity().rotationYawHead=planeEntity.rotationYaw*2-event.getEntity().rotationYawHead;
+            }
+            if(MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll,0)>90){
+                event.getEntity().prevRotationYawHead=planeEntity.prevRotationYaw*2-event.getEntity().prevRotationYawHead;
+            }
+//            event.getEntity().rotationYaw*=-1;
+//            event.getEntity().prevRotationYaw*=-1;
+//            event.getEntity().renderYawOffset*=-1;
 
         }
     }
@@ -128,6 +137,19 @@ public class PlanesEvents {
         if (playerRotationNeedToPop) {
             playerRotationNeedToPop = false;
             event.getMatrixStack().pop();
+//            event.getEntity().rotationYaw*=-1;
+//            event.getEntity().prevRotationYaw*=-1;
+//            event.getEntity().renderYawOffset*=-1;
+            Entity entity = event.getEntity().getLowestRidingEntity();
+            PlaneEntity planeEntity = (PlaneEntity) entity;
+
+            if(MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll,0)>90){
+                event.getEntity().rotationYawHead=planeEntity.rotationYaw*2-event.getEntity().rotationYawHead;
+            }
+            if(MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll,0)>90){
+                event.getEntity().prevRotationYawHead=planeEntity.prevRotationYaw*2-event.getEntity().prevRotationYawHead;
+            }
+
         }
     }
 
@@ -138,7 +160,7 @@ public class PlanesEvents {
                 player.getRidingEntity() instanceof PlaneEntity &&
                 event.phase == TickEvent.Phase.END) {
             //todo: is this the right place, prevent player from looking away when flying
-            if((Minecraft.getInstance()).gameSettings.thirdPersonView==0){
+            if ((Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
                 float f = MathHelper.wrapDegrees(player.rotationPitch - 0);
                 float f1 = MathHelper.clamp(f, -50, 50);
                 float perc = (f1 - f) * 0.5f;
@@ -161,33 +183,37 @@ public class PlanesEvents {
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
         final Entity entity = event.getInfo().getRenderViewEntity();
         if (entity instanceof ClientPlayerEntity &&
-                entity.getRidingEntity() instanceof PlaneEntity)
+                entity.getRidingEntity() instanceof PlaneEntity) {
+            PlaneEntity planeEntity = (PlaneEntity) entity.getRidingEntity();
+            ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
+
             if (!event.getInfo().isThirdPerson()) {
-                PlaneEntity planeEntity = (PlaneEntity) entity.getRidingEntity();
-                ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
                 double partialTicks = event.getRenderPartialTicks();
 
                 Quaternion q_prev = planeEntity.getQ_Prev();
                 int max = 105;
-                float diff =MathUtil.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw,playerEntity.prevRotationYaw),-max, max);
+                float diff = MathUtil.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw, playerEntity.prevRotationYaw), -max, max);
+                float pitch = MathUtil.clamp(event.getPitch(), -45, 45);
                 q_prev.multiply(Vector3f.YP.rotationDegrees(diff));
-                float pitch = MathUtil.clamp(event.getPitch(),-45,45);
                 q_prev.multiply(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.Angels angles_prev =MathUtil.ToEulerAngles(q_prev);
+                MathUtil.Angels angles_prev = MathUtil.ToEulerAngles(q_prev);
 
                 Quaternion q_client = planeEntity.getQ_Client();
-                diff =MathUtil.clamp(MathUtil.wrapSubtractDegrees( planeEntity.rotationYaw,playerEntity.rotationYaw),-max, max);
+                diff = MathUtil.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
                 q_client.multiply(Vector3f.YP.rotationDegrees(diff));
                 q_client.multiply(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.Angels angles =MathUtil.ToEulerAngles(q_client);
+                MathUtil.Angels angles = MathUtil.ToEulerAngles(q_client);
+                Quaternion r = MathUtil.ToQuaternion(11, 0, 0);
+                r.multiply(Vector3f.XP.rotationDegrees(89.999f));
 
 
                 event.setPitch(-(float) MathUtil.lerpAngle180(partialTicks, angles_prev.pitch, angles.pitch));
                 event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw));
                 event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, angles_prev.roll, angles.roll));
             } else {
-
+//                event.getInfo().pos =planeEntity.getPositionVec();
             }
+        }
     }
 
 

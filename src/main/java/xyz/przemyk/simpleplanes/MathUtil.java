@@ -100,10 +100,12 @@ public class MathUtil extends MathHelper {
 
         // pitch (y-axis rotation)
         double sinp = 2 * (q.getW() * q.getX() - q.getY() * q.getZ());
-        if (Math.abs(sinp) >= 0.99) {
+        if (Math.abs(sinp) >= 0.98) {
             angles.pitch = -Math.toDegrees(Math.signum(sinp) * Math.PI / 2); // use 90 degrees if out of range
-            angles.roll = 180;
-//            angles.yaw = Math.toDegrees(Math.atan2(q.getX(),q.getW()));
+//            q.multiply(Vector3f.XP.rotationDegrees((float) (45*Math.signum(sinp))));
+
+//            angles.roll = 180;
+//            angles.yaw = Math.toDegrees(Math.atan2(q.getY(),q.getZ()));
 //            return angles;
         } else {
             angles.pitch = -Math.toDegrees(Math.asin(sinp));
