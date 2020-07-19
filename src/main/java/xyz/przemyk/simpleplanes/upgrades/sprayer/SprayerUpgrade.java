@@ -30,8 +30,6 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import java.util.List;
 
 public class SprayerUpgrade extends Upgrade {
-    public static final SprayerModel SPRAYER_MODEL = new SprayerModel();
-    public static final LargeSprayerModel LARGE_SPRAYER_MODEL = new LargeSprayerModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/sprayer.png");
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
@@ -138,11 +136,11 @@ public class SprayerUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(SPRAYER_MODEL.getRenderType(TEXTURE));
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(SprayerModel.INSTANCE.getRenderType(TEXTURE));
         if (planeEntity.isLarge()) {
-            LARGE_SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            LargeSprayerModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else {
-            SPRAYER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            SprayerModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 }

@@ -20,8 +20,6 @@ import static net.minecraft.item.Items.*;
 import static xyz.przemyk.simpleplanes.MathUtil.getVec;
 
 public class RocketUpgrade extends Upgrade {
-
-    public static final RocketModel ROCKET_MODEL = new RocketModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
     public static int FUEL_PER_GUNPOWDER = 30;
 
@@ -102,7 +100,7 @@ public class RocketUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(ROCKET_MODEL.getRenderType(TEXTURE));
-        ROCKET_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(RocketModel.INSTANCE.getRenderType(TEXTURE));
+        RocketModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

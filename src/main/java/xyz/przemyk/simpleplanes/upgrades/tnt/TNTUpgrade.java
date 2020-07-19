@@ -14,7 +14,6 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class TNTUpgrade extends Upgrade {
-    public static final TNTModel TNT_MODEL = new TNTModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/tnt.png");
 
     public TNTUpgrade(PlaneEntity planeEntity) {
@@ -37,7 +36,7 @@ public class TNTUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        IVertexBuilder iVertexBuilder = buffer.getBuffer(TNT_MODEL.getRenderType(TEXTURE));
-        TNT_MODEL.render(matrixStack, iVertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder iVertexBuilder = buffer.getBuffer(TNTModel.INSTANCE.getRenderType(TEXTURE));
+        TNTModel.INSTANCE.render(matrixStack, iVertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

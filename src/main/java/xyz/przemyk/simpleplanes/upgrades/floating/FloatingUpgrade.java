@@ -13,8 +13,6 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class FloatingUpgrade extends Upgrade {
-    public static final FloatingModel MODEL = new FloatingModel();
-    public static final LargeFloatingModel LARGE_MODEL = new LargeFloatingModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/floating.png");
     public static final ResourceLocation LARGE_TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/floating_large.png");
 
@@ -43,9 +41,9 @@ public class FloatingUpgrade extends Upgrade {
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         if (planeEntity.isLarge()) {
-            LARGE_MODEL.render(matrixStack, buffer.getBuffer(LARGE_MODEL.getRenderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            LargeFloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else {
-            MODEL.render(matrixStack, buffer.getBuffer(MODEL.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            FloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(FloatingModel.INSTANCE.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 }

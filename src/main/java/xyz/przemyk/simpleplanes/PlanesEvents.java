@@ -74,17 +74,7 @@ public class PlanesEvents {
                 planeEntity.setNoGravity(!planeEntity.hasNoGravity());
             }
 
-            for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-                if (upgradeType.IsThisItem(itemStack) && planeEntity.canAddUpgrade(upgradeType)) {
-                    final Upgrade upgrade = upgradeType.instanceSupplier.apply(planeEntity);
-                    planeEntity.upgrades.put(upgradeType.getRegistryName(), upgrade);
-                    upgrade.onApply(itemStack, player);
-                    if (!player.isCreative()) {
-                        itemStack.shrink(1);
-                    }
-                    planeEntity.upgradeChanged();
-                }
-            }
+            planeEntity.tryToAddUpgrade(player, itemStack);
         }
     }
 

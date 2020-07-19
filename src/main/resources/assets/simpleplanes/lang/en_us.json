@@ -32,5 +32,36 @@
 
     "itemGroup.simpleplanes": "Simple Planes",
 
+
+    "_planes_comment": "Everything below is for mod compatibility",
+
+    "item.simpleplanes.ft_cherry_plane": "Cherry Furnace Plane",
+    "item.simpleplanes.ft_cherry_large_plane": "Large Cherry Furnace Plane",
+    "item.simpleplanes.ft_citrus_plane": "Citrus Furnace Plane",
+    "item.simpleplanes.ft_citrus_large_plane": "Large Citrus Furnace Plane",
+
+    "item.simpleplanes.bop_cherry_large_plane": "Large Cherry Furnace Plane",
+    "item.simpleplanes.bop_cherry_plane": "Cherry Furnace Plane",
+    "item.simpleplanes.bop_dead_large_plane": "Large Dead Furnace Plane",
+    "item.simpleplanes.bop_dead_plane": "Dead Furnace Plane",
+    "item.simpleplanes.bop_fir_large_plane": "Large Fir Furnace Plane",
+    "item.simpleplanes.bop_fir_plane": "Fir Furnace Plane",
+    "item.simpleplanes.bop_hellbark_large_plane": "Large Hellbark Furnace Plane",
+    "item.simpleplanes.bop_hellbark_plane": "Hellbark Furnace Plane",
+    "item.simpleplanes.bop_jacaranda_large_plane": "Large Jacaranda Furnace Plane",
+    "item.simpleplanes.bop_jacaranda_plane": "Jacaranda Furnace Plane",
+    "item.simpleplanes.bop_magic_large_plane": "Large Magic Furnace Plane",
+    "item.simpleplanes.bop_magic_plane": "Magic Furnace Plane",
+    "item.simpleplanes.bop_mahogany_large_plane": "Large Mahogany Furnace Plane",
+    "item.simpleplanes.bop_mahogany_plane": "Mahogany Furnace Plane",
+    "item.simpleplanes.bop_palm_large_plane": "Large Palm Furnace Plane",
+    "item.simpleplanes.bop_palm_plane": "Palm Furnace Plane",
+    "item.simpleplanes.bop_redwood_large_plane": "Large Redwood Furnace Plane",
+    "item.simpleplanes.bop_redwood_plane": "Redwood Furnace Plane",
+    "item.simpleplanes.bop_umbran_large_plane": "Large Umbran Furnace Plane",
+    "item.simpleplanes.bop_umbran_plane": "Umbran Furnace Plane",
+    "item.simpleplanes.bop_willow_large_plane": "Large Willow Furnace Plane",
+    "item.simpleplanes.bop_willow_plane": "Willow Furnace Plane",
+
     "death.attack.plane_crush": "Died in a plane crush"
 }

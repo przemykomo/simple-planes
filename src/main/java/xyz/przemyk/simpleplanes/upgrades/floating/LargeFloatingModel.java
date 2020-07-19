@@ -9,7 +9,10 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class LargeFloatingModel extends EntityModel<LargePlaneEntity> {
+	public static final LargeFloatingModel INSTANCE = new LargeFloatingModel();
+
 	private final ModelRenderer Body;
 	private final ModelRenderer balloon;
 	private final ModelRenderer wing_left;

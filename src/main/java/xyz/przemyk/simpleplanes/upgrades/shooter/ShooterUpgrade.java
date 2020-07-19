@@ -30,10 +30,8 @@ import static net.minecraft.item.Items.FIRE_CHARGE;
 import static xyz.przemyk.simpleplanes.MathUtil.getVec;
 
 public class ShooterUpgrade extends Upgrade {
-
-    public static final ShooterModel SHOOTER_MODEL = new ShooterModel();
-    //TODO: different texture
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/shooter.png");
+
     private static final Map<Item, IShooterBehavior> SHOOTER_BEHAVIOR_MAP = Util.make(new Object2ObjectOpenHashMap<>(), (p_212564_0_) -> {
         p_212564_0_.defaultReturnValue(new IShooterBehavior() {
             @Override
@@ -123,7 +121,7 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(SHOOTER_MODEL.getRenderType(TEXTURE));
-        SHOOTER_MODEL.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(ShooterModel.INSTANCE.getRenderType(TEXTURE));
+        ShooterModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

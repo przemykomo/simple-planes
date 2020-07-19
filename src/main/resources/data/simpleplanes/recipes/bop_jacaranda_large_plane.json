@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:bop_jacaranda_plane"
+        },
+        "B": {
+            "item": "biomesoplenty:jacaranda_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:bop_jacaranda_large_plane"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:bop_hellbark_plane"
+        },
+        "B": {
+            "item": "biomesoplenty:hellbark_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:bop_hellbark_large_plane"
+    }
+}

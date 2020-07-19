@@ -168,10 +168,11 @@ public class PlaneEntity extends Entity implements IJumpingMount
     }
 
     @Override
-    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand)
-    {
-        if (player.isSneaking() && player.getHeldItem(hand).isEmpty())
-        {
+    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
+        if (tryToAddUpgrade(player, player.getHeldItem(hand))) {
+            return ActionResultType.SUCCESS;
+        }
+        if (player.isSneaking() && player.getHeldItem(hand).isEmpty()) {
             boolean hasplayer = false;
             for (Entity passenger : getPassengers())
             {
@@ -188,6 +189,22 @@ public class PlaneEntity extends Entity implements IJumpingMount
             return ActionResultType.SUCCESS;
         }
         return !world.isRemote && player.startRiding(this) ? ActionResultType.SUCCESS : ActionResultType.FAIL;
+    }
+
+    public boolean tryToAddUpgrade(PlayerEntity player, ItemStack itemStack) {
+        for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
+            if (upgradeType.IsThisItem(itemStack) && canAddUpgrade(upgradeType)) {
+                Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
+                upgrade.onApply(itemStack,player);
+                if (!player.isCreative()) {
+                    itemStack.shrink(1);
+                }
+                upgrades.put(upgradeType.getRegistryName(), upgrade);
+                upgradeChanged();
+                return true;
+            }
+        }
+        return false;
     }
 
     @SuppressWarnings("deprecation")
@@ -261,6 +278,14 @@ public class PlaneEntity extends Entity implements IJumpingMount
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
         prevRotationRoll = rotationRoll;
+        if (isPowered()) {
+            if (poweredTicks % 50 == 0) {
+                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
+            }
+            ++poweredTicks;
+        } else {
+            poweredTicks = 0;
+        }
 
         if (world.isRemote && !canPassengerSteer())
         {
@@ -330,18 +355,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
             q = getQ();
 
         Angels angelsOld = ToEulerAngles(q).copy();
-        if (isPowered())
-        {
-            if (poweredTicks % 50 == 0)
-            {
-                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.1F, 1.0F);
-            }
-            ++poweredTicks;
-        }
-        else
-        {
-            poweredTicks = 0;
-        }
 
         Vector3d oldMotion = getMotion();
         recalculateSize();
@@ -731,14 +744,11 @@ public class PlaneEntity extends Entity implements IJumpingMount
     protected void writeAdditional(CompoundNBT compound)
     {
         compound.putInt("Fuel", dataManager.get(FUEL));
-
-        CompoundNBT upgradesNBT = getUpgradesNBT();
-
-        compound.put("upgrades", upgradesNBT);
+        compound.put("upgrades", getUpgradesNBT());
     }
 
-    private CompoundNBT getUpgradesNBT()
-    {
+    @SuppressWarnings("ConstantConditions")
+    private CompoundNBT getUpgradesNBT() {
         CompoundNBT upgradesNBT = new CompoundNBT();
         for (Upgrade upgrade : upgrades.values())
         {
@@ -754,16 +764,10 @@ public class PlaneEntity extends Entity implements IJumpingMount
     }
 
     @Override
-    public boolean canBeRiddenInWater()
-    {
+    public boolean canBeRiddenInWater(Entity rider) {
         return upgrades.containsKey(SimplePlanesUpgrades.FLOATING.getId());
     }
 
-    @Override
-    public boolean canBeRiddenInWater(Entity e)
-    {
-        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING.getId());
-    }
 
     @Override
     public boolean canBeCollidedWith()

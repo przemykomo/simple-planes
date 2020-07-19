@@ -9,6 +9,8 @@ import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class LargeSprayerModel extends EntityModel<LargePlaneEntity> {
+	public static final LargeSprayerModel INSTANCE = new LargeSprayerModel();
+
 	private final ModelRenderer Body;
 	private final ModelRenderer sprayer;
 	private final ModelRenderer spray_lest;
