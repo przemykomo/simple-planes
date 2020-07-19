@@ -209,6 +209,7 @@ public class PlanesEvents {
 
                 event.setPitch(-(float) MathUtil.lerpAngle180(partialTicks, angles_prev.pitch, angles.pitch));
                 event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw));
+//                event.setYaw((float) MathUtil.lerpAngle(partialTicks, playerEntity.prevRotationYaw, playerEntity.rotationYaw));
                 event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, angles_prev.roll, angles.roll));
             } else {
 //                event.getInfo().pos =planeEntity.getPositionVec();

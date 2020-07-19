@@ -9,46 +9,56 @@ import net.minecraft.util.math.vector.Vector3f;
 
 import static net.minecraft.network.datasync.DataSerializers.registerSerializer;
 
-public class MathUtil extends MathHelper {
+public class MathUtil extends MathHelper
+{
 
-    public static float getPitch(Vector3d motion) {
+    public static float getPitch(Vector3d motion)
+    {
         double y = motion.y;
         return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
     }
 
-    public static float getYaw(Vector3d motion) {
+    public static float getYaw(Vector3d motion)
+    {
         return (float) Math.toDegrees(Math.atan2(-motion.x, motion.z));
     }
 
-    public static float lerpAngle(float perc, float start, float end) {
+    public static float lerpAngle(float perc, float start, float end)
+    {
         return start + perc * wrapDegrees(end - start);
     }
 
-    public static float lerpAngle180(float perc, float start, float end) {
+    public static float lerpAngle180(float perc, float start, float end)
+    {
         if (degreesDifferenceAbs(start, end) > 90)
             end += 180;
         return start + perc * wrapDegrees(end - start);
     }
 
-    public static double lerpAngle180(double perc, double start, double end) {
+    public static double lerpAngle180(double perc, double start, double end)
+    {
         if (degreesDifferenceAbs(start, end) > 90)
             end += 180;
         return start + perc * wrapDegrees(end - start);
     }
 
-    public static double lerpAngle(double perc, double start, double end) {
+    public static double lerpAngle(double perc, double start, double end)
+    {
         return start + perc * wrapDegrees(end - start);
     }
 
-    public static double degreesDifferenceAbs(double p_203301_0_, double p_203301_1_) {
+    public static double degreesDifferenceAbs(double p_203301_0_, double p_203301_1_)
+    {
         return Math.abs(wrapSubtractDegrees(p_203301_0_, p_203301_1_));
     }
 
-    public static double wrapSubtractDegrees(double p_203302_0_, double p_203302_1_) {
+    public static double wrapSubtractDegrees(double p_203302_0_, double p_203302_1_)
+    {
         return wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
-    public static Vector3f getVecf(double yaw, double pitch) {
+    public static Vector3f getVecf(double yaw, double pitch)
+    {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
         double xzLen = Math.cos(pitch);
@@ -59,7 +69,8 @@ public class MathUtil extends MathHelper {
 
     }
 
-    public static Vector3d getVec(double yaw, double pitch) {
+    public static Vector3d getVec(double yaw, double pitch)
+    {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
         double xzLen = Math.cos(pitch);
@@ -69,16 +80,19 @@ public class MathUtil extends MathHelper {
         return new Vector3d(x, y, z);
     }
 
-    public static Vector3d getVec(double yaw, double pitch, double l) {
+    public static Vector3d getVec(double yaw, double pitch, double l)
+    {
         Vector3d vec = getVec(yaw, pitch);
         return vec.scale(l / vec.length());
     }
 
-    public static Vector3d getVec(Quaternion q) {
+    public static Vector3d getVec(Quaternion q)
+    {
         return new Vector3d(q.getX(), q.getY(), q.getZ());
     }
 
-    public static Vector3d getVecSized(double x, double y, double z, double l) {
+    public static Vector3d getVecSized(double x, double y, double z, double l)
+    {
 
         Vector3d vector3d = new Vector3d(x, y, z);
         if (l != 0)
@@ -86,11 +100,13 @@ public class MathUtil extends MathHelper {
         return vector3d;
     }
 
-    public static double getHorizontalLength(Vector3d vector3d) {
+    public static double getHorizontalLength(Vector3d vector3d)
+    {
         return Math.sqrt(vector3d.x * vector3d.x + vector3d.z * vector3d.z);
     }
 
-    public static Angels ToEulerAngles(Quaternion q) {
+    public static Angels ToEulerAngles(Quaternion q)
+    {
         Angels angles = new Angels();
 
         // roll (x-axis rotation)
@@ -100,14 +116,17 @@ public class MathUtil extends MathHelper {
 
         // pitch (y-axis rotation)
         double sinp = 2 * (q.getW() * q.getX() - q.getY() * q.getZ());
-        if (Math.abs(sinp) >= 0.98) {
+        if (Math.abs(sinp) >= 0.98)
+        {
             angles.pitch = -Math.toDegrees(Math.signum(sinp) * Math.PI / 2); // use 90 degrees if out of range
-//            q.multiply(Vector3f.XP.rotationDegrees((float) (45*Math.signum(sinp))));
+            //            q.multiply(Vector3f.XP.rotationDegrees((float) (45*Math.signum(sinp))));
 
-//            angles.roll = 180;
-//            angles.yaw = Math.toDegrees(Math.atan2(q.getY(),q.getZ()));
-//            return angles;
-        } else {
+            //            angles.roll = 180;
+            //            angles.yaw = Math.toDegrees(Math.atan2(q.getY(),q.getZ()));
+            //            return angles;
+        }
+        else
+        {
             angles.pitch = -Math.toDegrees(Math.asin(sinp));
         }
 
@@ -139,53 +158,106 @@ public class MathUtil extends MathHelper {
         float x = (float) (cr * sp * cy + sr * cp * sy);
         float y = (float) (cr * cp * sy - sr * sp * cy);
 
-
         return new Quaternion(x, y, z, w);
     }
 
-    public static Quaternion lerpQ(float perc, Quaternion start, Quaternion end) {
-        return new Quaternion(
-                start.getX() * (1 - perc) + end.getX() * perc,
-                start.getY() * (1 - perc) + end.getY() * perc,
-                start.getZ() * (1 - perc) + end.getZ() * perc,
-                start.getW() * (1 - perc) + end.getW() * perc
+    public static Quaternion lerpQ(float perc, Quaternion start, Quaternion end)
+    {
+        // Only unit quaternions are valid rotations.
+        // Normalize to avoid undefined behavior.
+        start.normalize();
+        end.normalize();
+
+        // Compute the cosine of the angle between the two vectors.
+        double dot = start.getX() * end.getX() +start.getY() * end.getY() +start.getZ() * end.getZ() +start.getW() * end.getW()  ;
+
+        // If the dot product is negative, slerp won't take
+        // the shorter path. Note that v1 and -v1 are equivalent when
+        // the negation is applied to all four components. Fix by
+        // reversing one quaternion.
+        if (dot < 0.0f)
+        {
+            end = end.copy();
+            end.multiply(-1);
+            dot = -dot;
+        }
+
+        double DOT_THRESHOLD = 0.9995;
+        if (dot > DOT_THRESHOLD)
+        {
+            // If the inputs are too close for comfort, linearly interpolate
+            // and normalize the result.
+
+            Quaternion quaternion = new Quaternion(
+                    start.getX() * (1 - perc) + end.getX() * perc,
+                    start.getY() * (1 - perc) + end.getY() * perc,
+                    start.getZ() * (1 - perc) + end.getZ() * perc,
+                    start.getW() * (1 - perc) + end.getW() * perc
+            );
+            quaternion.normalize();
+            return quaternion;
+        }
+
+        // Since dot is in range [0, DOT_THRESHOLD], acos is safe
+        double theta_0 = Math.acos(dot);        // theta_0 = angle between input vectors
+        double theta = theta_0 * perc;          // theta = angle between v0 and result
+        double sin_theta = Math.sin(theta);     // compute this value only once
+        double sin_theta_0 = Math.sin(theta_0); // compute this value only once
+
+        float s0 = (float) (Math.cos(theta) - dot * sin_theta / sin_theta_0);  // == sin(theta_0 - theta) / sin(theta_0)
+        float s1 = (float) (sin_theta / sin_theta_0);
+
+        Quaternion quaternion = new Quaternion(
+                start.getX() * (s0) + end.getX() * s1,
+                start.getY() * (s0) + end.getY() * s1,
+                start.getZ() * (s0) + end.getZ() * s1,
+                start.getW() * (s0) + end.getW() * s1
         );
+        quaternion.normalize();
+        return quaternion;
     }
 
     //    public static Quaternion lerpQ(float perc,Quaternion start,Quaternion end){
-//        return new Quaternion(
-//                start.getX()*(1-perc)+end.getX()*perc,
-//                start.getY()*(1-perc)+end.getY()*perc,
-//                start.getZ()*(1-perc)+end.getZ()*perc,
-//                start.getW()*(1-perc)+end.getW()*perc
-//        );
-//    }
-    public static class Angels {
+    //        return new Quaternion(
+    //                start.getX()*(1-perc)+end.getX()*perc,
+    //                start.getY()*(1-perc)+end.getY()*perc,
+    //                start.getZ()*(1-perc)+end.getZ()*perc,
+    //                start.getW()*(1-perc)+end.getW()*perc
+    //        );
+    //    }
+    public static class Angels
+    {
         public double pitch, yaw, roll;
 
-        public Angels() {
+        public Angels()
+        {
         }
 
-        public Angels(double pitch, double yaw, double roll) {
+        public Angels(double pitch, double yaw, double roll)
+        {
             this.pitch = pitch;
             this.yaw = yaw;
             this.roll = roll;
         }
 
-        public Angels(Angels a) {
+        public Angels(Angels a)
+        {
             this.pitch = a.pitch;
             this.yaw = a.yaw;
             this.roll = a.roll;
         }
 
-        public Angels copy() {
+        public Angels copy()
+        {
             return new Angels(this);
         }
     }
 
-    public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>() {
+    public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>()
+    {
         @Override
-        public void write(PacketBuffer buf, Quaternion q) {
+        public void write(PacketBuffer buf, Quaternion q)
+        {
             buf.writeFloat(q.getX());
             buf.writeFloat(q.getY());
             buf.writeFloat(q.getZ());
@@ -193,17 +265,20 @@ public class MathUtil extends MathHelper {
         }
 
         @Override
-        public Quaternion read(PacketBuffer buf) {
+        public Quaternion read(PacketBuffer buf)
+        {
             return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
         }
 
         @Override
-        public Quaternion copyValue(Quaternion q) {
+        public Quaternion copyValue(Quaternion q)
+        {
             return new Quaternion(q);
         }
     };
 
-    static {
+    static
+    {
         registerSerializer(QUATERNION_SERIALIZER);
     }
 }

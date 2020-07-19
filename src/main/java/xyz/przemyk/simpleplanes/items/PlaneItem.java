@@ -54,6 +54,7 @@ public class PlaneItem extends Item {
                 PlaneEntity planeEntity = planeSupplier.apply(worldIn);
                 planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
                 planeEntity.rotationYaw = playerIn.rotationYaw;
+                planeEntity.prevRotationYaw = playerIn.prevRotationYaw;
                 planeEntity.setCustomName(itemstack.getDisplayName());
                 CompoundNBT entityTag = itemstack.getChildTag("EntityTag");
                 if (entityTag!=null)
