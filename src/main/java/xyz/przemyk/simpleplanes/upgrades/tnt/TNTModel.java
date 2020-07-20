@@ -18,7 +18,7 @@ public class TNTModel extends EntityModel<LargePlaneEntity> {
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(Body, -0.1745F, 0.0F, 0.0F);
+		setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
 		Body.setTextureOffset(0, 0).addBox(-8.0F, -16.0F, 6.0F, 16.0F, 16.0F, 16.0F, -1.0F, false);
 	}
 
