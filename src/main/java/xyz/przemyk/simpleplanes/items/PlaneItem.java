@@ -31,6 +31,12 @@ public class PlaneItem extends Item {
     }
 
     @Override
+    public boolean hasEffect(ItemStack stack)
+    {
+        return super.hasEffect(stack) || stack.getChildTag("EntityTag")!=null;
+    }
+
+    @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.ANY);

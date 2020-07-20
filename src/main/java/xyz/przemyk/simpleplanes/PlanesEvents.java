@@ -96,7 +96,6 @@ public class PlanesEvents {
 
             matrixStack.translate(0, 0.7, 0);
             Quaternion q = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-//            Quaternion q =planeEntity.getQ();
             q.set(q.getX(), -q.getY(), -q.getZ(), q.getW());
             matrixStack.rotate(q);
             final float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
@@ -112,10 +111,6 @@ public class PlanesEvents {
             if(MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll,0)>90){
                 event.getEntity().prevRotationYawHead=planeEntity.prevRotationYaw*2-event.getEntity().prevRotationYawHead;
             }
-//            event.getEntity().rotationYaw*=-1;
-//            event.getEntity().prevRotationYaw*=-1;
-//            event.getEntity().renderYawOffset*=-1;
-
         }
     }
 
@@ -125,9 +120,6 @@ public class PlanesEvents {
         if (playerRotationNeedToPop) {
             playerRotationNeedToPop = false;
             event.getMatrixStack().pop();
-//            event.getEntity().rotationYaw*=-1;
-//            event.getEntity().prevRotationYaw*=-1;
-//            event.getEntity().renderYawOffset*=-1;
             Entity entity = event.getEntity().getLowestRidingEntity();
             PlaneEntity planeEntity = (PlaneEntity) entity;
 
@@ -167,6 +159,9 @@ public class PlanesEvents {
         }
     }
 
+    /**
+     * fixes first person view
+     */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
         final Entity entity = event.getInfo().getRenderViewEntity();
@@ -184,24 +179,18 @@ public class PlanesEvents {
                 float pitch = MathUtil.clamp(event.getPitch(), -45, 45);
                 q_prev.multiply(Vector3f.YP.rotationDegrees(diff));
                 q_prev.multiply(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.Angels angles_prev = MathUtil.ToEulerAngles(q_prev);
+                MathUtil.Angels angles_prev = MathUtil.toEulerAngles(q_prev);
 
                 Quaternion q_client = planeEntity.getQ_Client();
                 diff = MathUtil.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
                 q_client.multiply(Vector3f.YP.rotationDegrees(diff));
                 q_client.multiply(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.Angels angles = MathUtil.ToEulerAngles(q_client);
-                Quaternion r = MathUtil.ToQuaternion(11, 0, 0);
-                r.multiply(Vector3f.XP.rotationDegrees(89.999f));
-
+                MathUtil.Angels angles = MathUtil.toEulerAngles(q_client);
 
                 event.setPitch(-(float) MathUtil.lerpAngle180(partialTicks, angles_prev.pitch, angles.pitch));
                 event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw));
-//                event.setYaw((float) MathUtil.lerpAngle(partialTicks, playerEntity.prevRotationYaw, playerEntity.rotationYaw));
                 event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, angles_prev.roll, angles.roll));
-            } /* else {
-                event.getInfo().pos =planeEntity.getPositionVec();
-            } */
+            }
         }
     }
 

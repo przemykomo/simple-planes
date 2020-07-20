@@ -65,7 +65,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
     public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
-//    private double lastYd;
     protected int poweredTicks;
 
     //count how many ticks since on ground
@@ -297,7 +296,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
 
             tickLerp();
             this.setMotion(Vector3d.ZERO);
-            Angels angels1 = ToEulerAngles(getQ_Client());
+            Angels angels1 = toEulerAngles(getQ_Client());
             rotationPitch = (float) angels1.pitch;
             rotationYaw = (float) angels1.yaw;
             rotationRoll = (float) angels1.roll;
@@ -334,7 +333,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
         float ground_push = 0.03f;
         float passive_engine_push = 0.02f;
 
-        float motion_to_pitch = 0.05f;
+        float motion_to_rotation = 0.05f;
         float pitch_to_motion = 0.05f;
 
         if (this.hasNoGravity())
@@ -359,7 +358,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
         else
             q = getQ();
 
-        Angels angelsOld = ToEulerAngles(q).copy();
+        Angels angelsOld = toEulerAngles(q).copy();
 
         Vector3d oldMotion = getMotion();
         recalculateSize();
@@ -373,10 +372,12 @@ public class PlaneEntity extends Entity implements IJumpingMount
         //pitch + movement speed
         if (getOnGround() || isAboveWater())
         {
-            if (groundTicks < 0) {
+            if (groundTicks < 0)
+            {
                 groundTicks = 10;
             }
-            else {
+            else
+            {
                 groundTicks--;
             }
             float pitch = isLarge() ? 10 : 15;
@@ -402,7 +403,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
             }
             else if (moveForward < 0)
             {
-                Vector3d m = getVec(rotationYaw, 0, -ground_push);
+                Vector3d m = MathUtil.rotationToVector(rotationYaw, 0, -ground_push);
                 setMotion(getMotion().add(m));
             }
             else if (moveForward == 0)
@@ -522,7 +523,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
                 {
                     rotationRoll = clamp(rotationRoll - f1, -r, 0);
                 }
-                final double roll_old = ToEulerAngles(getQ()).roll;
+                final double roll_old = toEulerAngles(getQ()).roll;
                 if (MathUtil.degreesDifferenceAbs(roll_old, 0) < 90)
                 {
                     turn = MathHelper.clamp(roll_old / 5.0f, -yawdiff, yawdiff);
@@ -559,8 +560,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
         }
 
         rotationYaw -= turn;
-        if (MathUtil.degreesDifferenceAbs(rotationRoll, 180) < 45)
-            turn = -turn;
 
         //upgrades
         HashSet<Upgrade> upgradesToRemove = new HashSet<>();
@@ -587,14 +586,21 @@ public class PlaneEntity extends Entity implements IJumpingMount
         {
             float yaw = MathUtil.getYaw(motion);
             float pitch = MathUtil.getPitch(motion);
-            if (degreesDifferenceAbs(rotationRoll, 0) < 70)
-                rotationPitch = lerpAngle180(motion_to_pitch, rotationPitch, pitch);
-            if (easy)
+            if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
             {
-                rotationPitch = MathUtil.clamp(rotationPitch, -70, 70);
+                setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch),
+                        motion.length()));
+                if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90)
+                {
+                    pitch = wrapDegrees(pitch + 180);
+                }
+                if (Math.abs(rotationPitch) < 85)
+                {
+                    Quaternion q1 = toQuaternion(MathUtil.getYaw(getMotion()), pitch, rotationRoll);
+                    q = lerpQ(motion_to_rotation, q, q1);
+                }
             }
-            setMotion(MathUtil.getVec(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch),
-                    motion.length()));
+
         }
         //do not move when slow
         double l = 0.02;
@@ -642,9 +648,10 @@ public class PlaneEntity extends Entity implements IJumpingMount
         q.multiply(Vector3f.XN.rotationDegrees((float) (rotationPitch - angelsOld.pitch)));
         q.multiply(Vector3f.YP.rotationDegrees((float) (rotationYaw - angelsOld.yaw)));
         q.normalize();
+
         setQ_prev(getQ_Client());
         setQ(q);
-        Angels angels1 = ToEulerAngles(q);
+        Angels angels1 = toEulerAngles(q);
         rotationPitch = (float) angels1.pitch;
         rotationYaw = (float) angels1.yaw;
         rotationRoll = (float) angels1.roll;
@@ -707,10 +714,10 @@ public class PlaneEntity extends Entity implements IJumpingMount
 
     public Vector3f transformPos(Vector3f relPos)
     {
-        Angels angels = MathUtil.ToEulerAngles(getQ_Client());
+        Angels angels = MathUtil.toEulerAngles(getQ_Client());
         angels.yaw = -angels.yaw;
         angels.roll = -angels.roll;
-        relPos.transform(MathUtil.ToQuaternion(angels.yaw, angels.pitch, angels.roll));
+        relPos.transform(MathUtil.toQuaternion(angels.yaw, angels.pitch, angels.roll));
         return relPos;
     }
 
@@ -856,7 +863,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
             this.fallDistance = 0.0F;
         }
 
-//        this.lastYd = this.getMotion().y;
+        //        this.lastYd = this.getMotion().y;
     }
 
     @SuppressWarnings("deprecation")
