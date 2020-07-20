@@ -2,7 +2,6 @@ package xyz.przemyk.simpleplanes.upgrades.shooter;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,35 +11,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import java.util.Map;
 import java.util.Random;
 
 import static net.minecraft.item.Items.FIREWORK_ROCKET;
 import static net.minecraft.item.Items.FIRE_CHARGE;
-import static xyz.przemyk.simpleplanes.MathUtil.getVec;
 
 public class ShooterUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/shooter.png");
-
-    private static final Map<Item, IShooterBehavior> SHOOTER_BEHAVIOR_MAP = Util.make(new Object2ObjectOpenHashMap<>(), (p_212564_0_) -> {
-        p_212564_0_.defaultReturnValue(new IShooterBehavior() {
-            @Override
-            public void shoot(PlaneEntity planeEntity, ItemStack itemStack) {
-
-            }
-        });
-    });
-
 
     private boolean shootSide = false;
 
@@ -56,7 +41,6 @@ public class ShooterUpgrade extends Upgrade {
         Vector3d motion = new Vector3d(motion1);
         World world = event.getWorld();
         Random random = world.rand;
-        Vector2f front = this.planeEntity.getHorizontalFrontPos();
 
         Vector3f pos = planeEntity.transformPos(new Vector3f( shootSide ? 0.8f : -0.8f, 0.8f,0.8f));
         shootSide = !shootSide;

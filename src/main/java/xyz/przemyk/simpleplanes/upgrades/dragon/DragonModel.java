@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades.banner;
+package xyz.przemyk.simpleplanes.upgrades.dragon;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.AbstractSkullBlock;
@@ -22,15 +22,6 @@ public class DragonModel {
 
         SkullTileEntityRenderer.render(null, 180.0F, ((AbstractSkullBlock)((Blocks.DRAGON_HEAD))).getSkullType(), null, r, matrixStackIn, bufferIn, packedLightIn);
 
-
         matrixStackIn.pop();
-
-
     }
-
-
-    public DragonModel() {
-    }
-
-
 }

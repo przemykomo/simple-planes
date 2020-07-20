@@ -31,8 +31,6 @@ public class FloatingUpgrade extends Upgrade {
             if (planeEntity.world.getBlockState(new BlockPos(planeEntity.getPositionVec().add(0, 0.5, 0))).getBlock() == Blocks.WATER) {
                 planeEntity.setMotion(planeEntity.getMotion().add(0,0.005,0));
             }
-
-
         }
         return false;
     }

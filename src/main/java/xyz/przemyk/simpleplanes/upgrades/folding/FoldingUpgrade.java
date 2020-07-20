@@ -13,20 +13,15 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class FoldingUpgrade extends Upgrade {
-    public static final FoldingModel FOLDING_MODEL = new FoldingModel();
-    public static final FoldingSprayerModel LARGE_SPRAYER_MODEL = new FoldingSprayerModel();
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/folding.png");
-    public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
     public FoldingUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.FOLDING.get(), planeEntity);
     }
 
-
-
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(FOLDING_MODEL.getRenderType(TEXTURE));
-        FOLDING_MODEL.render(matrixStack,ivertexbuilder,packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(FoldingModel.INSTANCE.getRenderType(TEXTURE));
+        FoldingModel.INSTANCE.render(matrixStack,ivertexbuilder,packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

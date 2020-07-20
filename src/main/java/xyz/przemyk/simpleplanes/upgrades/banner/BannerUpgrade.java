@@ -16,9 +16,8 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import static net.minecraft.item.Items.WHITE_BANNER;
 
 public class BannerUpgrade extends Upgrade {
-    public static final BannerModel BANNER_MODEL = new BannerModel();
     public ItemStack banner;
-    public float rotation,prevRotation;
+    public float rotation, prevRotation;
 
     public BannerUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BANNER.get(), planeEntity);
@@ -29,8 +28,8 @@ public class BannerUpgrade extends Upgrade {
 
     @Override
     public boolean tick() {
-        prevRotation= rotation ;
-        rotation=MathUtil.lerpAngle(0.05f,rotation,planeEntity.prevRotationYaw);
+        prevRotation = rotation ;
+        rotation = MathUtil.lerpAngle(0.05f,rotation,planeEntity.prevRotationYaw);
         return super.tick();
     }
 
@@ -45,7 +44,7 @@ public class BannerUpgrade extends Upgrade {
     public void deserializeNBT(CompoundNBT nbt) {
         final INBT banner = nbt.get("banner");
         if (banner instanceof CompoundNBT)
-            this.banner =ItemStack.read((CompoundNBT) banner);
+            this.banner = ItemStack.read((CompoundNBT) banner);
     }
 
     @Override

@@ -77,6 +77,4 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     }
 
     protected abstract EntityModel<T> getModel();
-
-    protected abstract float getInAirRotation();
 }

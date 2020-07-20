@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundNBT;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.banner.DragonModel;
 
 public class DragonUpgrade extends Upgrade
 {

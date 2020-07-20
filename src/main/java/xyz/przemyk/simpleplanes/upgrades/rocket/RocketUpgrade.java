@@ -25,7 +25,6 @@ public class RocketUpgrade extends Upgrade {
 
     public int fuel = 0;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT compoundNBT = new CompoundNBT();
@@ -36,7 +35,6 @@ public class RocketUpgrade extends Upgrade {
     @Override
     public void deserializeNBT(CompoundNBT compoundNBT) {
         fuel = compoundNBT.getInt("fuel");
-        String effectName = compoundNBT.getString("effect");
     }
 
     public RocketUpgrade(PlaneEntity planeEntity) {

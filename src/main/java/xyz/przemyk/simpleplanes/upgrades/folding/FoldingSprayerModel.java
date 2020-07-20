@@ -9,6 +9,7 @@ import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class FoldingSprayerModel extends EntityModel<LargePlaneEntity> {
+	public static final FoldingSprayerModel INSTANCE = new FoldingSprayerModel();
 	private final ModelRenderer Body;
 	private final ModelRenderer sprayer;
 	private final ModelRenderer spray_lest;

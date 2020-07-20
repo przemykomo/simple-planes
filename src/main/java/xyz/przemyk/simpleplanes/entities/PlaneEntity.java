@@ -3,10 +3,8 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -67,15 +65,12 @@ public class PlaneEntity extends Entity implements IJumpingMount
     public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
-    public static final int MAX_PITCH = 20;
-    private double lastYd;
+//    private double lastYd;
     protected int poweredTicks;
 
     //count how many ticks since on ground
     private int groundTicks;
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
-    private float nextStepDistance;
-    private float nextFlap;
     public float rotationRoll;
     public float prevRotationRoll;
     private float deltaRotation;
@@ -274,7 +269,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
         //just hate my head in the nether ceiling
     }
 
-    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     @Override
     public void tick()
     {
@@ -379,10 +373,10 @@ public class PlaneEntity extends Entity implements IJumpingMount
         //pitch + movement speed
         if (getOnGround() || isAboveWater())
         {
-            if (groundTicks < 0)
+            if (groundTicks < 0) {
                 groundTicks = 10;
-            else if (groundTicks >= 0)
-            {
+            }
+            else {
                 groundTicks--;
             }
             float pitch = isLarge() ? 10 : 15;
@@ -661,6 +655,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
             d = 0;
         }
         int diff = 3;
+        //noinspection ConstantConditions
         if (world.isRemote && isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0)
         {
             diff = 180;
@@ -750,7 +745,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void writeAdditional(CompoundNBT compound)
     {
@@ -846,7 +840,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
         return super.isInvulnerableTo(source);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
@@ -863,9 +856,10 @@ public class PlaneEntity extends Entity implements IJumpingMount
             this.fallDistance = 0.0F;
         }
 
-        this.lastYd = this.getMotion().y;
+//        this.lastYd = this.getMotion().y;
     }
 
+    @SuppressWarnings("deprecation")
     private void crush(float damage)
     {
         if (!this.world.isRemote && !this.removed)
@@ -1001,6 +995,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
         return super.func_230268_c_(livingEntity);
     }
 
+    @SuppressWarnings("rawtypes")
     private ItemStack getItemStack()
     {
         ItemStack itemStack = new ItemStack(((AbstractPlaneEntityType) getType()).dropItem);
@@ -1088,7 +1083,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
         if (this.canPassengerSteer() && this.lerpSteps > 0)
         {
             this.lerpSteps = 0;
-            this.setPositionAndRotation(this.lerpX, this.lerpY, this.lerpZ, (float) this.rotationYaw, (float) this.rotationPitch);
+            this.setPositionAndRotation(this.lerpX, this.lerpY, this.lerpZ, this.rotationYaw, this.rotationPitch);
         }
     }
 

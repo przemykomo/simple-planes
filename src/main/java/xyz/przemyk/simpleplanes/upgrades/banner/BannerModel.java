@@ -50,10 +50,4 @@ public class BannerModel {
 
         }
     }
-
-
-    public BannerModel() {
-    }
-
-
 }

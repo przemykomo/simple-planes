@@ -9,11 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.play.client.CEntityActionPacket;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -23,9 +21,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.HashSet;
 
@@ -82,6 +78,7 @@ public class PlanesEvents {
 
     public static boolean playerRotationNeedToPop = false;
 
+    @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre event) {
         Entity entity = event.getEntity().getLowestRidingEntity();
@@ -103,7 +100,7 @@ public class PlanesEvents {
             q.set(q.getX(), -q.getY(), -q.getZ(), q.getW());
             matrixStack.rotate(q);
             final float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
-            ;
+
             matrixStack.rotate(Vector3f.YP.rotationDegrees(rotationYaw));
             matrixStack.translate(0, -0.7, 0);
             if (fpv) {
@@ -122,6 +119,7 @@ public class PlanesEvents {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPost(RenderLivingEvent.Post event) {
         if (playerRotationNeedToPop) {
@@ -201,9 +199,9 @@ public class PlanesEvents {
                 event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw));
 //                event.setYaw((float) MathUtil.lerpAngle(partialTicks, playerEntity.prevRotationYaw, playerEntity.rotationYaw));
                 event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, angles_prev.roll, angles.roll));
-            } else {
-//                event.getInfo().pos =planeEntity.getPositionVec();
-            }
+            } /* else {
+                event.getInfo().pos =planeEntity.getPositionVec();
+            } */
         }
     }
 

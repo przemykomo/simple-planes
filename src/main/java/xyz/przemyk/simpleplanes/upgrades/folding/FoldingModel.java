@@ -10,6 +10,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class FoldingModel extends EntityModel<PlaneEntity> {
+	public static final FoldingModel INSTANCE = new FoldingModel();
 	private final ModelRenderer rightWing;
 	private final ModelRenderer leftWing = new ModelRenderer(this, 22, 0);
 
