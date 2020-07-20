@@ -23,10 +23,10 @@ public class Config {
 
         FLY_TICKS_PER_COAL = BUILDER.comment("Ticks of flying per one coal (furnace planes)")
                 .defineInRange("flyTicksPerCoal", 600, 0, Integer.MAX_VALUE);
-        EASY_FLIGHT = BUILDER.comment("easier flight mode")
-                .define("easyFlight", true);
+        EASY_FLIGHT = BUILDER.comment("easier flight mode, disables the extreme movements")
+                .define("easyFlight", false);
         PLANE_CRUSH = BUILDER.comment("planes crash on bad landings")
-                .define("planeCrush", false);
+                .define("planeCrush", true);
         THIEF = BUILDER.comment("can players steal planes")
                 .define("plane_heist", true);
 

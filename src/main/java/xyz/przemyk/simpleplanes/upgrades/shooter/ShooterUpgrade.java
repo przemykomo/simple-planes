@@ -2,17 +2,8 @@ package xyz.przemyk.simpleplanes.upgrades.shooter;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.DispenserBlock;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.item.FireworkRocketEntity;
-import net.minecraft.entity.projectile.AbstractFireballEntity;
-import net.minecraft.entity.projectile.SmallFireballEntity;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.IDispenseItemBehavior;
-import net.minecraft.dispenser.IPosition;
-import net.minecraft.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.item.Item;
@@ -20,15 +11,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import java.util.Map;
 import java.util.Random;
 
 import static net.minecraft.item.Items.FIREWORK_ROCKET;
@@ -37,47 +27,29 @@ import static net.minecraft.item.Items.FIRE_CHARGE;
 public class ShooterUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/shooter.png");
 
-    private static final Map<Item, IShooterBehavior> SHOOTER_BEHAVIOR_MAP = Util.make(new Object2ObjectOpenHashMap<>(), (p_212564_0_) -> {
-        p_212564_0_.defaultReturnValue(new IShooterBehavior() {
-            @Override
-            public void shoot(PlaneEntity planeEntity, ItemStack itemStack) {
-
-            }
-        });
-    });
-
-
     private boolean shootSide = false;
 
     public ShooterUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SHOOTER, planeEntity);
+        super(SimplePlanesUpgrades.SHOOTER.get(), planeEntity);
     }
 
     @Override
     public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         PlayerEntity player = event.getPlayer();
         ItemStack itemStack = player.getHeldItem(event.getHand());
-        Vec3d motion = planeEntity.getMotion();
+        Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1+planeEntity.getMotion().length())));
+        Vector3d motion = new Vector3d(motion1);
         World world = event.getWorld();
         Random random = world.rand;
-        Vec2f front = this.planeEntity.getHorizontalFrontPos();
-        float pitch = PlaneEntity.getPitch(motion);
-        motion = planeEntity.getVec(planeEntity.rotationYaw, pitch)
-                .scale(Math.max(0.25, motion.length()));
-        double x = planeEntity.getPosX() + 1 * front.x;
-        double z = planeEntity.getPosZ() + 1 * front.y;
-        double y = planeEntity.getPosY() + 0.5;
-        if (shootSide) {
-            z += 1 * front.x;
-            x += 1 * front.y;
-        } else {
-            z -= 1 * front.x;
-            x -= 1 * front.y;
-        }
+
+        Vector3f pos = planeEntity.transformPos(new Vector3f( shootSide ? 0.8f : -0.8f, 0.8f,0.8f));
         shootSide = !shootSide;
+
+        double x = pos.getX()+planeEntity.getPosX();
+        double y = pos.getY()+planeEntity.getPosY();
+        double z = pos.getZ()+planeEntity.getPosZ();
         Item item = itemStack.getItem();
         if (item.equals(FIREWORK_ROCKET)) {
-            shootSide = !shootSide;
             FireworkRocketEntity fireworkrocketentity = new FireworkRocketEntity(world, itemStack,
                     x, y, z, true);
             fireworkrocketentity.shoot(-motion.x, -motion.y, -motion.z, -(float) Math.max(0.5F, motion.length() * 1.5), 1.0F);
@@ -132,7 +104,7 @@ public class ShooterUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(ShooterModel.INSTANCE.getRenderType(TEXTURE));
         ShooterModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }

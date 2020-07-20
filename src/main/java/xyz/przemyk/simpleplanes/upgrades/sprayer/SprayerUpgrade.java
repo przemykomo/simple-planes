@@ -29,14 +29,12 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.List;
 
-import static net.minecraft.block.Blocks.FIRE;
-
 public class SprayerUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/sprayer.png");
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
     public SprayerUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SPRAYER, planeEntity);
+        super(SimplePlanesUpgrades.SPRAYER.get(), planeEntity);
     }
 
     private int fluid = 0;
@@ -103,25 +101,7 @@ public class SprayerUpgrade extends Upgrade {
                     } else {
                         blockPos.move(Direction.DOWN);
                     }
-                    if (block == FIRE) {
-                        planeEntity.world.removeBlock(blockPos, false);
-                    }
                 }
-                blockPos.setPos(planeEntity.getPosition());
-                for (int j1 = -1; j1 < 2; ++j1) {
-                    for (int j2 = -3; j2 < 1; ++j2) {
-                        for (int j3 = -1; j3 < 2; ++j3) {
-                            BlockPos blockPos1 = blockPos.toImmutable().add(j1, j2, j3);
-                            BlockState blockState = planeEntity.world.getBlockState(blockPos1);
-                            Block block = blockState.getBlock();
-                            if (block == FIRE) {
-                                planeEntity.world.removeBlock(blockPos, false);
-                            }
-                            blockPos.move(Direction.DOWN);
-                        }
-                    }
-                }
-
 
                 if (effect != null) {
                     for (LivingEntity entity : planeEntity.world.getEntitiesWithinAABB(LivingEntity.class, AFFECT_ENTITIES.offset(planeEntity.getPositionVec()))) {
@@ -155,7 +135,7 @@ public class SprayerUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight) {
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(SprayerModel.INSTANCE.getRenderType(TEXTURE));
         if (planeEntity.isLarge()) {
             LargeSprayerModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

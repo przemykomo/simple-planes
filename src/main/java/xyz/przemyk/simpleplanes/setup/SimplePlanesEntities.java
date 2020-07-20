@@ -13,7 +13,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntityType;
 @SuppressWarnings("unused")
 public class SimplePlanesEntities {
 
-    public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, SimplePlanesMod.MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, SimplePlanesMod.MODID);
 
     public static void init() {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -37,7 +37,7 @@ public class SimplePlanesEntities {
     public static final RegistryObject<LargePlaneEntityType> CRIMSON_LARGE_PLANE = ENTITIES.register("crimson_large_furnace_plane", () -> new LargePlaneEntityType(SimplePlanesItems.CRIMSON_LARGE_PLANE.get(), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace/crimson.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace_powered/crimson.png"), true));
     public static final RegistryObject<LargePlaneEntityType> WARPED_LARGE_PLANE = ENTITIES.register("warped_large_furnace_plane", () -> new LargePlaneEntityType(SimplePlanesItems.WARPED_LARGE_PLANE.get(), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace/warped.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace_powered/warped.png"), true));
 
-    ////////////////////////////////// Everything below is for mod compatibility //////////////////////////////////TODO: change items
+    ////////////////////////////////// Everything below is for mod compatibility //////////////////////////////////
     //////////// Fruit Trees
     public static final RegistryObject<PlaneEntityType> FT_CHERRY_PLANE = ENTITIES.register("ft_cherry_plane", () -> new PlaneEntityType(SimplePlanesItems.FT_CHERRY_PLANE.get(), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/ft_cherry.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace_powered/ft_cherry.png"), false));
     public static final RegistryObject<LargePlaneEntityType> FT_CHERRY_LARGE_PLANE = ENTITIES.register("ft_cherry_large_plane", () -> new LargePlaneEntityType(SimplePlanesItems.FT_CHERRY_LARGE_PLANE.get(), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace/ft_cherry.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace_powered/ft_cherry.png"), false));

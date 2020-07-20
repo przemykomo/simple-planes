@@ -28,6 +28,7 @@
     "description.simpleplanes.booster": "Use gunpowder to boost your plane. Can only be applied to small planes.",
     "description.simpleplanes.floaty_bedding": "Makes plane float on water.",
     "description.simpleplanes.shooter": "Shoots fireworks or fire charges.",
+    "description.simpleplanes.folding": "Plane returns to players inventory upon departure.",
 
     "itemGroup.simpleplanes": "Simple Planes",
 
@@ -60,5 +61,7 @@
     "item.simpleplanes.bop_umbran_large_plane": "Large Umbran Furnace Plane",
     "item.simpleplanes.bop_umbran_plane": "Umbran Furnace Plane",
     "item.simpleplanes.bop_willow_large_plane": "Large Willow Furnace Plane",
-    "item.simpleplanes.bop_willow_plane": "Willow Furnace Plane"
+    "item.simpleplanes.bop_willow_plane": "Willow Furnace Plane",
+
+    "death.attack.plane_crush": "Died in a plane crush"
 }

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
@@ -29,7 +30,7 @@ public class FurnacePlaneModel extends EntityModel<PlaneEntity> {
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
+//		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
 		Body.setTextureOffset(0, 0).addBox(-33.0F, -22.0F, -15.0F, 64.0F, 1.0F, 9.0F, 0.0F, false);
 
 		bone_propeller = new ModelRenderer(this);
@@ -112,8 +113,10 @@ public class FurnacePlaneModel extends EntityModel<PlaneEntity> {
 
 	@Override
 	public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		if (entity.isPowered()) {
-			bone_propeller.rotateAngleZ = (entity.ticksExisted % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+        bone_propeller.showModel = !entity.upgrades.containsKey(SimplePlanesUpgrades.DRAGON.getId());
+
+	    if (entity.isPowered()) {
+			bone_propeller.rotateAngleZ = ((entity.ticksExisted+limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
 		} else {
 			bone_propeller.rotateAngleZ = 1;
 		}

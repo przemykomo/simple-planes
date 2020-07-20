@@ -20,11 +20,6 @@ public class PlaneRenderer extends AbstractPlaneRenderer<PlaneEntity> {
         return planeModel;
     }
 
-    @Override
-    protected float getInAirRotation() {
-        return -15f;
-    }
-
     @SuppressWarnings("rawtypes")
     @Override
     public ResourceLocation getEntityTexture(PlaneEntity entity) {

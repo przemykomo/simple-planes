@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades.sprayer;
+package xyz.przemyk.simpleplanes.upgrades.folding;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -8,15 +8,14 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class LargeSprayerModel extends EntityModel<LargePlaneEntity> {
-	public static final LargeSprayerModel INSTANCE = new LargeSprayerModel();
-
+public class FoldingSprayerModel extends EntityModel<LargePlaneEntity> {
+	public static final FoldingSprayerModel INSTANCE = new FoldingSprayerModel();
 	private final ModelRenderer Body;
 	private final ModelRenderer sprayer;
 	private final ModelRenderer spray_lest;
 	private final ModelRenderer spray_right;
 
-	public LargeSprayerModel() {
+	public FoldingSprayerModel() {
 		textureWidth = 64;
 		textureHeight = 64;
 

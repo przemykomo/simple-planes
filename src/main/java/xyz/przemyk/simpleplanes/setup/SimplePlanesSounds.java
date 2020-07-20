@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
 public class SimplePlanesSounds {
-    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, SimplePlanesMod.MODID);
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, SimplePlanesMod.MODID);
 
     public static void init() {
         SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
