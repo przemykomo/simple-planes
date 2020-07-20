@@ -24,7 +24,7 @@ public class ShooterModel extends EntityModel<PlaneEntity> {
 
 		shooter = new ModelRenderer(this);
 		shooter.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(shooter, -0.2618F, 0.0F, 0.0F);
+		setRotationAngle(shooter, 0.0F, 0.0F, 0.0F);
 
 		shooter.setTextureOffset(0, 0).addBox(0.0F, 0.0F, -12.0F, 16.0F, 16.0F, 16.0F, 0.0F, false);
 

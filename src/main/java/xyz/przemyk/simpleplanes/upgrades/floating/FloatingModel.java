@@ -22,7 +22,7 @@ public class FloatingModel extends EntityModel<PlaneEntity> {
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
+		setRotationAngle(Body, 0, 0.0F, 0.0F);
 		
 
 		balloon = new ModelRenderer(this);

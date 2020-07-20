@@ -23,7 +23,7 @@ public class SprayerModel extends EntityModel<PlaneEntity> {
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-		setRotationAngle(Body, -0.2618F, 0.0F, 0.0F);
+		setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
 
 
 		sprayer = new ModelRenderer(this);
