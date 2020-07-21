@@ -3,6 +3,8 @@ package xyz.przemyk.simpleplanes;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -11,8 +13,6 @@ import net.minecraft.network.play.client.CEntityActionPacket;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
@@ -43,7 +43,7 @@ public class PlanesEvents {
             PlaneEntity planeEntity = (PlaneEntity) entity;
             if (planeEntity.getFuel() < 200) {
                 //func_230235_a_ - contains
-                if (ItemTags.getCollection().getOrCreate(COAL_TAG).func_230235_a_(itemStack.getItem())) {
+                if (ItemTags.getCollection().getOrCreate(COAL_TAG).contains(itemStack.getItem())) {
                     ((PlaneEntity) entity).addFuel();
                     if (!player.isCreative()) {
                         itemStack.shrink(1);

@@ -1,24 +1,25 @@
 package xyz.przemyk.simpleplanes;
 
+import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.Vec3d;
 
 import static net.minecraft.network.datasync.DataSerializers.registerSerializer;
+
+import com.sun.javafx.geom.Vec3f;
 
 public class MathUtil extends MathHelper
 {
 
-    public static float getPitch(Vector3d motion)
+    public static float getPitch(Vec3d motion)
     {
         double y = motion.y;
         return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
     }
 
-    public static float getYaw(Vector3d motion)
+    public static float getYaw(Vec3d motion)
     {
         return (float) Math.toDegrees(Math.atan2(-motion.x, motion.z));
     }
@@ -57,7 +58,7 @@ public class MathUtil extends MathHelper
         return wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
-    public static Vector3f rotationToVectorFloat(double yaw, double pitch)
+    public static Vec3f rotationToVectorFloat(double yaw, double pitch)
     {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
@@ -65,11 +66,11 @@ public class MathUtil extends MathHelper
         float x = (float) (-xzLen * Math.sin(yaw));
         float y = (float) Math.sin(pitch);
         float z = (float) (xzLen * Math.cos(-yaw));
-        return new Vector3f(x, y, z);
+        return new Vec3f(x, y, z);
 
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch)
+    public static Vec3d rotationToVector(double yaw, double pitch)
     {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
@@ -77,20 +78,20 @@ public class MathUtil extends MathHelper
         double x = -xzLen * Math.sin(yaw);
         double y = Math.sin(pitch);
         double z = xzLen * Math.cos(-yaw);
-        return new Vector3d(x, y, z);
+        return new Vec3d(x, y, z);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch, double size)
+    public static Vec3d rotationToVector(double yaw, double pitch, double size)
     {
-        Vector3d vec = rotationToVector(yaw, pitch);
+        Vec3d vec = rotationToVector(yaw, pitch);
         return vec.scale(size / vec.length());
     }
 
 
 
-    public static double getHorizontalLength(Vector3d vector3d)
+    public static double getHorizontalLength(Vec3d Vec3d)
     {
-        return Math.sqrt(vector3d.x * vector3d.x + vector3d.z * vector3d.z);
+        return Math.sqrt(Vec3d.x * Vec3d.x + Vec3d.z * Vec3d.z);
     }
 
     public static Angels toEulerAngles(Quaternion q)

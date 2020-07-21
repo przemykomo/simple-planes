@@ -5,6 +5,7 @@ package xyz.przemyk.simpleplanes.upgrades.banner;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -15,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
@@ -41,7 +41,7 @@ public class BannerModel {
             final float f2 = partialTicks + planeEntity.ticksExisted;
             float r = (0.05F * MathHelper.cos(f2 / 5)) * (float) 180;
             r+=bannerUpgrade.prevRotation-MathUtil.lerpAngle(partialTicks,planeEntity.prevRotationYaw,planeEntity.rotationYaw);
-            r+=MathUtil.lerpAngle(partialTicks,MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation,bannerUpgrade.prevRotation),0);
+            r+= MathUtil.lerpAngle(partialTicks,MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation,bannerUpgrade.prevRotation),0);
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(r));
             List<Pair<BannerPattern, DyeColor>> list = BANNER_TE.getPatternList();
             BannerTileEntityRenderer.func_230180_a_(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, modelRenderer, ModelBakery.LOCATION_BANNER_BASE, true, list);

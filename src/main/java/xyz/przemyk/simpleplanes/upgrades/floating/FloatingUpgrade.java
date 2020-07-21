@@ -6,7 +6,8 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
+
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -17,14 +18,14 @@ public class FloatingUpgrade extends Upgrade {
     public static final ResourceLocation LARGE_TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/floating_large.png");
 
     public FloatingUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.FLOATING.get(), planeEntity);
+        super(SimplePlanesUpgrades.FLOATING, planeEntity);
     }
 
     @Override
     public boolean tick() {
         if (planeEntity.isAboveWater()) {
 
-            Vector3d motion = planeEntity.getMotion();
+            Vec3d motion = planeEntity.getMotion();
             double f = 0.98;
             double y = MathUtil.lerp(1,motion.y,Math.max(motion.y, 0));
             planeEntity.setMotion(motion.x * f, y, motion.z * f);

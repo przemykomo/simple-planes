@@ -16,7 +16,7 @@ public class FoldingUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/folding.png");
 
     public FoldingUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.FOLDING.get(), planeEntity);
+        super(SimplePlanesUpgrades.FOLDING, planeEntity);
     }
 
     @Override

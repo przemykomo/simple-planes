@@ -4,10 +4,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.tileentity.SkullTileEntityRenderer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 

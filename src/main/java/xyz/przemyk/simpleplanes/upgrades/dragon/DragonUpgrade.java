@@ -13,11 +13,10 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class DragonUpgrade extends Upgrade
 {
-    public static final DragonModel DRAGON_MODEL = new DragonModel();
 
     public DragonUpgrade(PlaneEntity planeEntity)
     {
-        super(SimplePlanesUpgrades.DRAGON.get(), planeEntity);
+        super(SimplePlanesUpgrades.DRAGON, planeEntity);
     }
 
     @Override

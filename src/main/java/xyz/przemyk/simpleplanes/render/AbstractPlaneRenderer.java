@@ -5,13 +5,14 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.Vec3d;
+
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -26,13 +27,13 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     }
 
     @Override
-    public Vector3d getRenderOffset(T entityIn, float partialTicks) {
+    public Vec3d getRenderOffset(T entityIn, float partialTicks) {
         if (Minecraft.getInstance().player != null) {
             ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
             if (playerEntity == entityIn.getControllingPassenger()) {
                 if ((Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
 
-                    return new Vector3d(0, 0, 0);
+                    return new Vec3d(0, 0, 0);
                 }
             }
         }
