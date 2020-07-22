@@ -60,5 +60,14 @@
     "item.simpleplanes.bop_umbran_large_plane": "Large Umbran Furnace Plane",
     "item.simpleplanes.bop_umbran_plane": "Umbran Furnace Plane",
     "item.simpleplanes.bop_willow_large_plane": "Large Willow Furnace Plane",
-    "item.simpleplanes.bop_willow_plane": "Willow Furnace Plane"
-}
+    "item.simpleplanes.bop_willow_plane": "Willow Furnace Plane",
+
+    "item.simpleplanes.atm_aspen_plane":  "Aspen Furnace Plane",
+    "item.simpleplanes.atm_aspen_large_plane":  "Large Aspen Furnace Plane",
+    "item.simpleplanes.atm_grimwood_plane": "Grimwood Furnace Plane",
+    "item.simpleplanes.atm_grimwood_large_plane": "Large Grimwood Furnace Plane",
+    "item.simpleplanes.atm_kousa_plane":  "Kousa Furnace Plane",
+    "item.simpleplanes.atm_kousa_large_plane":  "Large Kousa Furnace Plane",
+    "item.simpleplanes.atm_yucca_plane":  "Yucca Furnace Plane",
+    "item.simpleplanes.atm_yucca_large_plane":  "Large Yucca Furnace Plane"
+ }

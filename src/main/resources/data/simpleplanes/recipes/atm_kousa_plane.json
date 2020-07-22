@@ -1,0 +1,28 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " WF",
+        "PEB",
+        " W "
+    ],
+    "key": {
+        "W": {
+            "item": "atmospheric:kousa_slab"
+        },
+        "F": {
+            "item": "minecraft:furnace"
+        },
+        "B": {
+            "item": "atmospheric:kousa_boat"
+        },
+        "E": {
+            "item": "simpleplanes:furnace_engine"
+        },
+        "P": {
+            "item": "simpleplanes:propeller"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:atm_kousa_plane"
+    }
+}
