@@ -25,7 +25,7 @@ public class FloatingUpgrade extends Upgrade {
         if (planeEntity.isAboveWater()) {
 
             Vector3d motion = planeEntity.getMotion();
-            double f = 0.98;
+            double f = 1;
             double y = MathUtil.lerp(1,motion.y,Math.max(motion.y, 0));
             planeEntity.setMotion(motion.x * f, y, motion.z * f);
             if (planeEntity.world.getBlockState(new BlockPos(planeEntity.getPositionVec().add(0, 0.5, 0))).getBlock() == Blocks.WATER) {

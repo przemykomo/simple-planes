@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes;
 
+
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -8,6 +9,10 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.render.LargePlaneRenderer;
 import xyz.przemyk.simpleplanes.render.PlaneRenderer;
@@ -17,6 +22,7 @@ import xyz.przemyk.simpleplanes.setup.*;
 public class SimplePlanesMod {
     public static final String MODID = "simpleplanes";
     public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = (new DamageSource("plain_crash")).setDamageBypassesArmor();
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public SimplePlanesMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.CONFIG);

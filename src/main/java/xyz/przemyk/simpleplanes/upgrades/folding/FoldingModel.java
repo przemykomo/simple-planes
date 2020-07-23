@@ -28,12 +28,15 @@ public class FoldingModel extends EntityModel<PlaneEntity> {
 
 	@Override
 	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
+		matrixStack.push();
+	    matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
 		matrixStack.translate(0,1.1,-0.2);
 		matrixStack.scale(0.5f,0.5f,0.5f);
 
 		rightWing.render(matrixStack, buffer, packedLight, packedOverlay);
 		leftWing.render(matrixStack, buffer, packedLight, packedOverlay);
-	}
+        matrixStack.pop();
+
+    }
 
 }
