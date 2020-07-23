@@ -15,6 +15,7 @@ public class Config {
     public static ForgeConfigSpec CONFIG;
 
     public static ForgeConfigSpec.IntValue FLY_TICKS_PER_COAL;
+    public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
     public static ForgeConfigSpec.BooleanValue EASY_FLIGHT;
     public static ForgeConfigSpec.BooleanValue PLANE_CRUSH;
 
@@ -23,6 +24,8 @@ public class Config {
 
         FLY_TICKS_PER_COAL = BUILDER.comment("Ticks of flying per one coal (furnace planes)")
                 .defineInRange("flyTicksPerCoal", 600, 0, Integer.MAX_VALUE);
+        TURN_THRESHOLD = BUILDER.comment("For controllers, a threshold for the joystick movement of the plane")
+                .defineInRange("turnThreshold", 20, 0, 90);
         EASY_FLIGHT = BUILDER.comment("easier flight mode, disables the extreme movements")
                 .define("easyFlight", false);
         PLANE_CRUSH = BUILDER.comment("planes crash on bad landings")

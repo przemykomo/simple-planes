@@ -12,12 +12,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import static net.minecraft.item.Items.*;
-import static xyz.przemyk.simpleplanes.MathUtil.getVec;
 
 public class RocketUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
@@ -83,7 +83,7 @@ public class RocketUpgrade extends Upgrade {
             }
         }
         planeEntity.rotationPitch+=pitch;
-        Vector3d motion = getVec(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.2);
+        Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.2);
 
         planeEntity.setMotion(m.add(motion));
         if (!planeEntity.world.isRemote()) {
