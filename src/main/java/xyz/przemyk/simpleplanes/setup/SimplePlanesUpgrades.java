@@ -7,11 +7,12 @@ import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.GameData;
+
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.dragon.DragonUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.paint.PaintUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -46,4 +47,6 @@ public class SimplePlanesUpgrades {
             itemStack -> itemStack.getItem() == Items.ELYTRA && EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING,itemStack)>0, FoldingUpgrade::new));
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", () -> new UpgradeType.Custom(
             itemStack -> itemStack.getItem().getClass()== BannerItem.class, BannerUpgrade::new));
+    public static final RegistryObject<UpgradeType> PAINT = UPGRADE_TYPES.register("paint", () -> new UpgradeType.Custom(
+            itemStack -> PaintUpgrade.PAINTS.containsKey(itemStack.getItem().getRegistryName()), PaintUpgrade::new));
 }

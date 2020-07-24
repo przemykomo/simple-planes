@@ -1,4 +1,11 @@
 {
+    "conditions": [
+        {
+            "type": "forge:mod_loaded",
+            "modid": "biomesoplenty"
+        }
+    ],
+    "group": "large_plane",
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "I  ",

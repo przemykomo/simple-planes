@@ -1,11 +1,12 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 public class LargePlaneEntityType extends AbstractPlaneEntityType<LargePlaneEntity> {
 
-    public LargePlaneEntityType(Item dropItem, ResourceLocation texture, ResourceLocation texturePowered, boolean immuneToFire) {
-        super(LargePlaneEntity::new, dropItem, texture, texturePowered, immuneToFire);
+    public LargePlaneEntityType(boolean immuneToFire) {
+        super(LargePlaneEntity::new, immuneToFire);
     }
 }

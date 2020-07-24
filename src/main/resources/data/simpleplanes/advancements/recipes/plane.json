@@ -1,0 +1,69 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+        "simpleplanes:acacia_large_plane",
+        "simpleplanes:acacia_plane",
+        "simpleplanes:birch_large_plane",
+        "simpleplanes:birch_plane",
+        "simpleplanes:booster",
+        "simpleplanes:bop_cherry_large_plane",
+        "simpleplanes:bop_cherry_plane",
+        "simpleplanes:bop_dead_large_plane",
+        "simpleplanes:bop_dead_plane",
+        "simpleplanes:bop_fir_large_plane",
+        "simpleplanes:bop_fir_plane",
+        "simpleplanes:bop_hellbark_large_plane",
+        "simpleplanes:bop_hellbark_plane",
+        "simpleplanes:bop_jacaranda_large_plane",
+        "simpleplanes:bop_jacaranda_plane",
+        "simpleplanes:bop_magic_large_plane",
+        "simpleplanes:bop_magic_plane",
+        "simpleplanes:bop_mahogany_large_plane",
+        "simpleplanes:bop_mahogany_plane",
+        "simpleplanes:bop_palm_large_plane",
+        "simpleplanes:bop_palm_plane",
+        "simpleplanes:bop_redwood_large_plane",
+        "simpleplanes:bop_redwood_plane",
+        "simpleplanes:bop_umbran_large_plane",
+        "simpleplanes:bop_umbran_plane",
+        "simpleplanes:bop_willow_large_plane",
+        "simpleplanes:bop_willow_plane",
+        "simpleplanes:crimson_large_plane",
+        "simpleplanes:crimson_plane",
+        "simpleplanes:dark_oak_large_plane",
+        "simpleplanes:dark_oak_plane",
+        "simpleplanes:floaty_bedding",
+        "simpleplanes:folding",
+        "simpleplanes:ft_cherry_large_plane",
+        "simpleplanes:ft_cherry_plane",
+        "simpleplanes:ft_citrus_large_plane",
+        "simpleplanes:ft_citrus_plane",
+        "simpleplanes:furnace_engine",
+        "simpleplanes:jungle_large_plane",
+        "simpleplanes:jungle_plane",
+        "simpleplanes:oak_large_plane",
+        "simpleplanes:oak_plane",
+        "simpleplanes:propeller",
+        "simpleplanes:shooter",
+        "simpleplanes:sprayer",
+        "simpleplanes:spruce_large_plane",
+        "simpleplanes:spruce_plane",
+        "simpleplanes:warped_large_plane",
+        "simpleplanes:warped_plane"
+    ]
+  },
+  "criteria": {
+    "in_fire": {
+      "trigger": "minecraft:enter_block",
+      "conditions": {
+        "block": "minecraft:fire"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "in_fire"
+    ]
+  ]
+}

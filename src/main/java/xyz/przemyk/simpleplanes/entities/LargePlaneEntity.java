@@ -11,6 +11,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
+import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -18,16 +19,22 @@ import java.util.List;
 
 public class LargePlaneEntity extends PlaneEntity
 {
-
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn)
     {
         super(entityTypeIn, worldIn);
         setMaxSpeed(0.2f);
     }
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z)
+
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material)
     {
-        super(entityTypeIn, worldIn, x, y, z);
+        super(entityTypeIn, worldIn, material);
+        setMaxSpeed(0.2f);
+    }
+
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z)
+    {
+        super(entityTypeIn, worldIn, material, x, y, z);
         setMaxSpeed(0.2f);
     }
 
@@ -52,6 +59,10 @@ public class LargePlaneEntity extends PlaneEntity
     protected boolean canFitPassenger(Entity passenger)
     {
         if (getPassengers().size() > 1 || passenger.getRidingEntity() == this)
+        {
+            return false;
+        }
+        if(passenger instanceof PlaneEntity)
         {
             return false;
         }

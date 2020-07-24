@@ -1,4 +1,10 @@
 {
+    "conditions": [
+        {
+            "type": "forge:mod_loaded",
+            "modid": "biomesoplenty"
+        }
+    ],
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "I  ",

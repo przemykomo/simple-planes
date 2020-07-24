@@ -92,7 +92,8 @@ public class PlanesClientEvents
             PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
             if ((Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
                 float d = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
-                player.rotationYaw += d;
+                if(Math.abs(MathUtil.wrapDegrees(d))>10)
+                    player.rotationYaw += d;
                 float f = MathHelper.wrapDegrees(player.rotationPitch - 0);
                 float f1 = MathHelper.clamp(f, -50, 50);
                 float perc = (f1 - f) * 0.5f;

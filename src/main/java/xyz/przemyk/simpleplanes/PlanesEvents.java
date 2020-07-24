@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,8 +34,10 @@ public class PlanesEvents {
             PlaneEntity planeEntity = (PlaneEntity) entity;
             if (planeEntity.getFuel() < 200) {
                 //func_230235_a_ - contains
-                if (ItemTags.getCollection().getOrCreate(COAL_TAG).func_230235_a_(itemStack.getItem())) {
-                    ((PlaneEntity) entity).addFuel();
+                int burnTime = ForgeHooks.getBurnTime(itemStack);
+                if(burnTime>0) {
+                    int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
+                    ((PlaneEntity) entity).addFuel(fuel);
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
                     }

@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " WF",
+        "PEW",
+        " W "
+    ],
+    "key": {
+        "W": {
+            "item": "minecraft:crimson_slab"
+        },
+        "F": {
+            "item": "minecraft:furnace"
+        },
+        "E": {
+            "item": "simpleplanes:furnace_engine"
+        },
+        "P": {
+            "item": "simpleplanes:propeller"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:crimson_plane"
+    }
+}

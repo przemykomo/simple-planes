@@ -1,11 +1,11 @@
 {
-    "type":"crafting_shapeless",
+    "type": "crafting_shapeless",
     "ingredients": [
         {
-            "item":"minecraft:elytra"
+            "item": "minecraft:elytra"
         }
     ],
     "result": {
-    "item":"simpleplanes:folding"
+        "item": "simpleplanes:folding"
     }
 }
