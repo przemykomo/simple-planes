@@ -24,7 +24,7 @@ public class DragonUpgrade extends Upgrade
     public void deserializeNBT(CompoundNBT nbt)
     {
         super.deserializeNBT(nbt);
-        planeEntity.setMaxSpeed(0.6f);
+        planeEntity.setMaxSpeed(0.5f);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DragonUpgrade extends Upgrade
     {
         if (!planeEntity.world.isRemote)
         {
-            planeEntity.setMaxSpeed(1);
+            planeEntity.setMaxSpeed(0.5f);
         }
     }
 }

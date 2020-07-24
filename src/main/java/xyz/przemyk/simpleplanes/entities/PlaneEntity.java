@@ -313,13 +313,13 @@ public class PlaneEntity extends Entity implements IJumpingMount
         }
         double max_speed = getMaxSpeed();
         double take_off_speed = 0.2;
-        float max_lift = 0.05f;
+        float max_lift = 0.07f;
 
-        double lift_factor = 1 / 12.0;
+        double lift_factor = 1 / 8.0;
 
-        double gravity = -0.06;
+        double gravity = -0.08;
 
-        final double drag_mul = 0.99;
+        final double drag_mul = 0.98;
         final double drag = 0.01;
         final double drag_above_max = 0.05;
         float push = 0.1f;
@@ -433,7 +433,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
         double speed = motion.length();
         final double speed_x = getHorizontalLength(motion);
 
-        speed *= drag_mul;
+        speed *=Math.pow(drag_mul,speed*2);
         speed -= drag;
         speed = Math.max(speed, 0);
         if (speed > max_speed)
