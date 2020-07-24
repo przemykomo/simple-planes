@@ -1,11 +1,11 @@
 package xyz.przemyk.simpleplanes.upgrades.dragon;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -24,7 +24,7 @@ public class DragonUpgrade extends Upgrade
     public void deserializeNBT(CompoundNBT nbt)
     {
         super.deserializeNBT(nbt);
-        planeEntity.setMaxSpeed(0.5f);
+        planeEntity.setMaxSpeed(1f);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DragonUpgrade extends Upgrade
     {
         if (!planeEntity.world.isRemote)
         {
-            planeEntity.setMaxSpeed(0.5f);
+            planeEntity.setMaxSpeed(1f);
         }
     }
 }
