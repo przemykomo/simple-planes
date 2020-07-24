@@ -1,9 +1,34 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import static net.minecraft.util.math.MathHelper.wrapDegrees;
+import static xyz.przemyk.simpleplanes.MathUtil.Angels;
+import static xyz.przemyk.simpleplanes.MathUtil.QUATERNION_SERIALIZER;
+import static xyz.przemyk.simpleplanes.MathUtil.abs;
+import static xyz.przemyk.simpleplanes.MathUtil.clamp;
+import static xyz.przemyk.simpleplanes.MathUtil.degreesDifferenceAbs;
+import static xyz.przemyk.simpleplanes.MathUtil.getHorizontalLength;
+import static xyz.przemyk.simpleplanes.MathUtil.lerpAngle;
+import static xyz.przemyk.simpleplanes.MathUtil.lerpAngle180;
+import static xyz.przemyk.simpleplanes.MathUtil.lerpQ;
+import static xyz.przemyk.simpleplanes.MathUtil.toEulerAngles;
+import static xyz.przemyk.simpleplanes.MathUtil.toQuaternion;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IJumpingMount;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -13,7 +38,11 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.TransportationHelper;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -39,15 +68,6 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
 
-import javax.annotation.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import static net.minecraft.util.math.MathHelper.wrapDegrees;
-import static xyz.przemyk.simpleplanes.MathUtil.*;
-
 public class PlaneEntity extends Entity implements IJumpingMount
 {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
@@ -58,8 +78,8 @@ public class PlaneEntity extends Entity implements IJumpingMount
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
     public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, QUATERNION_SERIALIZER);
-    public Quaternion Q_Client = Quaternion.ONE.copy();
-    public Quaternion Q_Prev = Quaternion.ONE.copy();
+    public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
+    public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
     public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
@@ -79,7 +99,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
     {
         super(entityTypeIn, worldIn);
         this.stepHeight = 0.999f;
-        setMaxSpeed(0.25f);
+        setMaxSpeed(0.5f);
     }
 
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, double x, double y, double z)
@@ -125,7 +145,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
 
     public Quaternion getQ()
     {
-        return dataManager.get(Q).copy();
+        return new Quaternion(dataManager.get(Q));
     }
 
     public void setQ(Quaternion q)
@@ -135,7 +155,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
 
     public Quaternion getQ_Client()
     {
-        return Q_Client.copy();
+        return new Quaternion(Q_Client);
     }
 
     public void setQ_Client(Quaternion q)
@@ -313,21 +333,21 @@ public class PlaneEntity extends Entity implements IJumpingMount
         }
         double max_speed = getMaxSpeed();
         double take_off_speed = 0.2;
-        float max_lift = 0.05f;
+        float max_lift = 0.07f;
 
-        double lift_factor = 1 / 12.0;
+        double lift_factor = 1 / 5.0;
 
-        double gravity = -0.06;
+        double gravity = -0.08;
 
-        final double drag_mul = 0.99;
-        final double drag = 0.01;
-        final double drag_above_max = 0.05;
+        double drag_mul = 0.99;
+        final double drag = 0.001;
+        final double drag_above_max = 0.02;
         float push = 0.1f;
-        float ground_push = 0.02f;
-        float passive_engine_push = 0.05f;
+        float ground_push = 0.01f;
+        float passive_engine_push = 0.04f;
 
-        float motion_to_rotation = 0.05f;
-        float pitch_to_motion = 0.05f;
+        float motion_to_rotation = 0.04f;
+        float pitch_to_motion = 0.1f;
 
         if (this.hasNoGravity())
         {
@@ -392,14 +412,21 @@ public class PlaneEntity extends Entity implements IJumpingMount
             if (((MathUtil.degreesDifferenceAbs(rotationPitch, 0) < 5) || (getMotion().length() > 0.4))
                     && moveForward > 0.0F && isPowered())
             {
-                gravity = -max_lift*0.9;
+                gravity = -max_lift * 0.9;
             }
-            else if(moveForward<0)
+            else if (moveForward < 0)
             {
                 push = -ground_push;
-            }else {
+            }
+            else
+            {
                 push = 0;
             }
+            float f;
+            BlockPos pos = new BlockPos(this.getPosX(), this.getPosY() - 1.0D, this.getPosZ());
+            f = this.world.getBlockState(pos).getSlipperiness(this.world, pos, this) * 0.98F;
+            f = Math.max(f, 0.98F);
+            drag_mul *= f;
 
         }
         else
@@ -418,11 +445,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
             {
                 push = passive_engine_push;
             }
-            if (passengerSprinting && isPowered())
-            {
-                push *= 2;
-                dataManager.set(FUEL, fuel - 1);
-            }
             if (!isPowered())
             {
                 push = 0;
@@ -439,7 +461,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
         if (speed > max_speed)
         {
             double i = (speed / max_speed);
-            //                i = i * i;
+            push = 0;
             speed = MathHelper.lerp(drag_above_max * i, speed, max_speed);
         }
         if (speed == 0)
@@ -458,7 +480,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
 
         //rotating (roll + yaw)
         //########
-
         float f1 = 1f;
         double turn = 0;
 
@@ -597,7 +618,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
         {
             double speed_before = Math.sqrt(horizontalMag(this.getMotion()));
             boolean onGroundOld = this.onGround;
-
             if (getMotion().length() > 0.5 || moveForward != 0)
             {
                 onGround = true;
@@ -618,10 +638,11 @@ public class PlaneEntity extends Entity implements IJumpingMount
         }
 
         //back to q
-        q.multiply(Vector3f.ZP.rotationDegrees((float) (rotationRoll - angelsOld.roll)));
-        q.multiply(Vector3f.XN.rotationDegrees((float) (rotationPitch - angelsOld.pitch)));
-        q.multiply(Vector3f.YP.rotationDegrees((float) (rotationYaw - angelsOld.yaw)));
-        q.normalize();
+        q.multiply(new Quaternion(Vector3f.ZP, ((float) (rotationRoll - angelsOld.roll)), true));
+        q.multiply(new Quaternion(Vector3f.XN, ((float) (rotationPitch - angelsOld.pitch)), true));
+        q.multiply(new Quaternion(Vector3f.YP, ((float) (rotationYaw - angelsOld.yaw)), true));
+
+        q = MathUtil.normalizeQuaternion(q);
 
         setQ_prev(getQ_Client());
         setQ(q);
@@ -661,17 +682,16 @@ public class PlaneEntity extends Entity implements IJumpingMount
 
     protected void spawnSmokeParticles(int fuel)
     {
-        spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.5f, -1), 0);
+        spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 1.2f, -1), 0);
         if ((fuel > 4 && fuel < 100))
         {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.5f, -1), 5);
+            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 1.2f, -1), 5);
         }
     }
 
     public void spawnParticle(IParticleData particleData, Vector3f relPos, int particleCount)
     {
         transformPos(relPos);
-        relPos.add(0, 0.7f, 0);
         ((ServerWorld) world).spawnParticle(particleData,
                 getPosX() + relPos.getX(),
                 getPosY() + relPos.getY(),
@@ -878,11 +898,13 @@ public class PlaneEntity extends Entity implements IJumpingMount
     public void updatePassenger(Entity passenger)
     {
         super.updatePassenger(passenger);
+        boolean b = (passenger instanceof PlayerEntity) && ((PlayerEntity) passenger).isUser();
 
-        if (this.isPassenger(passenger) && !canPassengerSteer())
+        if (this.isPassenger(passenger) && !b)
         {
             this.applyYawToEntity(passenger);
         }
+
     }
 
     /**
@@ -890,7 +912,6 @@ public class PlaneEntity extends Entity implements IJumpingMount
      */
     public void applyYawToEntity(Entity entityToUpdate)
     {
-        //        entityToUpdate.setRenderYawOffset(lerpAngle(0.01f,((LivingEntity)entityToUpdate).renderYawOffset,entityToUpdate.rotationYaw));
         entityToUpdate.setRotationYawHead(entityToUpdate.getRotationYawHead() + this.deltaRotation);
 
         entityToUpdate.rotationYaw += this.deltaRotation;
@@ -901,14 +922,11 @@ public class PlaneEntity extends Entity implements IJumpingMount
         float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
 
         float perc = deltaRotationTicks > 0 ? 1f / deltaRotationTicks : 1f;
-        //        float perc =  1f/deltaRotationTicks ;
-        //        float perc =  0.9f;
         float diff = (f1 - f) * perc;
 
         entityToUpdate.prevRotationYaw += diff;
         entityToUpdate.rotationYaw += diff;
 
-        //        entityToUpdate.setRotationYawHead(lerpAngle180(0.9f,entityToUpdate.getRotationYawHead(),entityToUpdate.rotationYaw));
         entityToUpdate.setRotationYawHead(entityToUpdate.rotationYaw);
     }
 

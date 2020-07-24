@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -14,21 +16,17 @@ import net.minecraft.world.server.ServerWorld;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
-import java.util.List;
-
 public class LargePlaneEntity extends PlaneEntity
 {
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn)
     {
         super(entityTypeIn, worldIn);
-        setMaxSpeed(0.2f);
     }
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, double x, double y, double z)
     {
         super(entityTypeIn, worldIn, x, y, z);
-        setMaxSpeed(0.2f);
     }
 
     @Override
