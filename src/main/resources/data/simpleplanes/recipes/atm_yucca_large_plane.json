@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:atm_yucca_plane"
+        },
+        "B": {
+            "item": "atmospheric:yucca_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:atm_yucca_large_plane"
+    }
+}

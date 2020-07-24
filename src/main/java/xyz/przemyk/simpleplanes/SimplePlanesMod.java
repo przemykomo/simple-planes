@@ -90,5 +90,22 @@ public class SimplePlanesMod {
 
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_WILLOW_PLANE.get(), PlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BOP_WILLOW_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        //////////// Atmospheric
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ATM_ASPEN_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ATM_ASPEN_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ATM_GRIMWOOD_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ARM_GRIMWOOD_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ATM_KOUSA_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ARM_KOUSA_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ATM_ROSEWOOD_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ARM_ROSEWOOD_LARGE_PLANE.get(), LargePlaneRenderer::new);
+
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ATM_YUCCA_PLANE.get(), PlaneRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.ARM_YUCCA_LARGE_PLANE.get(), LargePlaneRenderer::new);
     }
 }

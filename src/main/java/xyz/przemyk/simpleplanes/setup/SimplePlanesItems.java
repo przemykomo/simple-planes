@@ -98,4 +98,22 @@ public class SimplePlanesItems {
 
     public static final RegistryObject<PlaneItem> BOP_WILLOW_PLANE = ITEMS.register("bop_willow_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.BOP_WILLOW_PLANE.get(), world)));
     public static final RegistryObject<PlaneItem> BOP_WILLOW_LARGE_PLANE = ITEMS.register("bop_willow_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.BOP_WILLOW_LARGE_PLANE.get(), world)));
+
+
+    //////////// Atmospheric
+    public static final RegistryObject<PlaneItem> ATM_ASPEN_PLANE = ITEMS.register("atm_aspen_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.ATM_ASPEN_PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> ATM_ASPEN_LARGE_PLANE = ITEMS.register("atm_aspen_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.ATM_ASPEN_LARGE_PLANE.get(), world)));
+
+    public static final RegistryObject<PlaneItem> ATM_GRIMWOOD_PLANE = ITEMS.register("atm_grimwood_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.ATM_GRIMWOOD_PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> ARM_GRIMWOOD_LARGE_PLANE = ITEMS.register("atm_grimwood_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.ARM_GRIMWOOD_LARGE_PLANE.get(), world)));
+
+    public static final RegistryObject<PlaneItem> ATM_KOUSA_PLANE = ITEMS.register("atm_kousa_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.ATM_KOUSA_PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> ARM_KOUSA_LARGE_PLANE = ITEMS.register("atm_kousa_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.ARM_KOUSA_LARGE_PLANE.get(), world)));
+
+    public static final RegistryObject<PlaneItem> ATM_ROSEWOOD_PLANE = ITEMS.register("atm_rosewood_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.ATM_ROSEWOOD_PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> ARM_ROSEWOOD_LARGE_PLANE = ITEMS.register("atm_rosewood_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.ARM_ROSEWOOD_LARGE_PLANE.get(), world)));
+
+    public static final RegistryObject<PlaneItem> ATM_YUCCA_PLANE = ITEMS.register("atm_yucca_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.ATM_YUCCA_PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> ARM_YUCCA_LARGE_PLANE = ITEMS.register("atm_yucca_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.ARM_YUCCA_LARGE_PLANE.get(), world)));
+
 }

@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:atm_kousa_plane"
+        },
+        "B": {
+            "item": "atmospheric:kousa_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:atm_kousa_large_plane"
+    }
+}
