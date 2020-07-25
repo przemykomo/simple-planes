@@ -585,23 +585,26 @@ public class PlaneEntity extends Entity implements IJumpingMount
         }
 
         motion = getMotion();
+        float yaw = MathUtil.getYaw(motion);
+        float pitch = MathUtil.getPitch(motion);
+        if (degreesDifferenceAbs(yaw, rotationYaw) > 90 && getOnGround() || isAboveWater())
+        {
+            setMotion(motion.scale(0.9));
+        }
+
         if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
         {
-            float yaw = MathUtil.getYaw(motion);
-            float pitch = MathUtil.getPitch(motion);
-            if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
+            setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch),
+                    getMotion().length()));
+
+            if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90)
             {
-                setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch),
-                        motion.length()));
-                if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90)
-                {
-                    pitch = wrapDegrees(pitch + 180);
-                }
-                if (Math.abs(rotationPitch) < 85)
-                {
-                    Quaternion q1 = toQuaternion(MathUtil.getYaw(getMotion()), pitch, rotationRoll);
-                    q = lerpQ(motion_to_rotation, q, q1);
-                }
+                pitch = wrapDegrees(pitch + 180);
+            }
+            if (Math.abs(rotationPitch) < 85)
+            {
+                Quaternion q1 = toQuaternion(MathUtil.getYaw(getMotion()), pitch, rotationRoll);
+                q = lerpQ(motion_to_rotation, q, q1);
             }
 
         }
