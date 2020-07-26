@@ -98,7 +98,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn)
     {
         super(entityTypeIn, worldIn);
-        this.stepHeight = 0.999f;
+        this.stepHeight = 0.9999f;
         setMaxSpeed(0.5f);
     }
 
@@ -331,23 +331,25 @@ public class PlaneEntity extends Entity implements IJumpingMount
 
             return;
         }
-        double max_speed = getMaxSpeed();
-        double take_off_speed = 0.2;
+        double max_speed = 3;
+        double max_push_speed = getMaxSpeed() * 1.5;
+        double take_off_speed = 0.3;
         float max_lift = 0.07f;
 
         double lift_factor = 1 / 5.0;
 
-        double gravity = -0.08;
+        double gravity = -0.03;
 
-        double drag_mul = 0.99;
-        final double drag = 0.001;
-        final double drag_above_max = 0.02;
-        float push = 0.1f;
+        final double drag = 0.002;
+        double drag_mul = 0.0005;
+        double drag_quad = 0.001;
+
+        float push = 0.08f;
         float ground_push = 0.01f;
-        float passive_engine_push = 0.04f;
+        float passive_engine_push = 0.02f;
 
-        float motion_to_rotation = 0.04f;
-        float pitch_to_motion = 0.1f;
+        float motion_to_rotation = 0.05f;
+        float pitch_to_motion = 0.2f;
 
         if (this.hasNoGravity())
         {
@@ -388,48 +390,106 @@ public class PlaneEntity extends Entity implements IJumpingMount
         int fuel = dataManager.get(FUEL);
         if (fuel > 0)
         {
-            --fuel;
+            fuel -=passengerSprinting?2: 1;
             dataManager.set(FUEL, fuel);
         }
+        Vector3d motion = getMotion();
 
+        if (motion.length() > 0.1)
+        {
+            float yaw = MathUtil.getYaw(motion);
+            float pitch = MathUtil.getPitch(motion);
+            if (degreesDifferenceAbs(yaw, rotationYaw) > 90 && getOnGround() || isAboveWater())
+            {
+                setMotion(motion.scale(0.9));
+            }
+
+            float d = degreesDifferenceAbs(pitch, rotationPitch);
+            if (d > 180)
+            {
+                d = d-180;
+            }
+            //            d/=3600;
+            d /= 60;
+            d = Math.min(1, d);
+            d *= d;
+            d = 1 - d;
+            //            speed = getMotion().length()*(d);
+            double speed = getMotion().length();
+            max_lift = 10;
+            lift_factor = Math.min(speed * 40, max_lift);
+            setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
+                    lerpAngle180(pitch_to_motion * d, pitch, rotationPitch + lift_factor),
+                    speed));
+            if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
+            {
+
+                if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90)
+                {
+                    pitch = wrapDegrees(pitch + 180);
+                }
+                if (Math.abs(rotationPitch) < 85)
+                {
+
+                    yaw = MathUtil.getYaw(getMotion());
+                    if (degreesDifferenceAbs(yaw, rotationYaw) > 90)
+                    {
+                        yaw = yaw - 180;
+                    }
+                    Quaternion q1 = toQuaternion(yaw, pitch, rotationRoll);
+                    q = lerpQ(motion_to_rotation, q, q1);
+                }
+
+            }
+        }
+        boolean b = true;
         //pitch + movement speed
         if ((getOnGround() || isAboveWater()))
         {
             if (groundTicks < 0)
             {
-                groundTicks = 10;
+                groundTicks = 2;
             }
             else
             {
                 groundTicks--;
             }
             float pitch = isLarge() ? 10 : 15;
+            float p1 = 0;
             if ((isPowered() && moveForward > 0.0F) || isAboveWater())
             {
-                pitch = 0;
+                pitch = p1;
             }
             rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
-            if (((MathUtil.degreesDifferenceAbs(rotationPitch, 0) < 5) || (getMotion().length() > 0.4))
-                    && moveForward > 0.0F && isPowered())
+
+            if (MathUtil.degreesDifferenceAbs(rotationPitch, p1) > 1 && getMotion().length() < 0.1)
             {
-                gravity = -max_lift * 0.9;
+                push = 0;
             }
-            else if (moveForward < 0)
+            if (getMotion().length() < take_off_speed)
+            {
+                //                rotationPitch = lerpAngle(0.2f, rotationPitch, pitch);
+                b = false;
+                //                push = 0;
+            }
+            if (moveForward < 0)
             {
                 push = -ground_push;
             }
-            else
+            if (!isPowered() || moveForward == 0)
             {
                 push = 0;
             }
             float f;
             BlockPos pos = new BlockPos(this.getPosX(), this.getPosY() - 1.0D, this.getPosZ());
-            f = this.world.getBlockState(pos).getSlipperiness(this.world, pos, this) * 0.98F;
-            f = Math.max(f, 0.98F);
-            drag_mul *= f;
+            f = this.world.getBlockState(pos).getSlipperiness(this.world, pos, this);
+            drag_mul = Math.min(drag_mul, Math.max(f, 0.90f));
 
         }
-        else
+        else if (!passengerSprinting)
+        {
+            push = passive_engine_push;
+        }
         {
             groundTicks--;
             float pitch = 0f;
@@ -437,33 +497,42 @@ public class PlaneEntity extends Entity implements IJumpingMount
             {
                 pitch = passengerSprinting ? 2 : 1f;
             }
-            else if (moveForward < 0.0F)
-            {
-                pitch = passengerSprinting ? -2 : -1;
-            }
             else
             {
-                push = passive_engine_push;
+                if (moveForward < 0.0F)
+                {
+                    pitch = passengerSprinting ? -2 : -1;
+                }
             }
             if (!isPowered())
             {
                 push = 0;
             }
-            rotationPitch += pitch;
+            if (b)
+            {
+                rotationPitch += pitch;
+            }
         }
-        Vector3d motion = this.getMotion();
+        motion = this.getMotion();
         double speed = motion.length();
         final double speed_x = getHorizontalLength(motion);
-
-        speed *= drag_mul;
-        speed -= drag;
+        speed -= speed * speed * drag_quad + speed * drag_mul + drag;
         speed = Math.max(speed, 0);
         if (speed > max_speed)
         {
-            double i = (speed / max_speed);
-            push = 0;
-            speed = MathHelper.lerp(drag_above_max * i, speed, max_speed);
+            speed = MathUtil.lerp(0.2, speed, max_speed);
         }
+
+        if (push != 0)
+        {
+            push *= Math.max(1 - speed / (max_push_speed * push * 10), 0);
+        }
+
+        //        if (speed > max_speed)
+        //        {
+        //            //            double i = (speed / max_speed);
+        //            //            speed = MathHelper.lerp(drag_quad * i, speed, max_speed);
+        //        }
         if (speed == 0)
         {
             motion = Vector3d.ZERO;
@@ -471,8 +540,10 @@ public class PlaneEntity extends Entity implements IJumpingMount
         if (motion.length() > 0)
             motion = motion.scale(speed / motion.length());
 
-        Vector3f v = transformPos(new Vector3f(0, Math.min((float) (speed_x * lift_factor), max_lift), push));
+        Vector3f v = transformPos(new Vector3f(0, 0, push));
         motion = motion.add(v.getX(), v.getY(), v.getZ());
+        //        v = transformPos(new Vector3f(0, Math.min((float) (speed_x * lift_factor), max_lift), 0));
+        //        motion = motion.add(0, v.getY(), 0);
 
         motion = motion.add(0, gravity, 0);
 
@@ -579,37 +650,8 @@ public class PlaneEntity extends Entity implements IJumpingMount
             upgrades.remove(upgrade.getType().getRegistryName());
         }
 
-        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote)
-        {
-            spawnSmokeParticles(fuel);
-        }
-
-        motion = getMotion();
-        float yaw = MathUtil.getYaw(motion);
-        float pitch = MathUtil.getPitch(motion);
-        if (degreesDifferenceAbs(yaw, rotationYaw) > 90 && getOnGround() || isAboveWater())
-        {
-            setMotion(motion.scale(0.9));
-        }
-
-        if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
-        {
-            setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch),
-                    getMotion().length()));
-
-            if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90)
-            {
-                pitch = wrapDegrees(pitch + 180);
-            }
-            if (Math.abs(rotationPitch) < 85)
-            {
-                Quaternion q1 = toQuaternion(MathUtil.getYaw(getMotion()), pitch, rotationRoll);
-                q = lerpQ(motion_to_rotation, q, q1);
-            }
-
-        }
         //do not move when slow
-        double l = 0.02;
+        double l = 0.002;
         if (oldMotion.length() < l && getMotion().length() < l)
         {
             this.setMotion(Vector3d.ZERO);
@@ -638,6 +680,10 @@ public class PlaneEntity extends Entity implements IJumpingMount
                 }
             }
 
+        }
+        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote)
+        {
+            spawnSmokeParticles(fuel);
         }
 
         //back to q

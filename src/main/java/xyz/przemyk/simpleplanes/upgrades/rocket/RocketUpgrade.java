@@ -21,7 +21,7 @@ import static net.minecraft.item.Items.*;
 
 public class RocketUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
-    public static int FUEL_PER_GUNPOWDER = 30;
+    public static int FUEL_PER_GUNPOWDER = 20;
 
     public int fuel = 0;
 
@@ -83,7 +83,7 @@ public class RocketUpgrade extends Upgrade {
             }
         }
         planeEntity.rotationPitch+=pitch;
-        Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.2);
+        Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
 
         planeEntity.setMotion(m.add(motion));
         if (!planeEntity.world.isRemote()) {
