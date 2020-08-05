@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes;
 
+import static net.minecraft.network.datasync.DataSerializers.registerSerializer;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.util.math.MathHelper;
@@ -7,10 +9,17 @@ import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 
-import static net.minecraft.network.datasync.DataSerializers.registerSerializer;
-
 public class MathUtil extends MathHelper
 {
+    public static double angelBetweenVec(Vector3d v1, Vector3d v2)
+    {
+        return Math.toDegrees(Math.acos(normalizedDotProduct(v1, v2)));
+    }
+
+    public static double normalizedDotProduct(Vector3d v1, Vector3d v2)
+    {
+        return v1.dotProduct(v2) / (v1.length() * v2.length());
+    }
 
     public static float getPitch(Vector3d motion)
     {
@@ -86,8 +95,6 @@ public class MathUtil extends MathHelper
         return vec.scale(size / vec.length());
     }
 
-
-
     public static double getHorizontalLength(Vector3d vector3d)
     {
         return Math.sqrt(vector3d.x * vector3d.x + vector3d.z * vector3d.z);
@@ -121,6 +128,38 @@ public class MathUtil extends MathHelper
         return angles;
     }
 
+    public static float fastInvSqrt(float number)
+    {
+        float f = 0.5F * number;
+        int i = Float.floatToIntBits(number);
+        i = 1597463007 - (i >> 1);
+        number = Float.intBitsToFloat(i);
+        return number * (1.5F - f * number * number);
+    }
+
+    public static Quaternion normalizeQuaternion(Quaternion q)
+    {
+        float f = q.getX() * q.getX() + q.getY() * q.getY() + q.getZ() * q.getZ() + q.getW() * q.getW();
+        float x = q.getX();
+        float y = q.getY();
+        float z = q.getZ();
+        float w = q.getW();
+        if (f > 1.0E-6F)
+        {
+            float f1 = fastInvSqrt(f);
+            x *= f1;
+            y *= f1;
+            z *= f1;
+            w *= f1;
+            return new Quaternion(x, y, z, w);
+        }
+        else
+        {
+            return new Quaternion(0, 0, 0, 0);
+        }
+
+    }
+
     public static Quaternion toQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch (Y), roll (X)
     {
         // Abbreviations for the various angular functions
@@ -148,11 +187,11 @@ public class MathUtil extends MathHelper
     {
         // Only unit quaternions are valid rotations.
         // Normalize to avoid undefined behavior.
-        start.normalize();
-        end.normalize();
+        start = normalizeQuaternion(start);
+        end = normalizeQuaternion(end);
 
         // Compute the cosine of the angle between the two vectors.
-        double dot = start.getX() * end.getX() +start.getY() * end.getY() +start.getZ() * end.getZ() +start.getW() * end.getW()  ;
+        double dot = start.getX() * end.getX() + start.getY() * end.getY() + start.getZ() * end.getZ() + start.getW() * end.getW();
 
         // If the dot product is negative, slerp won't take
         // the shorter path. Note that v1 and -v1 are equivalent when
@@ -160,8 +199,7 @@ public class MathUtil extends MathHelper
         // reversing one quaternion.
         if (dot < 0.0f)
         {
-            end = end.copy();
-            end.multiply(-1);
+            end = new Quaternion(-end.getX(), -end.getY(), -end.getZ(), -end.getW());
             dot = -dot;
         }
 
@@ -177,8 +215,7 @@ public class MathUtil extends MathHelper
                     start.getZ() * (1 - perc) + end.getZ() * perc,
                     start.getW() * (1 - perc) + end.getW() * perc
             );
-            quaternion.normalize();
-            return quaternion;
+            return normalizeQuaternion(quaternion);
         }
 
         // Since dot is in range [0, DOT_THRESHOLD], acos is safe
@@ -196,8 +233,7 @@ public class MathUtil extends MathHelper
                 start.getZ() * (s0) + end.getZ() * s1,
                 start.getW() * (s0) + end.getW() * s1
         );
-        quaternion.normalize();
-        return quaternion;
+        return normalizeQuaternion(quaternion);
     }
 
     public static class Angels

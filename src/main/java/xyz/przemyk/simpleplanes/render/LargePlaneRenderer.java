@@ -1,8 +1,11 @@
 package xyz.przemyk.simpleplanes.render;
 
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.ResourceLocation;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.AbstractPlaneEntityType;
@@ -15,6 +18,13 @@ public class LargePlaneRenderer extends AbstractPlaneRenderer<LargePlaneEntity> 
     public LargePlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
         shadowSize = 1.0f;
+    }
+
+    @Override
+    protected void renderEngine(LargePlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+    {
+        matrixStackIn.translate(0, 0, 1);
+        super.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
     @Override

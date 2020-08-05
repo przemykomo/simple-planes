@@ -12,6 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.items.InformationItem;
@@ -38,6 +39,7 @@ public class SimplePlanesItems {
                 return new PlaneEntity(SimplePlanesEntities.PLANE, world, SimplePlanesMaterials.getMaterial(name));
             }));
             ITEMS.register(name+"_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE, world,SimplePlanesMaterials.getMaterial(name))));
+            ITEMS.register(name+"_helicopter", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER, world,SimplePlanesMaterials.getMaterial(name))));
 
         }
 

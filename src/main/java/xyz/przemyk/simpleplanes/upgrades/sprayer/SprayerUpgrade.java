@@ -143,4 +143,5 @@ public class SprayerUpgrade extends Upgrade {
             SprayerModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
+
 }

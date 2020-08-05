@@ -4,14 +4,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import xyz.przemyk.simpleplanes.PlaneMaterial;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -22,20 +26,17 @@ public class LargePlaneEntity extends PlaneEntity
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn)
     {
         super(entityTypeIn, worldIn);
-        setMaxSpeed(0.2f);
     }
 
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material)
     {
         super(entityTypeIn, worldIn, material);
-        setMaxSpeed(0.2f);
     }
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z)
     {
         super(entityTypeIn, worldIn, material, x, y, z);
-        setMaxSpeed(0.2f);
     }
 
     @Override
@@ -53,6 +54,11 @@ public class LargePlaneEntity extends PlaneEntity
                 entity.startRiding(this);
             }
         }
+    }
+
+    @Override protected float getGroundPitch()
+    {
+        return 10;
     }
 
     @Override
@@ -90,7 +96,7 @@ public class LargePlaneEntity extends PlaneEntity
             super.updatePassenger(passenger);
             if (passengers.indexOf(passenger) != 0)
             {
-                Vector3f pos = transformPos(new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -1));
+                Vector3f pos = transformPos(getPassengerTwoPos(passenger));
                 passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
             }
         }
@@ -98,6 +104,16 @@ public class LargePlaneEntity extends PlaneEntity
         {
             super.updatePassenger(passenger);
         }
+    }
+
+    protected Vector3f getPassengerTwoPos(Entity passenger)
+    {
+        return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -1);
+    }
+
+    @Override protected Item getItem()
+    {
+        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_large_plane"));
     }
 
     @Override

@@ -12,18 +12,15 @@ import net.minecraft.util.math.vector.Vector3f;
 
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class DragonModel
-{
+
+public class DragonModel {
 
     public static void renderDragon(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
         matrixStackIn.push();
         matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180));
         matrixStackIn.translate(-0.5, -1, 0.5);
-        float f2 = partialTicks + planeEntity.ticksExisted;
-        float f5 = planeEntity.limbSwing - planeEntity.limbSwingAmount * (1.0F - partialTicks);
-        f2 += f5*2;
-
+        final float f2 = partialTicks + planeEntity.ticksExisted;
         float r = (MathHelper.cos(f2 / 5));
 
         SkullTileEntityRenderer

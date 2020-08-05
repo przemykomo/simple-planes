@@ -1,11 +1,33 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import static net.minecraft.util.math.MathHelper.wrapDegrees;
+import static xyz.przemyk.simpleplanes.MathUtil.Angels;
+import static xyz.przemyk.simpleplanes.MathUtil.QUATERNION_SERIALIZER;
+import static xyz.przemyk.simpleplanes.MathUtil.abs;
+import static xyz.przemyk.simpleplanes.MathUtil.clamp;
+import static xyz.przemyk.simpleplanes.MathUtil.degreesDifferenceAbs;
+import static xyz.przemyk.simpleplanes.MathUtil.getHorizontalLength;
+import static xyz.przemyk.simpleplanes.MathUtil.lerpAngle;
+import static xyz.przemyk.simpleplanes.MathUtil.lerpAngle180;
+import static xyz.przemyk.simpleplanes.MathUtil.lerpQ;
+import static xyz.przemyk.simpleplanes.MathUtil.toEulerAngles;
+import static xyz.przemyk.simpleplanes.MathUtil.toQuaternion;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,7 +37,10 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -44,16 +69,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
-import javax.annotation.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import static net.minecraft.util.math.MathHelper.wrapDegrees;
-import static xyz.przemyk.simpleplanes.MathUtil.*;
-
-public class PlaneEntity extends LivingEntity
+public class PlaneEntity extends Entity
 {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
@@ -64,8 +80,8 @@ public class PlaneEntity extends LivingEntity
     public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
     public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, QUATERNION_SERIALIZER);
     public static final DataParameter<String> MATERIAL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.STRING);
-    public Quaternion Q_Client = Quaternion.ONE.copy();
-    public Quaternion Q_Prev = Quaternion.ONE.copy();
+    public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
+    public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
     public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
@@ -92,9 +108,9 @@ public class PlaneEntity extends LivingEntity
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material)
     {
         super(entityTypeIn, worldIn);
-        this.stepHeight = 0.999f;
+        this.stepHeight = 0.9999f;
         this.setMaterial(material);
-        setMaxSpeed(0.25f);
+        setMaxSpeed(1f);
     }
 
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z)
@@ -106,7 +122,6 @@ public class PlaneEntity extends LivingEntity
     @Override
     protected void registerData()
     {
-        super.registerData();
         dataManager.register(FUEL, 0);
         dataManager.register(MOVEMENT_RIGHT, 0);
         dataManager.register(UPGRADES_NBT, new CompoundNBT());
@@ -142,7 +157,7 @@ public class PlaneEntity extends LivingEntity
 
     public Quaternion getQ()
     {
-        return dataManager.get(Q).copy();
+        return new Quaternion(dataManager.get(Q));
     }
 
     public void setQ(Quaternion q)
@@ -152,7 +167,7 @@ public class PlaneEntity extends LivingEntity
 
     public Quaternion getQ_Client()
     {
-        return Q_Client.copy();
+        return new Quaternion(Q_Client);
     }
 
     public void setQ_Client(Quaternion q)
@@ -248,45 +263,22 @@ public class PlaneEntity extends LivingEntity
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (source.getTrueSource() instanceof PlayerEntity && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode)
+        if (this.isInvulnerableTo(source))
         {
-            this.setHealth(0);
+            return false;
         }
-        return super.attackEntityFrom(source, amount);
-    }
-
-    @Override
-    public void spawnDrops(DamageSource cause)
-    {
-
-        if (!(cause.getTrueSource() instanceof PlayerEntity && ((PlayerEntity) cause.getTrueSource()).abilities.isCreativeMode)
-                && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
+        if (!(source.getTrueSource() instanceof PlayerEntity && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode)
+                && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS) && !this.removed)
         {
+
             dropItem();
         }
-        this.deathTime = 19;
-        super.spawnDrops(cause);
-    }
-
-    @Override
-    protected void createWitherRose(@Nullable LivingEntity p_226298_1_)
-    {
-
-    }
-
-    @Override public Iterable<ItemStack> getArmorInventoryList()
-    {
-        return NonNullList.withSize(4, ItemStack.EMPTY);
-    }
-
-    @Override public ItemStack getItemStackFromSlot(EquipmentSlotType slotIn)
-    {
-        return ItemStack.EMPTY;
-    }
-
-    @Override public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack)
-    {
-
+        if (!this.world.isRemote && !this.removed)
+        {
+            remove();
+            return true;
+        }
+        return false;
     }
 
     @SuppressWarnings("rawtypes")
@@ -321,25 +313,16 @@ public class PlaneEntity extends LivingEntity
     {
         if (this.getControllingPassenger() instanceof PlayerEntity)
         {
-            return Config.EASY_FLIGHT.get() ? FLYING_SIZE_EASY : FLYING_SIZE;
+            return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
         }
         return super.getSize(poseIn);
         //just hate my head in the nether ceiling
     }
 
     @Override
-    public void livingTick()
-    {
-        func_233629_a_(this, true);
-        double d = isPowered() ? 0.2 : 0.1;
-        this.limbSwingAmount += d;
-        this.limbSwing += d;
-    }
-
-    @Override
     public void tick()
     {
-        this.baseTick();
+        super.tick();
 
         if (Double.isNaN(getMotion().length()))
             setMotion(Vector3d.ZERO);
@@ -364,65 +347,34 @@ public class PlaneEntity extends LivingEntity
 
             tickLerp();
             this.setMotion(Vector3d.ZERO);
-            Angels angels1 = toEulerAngles(getQ_Client());
-            rotationPitch = (float) angels1.pitch;
-            rotationYaw = (float) angels1.yaw;
-            rotationRoll = (float) angels1.roll;
-
-            float d = MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
-            if (rotationRoll >= 90 && prevRotationRoll <= 90)
-            {
-                d = 0;
-            }
-            deltaRotationLeft += d;
-            deltaRotationLeft = wrapDegrees(deltaRotationLeft);
-            int diff = 5;
-            deltaRotation = Math.min(abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
-            deltaRotationLeft -= deltaRotation;
+            tickDeltaRotation(getQ_Client());
 
             return;
         }
-        double max_speed = getMaxSpeed();
-        double take_off_speed = 0.2;
-        float max_lift = 0.05f;
-
-        double lift_factor = 1 / 12.0;
-
-        double gravity = -0.06;
-
-        final double drag_mul = 0.99;
-        final double drag = 0.01;
-        final double drag_above_max = 0.05;
-        float push = 0.1f;
-        float ground_push = 0.02f;
-        float passive_engine_push = 0.05f;
-
-        float motion_to_rotation = 0.05f;
-        float pitch_to_motion = 0.05f;
+        Vars vars = getMotionVars();
 
         if (this.hasNoGravity())
         {
-            gravity = 0;
-            max_lift = 0;
-            push = 0.00f;
+            vars.gravity = 0;
+            vars.max_lift = 0;
+            vars.push = 0.00f;
 
-            passive_engine_push = 0;
+            vars.passive_engine_push = 0;
         }
 
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
-        float moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
-        double turn_threshold = Config.TURN_THRESHOLD.get() / 100d;
-        if (abs(moveForward) < turn_threshold)
+        vars.moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
+        vars.turn_threshold = Config.TURN_THRESHOLD.get() / 100d;
+        if (abs(vars.moveForward) < vars.turn_threshold)
         {
-            moveForward = 0;
+            vars.moveForward = 0;
         }
-        float moveStrafing = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveStrafing : 0;
-        if (abs(moveStrafing) < turn_threshold)
+        vars.moveStrafing = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveStrafing : 0;
+        if (abs(vars.moveStrafing) < vars.turn_threshold)
         {
-            moveStrafing = 0;
+            vars.moveStrafing = 0;
         }
-        boolean passengerSprinting = controllingPassenger != null && controllingPassenger.isSprinting();
-        Boolean easy = Config.EASY_FLIGHT.get();
+        vars.passengerSprinting = controllingPassenger != null && controllingPassenger.isSprinting();
 
         Quaternion q;
         if (world.isRemote)
@@ -435,107 +387,157 @@ public class PlaneEntity extends LivingEntity
         Angels angelsOld = toEulerAngles(q).copy();
 
         Vector3d oldMotion = getMotion();
+
         recalculateSize();
         int fuel = dataManager.get(FUEL);
         if (fuel > 0)
         {
-            --fuel;
+            fuel -= vars.passengerSprinting ? 4 : 1;
             dataManager.set(FUEL, fuel);
         }
 
+        //motion and rotetion interpulation + lift.
+        if (getMotion().length() > 0.05)
+        {
+            q = tickRotateMotion(vars, q, getMotion());
+        }
+        boolean do_pitch = true;
         //pitch + movement speed
         if ((getOnGround() || isAboveWater()))
         {
-            if (groundTicks < 0)
-            {
-                groundTicks = 10;
-            }
-            else
-            {
-                groundTicks--;
-            }
-            float pitch = isLarge() ? 10 : 15;
-            if ((isPowered() && moveForward > 0.0F) || isAboveWater())
-            {
-                pitch = 0;
-            }
-            rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
-            if (((MathUtil.degreesDifferenceAbs(rotationPitch, 0) < 5) || (getMotion().length() > 0.4))
-                    && moveForward > 0.0F && isPowered())
-            {
-                gravity = -max_lift * 0.9;
-            }
-            else if (moveForward < 0)
-            {
-                push = -ground_push;
-            }
-            else
-            {
-                push = 0;
-            }
+            do_pitch = tickOnGround(vars);
 
         }
         else
         {
             groundTicks--;
-            float pitch = 0f;
-            if (moveForward > 0.0F)
+            if (!vars.passengerSprinting)
             {
-                pitch = passengerSprinting ? 2 : 1f;
+                vars.push = vars.passive_engine_push;
             }
-            else if (moveForward < 0.0F)
-            {
-                pitch = passengerSprinting ? -2 : -1;
-            }
-            else
-            {
-                push = passive_engine_push;
-            }
-            if (passengerSprinting && isPowered())
-            {
-                push *= 2;
-                dataManager.set(FUEL, fuel - 1);
-            }
-            if (!isPowered())
-            {
-                push = 0;
-            }
-            rotationPitch += pitch;
         }
-        Vector3d motion = this.getMotion();
-        double speed = motion.length();
-        final double speed_x = getHorizontalLength(motion);
-
-        speed *= drag_mul;
-        speed -= drag;
-        speed = Math.max(speed, 0);
-        if (speed > max_speed)
+        if (do_pitch)
         {
-            double i = (speed / max_speed);
-            //                i = i * i;
-            speed = MathHelper.lerp(drag_above_max * i, speed, max_speed);
+            tickPitch(vars);
         }
-        if (speed == 0)
-        {
-            motion = Vector3d.ZERO;
-        }
-        if (motion.length() > 0)
-            motion = motion.scale(speed / motion.length());
 
-        Vector3f v = transformPos(new Vector3f(0, Math.min((float) (speed_x * lift_factor), max_lift), push));
-        motion = motion.add(v.getX(), v.getY(), v.getZ());
-
-        motion = motion.add(0, gravity, 0);
-
-        this.setMotion(motion);
+        tickMotion(vars);
 
         //rotating (roll + yaw)
         //########
+        tickRotation(vars.moveStrafing, vars.passengerSprinting);
 
+        //upgrades
+        HashSet<Upgrade> upgradesToRemove = new HashSet<>();
+        for (Upgrade upgrade : upgrades.values())
+        {
+            if (upgrade.tick())
+            {
+                upgradesToRemove.add(upgrade);
+            }
+        }
+
+        for (Upgrade upgrade : upgradesToRemove)
+        {
+            upgrades.remove(upgrade.getType().getRegistryName());
+        }
+
+        //do not move when slow
+        double l = 0.002;
+        if (oldMotion.length() < l && getMotion().length() < l && groundTicks > -50)
+        {
+            this.setMotion(Vector3d.ZERO);
+        }
+        // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
+        recalculateSize();
+        recenterBoundingBox();
+        if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0)
+        {
+            double speed_before = Math.sqrt(horizontalMag(this.getMotion()));
+            boolean onGroundOld = this.onGround;
+            Vector3d preMotion = getMotion();
+            if (preMotion.length() > 0.5 || vars.moveForward != 0)
+            {
+                onGround = true;
+            }
+            this.move(MoverType.SELF, this.getMotion());
+            onGround = ((preMotion.getY()) == 0.0) ? onGroundOld : onGround;
+            if (this.collidedHorizontally && !this.world.isRemote && Config.PLANE_CRUSH.get() && groundTicks <= 0)
+            {
+                double speed_after = Math.sqrt(horizontalMag(this.getMotion()));
+                double speed_diff = speed_before - speed_after;
+                float f2 = (float) (speed_diff * 10.0D - 5.0D);
+                if (f2 > 5.0F)
+                {
+                    crush(f2);
+                }
+            }
+
+        }
+        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote)
+        {
+            spawnSmokeParticles(fuel);
+        }
+
+        //back to q
+        q.multiply(new Quaternion(Vector3f.ZP, ((float) (rotationRoll - angelsOld.roll)), true));
+        q.multiply(new Quaternion(Vector3f.XN, ((float) (rotationPitch - angelsOld.pitch)), true));
+        q.multiply(new Quaternion(Vector3f.YP, ((float) (rotationYaw - angelsOld.yaw)), true));
+
+        q = MathUtil.normalizeQuaternion(q);
+
+        setQ_prev(getQ_Client());
+        setQ(q);
+        tickDeltaRotation(q);
+
+        if (world.isRemote && canPassengerSteer())
+        {
+            setQ_Client(q);
+
+            PlaneNetworking.INSTANCE.sendToServer(getQ());
+        }
+
+        this.tickLerp();
+
+    }
+
+    protected Vars getMotionVars()
+    {
+        return new Vars();
+    }
+
+    protected void tickDeltaRotation(Quaternion q)
+    {
+        Angels angels1 = toEulerAngles(q);
+        rotationPitch = (float) angels1.pitch;
+        rotationYaw = (float) angels1.yaw;
+        rotationRoll = (float) angels1.roll;
+
+        float d = MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
+        if (rotationRoll >= 90 && prevRotationRoll <= 90)
+        {
+            d = 0;
+        }
+        int diff = 3;
+
+        deltaRotationTicks = Math.min(10, Math.max((int) Math.abs(deltaRotationLeft) * 5, deltaRotationTicks));
+        deltaRotationLeft *= 0.7;
+        deltaRotationLeft += d;
+        deltaRotationLeft = wrapDegrees(deltaRotationLeft);
+        deltaRotation = Math.min(abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
+        deltaRotationLeft -= deltaRotation;
+        if (!(deltaRotation > 0))
+        {
+            deltaRotationTicks--;
+        }
+    }
+
+    protected void tickRotation(float moveStrafing, boolean passengerSprinting)
+    {
         float f1 = 1f;
         double turn = 0;
 
-        if (getOnGround() || isAboveWater() || !passengerSprinting || easy)
+        if (getOnGround() || isAboveWater() || !passengerSprinting || isEasy())
         {
             int yawdiff = 2;
             float roll = rotationRoll;
@@ -556,13 +558,11 @@ public class PlaneEntity extends LivingEntity
             {
                 turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
                 rotationRoll = roll;
-
             }
             else if (degreesDifferenceAbs(rotationRoll, 0) > 30)
             {
                 turn = moveStrafing > 0 ? -yawdiff : moveStrafing == 0 ? 0 : yawdiff;
                 rotationRoll = roll;
-
             }
             else
             {
@@ -615,152 +615,191 @@ public class PlaneEntity extends LivingEntity
         }
 
         rotationYaw -= turn;
+    }
 
-        //upgrades
-        HashSet<Upgrade> upgradesToRemove = new HashSet<>();
-        for (Upgrade upgrade : upgrades.values())
+    protected boolean isEasy()
+    {
+        return Config.EASY_FLIGHT.get();
+    }
+
+    protected void tickMotion(Vars vars)
+    {
+        Vector3d motion;
+        if (!isPowered())
         {
-            if (upgrade.tick())
-            {
-                upgradesToRemove.add(upgrade);
-            }
+            vars.push = 0;
+        }
+        motion = this.getMotion();
+        double speed = motion.length();
+        final double speed_x = getHorizontalLength(motion);
+        speed -= speed * speed * vars.drag_quad + speed * vars.drag_mul + vars.drag;
+        speed = Math.max(speed, 0);
+        if (speed > vars.max_speed)
+        {
+            speed = MathUtil.lerp(0.2, speed, vars.max_speed);
         }
 
-        for (Upgrade upgrade : upgradesToRemove)
+        if (speed == 0)
         {
-            upgrades.remove(upgrade.getType().getRegistryName());
+            motion = Vector3d.ZERO;
+        }
+        if (motion.length() > 0)
+            motion = motion.scale(speed / motion.length());
+
+        Vector3d pushVec = new Vector3d(getTickPush(vars));
+        if (pushVec.length() != 0 && motion.length() > 0.1)
+        {
+            double dot = MathUtil.normalizedDotProduct(pushVec, motion);
+            pushVec = pushVec.scale(MathUtil.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 1));
         }
 
-        if (isPowered() && rand.nextInt(4) == 0 && !world.isRemote)
-        {
-            spawnSmokeParticles(fuel);
-        }
+        motion = motion.add(pushVec);
 
-        motion = getMotion();
-        if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
-        {
-            float yaw = MathUtil.getYaw(motion);
-            float pitch = MathUtil.getPitch(motion);
-            if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
-            {
-                setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw), lerpAngle180(pitch_to_motion * motion.length(), pitch, rotationPitch),
-                        motion.length()));
-                if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90)
-                {
-                    pitch = wrapDegrees(pitch + 180);
-                }
-                if (Math.abs(rotationPitch) < 85)
-                {
-                    Quaternion q1 = toQuaternion(MathUtil.getYaw(getMotion()), pitch, rotationRoll);
-                    q = lerpQ(motion_to_rotation, q, q1);
-                }
-            }
+        motion = motion.add(0, vars.gravity, 0);
 
-        }
-        //do not move when slow
-        double l = 0.02;
-        if (oldMotion.length() < l && getMotion().length() < l)
-        {
-            this.setMotion(Vector3d.ZERO);
+        this.setMotion(motion);
+    }
 
-        }
-        // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
-        recalculateSize();
-        recenterBoundingBox();
-        Vector3d oldPos = this.getPositionVec();
-        if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0)
-        {
-            double speed_before = Math.sqrt(horizontalMag(this.getMotion()));
-            boolean onGroundOld = this.onGround;
+    protected Vector3f getTickPush(Vars vars)
+    {
+        return transformPos(new Vector3f(0, 0, vars.push));
+    }
 
-            if (getMotion().length() > 0.5 || moveForward != 0)
-            {
-                onGround = true;
-            }
-            this.move(MoverType.SELF, this.getMotion());
-            onGround = ((motion.getY()) == 0.0) ? onGroundOld : onGround;
-            if (this.collidedHorizontally && !this.world.isRemote && Config.PLANE_CRUSH.get() && groundTicks <= 0)
-            {
-                double speed_after = Math.sqrt(horizontalMag(this.getMotion()));
-                double speed_diff = speed_before - speed_after;
-                float f2 = (float) (speed_diff * 10.0D - 5.0D);
-                if (f2 > 5.0F)
-                {
-                    crash(f2);
-                }
-            }
-
-        }
-        if (oldPos.distanceTo(this.getPositionVec()) < 0.1)
+    protected void tickPitch(Vars vars)
+    {
+        float pitch = 0f;
+        if (vars.moveForward > 0.0F)
         {
-            if (this.ticksNotMoving++ > 20 && !world.isRemote())
-            {
-                this.ticksNotMoving = 0;
-                this.heal(0.5f);
-            }
+            pitch = vars.passengerSprinting ? 2 : 1f;
         }
         else
         {
-            this.ticksNotMoving = 0;
+            if (vars.moveForward < 0.0F)
+            {
+                pitch = vars.passengerSprinting ? -2 : -1;
+            }
         }
+        rotationPitch += pitch;
+    }
 
-        //back to q
-        q.multiply(Vector3f.ZP.rotationDegrees((float) (rotationRoll - angelsOld.roll)));
-        q.multiply(Vector3f.XN.rotationDegrees((float) (rotationPitch - angelsOld.pitch)));
-        q.multiply(Vector3f.YP.rotationDegrees((float) (rotationYaw - angelsOld.yaw)));
-        q.normalize();
-
-        setQ_prev(getQ_Client());
-        setQ(q);
-        Angels angels1 = toEulerAngles(q);
-        rotationPitch = (float) angels1.pitch;
-        rotationYaw = (float) angels1.yaw;
-        prevRenderYawOffset = renderYawOffset;
-        renderYawOffset = rotationYaw;
-        rotationRoll = (float) angels1.roll;
-
-        float d = MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
-        if (rotationRoll >= 90 && prevRotationRoll <= 90)
+    protected boolean tickOnGround(Vars vars)
+    {
+        boolean speeding_up = true;
+        if (groundTicks < 0)
         {
-            d = 0;
+            groundTicks = 5;
         }
-        int diff = 3;
-
-        deltaRotationTicks = Math.min(10, Math.max((int) Math.abs(deltaRotationLeft) * 5, deltaRotationTicks));
-        deltaRotationLeft *= 0.7;
-        deltaRotationLeft += d;
-        deltaRotationLeft = wrapDegrees(deltaRotationLeft);
-        deltaRotation = Math.min(abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
-        deltaRotationLeft -= deltaRotation;
-        if (!(deltaRotation > 0))
+        else
         {
-            deltaRotationTicks--;
+            groundTicks--;
         }
-
-        if (world.isRemote && canPassengerSteer())
+        float pitch = getGroundPitch();
+        if ((isPowered() && vars.moveForward > 0.0F) || isAboveWater())
         {
-            setQ_Client(q);
+            pitch = 0;
+        }
+        else if (getMotion().length() > vars.take_off_speed)
+        {
+            pitch /= 2;
+        }
+        rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
 
-            PlaneNetworking.INSTANCE.sendToServer(getQ());
+        if (MathUtil.degreesDifferenceAbs(rotationPitch, 0) > 1 && getMotion().length() < 0.1)
+        {
+            vars.push = 0;
+        }
+        if (getMotion().length() < vars.take_off_speed)
+        {
+            //                rotationPitch = lerpAngle(0.2f, rotationPitch, pitch);
+            speeding_up = false;
+            //                push = 0;
+        }
+        if (vars.moveForward < 0)
+        {
+            vars.push = -vars.ground_push;
+        }
+        if (!isPowered() || vars.moveForward == 0)
+        {
+            vars.push = 0;
+        }
+        float f;
+        BlockPos pos = new BlockPos(this.getPosX(), this.getPosY() - 1.0D, this.getPosZ());
+        f = this.world.getBlockState(pos).getSlipperiness(this.world, pos, this);
+        vars.drag_mul *= 20 * (3 - f);
+        return speeding_up;
+    }
+
+    protected float getGroundPitch()
+    {
+        return 15;
+    }
+
+    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion)
+    {
+        float yaw = MathUtil.getYaw(motion);
+        float pitch = MathUtil.getPitch(motion);
+        if (degreesDifferenceAbs(yaw, rotationYaw) > 5 && (getOnGround() || isAboveWater()))
+        {
+            setMotion(motion.scale(0.98));
         }
 
-        this.tickLerp();
+        float d = degreesDifferenceAbs(pitch, rotationPitch);
+        if (d > 180)
+        {
+            d = d - 180;
+        }
+        //            d/=3600;
+        d /= 60;
+        d = Math.min(1, d);
+        d *= d;
+        d = 1 - d;
+        //            speed = getMotion().length()*(d);
+        double speed = getMotion().length();
+        double lift = Math.min(speed * vars.lift_factor, vars.max_lift) * d;
+        double cos_roll = (1 + 4 * Math.max(Math.cos(Math.toRadians(degreesDifferenceAbs(rotationRoll, 0))), 0)) / 5;
+        lift *= cos_roll;
+        d *= cos_roll;
 
+        setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
+                lerpAngle180(vars.pitch_to_motion * d, pitch, rotationPitch) + lift,
+                speed));
+        if (!getOnGround() && !isAboveWater() && motion.length() > 0.1)
+        {
+
+            if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90)
+            {
+                pitch = wrapDegrees(pitch + 180);
+            }
+            if (Math.abs(rotationPitch) < 85)
+            {
+
+                yaw = MathUtil.getYaw(getMotion());
+                if (degreesDifferenceAbs(yaw, rotationYaw) > 90)
+                {
+                    yaw = yaw - 180;
+                }
+                Quaternion q1 = toQuaternion(yaw, pitch, rotationRoll);
+                q = lerpQ(vars.motion_to_rotation, q, q1);
+            }
+
+        }
+        return q;
     }
 
     protected void spawnSmokeParticles(int fuel)
     {
-        spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.5f, -1), 0);
+        spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -1), 0);
         if ((fuel > 4 && fuel < 100))
         {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.5f, -1), 5);
+            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -1), 5);
         }
     }
 
     public void spawnParticle(IParticleData particleData, Vector3f relPos, int particleCount)
     {
-        transformPos(relPos);
-        relPos.add(0, 0.7f, 0);
+        relPos = new Vector3f(relPos.getX(), relPos.getY() - 0.3f, relPos.getZ());
+        relPos = transformPos(relPos);
+        relPos = new Vector3f(relPos.getX(), relPos.getY() + 0.9f, relPos.getZ());
         ((ServerWorld) world).spawnParticle(particleData,
                 getPosX() + relPos.getX(),
                 getPosY() + relPos.getY(),
@@ -851,11 +890,6 @@ public class PlaneEntity extends LivingEntity
         return true;
     }
 
-    @Override public HandSide getPrimaryHand()
-    {
-        return null;
-    }
-
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox()
@@ -912,7 +946,7 @@ public class PlaneEntity extends LivingEntity
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
-        if(source.isFireDamage()&& material.fireResistant)
+        if (source.isFireDamage() && material.fireResistant)
         {
             return true;
         }
@@ -940,7 +974,7 @@ public class PlaneEntity extends LivingEntity
             final double y1 = transformPos(new Vector3f(0, 1, 0)).getY();
             if (y1 < 0.867)
             {
-                crash((float) (getMotion().length() * 5));
+                crush((float) (getMotion().length() * 5));
             }
 
             this.fallDistance = 0.0F;
@@ -950,11 +984,19 @@ public class PlaneEntity extends LivingEntity
     }
 
     @SuppressWarnings("deprecation")
-    private void crash(float damage)
+    private void crush(float damage)
     {
         if (!this.world.isRemote && !this.removed)
         {
-            this.attackEntityFrom(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage);
+            for (Entity entity : getPassengers())
+            {
+                entity.attackEntityFrom(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage);
+            }
+            if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS))
+            {
+                dropItem();
+            }
+            this.remove();
         }
     }
 
@@ -985,17 +1027,14 @@ public class PlaneEntity extends LivingEntity
 
     public void updatePassenger(Entity passenger)
     {
-        if (this.isPassenger(passenger))
-        {
-            super.updatePassenger(passenger);
-            passenger.rotationYaw += this.deltaRotation;
-            passenger.setRotationYawHead(passenger.getRotationYawHead() + this.deltaRotation);
+        super.updatePassenger(passenger);
+        boolean b = (passenger instanceof PlayerEntity) && ((PlayerEntity) passenger).isUser();
 
-            if (!(passenger instanceof PlayerEntity))
-            {
-                this.applyYawToEntity(passenger);
-            }
+        if (this.isPassenger(passenger) && !b)
+        {
+            this.applyYawToEntity(passenger);
         }
+
     }
 
     /**
@@ -1003,8 +1042,11 @@ public class PlaneEntity extends LivingEntity
      */
     public void applyYawToEntity(Entity entityToUpdate)
     {
+        entityToUpdate.setRotationYawHead(entityToUpdate.getRotationYawHead() + this.deltaRotation);
 
-        //        entityToUpdate.setRenderYawOffset(this.rotationYaw);
+        entityToUpdate.rotationYaw += this.deltaRotation;
+
+        entityToUpdate.setRenderYawOffset(this.rotationYaw);
 
         float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
         float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
@@ -1040,18 +1082,17 @@ public class PlaneEntity extends LivingEntity
     }
 
     @SuppressWarnings("rawtypes")
-    private ItemStack getItemStack()
+    protected ItemStack getItemStack()
     {
         ItemStack itemStack = getItem().getDefaultInstance();
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId()))
         {
             itemStack.setTagInfo("EntityTag", serializeNBT());
-            itemStack.addEnchantment(Enchantments.MENDING, 1);
         }
         return itemStack;
     }
 
-    private Item getItem()
+    protected Item getItem()
     {
         return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_plane"));
     }
@@ -1148,4 +1189,43 @@ public class PlaneEntity extends LivingEntity
         this.dataManager.set(UPGRADES_NBT, getUpgradesNBT());
     }
 
+    protected class Vars
+    {
+        public float moveForward = 0;
+        public double turn_threshold = 0;
+        public float moveStrafing = 0;
+        public boolean passengerSprinting;
+        double max_speed;
+        double max_push_speed;
+        double take_off_speed;
+        float max_lift;
+        double lift_factor;
+        double gravity;
+        double drag;
+        double drag_mul;
+        double drag_quad;
+        float push;
+        float ground_push;
+        float passive_engine_push;
+        float motion_to_rotation;
+        float pitch_to_motion;
+
+        public Vars()
+        {
+            max_speed = 3;
+            max_push_speed = getMaxSpeed() * 10;
+            take_off_speed = 0.3;
+            max_lift = 2;
+            lift_factor = 10;
+            gravity = -0.03;
+            drag = 0.001;
+            drag_mul = 0.0005;
+            drag_quad = 0.001;
+            push = 0.06f;
+            ground_push = 0.01f;
+            passive_engine_push = 0.025f;
+            motion_to_rotation = 0.05f;
+            pitch_to_motion = 0.2f;
+        }
+    }
 }

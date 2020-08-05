@@ -106,7 +106,7 @@ dependencies {
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
 //    compile fg.deobf('curse.maven:controllable:3008760')
-    compile fg.deobf('curse.maven:biomes-o-plenty:3012271')
+//    compile fg.deobf('curse.maven:biomes-o-plenty:3012271')
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env

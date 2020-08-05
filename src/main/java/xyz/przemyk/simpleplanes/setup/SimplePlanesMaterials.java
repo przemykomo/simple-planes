@@ -10,10 +10,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegistryBuilder;
-import net.minecraftforge.registries.RegistryManager;
 
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -26,13 +24,11 @@ public class SimplePlanesMaterials
 
     public static Set<Entry<ResourceLocation, PlaneMaterial>> getMaterials()
     {
-        IForgeRegistry<PlaneMaterial> registry = RegistryManager.ACTIVE.getRegistry(PlaneMaterial.class);
-        return registry.getEntries();
+        return SimplePlanesRegistries.PLANE_MATERIALS.getEntries();
     }
     public static PlaneMaterial getMaterial(ResourceLocation name)
     {
-        IForgeRegistry<PlaneMaterial> registry = RegistryManager.ACTIVE.getRegistry(PlaneMaterial.class);
-        return registry.getValue(name);
+        return SimplePlanesRegistries.PLANE_MATERIALS.getValue(name);
     }
 
     public static final String[] MATERIALS = new String[] {
@@ -70,14 +66,6 @@ public class SimplePlanesMaterials
 //                UPGRADE_TYPES.register("oak", () ->
 //                        new PlaneMaterial("oak", false));
 
-    @SubscribeEvent
-    public static void createRegistry(RegistryEvent.NewRegistry event) {
-        new RegistryBuilder<PlaneMaterial>()
-                .setType(PlaneMaterial.class)
-                .setDefaultKey(new ResourceLocation(SimplePlanesMod.MODID,"oak"))
-                .setName(new ResourceLocation(SimplePlanesMod.MODID,"plane_materials"))
-                .create();
-    }
 
     @SubscribeEvent
     public static void registerMaterials(RegistryEvent.Register<PlaneMaterial> event)

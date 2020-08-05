@@ -1,25 +1,20 @@
 package xyz.przemyk.simpleplanes.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -28,7 +23,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T>
 {
-    private final PropellerModel propellerModel;
+    protected EntityModel<PlaneEntity> propellerModel;
 
     //    protected final ArrayList<EntityModel<T>> addonModels = new ArrayList<>();
 
@@ -85,7 +80,8 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
 
         EntityModel<T> planeModel = getModel();
         //        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(planeEntity)));
-        IVertexBuilder ivertexbuilder = ItemRenderer.func_239391_c_(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, planeEntity.hasNoGravity());
+        IVertexBuilder ivertexbuilder = ItemRenderer
+                .func_239391_c_(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, planeEntity.hasNoGravity());
         planeModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -97,10 +93,17 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
 
         propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        EngineModel.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY);
+        matrixStackIn.push();
+        renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        matrixStackIn.pop();
         matrixStackIn.pop();
 
         super.render(planeEntity, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+    }
+
+    protected void renderEngine(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+    {
+        EngineModel.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY);
     }
 
     protected abstract EntityModel<T> getModel();

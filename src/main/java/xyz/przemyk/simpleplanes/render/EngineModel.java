@@ -21,17 +21,10 @@ public class EngineModel
     public static void renderEngine(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLight,
             int combinedOverlayIn) {
 //		if(true)return;
-            matrixStackIn.push();
             matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));
             matrixStackIn.translate(-0.4, -1, 0.3);
-            if(planeEntity.isLarge()){
-                matrixStackIn.translate(0, 0, 1);
-            }
-            matrixStackIn.scale(0.8f, 0.8f, 0.8f);
+            matrixStackIn.scale(0.82f, 0.82f, 0.82f);
             BlockState state = Blocks.FURNACE.getDefaultState().with(AbstractFurnaceBlock.LIT, planeEntity.isPowered());
             Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state,matrixStackIn,bufferIn,packedLight, combinedOverlayIn);
-
-            matrixStackIn.pop();
-
     }
 }
