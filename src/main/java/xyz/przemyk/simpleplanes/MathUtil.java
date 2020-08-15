@@ -1,9 +1,5 @@
 package xyz.przemyk.simpleplanes;
 
-import static net.minecraft.network.datasync.DataSerializers.registerSerializer;
-
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
@@ -262,34 +258,5 @@ public class MathUtil extends MathHelper
                     ", roll=" + roll +
                     '}';
         }
-    }
-
-    public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>()
-    {
-        @Override
-        public void write(PacketBuffer buf, Quaternion q)
-        {
-            buf.writeFloat(q.getX());
-            buf.writeFloat(q.getY());
-            buf.writeFloat(q.getZ());
-            buf.writeFloat(q.getW());
-        }
-
-        @Override
-        public Quaternion read(PacketBuffer buf)
-        {
-            return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
-        }
-
-        @Override
-        public Quaternion copyValue(Quaternion q)
-        {
-            return new Quaternion(q);
-        }
-    };
-
-    static
-    {
-        registerSerializer(QUATERNION_SERIALIZER);
     }
 }
