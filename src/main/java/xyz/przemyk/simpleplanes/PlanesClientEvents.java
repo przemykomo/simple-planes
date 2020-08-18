@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.play.client.CEntityActionPacket;
@@ -43,7 +44,7 @@ public class PlanesClientEvents
             playerRotationNeedToPop = true;
             double y1 = 0.7D;
             boolean fpv = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-                    && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
+                    && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
             if (fpv)
             {
                 matrixStack.translate(0.0D, y1, 0.0D);
@@ -105,7 +106,7 @@ public class PlanesClientEvents
         {
             //todo: is this the right place, prevent player from looking away when flying
             PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
-            if ((Minecraft.getInstance()).gameSettings.thirdPersonView == 0)
+            if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON)
             {
                 float d = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
                 player.rotationYaw += d;

@@ -832,17 +832,23 @@ public class PlaneEntity extends Entity implements IJumpingMount
         return true;
     }
 
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox()
-    {
-        return COLLISION_AABB.offset(getPositionVec());
-    }
+//    @Nullable
+//    @Override
+//    public AxisAlignedBB getCollisionBoundingBox()
+//    {
+//        return COLLISION_AABB.offset(getPositionVec());
+//    }
+//
+//    @Nullable
+//    @Override
+//    public AxisAlignedBB getCollisionBox(Entity entityIn)
+//    {
+//        return COLLISION_AABB.offset(getPositionVec());
+//    }
 
-    @Nullable
+    //TODO: does it work?
     @Override
-    public AxisAlignedBB getCollisionBox(Entity entityIn)
-    {
+    protected AxisAlignedBB getBoundingBox(Pose pose) {
         return COLLISION_AABB.offset(getPositionVec());
     }
 
@@ -988,6 +994,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
     }
 
     // all code down is from boat, copyright???
+    /*
     public Vector3d func_230268_c_(LivingEntity livingEntity)
     {
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId()))
@@ -1044,6 +1051,35 @@ public class PlaneEntity extends Entity implements IJumpingMount
         }
 
         return super.func_230268_c_(livingEntity);
+    }
+     */
+    //TODO: does the new code work?
+    public Vector3d func_230268_c_(LivingEntity p_230268_1_) {
+        Vector3d vector3d = func_233559_a_((double)(this.getWidth() * MathHelper.SQRT_2), (double)p_230268_1_.getWidth(), this.rotationYaw);
+        double d0 = this.getPosX() + vector3d.x;
+        double d1 = this.getPosZ() + vector3d.z;
+        BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);
+        BlockPos blockpos1 = blockpos.down();
+        if (!this.world.hasWater(blockpos1)) {
+            double d2 = (double)blockpos.getY() + this.world.func_242403_h(blockpos);
+            double d3 = (double)blockpos.getY() + this.world.func_242403_h(blockpos1);
+
+            for(Pose pose : p_230268_1_.func_230297_ef_()) {
+                Vector3d vector3d1 = TransportationHelper.func_242381_a(this.world, d0, d2, d1, p_230268_1_, pose);
+                if (vector3d1 != null) {
+                    p_230268_1_.setPose(pose);
+                    return vector3d1;
+                }
+
+                Vector3d vector3d2 = TransportationHelper.func_242381_a(this.world, d0, d3, d1, p_230268_1_, pose);
+                if (vector3d2 != null) {
+                    p_230268_1_.setPose(pose);
+                    return vector3d2;
+                }
+            }
+        }
+
+        return super.func_230268_c_(p_230268_1_);
     }
 
     @SuppressWarnings("rawtypes")
