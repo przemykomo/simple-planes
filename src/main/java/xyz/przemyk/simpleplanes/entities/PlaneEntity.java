@@ -2,7 +2,6 @@ package xyz.przemyk.simpleplanes.entities;
 
 import static net.minecraft.util.math.MathHelper.wrapDegrees;
 import static xyz.przemyk.simpleplanes.MathUtil.Angels;
-import static xyz.przemyk.simpleplanes.MathUtil.QUATERNION_SERIALIZER;
 import static xyz.przemyk.simpleplanes.MathUtil.abs;
 import static xyz.przemyk.simpleplanes.MathUtil.clamp;
 import static xyz.przemyk.simpleplanes.MathUtil.degreesDifferenceAbs;
@@ -64,6 +63,7 @@ import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
@@ -77,7 +77,7 @@ public class PlaneEntity extends Entity implements IJumpingMount
     //negative values mean left
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
-    public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, QUATERNION_SERIALIZER);
+    public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER);
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
     public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);

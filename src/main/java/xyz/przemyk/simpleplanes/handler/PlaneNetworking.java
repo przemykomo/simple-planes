@@ -13,13 +13,22 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.MathUtil.Angels;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
 
 public class PlaneNetworking
 {
+
+    public static final int MSG_PLANE_QUAT = 0;
+
     public static void init()
     {
-        INSTANCE.registerMessage(0, Quaternion.class, (msg, buff) -> MathUtil.QUATERNION_SERIALIZER.write(buff, msg), MathUtil.QUATERNION_SERIALIZER::read,
-                PlaneNetworking::handle_q);
+        INSTANCE.registerMessage(
+            MSG_PLANE_QUAT, // index
+            Quaternion.class, // messageType
+            (msg, buff) -> SimplePlanesDataSerializers.QUATERNION_SERIALIZER.write(buff, msg), // encoder
+            SimplePlanesDataSerializers.QUATERNION_SERIALIZER::read, // decoder
+            PlaneNetworking::handle_q // messageConsumer
+        );
     }
 
     private static final String PROTOCOL_VERSION = "1";
