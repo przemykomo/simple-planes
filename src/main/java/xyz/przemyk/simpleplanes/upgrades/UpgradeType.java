@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
 
-    protected Item upgradeItem;
+    public final Item upgradeItem;
     public final Function<PlaneEntity, Upgrade> instanceSupplier;
     public final Predicate<PlaneEntity> isPlaneApplicable;
     public final boolean occupyBackSeat;
@@ -40,31 +40,5 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
 
     public boolean IsThisItem(ItemStack itemStack){
         return itemStack.getItem() == this.upgradeItem;
-    }
-
-
-    public static class Custom extends UpgradeType{
-
-        private final Predicate<ItemStack> itemPredicate;
-
-        public Custom(Predicate<ItemStack> itemPredicate, Function<PlaneEntity, Upgrade> instanceSupplier, Predicate<PlaneEntity> isPlaneApplicable, boolean occupyBackSeat) {
-            super(null, instanceSupplier, isPlaneApplicable, occupyBackSeat);
-            this.itemPredicate = itemPredicate;
-        }
-
-        public Custom(Predicate<ItemStack> itemPredicate, Function<PlaneEntity, Upgrade> instanceSupplier, Predicate<PlaneEntity> isPlaneApplicable) {
-            super(null, instanceSupplier, isPlaneApplicable);
-            this.itemPredicate = itemPredicate;
-        }
-
-        public Custom(Predicate<ItemStack> itemPredicate, Function<PlaneEntity, Upgrade> instanceSupplier) {
-            super(null, instanceSupplier);
-            this.itemPredicate = itemPredicate;
-        }
-
-        @Override
-        public boolean IsThisItem(ItemStack itemStack) {
-            return itemPredicate.test(itemStack);
-        }
     }
 }

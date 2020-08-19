@@ -17,10 +17,7 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-// I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
-
-//    protected final ArrayList<EntityModel<T>> addonModels = new ArrayList<>();
 
     protected AbstractPlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
@@ -30,11 +27,8 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     public Vector3d getRenderOffset(T entityIn, float partialTicks) {
         if (Minecraft.getInstance().player != null) {
             ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
-            if (playerEntity == entityIn.getControllingPassenger()) {
-                if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
-
-                    return new Vector3d(0, 0, 0);
-                }
+            if (playerEntity == entityIn.getControllingPassenger() && Minecraft.getInstance().gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
+                return new Vector3d(0, 0, 0);
             }
         }
 
@@ -49,18 +43,17 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         matrixStackIn.translate(0, -0.5, 0);
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
 
-        double y1 = -0.7D;
-//        boolean fpv = Minecraft.getInstance().player != null && Minecraft.getInstance().player == entityIn.getControllingPassenger() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
-        boolean fpv = Minecraft.getInstance().player != null &&entityIn.isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
-        if (fpv) {
-            matrixStackIn.translate(0.0D, y1, 0.0D);
+        double firstPersonYOffset = -0.7D;
+        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && entityIn.isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+        if (isPlayerRidingInFirstPersonView) {
+            matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
         }
         Quaternion q = MathUtil.lerpQ(partialTicks, entityIn.getQ_Prev(), entityIn.getQ_Client());
         matrixStackIn.rotate(q);
         matrixStackIn.translate(0, -0.6, 0);
 
-        if (fpv) {
-            matrixStackIn.translate(0.0D, -y1, 0.0D);
+        if (isPlayerRidingInFirstPersonView) {
+            matrixStackIn.translate(0.0D, -firstPersonYOffset, 0.0D);
         }
 
         EntityModel<T> planeModel = getModel();

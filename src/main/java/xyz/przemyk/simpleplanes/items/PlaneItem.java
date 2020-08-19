@@ -31,9 +31,8 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack)
-    {
-        return super.hasEffect(stack) || stack.getChildTag("EntityTag")!=null;
+    public boolean hasEffect(ItemStack stack) {
+        return super.hasEffect(stack) || stack.getChildTag("EntityTag") != null;
     }
 
     @Override

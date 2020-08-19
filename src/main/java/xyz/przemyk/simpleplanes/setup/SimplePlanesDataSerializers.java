@@ -10,6 +10,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
+@SuppressWarnings("unused")
 public class SimplePlanesDataSerializers {
     private static final DeferredRegister<DataSerializerEntry> DATA_SERIALIZERS = DeferredRegister.create(ForgeRegistries.DATA_SERIALIZERS, SimplePlanesMod.MODID);
     
@@ -17,11 +18,10 @@ public class SimplePlanesDataSerializers {
         DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 	
-	public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>()
-    {
-        @Override
-        public void write(PacketBuffer buf, Quaternion q)
-        {
+	public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>() {
+
+	    @Override
+        public void write(PacketBuffer buf, Quaternion q) {
             buf.writeFloat(q.getX());
             buf.writeFloat(q.getY());
             buf.writeFloat(q.getZ());
@@ -29,13 +29,12 @@ public class SimplePlanesDataSerializers {
         }
 
         @Override
-        public Quaternion read(PacketBuffer buf)
-        {
+        public Quaternion read(PacketBuffer buf) {
             try {
                 return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
-            } catch(IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException e) {
 				// This function would throw anyway, might as well wrap the error with more relevant info
-                throw new RuntimeException("packet buffer does not contain enough data to constract plane's Quaternion", e);
+                throw new RuntimeException("packet buffer does not contain enough data to construct plane's Quaternion", e);
             }
         }
 
@@ -47,5 +46,4 @@ public class SimplePlanesDataSerializers {
 	};
 	
 	public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS.register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
-
 }

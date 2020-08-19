@@ -13,6 +13,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -20,7 +21,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import static net.minecraft.item.Items.*;
 
 public class RocketUpgrade extends Upgrade {
-    public static final ResourceLocation TEXTURE = new ResourceLocation("simpleplanes", "textures/plane_upgrades/rocket.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/rocket.png");
     public static int FUEL_PER_GUNPOWDER = 20;
 
     public int fuel = 0;
@@ -64,10 +65,10 @@ public class RocketUpgrade extends Upgrade {
     }
 
     private void push() {
-
-
-        if (fuel < 0)
+        if (fuel < 0) {
             return;
+        }
+
         fuel -= 1;
 
         Vector3d m = planeEntity.getMotion();
@@ -82,7 +83,7 @@ public class RocketUpgrade extends Upgrade {
                 pitch -= 2;
             }
         }
-        planeEntity.rotationPitch+=pitch;
+        planeEntity.rotationPitch += pitch;
         Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
 
         planeEntity.setMotion(m.add(motion));
@@ -91,8 +92,6 @@ public class RocketUpgrade extends Upgrade {
             planeEntity.spawnParticle(ParticleTypes.FLAME,new Vector3f(0.6f, 0f, -1.3f), 5);
 
         }
-
-
     }
 
 

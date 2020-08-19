@@ -10,18 +10,15 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.MathUtil.Angels;
+import xyz.przemyk.simpleplanes.MathUtil.EulerAngles;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
 
-public class PlaneNetworking
-{
-
+public class PlaneNetworking  {
     public static final int MSG_PLANE_QUAT = 0;
 
-    public static void init()
-    {
+    public static void init() {
         INSTANCE.registerMessage(
             MSG_PLANE_QUAT, // index
             Quaternion.class, // messageType
@@ -39,23 +36,20 @@ public class PlaneNetworking
             PROTOCOL_VERSION::equals
     );
 
-    public static void handle_q(Quaternion msg, Supplier<NetworkEvent.Context> ctx)
-    {
+    public static void handle_q(Quaternion msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be threadsafe (most work)
             PlayerEntity ServerPlayerEntity = ctx.get().getSender(); // the client that sent this packet
-            if (ServerPlayerEntity != null && ServerPlayerEntity.getRidingEntity() instanceof PlaneEntity)
-            {
+            if (ServerPlayerEntity != null && ServerPlayerEntity.getRidingEntity() instanceof PlaneEntity) {
                 PlaneEntity planeEntity = (PlaneEntity) ServerPlayerEntity.getRidingEntity();
                 planeEntity.setQ(msg);
-                Angels angels = MathUtil.toEulerAngles(msg);
-                planeEntity.rotationYaw = (float) angels.yaw;
-                planeEntity.rotationPitch = (float) angels.pitch;
-                planeEntity.rotationRoll = (float) angels.roll;
+                EulerAngles eulerAngles = MathUtil.toEulerAngles(msg);
+                planeEntity.rotationYaw = (float) eulerAngles.yaw;
+                planeEntity.rotationPitch = (float) eulerAngles.pitch;
+                planeEntity.rotationRoll = (float) eulerAngles.roll;
                 planeEntity.setQ_Client(msg);
             }
         });
         ctx.get().setPacketHandled(true);
     }
-
 }
