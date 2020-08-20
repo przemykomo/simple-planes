@@ -88,7 +88,6 @@ public class PlanesClientEvents {
     public static void onClientPlayerTick(PlayerTickEvent event) {
         final PlayerEntity player = event.player;
         if (event.phase == Phase.END && player instanceof ClientPlayerEntity && player.getRidingEntity() instanceof PlaneEntity) {
-            //todo: is this the right place, prevent player from looking away when flying
             PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
             if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
                 float yawDiff = planeEntity.rotationYaw - planeEntity.prevRotationYaw;

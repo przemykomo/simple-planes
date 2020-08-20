@@ -57,11 +57,6 @@ public class PlanesEvents {
                 return;
             }
 
-            //TODO: remove code with phantom membrane?
-            if (itemStack.getItem() == Items.PHANTOM_MEMBRANE) {
-                planeEntity.setNoGravity(!planeEntity.hasNoGravity());
-            }
-
             planeEntity.tryToAddUpgrade(player, itemStack);
         }
     }

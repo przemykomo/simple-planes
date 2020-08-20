@@ -54,7 +54,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     //negative values mean left
     public static final DataParameter<Integer> MOVEMENT_RIGHT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
-    public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER);
+    public static final DataParameter<Quaternion> QUATERNION = EntityDataManager.createKey(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER);
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
     public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
@@ -88,7 +88,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         dataManager.register(FUEL, 0);
         dataManager.register(MOVEMENT_RIGHT, 0);
         dataManager.register(UPGRADES_NBT, new CompoundNBT());
-        dataManager.register(Q, Quaternion.ONE);
+        dataManager.register(QUATERNION, Quaternion.ONE);
         dataManager.register(MAX_SPEED, 0.25f);
     }
 
@@ -113,11 +113,11 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     }
 
     public Quaternion getQ() {
-        return new Quaternion(dataManager.get(Q));
+        return new Quaternion(dataManager.get(QUATERNION));
     }
 
     public void setQ(Quaternion q) {
-        dataManager.set(Q, q);
+        dataManager.set(QUATERNION, q);
     }
 
     public Quaternion getQ_Client() {
@@ -693,7 +693,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         if (UPGRADES_NBT.equals(key) && world.isRemote()) {
             deserializeUpgrades(dataManager.get(UPGRADES_NBT));
         }
-        if (Q.equals(key) && world.isRemote() && !canPassengerSteer()) {
+        if (QUATERNION.equals(key) && world.isRemote() && !canPassengerSteer()) {
             if (firstUpdate) {
                 lerpStepsQ = 0;
                 setQ_Client(getQ());
@@ -796,8 +796,9 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         entityToUpdate.setRotationYawHead(entityToUpdate.rotationYaw);
     }
 
-    public Vector3d func_230268_c_(LivingEntity p_230268_1_) {
-        Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, p_230268_1_.getWidth(), this.rotationYaw);
+    // copied from boat entity and edited a little
+    public Vector3d func_230268_c_(LivingEntity livingEntity) {
+        Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, livingEntity.getWidth(), this.rotationYaw);
         double d0 = this.getPosX() + vector3d.x;
         double d1 = this.getPosZ() + vector3d.z;
         BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);
@@ -806,22 +807,22 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             double d2 = (double)blockpos.getY() + this.world.func_242403_h(blockpos);
             double d3 = (double)blockpos.getY() + this.world.func_242403_h(blockpos1);
 
-            for(Pose pose : p_230268_1_.func_230297_ef_()) {
-                Vector3d vector3d1 = TransportationHelper.func_242381_a(this.world, d0, d2, d1, p_230268_1_, pose);
+            for(Pose pose : livingEntity.func_230297_ef_()) {
+                Vector3d vector3d1 = TransportationHelper.func_242381_a(this.world, d0, d2, d1, livingEntity, pose);
                 if (vector3d1 != null) {
-                    p_230268_1_.setPose(pose);
+                    livingEntity.setPose(pose);
                     return vector3d1;
                 }
 
-                Vector3d vector3d2 = TransportationHelper.func_242381_a(this.world, d0, d3, d1, p_230268_1_, pose);
+                Vector3d vector3d2 = TransportationHelper.func_242381_a(this.world, d0, d3, d1, livingEntity, pose);
                 if (vector3d2 != null) {
-                    p_230268_1_.setPose(pose);
+                    livingEntity.setPose(pose);
                     return vector3d2;
                 }
             }
         }
 
-        return super.func_230268_c_(p_230268_1_);
+        return super.func_230268_c_(livingEntity);
     }
 
     private int lerpSteps;
@@ -866,17 +867,16 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         this.lerpY = y;
         this.lerpZ = z;
         this.lerpSteps = 10;
-
     }
 
     @Override
     public void setPositionAndRotation(double x, double y, double z, float yaw, float pitch) {
-        double d0 = MathHelper.clamp(x, -3.0E7D, 3.0E7D);
-        double d1 = MathHelper.clamp(z, -3.0E7D, 3.0E7D);
-        this.prevPosX = d0;
+        double clampedX = MathHelper.clamp(x, -3.0E7D, 3.0E7D);
+        double clampedZ = MathHelper.clamp(z, -3.0E7D, 3.0E7D);
+        this.prevPosX = clampedX;
         this.prevPosY = y;
-        this.prevPosZ = d1;
-        this.setPosition(d0, y, d1);
+        this.prevPosZ = clampedZ;
+        this.setPosition(clampedX, y, clampedZ);
         this.rotationYaw = yaw % 360.0F;
         this.rotationPitch = pitch % 360.0F;
 
@@ -893,9 +893,10 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         }
     }
 
-    public PlayerEntity getPlayer() {
-        if (getControllingPassenger() instanceof PlayerEntity) {
-            return (PlayerEntity) getControllingPassenger();
+    public PlayerEntity getControllingPlayer() {
+        Entity entity = getControllingPassenger();
+        if (entity instanceof PlayerEntity) {
+            return (PlayerEntity) entity;
         }
         return null;
     }
@@ -916,11 +917,9 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     public void handleStartJump(int perc) {
         int cost = 10;
         int fuel = getFuel();
-        if (fuel > cost)
-        {
+        if (fuel > cost) {
             dataManager.set(FUEL, fuel - cost);
-            if (perc > 80)
-            {
+            if (perc > 80) {
                 RocketUpgrade upgrade = (RocketUpgrade) upgrades.get(SimplePlanesUpgrades.BOOSTER.getId());
                 upgrade.fuel = 20;
             }
