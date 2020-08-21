@@ -6,10 +6,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import net.minecraft.util.math.Vec3d;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -26,7 +26,7 @@ public class FloatingUpgrade extends Upgrade {
     @Override
     public boolean tick() {
         if (planeEntity.isAboveWater()) {
-            Vector3d motion = planeEntity.getMotion();
+            Vec3d motion = planeEntity.getMotion();
             double f = 1;
             double y = MathHelper.lerp(1, motion.y, Math.max(motion.y, 0));
             planeEntity.setMotion(motion.x * f, y, motion.z * f);

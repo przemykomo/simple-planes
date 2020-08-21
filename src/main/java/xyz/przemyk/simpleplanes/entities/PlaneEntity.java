@@ -2,6 +2,8 @@ package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -13,13 +15,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.*;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -141,7 +137,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     }
 
     @Override
-    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
+    public boolean processInitialInteract(PlayerEntity player, Hand hand) {
         if (player.isSneaking() && player.getHeldItem(hand).isEmpty()) {
             boolean hasplayer = false;
             for (Entity passenger : getPassengers()) {
@@ -153,11 +149,11 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             if (!hasplayer || Config.THIEF.get()) {
                 this.removePassengers();
             }
-            return ActionResultType.SUCCESS;
+            return true;
         } else if (tryToAddUpgrade(player, player.getHeldItem(hand))) {
-            return ActionResultType.SUCCESS;
+            return true;
         }
-        return !world.isRemote && player.startRiding(this) ? ActionResultType.SUCCESS : ActionResultType.FAIL;
+        return !world.isRemote && player.startRiding(this);
     }
 
     public boolean tryToAddUpgrade(PlayerEntity player, ItemStack itemStack) {
@@ -209,8 +205,8 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         entityDropItem(itemStack);
     }
 
-    public Vector2f getHorizontalFrontPos() {
-        return new Vector2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
+    public Vec2f getHorizontalFrontPos() {
+        return new Vec2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
     }
 
     @Override
@@ -226,7 +222,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         super.tick();
 
         if (Double.isNaN(getMotion().length())) {
-            setMotion(Vector3d.ZERO);
+            setMotion(Vec3d.ZERO);
         }
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
@@ -243,7 +239,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         if (world.isRemote && !canPassengerSteer()) {
 
             tickLerp();
-            this.setMotion(Vector3d.ZERO);
+            this.setMotion(Vec3d.ZERO);
             EulerAngles eulerAngles1 = toEulerAngles(getQ_Client());
             rotationPitch = (float) eulerAngles1.pitch;
             rotationYaw = (float) eulerAngles1.yaw;
@@ -311,7 +307,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         EulerAngles eulerAnglesOld = toEulerAngles(q).copy();
 
-        Vector3d oldMotion = getMotion();
+        Vec3d oldMotion = getMotion();
         recalculateSize();
         int fuel = dataManager.get(FUEL);
         if (fuel > 0)
@@ -319,7 +315,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
             fuel -= passengerSprinting ? 4 : 1;
             dataManager.set(FUEL, fuel);
         }
-        Vector3d motion = getMotion();
+        Vec3d motion = getMotion();
 
         //motion and rotation interpolation + lift.
         if (motion.length() > 0.05) {
@@ -439,7 +435,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         //            //            speed = MathHelper.lerp(drag_quad * i, speed, max_speed);
         //        }
         if (speed == 0) {
-            motion = Vector3d.ZERO;
+            motion = Vec3d.ZERO;
         }
         if (motion.length() > 0)
             motion = motion.scale(speed / motion.length());
@@ -528,7 +524,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
         //do not move when slow
         double l = 0.002;
         if (oldMotion.length() < l && getMotion().length() < l) {
-            this.setMotion(Vector3d.ZERO);
+            this.setMotion(Vec3d.ZERO);
         }
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
         recalculateSize();
@@ -797,6 +793,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
     }
 
     // copied from boat entity and edited a little
+    /* I guess this is 1.16+ only method?
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
         Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, livingEntity.getWidth(), this.rotationYaw);
         double d0 = this.getPosX() + vector3d.x;
@@ -824,6 +821,7 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
         return super.func_230268_c_(livingEntity);
     }
+     */
 
     private int lerpSteps;
     private int lerpStepsQ;

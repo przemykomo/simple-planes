@@ -3,14 +3,14 @@ package xyz.przemyk.simpleplanes.upgrades.rocket;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -71,7 +71,7 @@ public class RocketUpgrade extends Upgrade {
 
         fuel -= 1;
 
-        Vector3d m = planeEntity.getMotion();
+        Vec3d m = planeEntity.getMotion();
         float pitch = 0;
         PlayerEntity player = planeEntity.getControllingPlayer();
         if (player != null) {
@@ -84,7 +84,7 @@ public class RocketUpgrade extends Upgrade {
             }
         }
         planeEntity.rotationPitch += pitch;
-        Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
+        Vec3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
 
         planeEntity.setMotion(m.add(motion));
         if (!planeEntity.world.isRemote()) {

@@ -2,14 +2,14 @@ package xyz.przemyk.simpleplanes.entities;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -69,7 +69,7 @@ public class LargePlaneEntity extends PlaneEntity {
 
     @Override
     protected void spawnSmokeParticles(int fuel) {
-        Vector2f front = getHorizontalFrontPos();
+        Vec2f front = getHorizontalFrontPos();
         ServerWorld serverWorld = (ServerWorld) world;
         serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - (2 * front.x), getPosY() + 1.0, getPosZ() - (2 * front.y), 0, 0, 0, 0, 0.0);
         if (fuel > 4 && fuel < 100) {

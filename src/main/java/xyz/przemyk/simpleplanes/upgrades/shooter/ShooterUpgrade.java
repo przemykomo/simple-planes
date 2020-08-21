@@ -3,7 +3,9 @@ package xyz.przemyk.simpleplanes.upgrades.shooter;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.item.FireworkRocketEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.item.Item;
@@ -11,8 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -39,7 +40,7 @@ public class ShooterUpgrade extends Upgrade {
         PlayerEntity player = event.getPlayer();
         ItemStack itemStack = player.getHeldItem(event.getHand());
         Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1 + planeEntity.getMotion().length())));
-        Vector3d motion = new Vector3d(motion1);
+        Vec3d motion = new Vec3d(motion1);
         World world = event.getWorld();
         Random random = world.rand;
 

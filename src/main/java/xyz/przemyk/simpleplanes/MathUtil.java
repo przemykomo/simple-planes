@@ -1,18 +1,18 @@
 package xyz.przemyk.simpleplanes;
 
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.util.math.Vec3d;
 
-import static net.minecraft.util.math.MathHelper.*;
+import static net.minecraft.util.math.MathHelper.wrapDegrees;
 
 public class MathUtil {
 
-    public static float getPitch(Vector3d motion) {
+    public static float getPitch(Vec3d motion) {
         double y = motion.y;
         return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
     }
 
-    public static float getYaw(Vector3d motion) {
+    public static float getYaw(Vec3d motion) {
         return (float) Math.toDegrees(Math.atan2(-motion.x, motion.z));
     }
 
@@ -44,23 +44,23 @@ public class MathUtil {
         return wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch) {
+    public static Vec3d rotationToVector(double yaw, double pitch) {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
         double xzLen = Math.cos(pitch);
         double x = -xzLen * Math.sin(yaw);
         double y = Math.sin(pitch);
         double z = xzLen * Math.cos(-yaw);
-        return new Vector3d(x, y, z);
+        return new Vec3d(x, y, z);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch, double size) {
-        Vector3d vec = rotationToVector(yaw, pitch);
+    public static Vec3d rotationToVector(double yaw, double pitch, double size) {
+        Vec3d vec = rotationToVector(yaw, pitch);
         return vec.scale(size / vec.length());
     }
 
-    public static double getHorizontalLength(Vector3d vector3d) {
-        return Math.sqrt(vector3d.x * vector3d.x + vector3d.z * vector3d.z);
+    public static double getHorizontalLength(Vec3d Vec3d) {
+        return Math.sqrt(Vec3d.x * Vec3d.x + Vec3d.z * Vec3d.z);
     }
 
     public static EulerAngles toEulerAngles(Quaternion q) {

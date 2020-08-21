@@ -1,8 +1,8 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.IDataSerializer;
-import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DataSerializerEntry;

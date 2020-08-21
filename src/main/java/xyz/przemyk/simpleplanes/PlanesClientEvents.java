@@ -2,14 +2,13 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.settings.PointOfView;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.play.client.CEntityActionPacket;
 import net.minecraft.network.play.client.CEntityActionPacket.Action;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -41,7 +40,7 @@ public class PlanesClientEvents {
             playerRotationNeedToPop = true;
             double firstPersonYOffset = 0.7D;
             boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-                    && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+                    && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
             if (isPlayerRidingInFirstPersonView) {
                 matrixStack.translate(0.0D, firstPersonYOffset, 0.0D);
             }
@@ -89,7 +88,7 @@ public class PlanesClientEvents {
         final PlayerEntity player = event.player;
         if (event.phase == Phase.END && player instanceof ClientPlayerEntity && player.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
-            if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
+            if ((Minecraft.getInstance()).gameSettings.thirdPersonView == 0) {
                 float yawDiff = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
                 player.rotationYaw += yawDiff;
                 float relativePlayerYaw = MathHelper.wrapDegrees(player.rotationYaw - planeEntity.rotationYaw);
