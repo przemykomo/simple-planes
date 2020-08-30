@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -798,31 +799,61 @@ public class PlaneEntity extends Entity implements IJumpingMount {
 
     // copied from boat entity and edited a little
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
+        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+            if (livingEntity instanceof PlayerEntity) {
+                final PlayerEntity playerEntity = (PlayerEntity) livingEntity;
+
+                if (!playerEntity.isCreative() && this.getPassengers().size() == 0 && this.isAlive()) {
+                    ItemStack itemStack = getItemStack();
+
+                    playerEntity.addItemStackToInventory(itemStack);
+                    this.remove();
+                    return super.func_230268_c_(livingEntity);
+                }
+            }
+        }
+
+        setPositionAndUpdate(this.getPosX(), this.getPosY(), this.getPosZ());
+
         Vector3d vector3d = func_233559_a_(this.getWidth() * MathHelper.SQRT_2, livingEntity.getWidth(), this.rotationYaw);
         double d0 = this.getPosX() + vector3d.x;
         double d1 = this.getPosZ() + vector3d.z;
         BlockPos blockpos = new BlockPos(d0, this.getBoundingBox().maxY, d1);
         BlockPos blockpos1 = blockpos.down();
         if (!this.world.hasWater(blockpos1)) {
-            double d2 = (double)blockpos.getY() + this.world.func_242403_h(blockpos);
-            double d3 = (double)blockpos.getY() + this.world.func_242403_h(blockpos1);
-
-            for(Pose pose : livingEntity.func_230297_ef_()) {
-                Vector3d vector3d1 = TransportationHelper.func_242381_a(this.world, d0, d2, d1, livingEntity, pose);
-                if (vector3d1 != null) {
-                    livingEntity.setPose(pose);
-                    return vector3d1;
+            for (Pose pose : livingEntity.func_230297_ef_()) {
+                AxisAlignedBB axisalignedbb = livingEntity.func_233648_f_(pose);
+                double d2 = this.world.func_234936_m_(blockpos);
+                if (TransportationHelper.func_234630_a_(d2)) {
+                    Vector3d vector3d1 = new Vector3d(d0, (double) blockpos.getY() + d2, d1);
+                    if (TransportationHelper.func_234631_a_(this.world, livingEntity, axisalignedbb.offset(vector3d1))) {
+                        livingEntity.setPose(pose);
+                        return vector3d1;
+                    }
                 }
 
-                Vector3d vector3d2 = TransportationHelper.func_242381_a(this.world, d0, d3, d1, livingEntity, pose);
-                if (vector3d2 != null) {
-                    livingEntity.setPose(pose);
-                    return vector3d2;
+                double d3 = this.world.func_234936_m_(blockpos1);
+                if (TransportationHelper.func_234630_a_(d3)) {
+                    Vector3d vector3d2 = new Vector3d(d0, (double) blockpos1.getY() + d3, d1);
+                    if (TransportationHelper.func_234631_a_(this.world, livingEntity, axisalignedbb.offset(vector3d2))) {
+                        livingEntity.setPose(pose);
+                        return vector3d2;
+                    }
                 }
             }
         }
 
         return super.func_230268_c_(livingEntity);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private ItemStack getItemStack() {
+        ItemStack itemStack = new ItemStack(((AbstractPlaneEntityType) getType()).dropItem);
+        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+            itemStack.setTagInfo("EntityTag", serializeNBT());
+            itemStack.addEnchantment(Enchantments.MENDING, 1);
+        }
+        return itemStack;
     }
 
     private int lerpSteps;

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -33,7 +32,7 @@ public class PlanesEvents {
             PlaneEntity planeEntity = (PlaneEntity) entity;
             if (planeEntity.getFuel() < 200) {
                 //func_230235_a_ - contains
-                if (ItemTags.createOptional(COAL_TAG).func_230235_a_(itemStack.getItem())) {
+                if (ItemTags.getCollection().getOrCreate(COAL_TAG).func_230235_a_(itemStack.getItem())) {
                     ((PlaneEntity) entity).addFuel();
                     if (!player.isCreative()) {
                         itemStack.shrink(1);

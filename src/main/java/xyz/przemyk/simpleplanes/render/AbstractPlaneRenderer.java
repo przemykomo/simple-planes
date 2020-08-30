@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.settings.PointOfView;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
@@ -27,7 +26,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     public Vector3d getRenderOffset(T entityIn, float partialTicks) {
         if (Minecraft.getInstance().player != null) {
             ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
-            if (playerEntity == entityIn.getControllingPassenger() && Minecraft.getInstance().gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
+            if (playerEntity == entityIn.getControllingPassenger() && Minecraft.getInstance().gameSettings.thirdPersonView == 0) {
                 return new Vector3d(0, 0, 0);
             }
         }
@@ -44,7 +43,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
 
         double firstPersonYOffset = -0.7D;
-        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && entityIn.isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && entityIn.isPassenger(Minecraft.getInstance().player) && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
         if (isPlayerRidingInFirstPersonView) {
             matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
         }
