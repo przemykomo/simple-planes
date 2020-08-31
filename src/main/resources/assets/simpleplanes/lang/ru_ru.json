@@ -1,0 +1,67 @@
+{
+    "item.simpleplanes.oak_furnace_plane":      "Дубовая печка самолета",
+    "item.simpleplanes.spruce_furnace_plane":   "Еловая печка самолета",
+    "item.simpleplanes.birch_furnace_plane":    "Березевая печка самолета",
+    "item.simpleplanes.jungle_furnace_plane":   "Джунглева печка самолета",
+    "item.simpleplanes.acacia_furnace_plane":   "Акацивая печка самолета",
+    "item.simpleplanes.dark_oak_furnace_plane": "Тено дубовая печка самолета",
+    "item.simpleplanes.crimson_furnace_plane":  "Багровая печка самолета",
+    "item.simpleplanes.warped_furnace_plane":   "Искаженая печка самолета",
+
+    "item.simpleplanes.oak_large_furnace_plane":      "Большой Дубовая печка самолета",
+    "item.simpleplanes.spruce_large_furnace_plane":   "Большой Еловая печка самолета",
+    "item.simpleplanes.birch_large_furnace_plane":    "Большой Березевая печка самолета",
+    "item.simpleplanes.jungle_large_furnace_plane":   "Большой Джунглева печка самолета",
+    "item.simpleplanes.acacia_large_furnace_plane":   "Большой Акацивая печка самолета",
+    "item.simpleplanes.dark_oak_large_furnace_plane": "Большой Тено дубовая печка самолета",
+    "item.simpleplanes.crimson_large_furnace_plane":  "Большой Багровая печка самолета",
+    "item.simpleplanes.warped_large_furnace_plane":   "Большой Искаженая печка самолета",
+
+    "item.simpleplanes.furnace_engine": "Печной двигатель",
+    "item.simpleplanes.propeller": "Пропеллер",
+    "item.simpleplanes.sprayer": "Опрыскиватель",
+    "item.simpleplanes.booster": "Ракетный ускоритель",
+    "item.simpleplanes.floaty_bedding": "Плавучие постельные принадлежности",
+    "item.simpleplanes.shooter": "Стрелок",
+
+    "description.simpleplanes.sprayer": "Используйте бутылки с водой или зелья, чтобы посевы росли быстрее и создавали эффект сущностей.",
+    "description.simpleplanes.booster": "Используйте порох, чтобы ускорить свой самолет. Применяется только к маленьким самолетам.",
+    "description.simpleplanes.floaty_bedding": "Заставляет самолет плыть по воде.",
+    "description.simpleplanes.shooter": "Стреляет салютом, стреляет зарядами и стрелами.",
+    "description.simpleplanes.folding": "Самолет возвращается в инвентарь игрока при вылете.",
+
+    "itemGroup.simpleplanes": "Простые самолеты",
+
+
+    "_planes_comment": "Все ниже предназначено для совместимости модов",
+
+    "item.simpleplanes.ft_cherry_plane": "Самолет вишневой печи",
+    "item.simpleplanes.ft_cherry_large_plane": "Самолет большой вишневой печи",
+    "item.simpleplanes.ft_citrus_plane": "Плоскость печи цитрусовых",
+    "item.simpleplanes.ft_citrus_large_plane": "Большая печь для цитрусовых",
+
+    "item.simpleplanes.bop_cherry_large_plane": "Самолет большой вишневой печи",
+    "item.simpleplanes.bop_cherry_plane": "Самолет вишневой печи",
+    "item.simpleplanes.bop_dead_large_plane": "Плоскость большой мертвой печи",
+    "item.simpleplanes.bop_dead_plane": "Плоскость мертвой печи",
+    "item.simpleplanes.bop_fir_large_plane": "Плоскость большой еловой печи",
+    "item.simpleplanes.bop_fir_plane": "Плоскость еловой печи",
+    "item.simpleplanes.bop_hellbark_large_plane": "Самолет большой печи адской коры",
+    "item.simpleplanes.bop_hellbark_plane": "Самолет печи адской коры",
+    "item.simpleplanes.bop_jacaranda_large_plane": "Плоскость большой печи Jacaranda",
+    "item.simpleplanes.bop_jacaranda_plane": "Плоскость печи Jacaranda",
+    "item.simpleplanes.bop_magic_large_plane": "Большой самолет волшебной печи",
+    "item.simpleplanes.bop_magic_plane": "Самолет волшебной печи",
+    "item.simpleplanes.bop_mahogany_large_plane": "Большая печь из красного дерева",
+    "item.simpleplanes.bop_mahogany_plane": "Плоскость печи из красного дерева",
+    "item.simpleplanes.bop_palm_large_plane": "Плоскость большой пальмовой печи",
+    "item.simpleplanes.bop_palm_plane": "Плоскость печи для пальм",
+    "item.simpleplanes.bop_redwood_large_plane": "Большая печь из красного дерева",
+    "item.simpleplanes.bop_redwood_plane": "Самолет печи Redwood",
+    "item.simpleplanes.bop_umbran_large_plane": "Плоскость большой умбранской печи",
+    "item.simpleplanes.bop_umbran_plane": "Плоскость печи Умбрана",
+    "item.simpleplanes.bop_willow_large_plane": "Плоскость большой ивовой печи",
+    "item.simpleplanes.bop_willow_plane": "Самолет печи ивы",
+
+    "death.attack.plane_crush": "Погиб в самолете"
+}
