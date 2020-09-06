@@ -1,20 +1,15 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import static net.minecraft.util.math.MathHelper.clamp;
-import static net.minecraft.util.math.MathHelper.degreesDifferenceAbs;
-import static xyz.przemyk.simpleplanes.MathUtil.lerpAngle;
-import static xyz.przemyk.simpleplanes.MathUtil.lerpAngle180;
-import static xyz.przemyk.simpleplanes.MathUtil.toEulerAngles;
-
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -78,6 +73,16 @@ public class HelicopterEntity extends LargePlaneEntity
         return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "helicopter"));
     }
 
+    @Override protected void addPassenger(Entity passenger)
+    {
+        super.addPassenger(passenger);
+        if (world.isRemote() && Minecraft.getInstance().player == passenger)
+        {
+            (Minecraft.getInstance()).ingameGUI.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
+        }
+
+    }
+
     @Override
     protected boolean isEasy()
     {
@@ -105,9 +110,13 @@ public class HelicopterEntity extends LargePlaneEntity
     {
         float push = vars.push;
         super.tickOnGround(vars);
-        if(vars.passengerSprinting)
+        if (vars.passengerSprinting)
         {
             vars.push = push;
+        }
+        else
+        {
+            vars.push = 0;
         }
         return false;
     }
@@ -134,12 +143,10 @@ public class HelicopterEntity extends LargePlaneEntity
     @Override
     protected void tickRotation(float moveStrafing, boolean passengerSprinting)
     {
-        float f1 = 1f;
-        double turn = 0;
 
         int yawdiff = 2;
 
-        turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
+        double turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
         rotationRoll = 0;
         rotationYaw -= turn;
     }

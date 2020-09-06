@@ -21,6 +21,7 @@ public class PaintUpgrade extends Upgrade
 
     public static void init(){
         PAINTS.put(Items.GOLD_BLOCK.getRegistryName(),"gold");
+        PAINTS.put(Items.field_234794_rw_.getRegistryName(),"netherite");
     }
     public PaintUpgrade(PlaneEntity planeEntity)
     {
@@ -30,7 +31,7 @@ public class PaintUpgrade extends Upgrade
     @Override
     public boolean tick()
     {
-        return true;
+        return false;
     }
 
     @Override
@@ -42,5 +43,6 @@ public class PaintUpgrade extends Upgrade
     public void onApply(ItemStack itemStack, PlayerEntity playerEntity)
     {
         planeEntity.setMaterial(PAINTS.get(itemStack.getItem().getRegistryName()));
+        itemStack.setCount(0);
     }
 }

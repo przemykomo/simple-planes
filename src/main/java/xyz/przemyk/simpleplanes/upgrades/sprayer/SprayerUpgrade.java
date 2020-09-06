@@ -4,10 +4,12 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.block.IGrowable;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,6 +17,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -94,6 +97,7 @@ public class SprayerUpgrade extends Upgrade {
                 blockPos.setPos(planeEntity.getPosXRandom(3.0), planeEntity.getPosY(), planeEntity.getPosZRandom(3.0));
                 for (int j = 0; j < 3; ++j) {
                     BlockState blockState = planeEntity.world.getBlockState(blockPos);
+                    extinguishFires(blockPos);
                     Block block = blockState.getBlock();
                     if (block instanceof IGrowable) {
                         ((IGrowable) block).grow((ServerWorld) planeEntity.world, planeEntity.world.rand, blockPos, blockState);
@@ -142,6 +146,18 @@ public class SprayerUpgrade extends Upgrade {
         } else {
             SprayerModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
+    }
+
+    private void extinguishFires(BlockPos pos) {
+        BlockState blockstate = planeEntity.world.getBlockState(pos);
+        if (blockstate.func_235714_a_(BlockTags.field_232872_am_)) {
+            planeEntity.world.removeBlock(pos, false);
+        } else if (CampfireBlock.func_226915_i_(blockstate)) {
+            planeEntity.world.playEvent((planeEntity.getPlayer()), 1009, pos, 0);
+            CampfireBlock.func_235475_c_(planeEntity.world, pos, blockstate);
+            planeEntity.world.setBlockState(pos, blockstate.with(CampfireBlock.LIT, Boolean.FALSE));
+        }
+
     }
 
 }

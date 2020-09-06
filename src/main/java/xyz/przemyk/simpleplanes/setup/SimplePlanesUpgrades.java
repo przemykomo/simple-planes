@@ -54,5 +54,5 @@ public class SimplePlanesUpgrades
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", () -> new UpgradeType.Custom(
             itemStack -> itemStack.getItem().getClass() == BannerItem.class, BannerUpgrade::new));
     public static final RegistryObject<UpgradeType> PAINT = UPGRADE_TYPES.register("paint", () -> new UpgradeType.Custom(
-            itemStack -> PaintUpgrade.PAINTS.containsKey(itemStack.getItem().getRegistryName()), PaintUpgrade::new));
+            itemStack -> PaintUpgrade.PAINTS.containsKey(itemStack.getItem().getRegistryName()) && itemStack.getCount() == 64, PaintUpgrade::new));
 }
