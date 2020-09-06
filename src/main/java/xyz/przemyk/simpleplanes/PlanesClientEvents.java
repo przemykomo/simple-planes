@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.play.client.CEntityActionPacket;
@@ -25,9 +26,8 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class PlanesClientEvents
-{
-    public static boolean playerRotationNeedToPop = false;
+public class PlanesClientEvents {
+    private static boolean playerRotationNeedToPop = false;
 
     @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -36,30 +36,29 @@ public class PlanesClientEvents
         Entity entity = event.getEntity().getLowestRidingEntity();
         if (entity instanceof PlaneEntity)
         {
-
             PlaneEntity planeEntity = (PlaneEntity) entity;
             MatrixStack matrixStack = event.getMatrixStack();
             matrixStack.push();
             playerRotationNeedToPop = true;
-            double y1 = 0.7D;
-            boolean fpv = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-                    && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
-            if (fpv)
+            double firstPersonYOffset = 0.7D;
+            boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
+                    && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+            if (isPlayerRidingInFirstPersonView)
             {
-                matrixStack.translate(0.0D, y1, 0.0D);
+                matrixStack.translate(0.0D, firstPersonYOffset, 0.0D);
             }
 
             matrixStack.translate(0, 0.7, 0);
-            Quaternion q = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-            q.set(q.getX(), -q.getY(), -q.getZ(), q.getW());
-            matrixStack.rotate(q);
+            Quaternion quaternion = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
+            quaternion.set(quaternion.getX(), -quaternion.getY(), -quaternion.getZ(), quaternion.getW());
+            matrixStack.rotate(quaternion);
             final float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(rotationYaw));
             matrixStack.translate(0, -0.7, 0);
-            if (fpv)
+            if (isPlayerRidingInFirstPersonView)
             {
-                matrixStack.translate(0.0D, -y1, 0.0D);
+                matrixStack.translate(0.0D, -firstPersonYOffset, 0.0D);
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90)
             {
@@ -91,7 +90,6 @@ public class PlanesClientEvents
             {
                 event.getEntity().prevRotationYawHead = planeEntity.prevRotationYaw * 2 - event.getEntity().prevRotationYawHead;
             }
-
         }
     }
 
@@ -99,43 +97,37 @@ public class PlanesClientEvents
     public static void onClientPlayerTick(PlayerTickEvent event)
     {
         final PlayerEntity player = event.player;
-        if (player instanceof ClientPlayerEntity &&
-                player.getRidingEntity() instanceof PlaneEntity &&
-                event.phase == Phase.END)
-        {
-            //todo: is this the right place, prevent player from looking away when flying
+        if (event.phase == Phase.END && player instanceof ClientPlayerEntity && player.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
-            if ((Minecraft.getInstance()).gameSettings.thirdPersonView == 0)
+            if ((Minecraft.getInstance()).gameSettings.field_243228_bb  == PointOfView.FIRST_PERSON)
             {
-                float d = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
-                player.rotationYaw += d;
-                float f = MathHelper.wrapDegrees(player.rotationYaw - planeEntity.rotationYaw);
-                float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
+                float yawDiff = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
+                player.rotationYaw += yawDiff;
+                float relativePlayerYaw = MathHelper.wrapDegrees(player.rotationYaw - planeEntity.rotationYaw);
+                float clampedRelativePlayerYaw = MathHelper.clamp(relativePlayerYaw, -105.0F, 105.0F);
 
-                float diff = (f1 - f);
+                float diff = (clampedRelativePlayerYaw - relativePlayerYaw);
                 player.prevRotationYaw += diff;
                 player.rotationYaw += diff;
                 player.setRotationYawHead(player.rotationYaw);
 
-                f = MathHelper.wrapDegrees(player.rotationPitch - 0);
-                f1 = MathHelper.clamp(f, -50, 50);
-                float perc = (f1 - f) * 0.5f;
+                relativePlayerYaw = MathHelper.wrapDegrees(player.rotationPitch - 0);
+                clampedRelativePlayerYaw = MathHelper.clamp(relativePlayerYaw, -50, 50);
+                float perc = (clampedRelativePlayerYaw - relativePlayerYaw) * 0.5f;
                 player.prevRotationPitch += perc;
                 player.rotationPitch += perc;
-            }
-            else
+            } else
             {
                 planeEntity.applyYawToEntity(player);
             }
 
-            boolean flag = Minecraft.getInstance().gameSettings.keyBindSprint.isKeyDown();
+            boolean isSprinting = Minecraft.getInstance().gameSettings.keyBindSprint.isKeyDown();
             final ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) player;
-            clientPlayerEntity.setSprinting(flag);
-            if (flag != clientPlayerEntity.serverSprintState || Math.random() < 0.1)
-            {
-                Action centityactionpacket$action = flag ? Action.START_SPRINTING : Action.STOP_SPRINTING;
-                clientPlayerEntity.connection.sendPacket(new CEntityActionPacket(player, centityactionpacket$action));
-                clientPlayerEntity.serverSprintState = flag;
+            clientPlayerEntity.setSprinting(isSprinting);
+            if (isSprinting != clientPlayerEntity.serverSprintState || Math.random() < 0.1) {
+                Action sprintingAction = isSprinting ? Action.START_SPRINTING : Action.STOP_SPRINTING;
+                clientPlayerEntity.connection.sendPacket(new CEntityActionPacket(player, sprintingAction));
+                clientPlayerEntity.serverSprintState = isSprinting;
             }
 
         }
@@ -148,8 +140,7 @@ public class PlanesClientEvents
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event)
     {
         final Entity entity = event.getInfo().getRenderViewEntity();
-        if (entity instanceof ClientPlayerEntity &&
-                entity.getRidingEntity() instanceof PlaneEntity)
+        if (entity instanceof ClientPlayerEntity && entity.getRidingEntity() instanceof PlaneEntity)
         {
             PlaneEntity planeEntity = (PlaneEntity) entity.getRidingEntity();
             ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
@@ -160,17 +151,17 @@ public class PlanesClientEvents
 
                 Quaternion q_prev = planeEntity.getQ_Prev();
                 int max = 105;
-                float diff = MathUtil.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw, playerEntity.prevRotationYaw), -max, max);
-                float pitch = MathUtil.clamp(event.getPitch(), -45, 45);
+                float diff = (float) MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw, playerEntity.prevRotationYaw), -max, max);
+                float pitch = MathHelper.clamp(event.getPitch(), -45, 45);
                 q_prev.multiply(Vector3f.YP.rotationDegrees(diff));
                 q_prev.multiply(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.Angels angles_prev = MathUtil.toEulerAngles(q_prev);
+                MathUtil.EulerAngles angles_prev = MathUtil.toEulerAngles(q_prev);
 
                 Quaternion q_client = planeEntity.getQ_Client();
-                diff = MathUtil.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
+                diff = (float) MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
                 q_client.multiply(Vector3f.YP.rotationDegrees(diff));
                 q_client.multiply(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.Angels angles = MathUtil.toEulerAngles(q_client);
+                MathUtil.EulerAngles angles = MathUtil.toEulerAngles(q_client);
 
                 event.setPitch(-(float) MathUtil.lerpAngle180(partialTicks, angles_prev.pitch, angles.pitch));
                 event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw));

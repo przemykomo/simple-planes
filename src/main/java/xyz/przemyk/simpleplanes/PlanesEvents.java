@@ -30,14 +30,16 @@ public class PlanesEvents {
             if (itemStack.isEmpty()) {
                 return;
             }
+//            todo: try this maybe?
+//            int burnTime = ForgeHooks.getBurnTime(itemStack);
+//            if(burnTime>0) {
+//                int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
 
             PlaneEntity planeEntity = (PlaneEntity) entity;
             if (planeEntity.getFuel() < 200) {
                 //func_230235_a_ - contains
-                int burnTime = ForgeHooks.getBurnTime(itemStack);
-                if(burnTime>0) {
-                    int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
-                    ((PlaneEntity) entity).addFuel(fuel);
+                if (ItemTags.createOptional(COAL_TAG).func_230235_a_(itemStack.getItem())) {
+                    ((PlaneEntity) entity).addFuel();
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
                     }
@@ -59,14 +61,8 @@ public class PlanesEvents {
             if (itemStack.isEmpty()) {
                 return;
             }
-            if (itemStack.getItem() == Items.PHANTOM_MEMBRANE) {
-                planeEntity.setNoGravity(!planeEntity.hasNoGravity());
-            }
 
             planeEntity.tryToAddUpgrade(player, itemStack);
         }
     }
-
-    // TODO: rotate player with plane?
-
 }

@@ -1,8 +1,7 @@
 package xyz.przemyk.simpleplanes.entities;
 
 import static net.minecraft.util.math.MathHelper.wrapDegrees;
-import static xyz.przemyk.simpleplanes.MathUtil.Angels;
-import static xyz.przemyk.simpleplanes.MathUtil.QUATERNION_SERIALIZER;
+import static xyz.przemyk.simpleplanes.MathUtil.EulerAngles;
 import static xyz.przemyk.simpleplanes.MathUtil.abs;
 import static xyz.przemyk.simpleplanes.MathUtil.clamp;
 import static xyz.przemyk.simpleplanes.MathUtil.degreesDifferenceAbs;
@@ -12,6 +11,7 @@ import static xyz.przemyk.simpleplanes.MathUtil.lerpAngle180;
 import static xyz.przemyk.simpleplanes.MathUtil.lerpQ;
 import static xyz.przemyk.simpleplanes.MathUtil.toEulerAngles;
 import static xyz.przemyk.simpleplanes.MathUtil.toQuaternion;
+import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,10 +62,7 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.setup.*;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -293,7 +290,7 @@ public class PlaneEntity extends Entity
         {
             for (Upgrade upgrade : upgrades.values())
             {
-                final ItemStack item = upgrade.getItem();
+                final ItemStack item = upgrade.getDrops();
                 if (item != null)
                 {
                     entityDropItem(item);
@@ -384,7 +381,7 @@ public class PlaneEntity extends Entity
         else
             q = getQ();
 
-        Angels angelsOld = toEulerAngles(q).copy();
+        EulerAngles angelsOld = toEulerAngles(q).copy();
 
         Vector3d oldMotion = getMotion();
 
@@ -508,7 +505,7 @@ public class PlaneEntity extends Entity
 
     protected void tickDeltaRotation(Quaternion q)
     {
-        Angels angels1 = toEulerAngles(q);
+        EulerAngles angels1 = toEulerAngles(q);
         rotationPitch = (float) angels1.pitch;
         rotationYaw = (float) angels1.yaw;
         rotationRoll = (float) angels1.roll;
@@ -809,7 +806,7 @@ public class PlaneEntity extends Entity
 
     public Vector3f transformPos(Vector3f relPos)
     {
-        Angels angels = MathUtil.toEulerAngles(getQ_Client());
+        EulerAngles angels = MathUtil.toEulerAngles(getQ_Client());
         angels.yaw = -angels.yaw;
         angels.roll = -angels.roll;
         relPos.transform(MathUtil.toQuaternion(angels.yaw, angels.pitch, angels.roll));
@@ -890,19 +887,19 @@ public class PlaneEntity extends Entity
         return true;
     }
 
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox()
-    {
-        return COLLISION_AABB.offset(getPositionVec());
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBox(Entity entityIn)
-    {
-        return COLLISION_AABB.offset(getPositionVec());
-    }
+//    @Nullable
+//    @Override
+//    public AxisAlignedBB getBoundingBox()
+//    {
+//        return COLLISION_AABB.offset(getPositionVec());
+//    }
+//
+//    @Nullable
+//    @Override
+//    public AxisAlignedBB getCollisionBox(Entity entityIn)
+//    {
+//        return COLLISION_AABB.offset(getPositionVec());
+//    }
 
     @Override
     public IPacket<?> createSpawnPacket()
@@ -1179,8 +1176,9 @@ public class PlaneEntity extends Entity
 
     public PlayerEntity getPlayer()
     {
-        if (getControllingPassenger() instanceof PlayerEntity)
+        if (getControllingPassenger() instanceof PlayerEntity) {
             return (PlayerEntity) getControllingPassenger();
+        }
         return null;
     }
 

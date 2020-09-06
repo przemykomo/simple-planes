@@ -49,11 +49,11 @@ public class BannerUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        BannerModel.renderBanner(this,partialticks,matrixStack,buffer,banner,packedLight, BannerTileEntityRenderer.func_228836_a_());
+        BannerModel.renderBanner(this, partialticks, matrixStack, buffer, banner, packedLight, BannerTileEntityRenderer.func_228836_a_());
     }
 
     @Override
-    public ItemStack getItem() {
+    public ItemStack getDrops() {
         return banner;
     }
 

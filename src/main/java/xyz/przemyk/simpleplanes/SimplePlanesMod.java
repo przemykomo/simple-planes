@@ -9,24 +9,17 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.render.HelicopterRenderer;
 import xyz.przemyk.simpleplanes.render.LargePlaneRenderer;
 import xyz.przemyk.simpleplanes.render.PlaneRenderer;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.setup.*;
 
 @Mod(SimplePlanesMod.MODID)
 public class SimplePlanesMod
 {
     public static final String MODID = "simpleplanes";
     public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = (new DamageSource("plain_crash")).setDamageBypassesArmor();
-    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public SimplePlanesMod()
     {
@@ -37,6 +30,7 @@ public class SimplePlanesMod
         SimplePlanesItems.init();
         SimplePlanesUpgrades.init();
         SimplePlanesSounds.init();
+        SimplePlanesDataSerializers.init();
         PlaneNetworking.init();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }

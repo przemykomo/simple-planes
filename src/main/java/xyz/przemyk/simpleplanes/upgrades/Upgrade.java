@@ -12,12 +12,11 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
 
     private final UpgradeType type;
+    protected final PlaneEntity planeEntity;
 
     public PlaneEntity getPlaneEntity() {
         return planeEntity;
     }
-
-    protected final PlaneEntity planeEntity;
 
     public Upgrade(UpgradeType type, PlaneEntity planeEntity) {
         this.type = type;
@@ -28,10 +27,9 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
         return type;
     }
 
-    public ItemStack getItem() {
-        return type.upgradeItem.getDefaultInstance();
+    public ItemStack getDrops() {
+        return type.getDrops();
     }
-
 
     /**
      * Called when passenger right clicks with item.
@@ -66,5 +64,5 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     @Override
     public void deserializeNBT(CompoundNBT nbt) {}
 
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity){}
+    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {}
 }

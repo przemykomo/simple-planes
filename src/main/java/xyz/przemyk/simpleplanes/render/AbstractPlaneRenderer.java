@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
@@ -41,7 +42,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
             ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
             if (playerEntity == entityIn.getControllingPassenger())
             {
-                if ((Minecraft.getInstance()).gameSettings.thirdPersonView == 0)
+                if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON)
                 {
 
                     return new Vector3d(0, 0, 0);
@@ -61,21 +62,21 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         matrixStackIn.translate(0, -0.5, 0);
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
 
-        double y1 = -0.7D;
+        double firstPersonYOffset = -0.7D;
         //        boolean fpv = Minecraft.getInstance().player != null && Minecraft.getInstance().player == planeEntity.getControllingPassenger() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
-        boolean fpv = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-                && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
-        if (fpv)
+        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
+                && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+        if (isPlayerRidingInFirstPersonView)
         {
-            matrixStackIn.translate(0.0D, y1, 0.0D);
+            matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
         }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
         matrixStackIn.rotate(q);
         matrixStackIn.translate(0, -0.6, 0);
 
-        if (fpv)
+        if (isPlayerRidingInFirstPersonView)
         {
-            matrixStackIn.translate(0.0D, -y1, 0.0D);
+            matrixStackIn.translate(0.0D, -firstPersonYOffset, 0.0D);
         }
 
         EntityModel<T> planeModel = getModel();

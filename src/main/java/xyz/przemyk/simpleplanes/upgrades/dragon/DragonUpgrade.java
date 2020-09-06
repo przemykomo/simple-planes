@@ -1,19 +1,17 @@
 package xyz.przemyk.simpleplanes.upgrades.dragon;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-public class DragonUpgrade extends Upgrade
-{
-    public static final DragonModel DRAGON_MODEL = new DragonModel();
+public class DragonUpgrade extends Upgrade {
 
     public DragonUpgrade(PlaneEntity planeEntity)
     {
@@ -21,24 +19,20 @@ public class DragonUpgrade extends Upgrade
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt)
-    {
+    public void deserializeNBT(CompoundNBT nbt) {
         super.deserializeNBT(nbt);
-        planeEntity.setMaxSpeed(0.6f);
+        planeEntity.setMaxSpeed(2f);
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks)
-    {
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         DragonModel.renderDragon(planeEntity, partialticks, matrixStack, buffer, packedLight);
     }
 
     @Override
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity)
-    {
-        if (!planeEntity.world.isRemote)
-        {
-            planeEntity.setMaxSpeed(1);
+    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+        if (!planeEntity.world.isRemote) {
+            planeEntity.setMaxSpeed(2f);
         }
     }
 }

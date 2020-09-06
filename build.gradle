@@ -13,23 +13,12 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.16.1-2.1.0.1'
+version = '1.16.2-2.1.0.2'
 group = 'xyz.przemyk.simpleplanes' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'simpleplanes'
-
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-repositories {
-    maven {
-        url = "https://www.cursemaven.com"
-    }
-}
-//dependencies {
-//    compile 'controllable:Controllable:1.12.2:0.3.1'
-//}
-//minecraft {
-//    useDepAts = true
-//}
 
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -39,7 +28,7 @@ minecraft {
     mappings channel: 'snapshot', version: '20200514-1.16'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -100,11 +89,12 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.16.1-32.0.61'
+    minecraft 'net.minecraftforge:forge:1.16.2-33.0.5'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
+
 //    compile fg.deobf('curse.maven:controllable:3008760')
 //    compile fg.deobf('curse.maven:biomes-o-plenty:3012271')
     // Real examples
@@ -127,13 +117,13 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "simpleplanes",
-                "Specification-Vendor"    : "simpleplanessareus",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "simpleplanessareus",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Specification-Title": "simpleplanes",
+            "Specification-Vendor": "simpleplanessareus",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"simpleplanessareus",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
@@ -146,9 +136,7 @@ jar.finalizedBy('reobfJar')
 
 publishing {
     publications {
-        //noinspection GroovyAssignabilityCheck
         mavenJava(MavenPublication) {
-            //noinspection GroovyAssignabilityCheck
             artifact jar
         }
     }
