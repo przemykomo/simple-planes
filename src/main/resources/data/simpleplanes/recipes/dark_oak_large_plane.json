@@ -1,6 +1,6 @@
 {
     "type": "minecraft:crafting_shaped",
-    "group": "large_plane",
+    "group": "simpleplanes:large_plane",
     "pattern": [
         "I  ",
         "IPB",

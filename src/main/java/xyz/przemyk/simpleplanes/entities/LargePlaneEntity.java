@@ -121,7 +121,7 @@ public class LargePlaneEntity extends PlaneEntity
     {
         Vector2f front = getHorizontalFrontPos();
         ServerWorld serverWorld = (ServerWorld) world;
-        serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() - (2 * front.x), getPosY() + 1.0, getPosZ() - (2 * front.y), 0, 0, 0, 0, 0.0);
+        serverWorld.spawnParticle(ParticleTypes.SMOKE, getPosX() - (2 * front.x), getPosY() + 1.0, getPosZ() - (2 * front.y), 0, 0, 0, 0, 0.0);
         if (fuel > 4 && fuel < 100)
         {
             serverWorld.spawnParticle(ParticleTypes.LARGE_SMOKE, getPosX() + front.x, getPosY() + 1.5, getPosZ() + front.y, 5, 0, 0, 0, 0.0);

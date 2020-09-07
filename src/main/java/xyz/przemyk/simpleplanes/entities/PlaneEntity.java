@@ -21,12 +21,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -372,7 +367,7 @@ public class PlaneEntity extends Entity
             vars.moveStrafing = 0;
         }
         vars.passengerSprinting = controllingPassenger != null && controllingPassenger.isSprinting();
-
+        this.setSprinting(vars.passengerSprinting);
         Quaternion q;
         if (world.isRemote)
         {
@@ -785,7 +780,7 @@ public class PlaneEntity extends Entity
 
     protected void spawnSmokeParticles(int fuel)
     {
-        spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -1), 0);
+        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -1), 0);
         if ((fuel > 4 && fuel < 100))
         {
             spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -1), 5);

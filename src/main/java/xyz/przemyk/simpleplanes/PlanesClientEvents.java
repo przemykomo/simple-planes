@@ -1,7 +1,10 @@
 package xyz.przemyk.simpleplanes;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,9 +23,10 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+
+import static xyz.przemyk.simpleplanes.SimplePlanesMod.keyBind;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
@@ -31,11 +35,9 @@ public class PlanesClientEvents {
 
     @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPre(RenderLivingEvent.Pre event)
-    {
+    public static void onRenderPre(RenderLivingEvent.Pre event) {
         Entity entity = event.getEntity().getLowestRidingEntity();
-        if (entity instanceof PlaneEntity)
-        {
+        if (entity instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) entity;
             MatrixStack matrixStack = event.getMatrixStack();
             matrixStack.push();
@@ -43,8 +45,7 @@ public class PlanesClientEvents {
             double firstPersonYOffset = 0.7D;
             boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
                     && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
-            if (isPlayerRidingInFirstPersonView)
-            {
+            if (isPlayerRidingInFirstPersonView) {
                 matrixStack.translate(0.0D, firstPersonYOffset, 0.0D);
             }
 
@@ -56,16 +57,13 @@ public class PlanesClientEvents {
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(rotationYaw));
             matrixStack.translate(0, -0.7, 0);
-            if (isPlayerRidingInFirstPersonView)
-            {
+            if (isPlayerRidingInFirstPersonView) {
                 matrixStack.translate(0.0D, -firstPersonYOffset, 0.0D);
             }
-            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90)
-            {
+            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
                 event.getEntity().rotationYawHead = planeEntity.rotationYaw * 2 - event.getEntity().rotationYawHead;
             }
-            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90)
-            {
+            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
                 event.getEntity().prevRotationYawHead = planeEntity.prevRotationYaw * 2 - event.getEntity().prevRotationYawHead;
             }
         }
@@ -73,34 +71,28 @@ public class PlanesClientEvents {
 
     @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPost(RenderLivingEvent.Post event)
-    {
-        if (playerRotationNeedToPop)
-        {
+    public static void onRenderPost(RenderLivingEvent.Post event) {
+        if (playerRotationNeedToPop) {
             playerRotationNeedToPop = false;
             event.getMatrixStack().pop();
             Entity entity = event.getEntity().getLowestRidingEntity();
             PlaneEntity planeEntity = (PlaneEntity) entity;
 
-            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90)
-            {
+            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
                 event.getEntity().rotationYawHead = planeEntity.rotationYaw * 2 - event.getEntity().rotationYawHead;
             }
-            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90)
-            {
+            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
                 event.getEntity().prevRotationYawHead = planeEntity.prevRotationYaw * 2 - event.getEntity().prevRotationYawHead;
             }
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onClientPlayerTick(PlayerTickEvent event)
-    {
+    public static void onClientPlayerTick(PlayerTickEvent event) {
         final PlayerEntity player = event.player;
         if (event.phase == Phase.END && player instanceof ClientPlayerEntity && player.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
-            if ((Minecraft.getInstance()).gameSettings.field_243228_bb  == PointOfView.FIRST_PERSON)
-            {
+            if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
                 float yawDiff = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
                 player.rotationYaw += yawDiff;
                 float relativePlayerYaw = MathHelper.wrapDegrees(player.rotationYaw - planeEntity.rotationYaw);
@@ -116,12 +108,11 @@ public class PlanesClientEvents {
                 float perc = (clampedRelativePlayerYaw - relativePlayerYaw) * 0.5f;
                 player.prevRotationPitch += perc;
                 player.rotationPitch += perc;
-            } else
-            {
+            } else {
                 planeEntity.applyYawToEntity(player);
             }
 
-            boolean isSprinting = Minecraft.getInstance().gameSettings.keyBindSprint.isKeyDown();
+            boolean isSprinting = keyBind.isKeyDown();
             final ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) player;
             clientPlayerEntity.setSprinting(isSprinting);
             if (isSprinting != clientPlayerEntity.serverSprintState || Math.random() < 0.1) {
@@ -137,16 +128,13 @@ public class PlanesClientEvents {
      * fixes first person view
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event)
-    {
+    public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
         final Entity entity = event.getInfo().getRenderViewEntity();
-        if (entity instanceof ClientPlayerEntity && entity.getRidingEntity() instanceof PlaneEntity)
-        {
+        if (entity instanceof ClientPlayerEntity && entity.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) entity.getRidingEntity();
             ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
 
-            if (!event.getInfo().isThirdPerson())
-            {
+            if (!event.getInfo().isThirdPerson()) {
                 double partialTicks = event.getRenderPartialTicks();
 
                 Quaternion q_prev = planeEntity.getQ_Prev();
@@ -169,4 +157,5 @@ public class PlanesClientEvents {
             }
         }
     }
+
 }

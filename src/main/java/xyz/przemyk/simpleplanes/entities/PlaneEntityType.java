@@ -5,7 +5,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class PlaneEntityType extends AbstractPlaneEntityType<PlaneEntity> {
 
-    public PlaneEntityType(boolean immuneToFire) {
-        super(PlaneEntity::new, immuneToFire);
+    public PlaneEntityType() {
+        super(PlaneEntity::new);
     }
 }

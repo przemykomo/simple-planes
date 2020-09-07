@@ -20,8 +20,8 @@ public class PropellerModel extends EntityModel<PlaneEntity>
 	private final ModelRenderer bone_propeller;
 
 	public PropellerModel() {
-		textureWidth = 16;
-		textureHeight = 16;
+		textureWidth = 32;
+		textureHeight = 32;
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 17.0F, 0.0F);

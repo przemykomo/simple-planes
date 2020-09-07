@@ -5,7 +5,7 @@
             "modid": "biomesoplenty"
         }
     ],
-    "group": "large_plane",
+    "group": "simpleplanes:large_plane",
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "I  ",

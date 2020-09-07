@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class LargePlaneEntityType extends AbstractPlaneEntityType<LargePlaneEntity> {
 
-    public LargePlaneEntityType(boolean immuneToFire) {
-        super(LargePlaneEntity::new, immuneToFire);
+    public LargePlaneEntityType() {
+        super(LargePlaneEntity::new);
     }
 }

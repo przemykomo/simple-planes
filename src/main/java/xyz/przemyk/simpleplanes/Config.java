@@ -18,6 +18,7 @@ public class Config {
     public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
     public static ForgeConfigSpec.BooleanValue EASY_FLIGHT;
     public static ForgeConfigSpec.BooleanValue PLANE_CRUSH;
+    public static ForgeConfigSpec.BooleanValue USE_JUMP_AS_BOOST;
 
     static {
         BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);

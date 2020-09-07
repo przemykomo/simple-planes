@@ -1,8 +1,9 @@
 {
     "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:plane",
     "pattern": [
         " WF",
-        "PEW",
+        "PEB",
         " W "
     ],
     "key": {
@@ -14,6 +15,9 @@
         },
         "E": {
             "item": "simpleplanes:furnace_engine"
+        },
+        "B": {
+            "item": "minecraft:netherite_block"
         },
         "P": {
             "item": "simpleplanes:propeller"

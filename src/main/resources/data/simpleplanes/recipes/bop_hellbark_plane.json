@@ -6,10 +6,11 @@
         }
     ],
     "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:plane",
     "pattern": [
         " WF",
         "PEB",
-        " W "
+        " WN"
     ],
     "key": {
         "W": {
@@ -26,6 +27,9 @@
         },
         "P": {
             "item": "simpleplanes:propeller"
+        },
+        "N": {
+            "item": "minecraft:netherite_block"
         }
     },
     "result": {
