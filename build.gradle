@@ -17,6 +17,11 @@ version = '1.16.2-2.1.0.2'
 group = 'xyz.przemyk.simpleplanes' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'simpleplanes'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+repositories {
+    maven {
+        url = "https://www.cursemaven.com"
+    }
+}
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
@@ -97,6 +102,7 @@ dependencies {
 
 //    compile fg.deobf('curse.maven:controllable:3008760')
 //    compile fg.deobf('curse.maven:biomes-o-plenty:3012271')
+//    compile fg.deobf('curse.maven:oh-the-biomes-youll-go:3046308')
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env

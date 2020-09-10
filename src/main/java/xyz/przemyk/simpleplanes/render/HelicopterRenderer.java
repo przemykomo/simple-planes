@@ -1,12 +1,10 @@
 package xyz.przemyk.simpleplanes.render;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.ResourceLocation;
-
-import com.mojang.blaze3d.matrix.MatrixStack;
-
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
@@ -21,8 +19,7 @@ public class HelicopterRenderer extends AbstractPlaneRenderer<PlaneEntity> {
     }
 
     @Override
-    protected void renderEngine(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
-    {
+    protected void renderEngine(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
         matrixStackIn.translate(0, -0.8, 0.65);
         super.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
@@ -35,9 +32,9 @@ public class HelicopterRenderer extends AbstractPlaneRenderer<PlaneEntity> {
     @SuppressWarnings("rawtypes")
     @Override
     public ResourceLocation getEntityTexture(PlaneEntity entity) {
-//        if (entity.isPowered()) {
-//            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace_powered/"+entity.getMaterial().name+".png");
-//        }
-        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/"+entity.getMaterial().name+".png");
+        //        if (entity.isPowered()) {
+        //            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace_powered/"+entity.getMaterial().name+".png");
+        //        }
+        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
     }
 }

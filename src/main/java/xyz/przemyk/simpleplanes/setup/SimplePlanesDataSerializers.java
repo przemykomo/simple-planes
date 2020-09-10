@@ -12,15 +12,16 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
 @SuppressWarnings("unused")
 public class SimplePlanesDataSerializers {
-    private static final DeferredRegister<DataSerializerEntry> DATA_SERIALIZERS = DeferredRegister.create(ForgeRegistries.DATA_SERIALIZERS, SimplePlanesMod.MODID);
-    
-	public static void init() {
-        DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-	}
-	
-	public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>() {
+    private static final DeferredRegister<DataSerializerEntry> DATA_SERIALIZERS = DeferredRegister
+        .create(ForgeRegistries.DATA_SERIALIZERS, SimplePlanesMod.MODID);
 
-	    @Override
+    public static void init() {
+        DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>() {
+
+        @Override
         public void write(PacketBuffer buf, Quaternion q) {
             buf.writeFloat(q.getX());
             buf.writeFloat(q.getY());
@@ -33,17 +34,17 @@ public class SimplePlanesDataSerializers {
             try {
                 return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
             } catch (IndexOutOfBoundsException e) {
-				// This function would throw anyway, might as well wrap the error with more relevant info
+                // This function would throw anyway, might as well wrap the error with more relevant info
                 throw new RuntimeException("packet buffer does not contain enough data to construct plane's Quaternion", e);
             }
         }
 
         @Override
-        public Quaternion copyValue(Quaternion q)
-        {
+        public Quaternion copyValue(Quaternion q) {
             return new Quaternion(q);
         }
-	};
-	
-	public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS.register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
+    };
+
+    public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS
+        .register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
 }

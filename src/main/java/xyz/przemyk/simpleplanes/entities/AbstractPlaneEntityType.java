@@ -11,5 +11,4 @@ public class AbstractPlaneEntityType<T extends PlaneEntity> extends EntityType<T
         super(factory, EntityClassification.MISC, true, true, false, true, ImmutableSet.of(), EntitySize.flexible(2.0f, 0.5f), 5, 3);
     }
 
-
 }

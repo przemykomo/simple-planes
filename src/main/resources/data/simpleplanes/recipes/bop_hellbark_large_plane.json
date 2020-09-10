@@ -14,7 +14,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:ingots/iron"
+            "item": "minecraft:netherite_ingot"
         },
         "P": {
             "item": "simpleplanes:bop_hellbark_plane"

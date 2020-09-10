@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "i i",
+        " E ",
+        " i "
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "E": {
+            "item": "minecraft:golden_apple"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:healing",
+        "count": 2
+    }
+}

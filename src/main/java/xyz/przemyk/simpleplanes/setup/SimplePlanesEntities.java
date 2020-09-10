@@ -1,24 +1,19 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.entities.*;
+import xyz.przemyk.simpleplanes.entities.HelicopterEntityType;
+import xyz.przemyk.simpleplanes.entities.LargePlaneEntityType;
+import xyz.przemyk.simpleplanes.entities.PlaneEntityType;
 
 @SuppressWarnings("unused")
-public class SimplePlanesEntities
-{
+public class SimplePlanesEntities {
 
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, SimplePlanesMod.MODID);
-
 
     public static void init() {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());

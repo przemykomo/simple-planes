@@ -33,6 +33,7 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
 
     /**
      * Called when passenger right clicks with item.
+     *
      * @param event The right click event
      * @return Should this upgrade be removed after this event is called?
      */
@@ -42,6 +43,7 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
 
     /**
      * Called every tick by plane entity.
+     *
      * @return Should this upgrade be removed after this event is called?
      */
     public boolean tick() {
@@ -50,8 +52,9 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
 
     /**
      * Called to render upgrade model. Loading model outside of this method may crash server.
+     *
      * @param matrixStack matrix stack. Don't modify it.
-     * @param buffer Render type buffer
+     * @param buffer      Render type buffer
      * @param packedLight packed light
      */
     public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks);
@@ -62,7 +65,9 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {}
+    public void deserializeNBT(CompoundNBT nbt) {
+    }
 
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {}
+    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    }
 }

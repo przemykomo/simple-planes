@@ -1,20 +1,17 @@
 package xyz.przemyk.simpleplanes.upgrades.dragon;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-
-import com.mojang.blaze3d.matrix.MatrixStack;
-
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class DragonUpgrade extends Upgrade {
 
-    public DragonUpgrade(PlaneEntity planeEntity)
-    {
+    public DragonUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.DRAGON.get(), planeEntity);
     }
 

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
@@ -56,12 +57,30 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         double firstPersonYOffset = -0.7D;
         //        boolean fpv = Minecraft.getInstance().player != null && Minecraft.getInstance().player == planeEntity.getControllingPassenger() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
         boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-                && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+            && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
         if (isPlayerRidingInFirstPersonView) {
             matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
         }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
         matrixStackIn.rotate(q);
+
+        float rockingAngle = planeEntity.getRockingAngle(partialTicks);
+        if (!MathHelper.epsilonEquals(rockingAngle, 0.0F)) {
+            matrixStackIn.rotate(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
+        }
+        float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
+        float f1 = planeEntity.getDamageTaken() - partialTicks;
+        if (f1 < 0.0F) {
+            f1 = 0.0F;
+        }
+
+        if (f > 0.0F) {
+            float angle =MathUtil.clamp(f * f1/ 50.0F,-30,30);
+//            float angle = 30;
+            f = planeEntity.ticksExisted + partialTicks;
+            matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));
+        }
+
         matrixStackIn.translate(0, -0.6, 0);
 
         if (isPlayerRidingInFirstPersonView) {
@@ -70,8 +89,9 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
 
         EntityModel<T> planeModel = getModel();
         //        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(planeEntity)));
+        boolean enchanted_plane = planeEntity.getHealth() > planeEntity.getMaxHealth();
         IVertexBuilder ivertexbuilder = ItemRenderer
-                .func_239391_c_(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, planeEntity.hasNoGravity());
+            .func_239391_c_(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, enchanted_plane);
         planeModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -85,7 +105,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
             resourceName = "textures/block/iron_block.png";
         }
 
-        ivertexbuilder = ItemRenderer.func_239391_c_(bufferIn, planeModel.getRenderType(new ResourceLocation(resourceName)), false, true);
+        ivertexbuilder = ItemRenderer.func_239391_c_(bufferIn, planeModel.getRenderType(new ResourceLocation(resourceName)), false, planeEntity.hasNoGravity());
 
         propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

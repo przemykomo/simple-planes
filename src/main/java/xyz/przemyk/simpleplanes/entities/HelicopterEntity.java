@@ -12,124 +12,101 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
-public class HelicopterEntity extends LargePlaneEntity
-{
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn)
-    {
+public class HelicopterEntity extends LargePlaneEntity {
+    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
     }
 
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material)
-    {
+    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
         super(entityTypeIn, worldIn, material);
     }
 
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z)
-    {
+    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
         super(entityTypeIn, worldIn, material, x, y, z);
     }
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         super.tick();
     }
 
     @Override
-    protected Vars getMotionVars()
-    {
+    protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
         motionVars.passive_engine_push = 0.028f;
         motionVars.push = 0.05f;
+        motionVars.drag_quad *= 2;
+        motionVars.drag_mul *= 2;
         return motionVars;
     }
 
     @Override
-    protected void tickMotion(Vars vars)
-    {
+    protected void tickMotion(Vars vars) {
         super.tickMotion(vars);
         double drag = 0.98;
         setMotion(getMotion().mul(drag, 1, drag));
     }
 
     @Override
-    protected Vector3f getTickPush(Vars vars)
-    {
-        if (vars.moveForward < 0 && isPowered() && !vars.passengerSprinting)
-        {
+    protected Vector3f getTickPush(Vars vars) {
+        if (vars.moveForward < 0 && isPowered() && !vars.passengerSprinting) {
             vars.push *= 0.2;
         }
         return transformPos(new Vector3f(0, vars.push, 0));
     }
 
     @Override
-    protected Item getItem()
-    {
+    protected Item getItem() {
         return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "helicopter"));
     }
 
-    @Override protected void addPassenger(Entity passenger)
-    {
+    @Override
+    protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
-        if (world.isRemote() && Minecraft.getInstance().player == passenger)
-        {
+        if (world.isRemote() && Minecraft.getInstance().player == passenger) {
             (Minecraft.getInstance()).ingameGUI.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
         }
 
     }
 
     @Override
-    protected boolean isEasy()
-    {
+    protected boolean isEasy() {
         return true;
     }
 
-    protected void tickPitch(Vars vars)
-    {
-        if (vars.moveForward > 0.0F)
-        {
+    protected void tickPitch(Vars vars) {
+        if (vars.moveForward > 0.0F) {
             rotationPitch = Math.max(rotationPitch - 1, -20);
-        }
-        else if (vars.moveForward < 0 && vars.passengerSprinting)
-        {
+        } else if (vars.moveForward < 0 && vars.passengerSprinting) {
             rotationPitch = Math.min(rotationPitch + 1, 10);
-        }
-        else
-        {
+        } else {
             rotationPitch = MathUtil.lerpAngle(0.2f, rotationPitch, 0);
         }
     }
 
     @Override
-    protected boolean tickOnGround(Vars vars)
-    {
+    protected boolean tickOnGround(Vars vars) {
         float push = vars.push;
         super.tickOnGround(vars);
-        if (vars.passengerSprinting)
-        {
+        if (vars.passengerSprinting) {
             vars.push = push;
-        }
-        else
-        {
+        } else {
             vars.push = 0;
         }
         return false;
     }
 
     @Override
-    protected float getGroundPitch()
-    {
+    protected float getGroundPitch() {
         return 0;
     }
 
     @Override
-    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion)
-    {
+    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
 
         //        float yaw = MathUtil.getYaw(motion);
         //        double speed = getMotion().length();
@@ -141,8 +118,7 @@ public class HelicopterEntity extends LargePlaneEntity
     }
 
     @Override
-    protected void tickRotation(float moveStrafing, boolean passengerSprinting)
-    {
+    protected void tickRotation(float moveStrafing, boolean passengerSprinting) {
 
         int yawdiff = 2;
 
@@ -152,19 +128,17 @@ public class HelicopterEntity extends LargePlaneEntity
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger)
-    {
+    protected boolean canFitPassenger(Entity passenger) {
         return super.canFitPassenger(passenger) && passenger instanceof PlayerEntity;
     }
 
     @Override
-    public void updatePassenger(Entity passenger)
-    {
+    public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
     }
 
-    @Override protected Vector3f getPassengerTwoPos(Entity passenger)
-    {
+    @Override
+    protected Vector3f getPassengerTwoPos(Entity passenger) {
         return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -0.8f);
     }
 }

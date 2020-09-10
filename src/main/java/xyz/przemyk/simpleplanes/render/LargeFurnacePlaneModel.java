@@ -5,14 +5,13 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class LargeFurnacePlaneModel extends EntityModel<LargePlaneEntity> {
     public static final int TICKS_PER_PROPELLER_ROTATION = 5; //TODO: move to config
 
     private final ModelRenderer Body;
-//    private final ModelRenderer bone_propeller;
+    //    private final ModelRenderer bone_propeller;
     private final ModelRenderer bone3;
     private final ModelRenderer bone4;
     private final ModelRenderer bone;
@@ -28,14 +27,14 @@ public class LargeFurnacePlaneModel extends EntityModel<LargePlaneEntity> {
 
         Body = new ModelRenderer(this);
         Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-//        setRotationAngle(Body, -0.1745F, 0.0F, 0.0F);
+        //        setRotationAngle(Body, -0.1745F, 0.0F, 0.0F);
         Body.setTextureOffset(0, 0).addBox(-42.0F, -22.0F, -15.0F, 84.0F, 1.0F, 9.0F, 0.0F, false);
 
-//        bone_propeller = new ModelRenderer(this);
-//        bone_propeller.setRotationPoint(0.0F, -7.0F, -21.0F);
-//        Body.addChild(bone_propeller);
-//        setRotationAngle(bone_propeller, 0.0F, 0.0F, 0.6109F);
-//        bone_propeller.setTextureOffset(110, 110).addBox(-16.0F, -1.0F, -1.0F, 32.0F, 2.0F, 1.0F, 0.0F, false);
+        //        bone_propeller = new ModelRenderer(this);
+        //        bone_propeller.setRotationPoint(0.0F, -7.0F, -21.0F);
+        //        Body.addChild(bone_propeller);
+        //        setRotationAngle(bone_propeller, 0.0F, 0.0F, 0.6109F);
+        //        bone_propeller.setTextureOffset(110, 110).addBox(-16.0F, -1.0F, -1.0F, 32.0F, 2.0F, 1.0F, 0.0F, false);
 
         bone3 = new ModelRenderer(this);
         bone3.setRotationPoint(0.0F, 0.0F, 18.0F);
@@ -44,10 +43,9 @@ public class LargeFurnacePlaneModel extends EntityModel<LargePlaneEntity> {
         bone3.setTextureOffset(0, 10).addBox(-7.0F, -1.0F, -34.0F, 14.0F, 1.0F, 53.0F, 0.0F, false);
         bone3.setTextureOffset(55, 77).addBox(7.0F, -13.0F, -34.0F, 1.0F, 13.0F, 53.0F, 0.0F, false);
         bone3.setTextureOffset(0, 64).addBox(-7.0F, -13.0F, 18.0F, 14.0F, 13.0F, 1.0F, 0.0F, false);
-//        bone3.setTextureOffset(81, 10).addBox(-8.0F, -16.0F, 3.0F, 16.0F, 16.0F, 16.0F, -1.0F, false);
+        //        bone3.setTextureOffset(81, 10).addBox(-8.0F, -16.0F, 3.0F, 16.0F, 16.0F, 16.0F, -1.0F, false);
         bone3.setTextureOffset(0, 38).addBox(-8.0F, -13.0F, -35.0F, 16.0F, 13.0F, 1.0F, 0.0F, false);
         bone3.setTextureOffset(21, 18).addBox(-2.0F, -9.0F, -36.0F, 4.0F, 4.0F, 1.0F, 0.0F, false);
-        bone3.setTextureOffset(7, 17).addBox(-1.0F, -8.0F, -39.0F, 2.0F, 2.0F, 3.0F, 0.0F, false);
         bone3.setTextureOffset(110, 77).addBox(-8.0F, -14.0F, -35.0F, 16.0F, 1.0F, 11.0F, 0.0F, false);
         bone3.setTextureOffset(0, 10).addBox(-1.0F, -12.0F, 19.0F, 2.0F, 11.0F, 17.0F, 0.0F, false);
         bone3.setTextureOffset(38, 10).addBox(-1.0F, -11.0F, 36.0F, 2.0F, 9.0F, 1.0F, 0.0F, false);
@@ -110,17 +108,17 @@ public class LargeFurnacePlaneModel extends EntityModel<LargePlaneEntity> {
     }
 
     @Override
-    public void setRotationAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-//        bone_propeller.showModel = !entity.upgrades.containsKey(SimplePlanesUpgrades.DRAGON.getId());
-//        if (entity.isPowered()) {
-//            bone_propeller.rotateAngleZ = ((entity.ticksExisted+limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
-//        } else {
-//            bone_propeller.rotateAngleZ = 1;
-//        }
+    public void setRotationAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        //        bone_propeller.showModel = !entity.upgrades.containsKey(SimplePlanesUpgrades.DRAGON.getId());
+        //        if (entity.isPowered()) {
+        //            bone_propeller.rotateAngleZ = ((entity.ticksExisted+limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+        //        } else {
+        //            bone_propeller.rotateAngleZ = 1;
+        //        }
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         Body.render(matrixStack, buffer, packedLight, packedOverlay);
     }
 

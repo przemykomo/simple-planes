@@ -25,7 +25,8 @@ public class TNTUpgrade extends Upgrade {
     public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
-            TNTEntity tntEntity = new TNTEntity(planeEntity.world, planeEntity.getPosX() - 1.0, planeEntity.getPosY(), planeEntity.getPosZ(), event.getPlayer());
+            TNTEntity tntEntity = new TNTEntity(planeEntity.world, planeEntity.getPosX() - 1.0, planeEntity.getPosY(), planeEntity.getPosZ(),
+                event.getPlayer());
             tntEntity.setMotion(planeEntity.getMotion());
             planeEntity.world.addEntity(tntEntity);
             itemStack.damageItem(1, event.getPlayer(), playerEntity -> playerEntity.sendBreakAnimation(event.getHand()));

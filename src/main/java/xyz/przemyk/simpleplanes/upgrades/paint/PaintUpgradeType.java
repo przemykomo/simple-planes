@@ -1,7 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.paint;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class PaintUpgradeType extends UpgradeType {

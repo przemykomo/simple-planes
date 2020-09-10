@@ -1,22 +1,23 @@
 package xyz.przemyk.simpleplanes.handler;
 
-import java.util.function.Supplier;
-
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.MathUtil.EulerAngles;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
 
-public class PlaneNetworking  {
+import java.util.function.Supplier;
+
+public class PlaneNetworking {
     public static final int MSG_PLANE_QUAT = 0;
+    public static final int MSG_PLANE_BOOST = 1;
 
     public static void init() {
         INSTANCE.registerMessage(
@@ -26,14 +27,21 @@ public class PlaneNetworking  {
             SimplePlanesDataSerializers.QUATERNION_SERIALIZER::read, // decoder
             PlaneNetworking::handle_q // messageConsumer
         );
+        INSTANCE.registerMessage(
+            MSG_PLANE_BOOST, // index
+            Boolean.class, // messageType
+            (msg, buff) -> DataSerializers.BOOLEAN.write(buff, msg), // encoder
+            DataSerializers.BOOLEAN::read, // decoder
+            PlaneNetworking::handle_boost // messageConsumer
+        );
     }
 
-    private static final String PROTOCOL_VERSION = "1";
+    private static final String PROTOCOL_VERSION = "2";
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(SimplePlanesMod.MODID, "plane_rotation"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
+        new ResourceLocation(SimplePlanesMod.MODID, "plane_rotation"),
+        () -> PROTOCOL_VERSION,
+        PROTOCOL_VERSION::equals,
+        PROTOCOL_VERSION::equals
     );
 
     public static void handle_q(Quaternion msg, Supplier<NetworkEvent.Context> ctx) {
@@ -48,6 +56,18 @@ public class PlaneNetworking  {
                 planeEntity.rotationPitch = (float) eulerAngles.pitch;
                 planeEntity.rotationRoll = (float) eulerAngles.roll;
                 planeEntity.setQ_Client(msg);
+            }
+        });
+        ctx.get().setPacketHandled(true);
+    }
+
+    public static void handle_boost(Boolean msg, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            // Work that needs to be threadsafe (most work)
+            PlayerEntity ServerPlayerEntity = ctx.get().getSender(); // the client that sent this packet
+            if (ServerPlayerEntity != null && ServerPlayerEntity.getRidingEntity() instanceof PlaneEntity) {
+                PlaneEntity planeEntity = (PlaneEntity) ServerPlayerEntity.getRidingEntity();
+                planeEntity.setSprinting(msg);
             }
         });
         ctx.get().setPacketHandled(true);
