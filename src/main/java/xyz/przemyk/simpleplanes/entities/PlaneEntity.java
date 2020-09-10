@@ -138,7 +138,11 @@ public class PlaneEntity extends Entity {
     public void addFuel(Integer fuel) {
         if (!world.isRemote) {
             int old_fuel = getFuel();
-            dataManager.set(FUEL, MathUtil.clamp(old_fuel + fuel, old_fuel, fuel * 3));
+            int new_fuel = old_fuel + fuel;
+            if (new_fuel > fuel * 3) {
+                new_fuel = old_fuel + fuel / 3;
+            }
+            dataManager.set(FUEL, new_fuel);
         }
     }
 
@@ -267,7 +271,7 @@ public class PlaneEntity extends Entity {
     public boolean attackEntityFrom(DamageSource source, float amount) {
 //        this.setRockingTicks(60);
         this.setTimeSinceHit(63);
-        this.setDamageTaken(this.getDamageTaken() + 10*amount);
+        this.setDamageTaken(this.getDamageTaken() + 10 * amount);
 
         if (this.isInvulnerableTo(source) || this.hurtTime > 0) {
             return false;
@@ -501,11 +505,11 @@ public class PlaneEntity extends Entity {
         if (this.getDamageTaken() > 0.0F) {
             this.setDamageTaken(this.getDamageTaken() - 1.0F);
         }
-        if (!this.world.isRemote && this.getHealth() > this.getMaxHealth() & this.health_timer>(getOnGround() ? 300 : 100)) {
+        if (!this.world.isRemote && this.getHealth() > this.getMaxHealth() & this.health_timer > (getOnGround() ? 300 : 100)) {
             this.setHealth(this.getHealth() - 1);
             health_timer = 0;
         }
-        if(health_timer<1000 && isPowered()){
+        if (health_timer < 1000 && isPowered()) {
             health_timer++;
         }
 

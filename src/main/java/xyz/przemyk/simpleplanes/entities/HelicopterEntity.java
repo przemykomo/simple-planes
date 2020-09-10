@@ -39,7 +39,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         Vars motionVars = super.getMotionVars();
         motionVars.passive_engine_push = 0.028f;
         motionVars.push = 0.05f;
-        motionVars.drag_quad *= 2;
+        motionVars.drag_quad *= 10;
         motionVars.drag_mul *= 2;
         return motionVars;
     }
@@ -47,8 +47,6 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected void tickMotion(Vars vars) {
         super.tickMotion(vars);
-        double drag = 0.98;
-        setMotion(getMotion().mul(drag, 1, drag));
     }
 
     @Override
@@ -85,6 +83,9 @@ public class HelicopterEntity extends LargePlaneEntity {
             rotationPitch = Math.min(rotationPitch + 1, 10);
         } else {
             rotationPitch = MathUtil.lerpAngle(0.2f, rotationPitch, 0);
+            double drag = 0.999;
+            setMotion(getMotion().mul(drag, 1, drag));
+
         }
     }
 

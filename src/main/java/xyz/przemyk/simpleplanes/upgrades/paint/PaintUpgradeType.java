@@ -11,6 +11,7 @@ public class PaintUpgradeType extends UpgradeType {
 
     @Override
     public boolean IsThisItem(ItemStack itemStack) {
-        return PaintUpgrade.PAINTS.containsKey(itemStack.getItem().getRegistryName()) && itemStack.getCount() == 64;
+        return false;
+//        return PaintUpgrade.PAINTS.containsKey(itemStack.getItem().getRegistryName()) && itemStack.getCount() == 64;
     }
 }

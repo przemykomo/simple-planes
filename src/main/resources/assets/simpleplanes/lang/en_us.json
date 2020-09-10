@@ -19,7 +19,8 @@
     "death.attack.plane_crash": "%1$s Died in a plane crash",
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",
     "helicopter.onboard": "Press %2$s to TakeOff | Press %1$s to Dismount",
-
+    "key.simpleplanes.category": "Simple Planes",
+    "key.plane_boost.desc": "Plane Boost Key",
 
 
     "item.simpleplanes.acacia_plane": "Acacia Plane",
