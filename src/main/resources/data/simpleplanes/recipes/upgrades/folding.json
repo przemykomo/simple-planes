@@ -3,6 +3,15 @@
     "ingredients": [
         {
             "item": "minecraft:elytra"
+        },
+        {
+            "item": "minecraft:netherite_ingot"
+        },
+        {
+            "item": "minecraft:string"
+        },
+        {
+            "item": "minecraft:string"
         }
     ],
     "result": {

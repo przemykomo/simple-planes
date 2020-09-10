@@ -228,7 +228,16 @@ mod_dict = {"bop": "biomesoplenty",
             "byg": "byg",
             "ft": "fruittrees"}
 
-if __name__ == '__main__':
+
+def recpie_list():
+    for f1 in os.listdir("../src/main/resources/data/simpleplanes/recipes/upgrades"):
+        mat = f1[:-5]
+        print(f""""simpleplanes:upgrades/{mat}",""")
+
+
+def main():
+    recpie_list()
+    return
     for f1 in os.listdir("out"):
         mat = f1[:-5]
         print(f""""simpleplanes:{mat}",""")
@@ -271,3 +280,7 @@ if __name__ == '__main__':
         # mat = f1[:-4]
         rmp = get_rmp()
         gen(rmp, os.path.join(folder2, f1))
+
+
+if __name__ == '__main__':
+    main()
