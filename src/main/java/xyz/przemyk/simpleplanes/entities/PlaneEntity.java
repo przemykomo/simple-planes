@@ -267,7 +267,7 @@ public class PlaneEntity extends Entity {
     public boolean attackEntityFrom(DamageSource source, float amount) {
 //        this.setRockingTicks(60);
         this.setTimeSinceHit(63);
-        this.setDamageTaken(this.getDamageTaken() + amount);
+        this.setDamageTaken(this.getDamageTaken() + 10*amount);
 
         if (this.isInvulnerableTo(source) || this.hurtTime > 0) {
             return false;
@@ -286,22 +286,26 @@ public class PlaneEntity extends Entity {
         boolean creative_player = is_player && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode;
         if (creative_player || (is_player && this.getDamageTaken() > 30.0F) || health <= 0) {
             if (!creative_player && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-                ((ServerWorld) world).spawnParticle(ParticleTypes.SMOKE,
-                    getPosX(),
-                    getPosY(),
-                    getPosZ(),
-                    5, 1, 1, 1, 2);
-                ((ServerWorld) world).spawnParticle(ParticleTypes.POOF,
-                    getPosX(),
-                    getPosY(),
-                    getPosZ(),
-                    10, 1, 1, 1, 1);
-                world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 2, Explosion.Mode.NONE);
-                dropItem();
+                explode();
             }
             this.remove();
         }
         return true;
+    }
+
+    private void explode() {
+        ((ServerWorld) world).spawnParticle(ParticleTypes.SMOKE,
+            getPosX(),
+            getPosY(),
+            getPosZ(),
+            5, 1, 1, 1, 2);
+        ((ServerWorld) world).spawnParticle(ParticleTypes.POOF,
+            getPosX(),
+            getPosY(),
+            getPosZ(),
+            10, 1, 1, 1, 1);
+        world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 0, Explosion.Mode.NONE);
+        dropItem();
     }
 
     @SuppressWarnings("rawtypes")
@@ -501,7 +505,7 @@ public class PlaneEntity extends Entity {
             this.setHealth(this.getHealth() - 1);
             health_timer = 0;
         }
-        if(health_timer<1000){
+        if(health_timer<1000 && isPowered()){
             health_timer++;
         }
 
@@ -899,9 +903,8 @@ public class PlaneEntity extends Entity {
         return super.isInvulnerableTo(source);
     }
 
-    //is immune to fire
     @Override
-    public boolean func_230279_az_() {
+    public boolean isImmuneToFire() {
         return this.material.fireResistant;
     }
 
@@ -1004,7 +1007,7 @@ public class PlaneEntity extends Entity {
     }
 
     @SuppressWarnings("rawtypes")
-    protected ItemStack getItemStack() {
+    public ItemStack getItemStack() {
         ItemStack itemStack = getItem().getDefaultInstance();
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
             itemStack.setTagInfo("EntityTag", serializeNBT());

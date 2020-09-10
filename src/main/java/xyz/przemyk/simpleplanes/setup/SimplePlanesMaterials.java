@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SimplePlanesMaterials {
 
-    public static Set<Entry<ResourceLocation, PlaneMaterial>> getMaterials() {
+    public static Set<Entry<RegistryKey<PlaneMaterial>, PlaneMaterial>> getMaterials() {
         return SimplePlanesRegistries.PLANE_MATERIALS.getEntries();
     }
 
@@ -51,14 +52,14 @@ public class SimplePlanesMaterials {
         ("byg_aspen"),
         ("byg_baobab"),
         ("byg_blue_enchanted"),
-        ("byg_bulbis"),
+//        ("byg_bulbis"),
         ("byg_cherry"),
         ("byg_cika"),
         ("byg_cypress"),
         ("byg_ebony"),
-        ("byg_embur"),
+//        ("byg_embur"),
         ("byg_fir"),
-        ("byg_glacial_oak"),
+//        ("byg_glacial_oak"),
         ("byg_green_enchanted"),
         ("byg_holly"),
         ("byg_jacaranda"),
@@ -103,7 +104,7 @@ public class SimplePlanesMaterials {
         //        event.getRegistry().registerAll(materials);
     }
 
-    private static void register(Register<PlaneMaterial> event, List<String> fire, String name) {
+    public static void register(Register<PlaneMaterial> event, List<String> fire, String name) {
         event.getRegistry().register(new PlaneMaterial(name, fire.contains(name)).setRegistryName(SimplePlanesMod.MODID, name));
     }
 

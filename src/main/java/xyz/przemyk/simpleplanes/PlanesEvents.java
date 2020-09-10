@@ -37,7 +37,7 @@ public class PlanesEvents {
                 int burnTime = ForgeHooks.getBurnTime(itemStack);
                 if (burnTime > 0) {
                     int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
-                    if (!ItemTags.createOptional(NOT_COAL_TAG).func_230235_a_(itemStack.getItem())) {
+                    if (!ItemTags.createOptional(NOT_COAL_TAG).contains(itemStack.getItem())) {
                         ((PlaneEntity) entity).addFuel(fuel);
                         if (!player.isCreative()) {
                             itemStack.shrink(1);

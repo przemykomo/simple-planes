@@ -70,12 +70,12 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         }
         float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
         float f1 = planeEntity.getDamageTaken() - partialTicks;
-        if (f1 < 0.0F) {
-            f1 = 0.0F;
+        if (f1 < 0.1F) {
+            f1 = 0.1F;
         }
 
         if (f > 0.0F) {
-            float angle =MathUtil.clamp(f * f1/ 50.0F,-30,30);
+            float angle =MathUtil.clamp(f * f1/ 200.0F,-30,30);
 //            float angle = 30;
             f = planeEntity.ticksExisted + partialTicks;
             matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));

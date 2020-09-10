@@ -188,11 +188,11 @@ public class SprayerUpgrade extends Upgrade {
 
     private void extinguishFires(BlockPos pos) {
         BlockState blockstate = planeEntity.world.getBlockState(pos);
-        if (blockstate.func_235714_a_(BlockTags.field_232872_am_)) {
+        if (blockstate.isIn(BlockTags.FIRE)) {
             planeEntity.world.removeBlock(pos, false);
-        } else if (CampfireBlock.func_226915_i_(blockstate)) {
+        } else if (CampfireBlock.isLit(blockstate)) {
             planeEntity.world.playEvent((planeEntity.getPlayer()), 1009, pos, 0);
-            CampfireBlock.func_235475_c_(planeEntity.world, pos, blockstate);
+            CampfireBlock.extinguish(planeEntity.world, pos, blockstate);
             planeEntity.world.setBlockState(pos, blockstate.with(CampfireBlock.LIT, Boolean.FALSE));
         }
 

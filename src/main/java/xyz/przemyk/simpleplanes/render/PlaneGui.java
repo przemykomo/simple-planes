@@ -63,9 +63,9 @@ public class PlaneGui extends AbstractGui {
                 part = MathHelper.clamp(part, 0, 1);
                 int currentWidth = (int) (bar_width * part);
 
-                func_238474_b_(mStack, x, y, 0, 0, tex_width, tex_height);
+                blit(mStack, x, y, 0, 0, tex_width, tex_height);
                 int bar_image_pos = planeEntity.isSprinting() ? tex_height * 2 : tex_height;
-                func_238474_b_(mStack, x, y, 0, bar_image_pos, currentWidth, tex_height);
+                blit(mStack, x, y, 0, bar_image_pos, currentWidth, tex_height);
             }
         }
     }
@@ -84,7 +84,7 @@ public class PlaneGui extends AbstractGui {
                 mc.getTextureManager().bindTexture(bar);
                 int left_align = scaledWidth / 2 + 91;
 
-                int health = (int) Math.ceil((double) planeEntity.getHealth());
+                int health = (int) Math.ceil(planeEntity.getHealth());
                 float healthMax = planeEntity.getMaxHealth();
                 int hearts = (int) (healthMax);
 
@@ -105,11 +105,11 @@ public class PlaneGui extends AbstractGui {
                     for (int i = 0; i < rowCount; ++i) {
                         int x = left_align - i * 16 - 16;
                         if (i + heart + 10 < health)
-                            func_238474_b_(mStack, x, top, GOLD, 15, 16, 9);
+                            blit(mStack, x, top, GOLD, 15, 16, 9);
                         else if (i + heart < health)
-                            func_238474_b_(mStack, x, top, FULL, 15, 16, 9);
+                            blit(mStack, x, top, FULL, 15, 16, 9);
                         else
-                            func_238474_b_(mStack, x, top, EMPTY, 15, 16, 9);
+                            blit(mStack, x, top, EMPTY, 15, 16, 9);
                     }
                     right_height += 10;
                 }

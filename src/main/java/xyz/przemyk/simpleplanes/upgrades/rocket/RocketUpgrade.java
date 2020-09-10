@@ -89,7 +89,7 @@ public class RocketUpgrade extends Upgrade {
             planeEntity.attackEntityFrom(DamageSource.ON_FIRE, 1);
         }
         if (planeEntity instanceof HelicopterEntity) {
-            pitch = -pitch;
+            pitch = 0;
         }
         planeEntity.rotationPitch += pitch;
         Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);

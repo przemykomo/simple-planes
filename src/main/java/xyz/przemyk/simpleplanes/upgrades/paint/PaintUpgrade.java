@@ -18,7 +18,7 @@ public class PaintUpgrade extends Upgrade {
 
     public static void init() {
         PAINTS.put(Items.GOLD_BLOCK.getRegistryName(), "gold");
-        PAINTS.put(Items.field_234794_rw_.getRegistryName(), "netherite");
+        PAINTS.put(Items.NETHERITE_BRICKS.getRegistryName(), "netherite");
     }
 
     public PaintUpgrade(PlaneEntity planeEntity) {

@@ -7,12 +7,14 @@
     "item.simpleplanes.shooter": "Shooter",
     "item.simpleplanes.folding": "Folding",
     "item.simpleplanes.healing": "Plane quick fix kit",
+    "item.simpleplanes.mana_upgrade": "Pure daisy bundle",
     "description.simpleplanes.sprayer": "Use water bottles or potions to make crops grow faster and give effect to entities",
     "description.simpleplanes.booster": "Use gunpowder to boost your plane. Can only be applied to small planes.",
     "description.simpleplanes.floaty_bedding": "Makes plane float on water.",
     "description.simpleplanes.shooter": "Shoots fireworks, fire charges and arrows.",
     "description.simpleplanes.folding": "Plane returns to players inventory upon departure.",
     "description.simpleplanes.healing": "Fix up your plane quicker",
+    "description.simpleplanes.mana_upgrade": "Turns your plane into living wood plane",
     "itemGroup.simpleplanes": "Simple Planes",
     "death.attack.plane_crash": "%1$s Died in a plane crash",
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",
@@ -151,5 +153,9 @@
     "item.simpleplanes.ft_citrus_helicopter": "Citrus Helicopter",
     "item.simpleplanes.ft_cherry_plane": "Cherry Plane",
     "item.simpleplanes.ft_cherry_large_plane": "Large Cherry Plane",
-    "item.simpleplanes.ft_cherry_helicopter": "Cherry Helicopter"
+    "item.simpleplanes.ft_cherry_helicopter": "Cherry Helicopter",
+
+    "item.simpleplanes.mana_plane": "Living Wood Plane",
+    "item.simpleplanes.mana_large_plane": "Large Living Wood Plane",
+    "item.simpleplanes.mana_helicopter": "Living Wood Helicopter"
 }

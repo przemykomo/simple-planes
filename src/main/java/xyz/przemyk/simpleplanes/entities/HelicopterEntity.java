@@ -61,7 +61,7 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "helicopter"));
+        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_helicopter"));
     }
 
     @Override

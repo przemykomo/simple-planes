@@ -88,4 +88,10 @@ public class PlaneItem extends Item {
             }
         }
     }
+
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        return super.getTranslationKey(stack);
+    }
+
 }
