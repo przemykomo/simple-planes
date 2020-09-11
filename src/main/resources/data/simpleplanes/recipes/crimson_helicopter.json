@@ -1,8 +1,8 @@
 {
     "conditions": [
         {
-            "type": "forge:mod_loaded",
-            "modid": "minecraft"
+            "type": "forge:item_exists",
+            "item": "minecraft:crimson_planks"
         }
     ],
     "type": "minecraft:crafting_shaped",

@@ -44,6 +44,6 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
     }
 
     public ItemStack getDrops() {
-        return upgradeItem.getDefaultInstance();
+        return new ItemStack(upgradeItem);
     }
 }

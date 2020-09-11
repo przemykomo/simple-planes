@@ -308,7 +308,7 @@ public class PlaneEntity extends Entity {
 
     @SuppressWarnings("rawtypes")
     protected void dropItem() {
-        ItemStack itemStack = getItem().getDefaultInstance();
+        ItemStack itemStack = new ItemStack(getItem());
         for (Upgrade upgrade : upgrades.values()) {
             final ItemStack item = upgrade.getDrops();
             if (item != null) {
@@ -1011,7 +1011,7 @@ public class PlaneEntity extends Entity {
 
     @SuppressWarnings("rawtypes")
     public ItemStack getItemStack() {
-        ItemStack itemStack = getItem().getDefaultInstance();
+        ItemStack itemStack =new ItemStack(getItem());
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
             itemStack.setTagInfo("EntityTag", serializeNBT());
         }

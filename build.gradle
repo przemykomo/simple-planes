@@ -123,12 +123,12 @@ dependencies {
 //    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}:api")
 //    runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-//    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}")
+//    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-${minecraft_version}-${curios_version}")
 //    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
 //    compile fg.deobf('curse.maven:controllable:3008760')
-//    compile fg.deobf('curse.maven:biomes-o-plenty:3012271')
-//    compile fg.deobf('curse.maven:oh-the-biomes-youll-go:3046308')
+//    compile fg.deobf('curse.maven:biomes-o-plenty:2988999')
+//    compile fg.deobf('curse.maven:oh-the-biomes-youll-go:3004847')
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env

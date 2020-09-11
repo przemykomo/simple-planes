@@ -21,7 +21,7 @@ public class BannerUpgrade extends Upgrade {
 
     public BannerUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BANNER.get(), planeEntity);
-        banner = WHITE_BANNER.getDefaultInstance();
+        banner = new ItemStack(WHITE_BANNER);
         prevRotation = planeEntity.prevRotationYaw;
         rotation = planeEntity.prevRotationYaw;
     }
