@@ -1,0 +1,20 @@
+{
+    "type": "crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:elytra"
+        },
+        {
+            "item": "minecraft:iron_block"
+        },
+        {
+            "item": "minecraft:string"
+        },
+        {
+            "item": "minecraft:string"
+        }
+    ],
+    "result": {
+        "item": "simpleplanes:folding"
+    }
+}

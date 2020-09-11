@@ -44,7 +44,7 @@ public class ShooterUpgrade extends Upgrade {
         World world = event.getWorld();
         Random random = world.rand;
 
-        Vector3f pos = planeEntity.transformPos(new Vector3f(shootSide ? 0.8f : -0.8f, 0.8f,0.8f));
+        Vector3f pos = planeEntity.transformPos(new Vector3f(shootSide ? 0.8f : -0.8f, 0.8f, 0.8f));
         shootSide = !shootSide;
 
         double x = pos.getX() + planeEntity.getPosX();
@@ -64,10 +64,14 @@ public class ShooterUpgrade extends Upgrade {
             double d3 = random.nextGaussian() * 0.05D + 2 * motion.x;
             double d4 = random.nextGaussian() * 0.05D;
             double d5 = random.nextGaussian() * 0.05D + 2 * motion.z;
-            AbstractFireballEntity fireBallEntity = Util.make(new SmallFireballEntity(world, player, d3, d4, d5), (p_229425_1_) -> p_229425_1_.setStack(itemStack));
+            AbstractFireballEntity fireBallEntity = Util
+                .make(new SmallFireballEntity(world, player, d3, d4, d5), (p_229425_1_) -> p_229425_1_.setStack(itemStack));
             fireBallEntity.forceSetPosition(x, y, z);
             fireBallEntity.setMotion(motion.scale(2));
             world.addEntity(fireBallEntity);
+            if (!player.isCreative()) {
+                itemStack.shrink(1);
+            }
         } else if (item == Items.ARROW) {
             ArrowEntity arrowentity = new ArrowEntity(world, x, y, z);
             arrowentity.setShooter(player);

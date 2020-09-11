@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:healing",
+    "pattern": [
+        "i i",
+        " E ",
+        " i "
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_block"
+        },
+        "E": {
+            "item": "minecraft:enchanted_golden_apple"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:healing",
+        "count": 64
+    }
+}

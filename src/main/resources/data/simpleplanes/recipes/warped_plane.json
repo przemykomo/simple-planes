@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:plane",
+    "pattern": [
+        " WF",
+        "PEB",
+        " W "
+    ],
+    "key": {
+        "W": {
+            "item": "minecraft:warped_slab"
+        },
+        "F": {
+            "item": "minecraft:furnace"
+        },
+        "E": {
+            "item": "simpleplanes:furnace_engine"
+        },
+        "B": {
+            "item": "minecraft:diamond_block"
+        },
+        "P": {
+            "item": "simpleplanes:propeller"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:warped_plane"
+    }
+}

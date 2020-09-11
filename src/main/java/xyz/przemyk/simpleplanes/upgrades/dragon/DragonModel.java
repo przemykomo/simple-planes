@@ -15,10 +15,12 @@ public class DragonModel {
         matrixStackIn.push();
         matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180));
         matrixStackIn.translate(-0.5, -1, 0.5);
+        matrixStackIn.scale(0.99f, 0.99f, 0.99f);
         final float f2 = partialTicks + planeEntity.ticksExisted;
-        float r = (MathHelper.cos(f2 / 5)) ;
+        float r = (MathHelper.cos(f2 / 5));
 
-        SkullTileEntityRenderer.render(null, 180.0F, ((AbstractSkullBlock)((Blocks.DRAGON_HEAD))).getSkullType(), null, r, matrixStackIn, bufferIn, packedLightIn);
+        SkullTileEntityRenderer
+            .render(null, 180.0F, ((AbstractSkullBlock) ((Blocks.DRAGON_HEAD))).getSkullType(), null, r, matrixStackIn, bufferIn, packedLightIn);
 
         matrixStackIn.pop();
     }

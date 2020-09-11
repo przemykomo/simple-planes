@@ -1,11 +1,19 @@
 package xyz.przemyk.simpleplanes;
 
 import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import static net.minecraft.util.math.MathHelper.wrapDegrees;
 
 public class MathUtil {
+    public static double angelBetweenVec(Vec3d v1, Vec3d v2) {
+        return Math.toDegrees(Math.acos(normalizedDotProduct(v1, v2)));
+    }
+
+    public static double normalizedDotProduct(Vec3d v1, Vec3d v2) {
+        return v1.dotProduct(v2) / (v1.length() * v2.length());
+    }
 
     public static float getPitch(Vec3d motion) {
         double y = motion.y;
@@ -101,8 +109,7 @@ public class MathUtil {
         float y = q.getY();
         float z = q.getZ();
         float w = q.getW();
-        if (f > 1.0E-6F)
-        {
+        if (f > 1.0E-6F) {
             float f1 = fastInvSqrt(f);
             x *= f1;
             y *= f1;
@@ -160,10 +167,10 @@ public class MathUtil {
             // and normalize the result.
 
             Quaternion quaternion = new Quaternion(
-                    start.getX() * (1 - perc) + end.getX() * perc,
-                    start.getY() * (1 - perc) + end.getY() * perc,
-                    start.getZ() * (1 - perc) + end.getZ() * perc,
-                    start.getW() * (1 - perc) + end.getW() * perc
+                start.getX() * (1 - perc) + end.getX() * perc,
+                start.getY() * (1 - perc) + end.getY() * perc,
+                start.getZ() * (1 - perc) + end.getZ() * perc,
+                start.getW() * (1 - perc) + end.getW() * perc
             );
             return normalizeQuaternion(quaternion);
         }
@@ -178,10 +185,10 @@ public class MathUtil {
         float s1 = (float) (sin_theta / sin_theta_0);
 
         Quaternion quaternion = new Quaternion(
-                start.getX() * (s0) + end.getX() * s1,
-                start.getY() * (s0) + end.getY() * s1,
-                start.getZ() * (s0) + end.getZ() * s1,
-                start.getW() * (s0) + end.getW() * s1
+            start.getX() * (s0) + end.getX() * s1,
+            start.getY() * (s0) + end.getY() * s1,
+            start.getZ() * (s0) + end.getZ() * s1,
+            start.getW() * (s0) + end.getW() * s1
         );
         return normalizeQuaternion(quaternion);
     }
@@ -189,7 +196,8 @@ public class MathUtil {
     public static class EulerAngles {
         public double pitch, yaw, roll;
 
-        public EulerAngles() {}
+        public EulerAngles() {
+        }
 
         //TODO: remove unused constructor?
         @SuppressWarnings("unused")
@@ -205,17 +213,17 @@ public class MathUtil {
             this.roll = a.roll;
         }
 
-        public EulerAngles copy()
-        {
+        public EulerAngles copy() {
             return new EulerAngles(this);
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return "EulerAngles{" +
-                    "pitch=" + pitch +
-                    ", yaw=" + yaw +
-                    ", roll=" + roll +
-                    '}';
+                "pitch=" + pitch +
+                ", yaw=" + yaw +
+                ", roll=" + roll +
+                '}';
         }
     }
 }

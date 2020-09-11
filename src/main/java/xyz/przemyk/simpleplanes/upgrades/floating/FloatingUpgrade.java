@@ -1,16 +1,16 @@
 package xyz.przemyk.simpleplanes.upgrades.floating;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-
-import com.mojang.blaze3d.matrix.MatrixStack;
-
 import net.minecraft.util.math.Vec3d;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -40,9 +40,19 @@ public class FloatingUpgrade extends Upgrade {
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         if (planeEntity.isLarge()) {
-            LargeFloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            if (planeEntity instanceof HelicopterEntity) {
+                HelicopterFloatingModel.INSTANCE
+                    .render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F,
+                        1.0F, 1.0F, 1.0F);
+            } else {
+                LargeFloatingModel.INSTANCE
+                    .render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY,
+                        1.0F, 1.0F, 1.0F, 1.0F);
+            }
         } else {
-            FloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(FloatingModel.INSTANCE.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            FloatingModel.INSTANCE
+                .render(matrixStack, buffer.getBuffer(FloatingModel.INSTANCE.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
+                    1.0F, 1.0F);
         }
     }
 }

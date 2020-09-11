@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:large_plane",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "tag": "forge:ingots/iron"
+        },
+        "P": {
+            "item": "simpleplanes:acacia_plane"
+        },
+        "B": {
+            "item": "minecraft:acacia_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:acacia_large_plane"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "type": "crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:dispenser"
+        },
+        {
+            "item": "minecraft:dispenser"
+        }
+    ],
+    "result": {
+        "item": "simpleplanes:shooter"
+    }
+}

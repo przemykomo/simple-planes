@@ -28,15 +28,15 @@ public class BannerUpgrade extends Upgrade {
 
     @Override
     public boolean tick() {
-        prevRotation = rotation ;
-        rotation = MathUtil.lerpAngle(0.05f,rotation,planeEntity.prevRotationYaw);
+        prevRotation = rotation;
+        rotation = MathUtil.lerpAngle(0.05f, rotation, planeEntity.prevRotationYaw);
         return super.tick();
     }
 
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT compoundNBT = new CompoundNBT();
-        compoundNBT.put("banner",banner.serializeNBT());
+        compoundNBT.put("banner", banner.serializeNBT());
         return compoundNBT;
     }
 
@@ -53,7 +53,7 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
-    public ItemStack getItem() {
+    public ItemStack getDrops() {
         return banner;
     }
 

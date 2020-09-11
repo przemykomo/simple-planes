@@ -13,6 +13,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
@@ -28,6 +29,11 @@ public class PlaneItem extends Item {
     public PlaneItem(Properties properties, Function<World, PlaneEntity> planeSupplier) {
         super(properties.maxStackSize(1));
         this.planeSupplier = planeSupplier;
+    }
+
+    @Override
+    public ITextComponent getName() {
+        return super.getName();
     }
 
     @Override
@@ -47,7 +53,7 @@ public class PlaneItem extends Item {
             if (!list.isEmpty()) {
                 Vec3d vec3d1 = playerIn.getEyePosition(1.0F);
 
-                for(Entity entity : list) {
+                for (Entity entity : list) {
                     AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(entity.getCollisionBorderSize());
                     if (axisalignedbb.contains(vec3d1)) {
                         return ActionResult.resultPass(itemstack);
@@ -62,8 +68,9 @@ public class PlaneItem extends Item {
                 planeEntity.prevRotationYaw = playerIn.prevRotationYaw;
                 planeEntity.setCustomName(itemstack.getDisplayName());
                 CompoundNBT entityTag = itemstack.getChildTag("EntityTag");
-                if (entityTag!=null)
+                if (entityTag != null) {
                     planeEntity.readAdditional(entityTag);
+                }
                 if (!worldIn.hasNoCollisions(planeEntity, planeEntity.getBoundingBox().grow(-0.1D))) {
                     return ActionResult.resultFail(itemstack);
                 } else {

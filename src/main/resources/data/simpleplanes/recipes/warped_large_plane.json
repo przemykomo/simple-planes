@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:large_plane",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "item": "minecraft:diamond_block"
+        },
+        "P": {
+            "item": "simpleplanes:warped_plane"
+        },
+        "B": {
+            "item": "minecraft:warped_slab"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:warped_large_plane"
+    }
+}

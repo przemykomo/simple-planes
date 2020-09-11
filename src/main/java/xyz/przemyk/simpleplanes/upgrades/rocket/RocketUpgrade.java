@@ -9,16 +9,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import static net.minecraft.item.Items.*;
+import static net.minecraft.item.Items.GUNPOWDER;
 
 public class RocketUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/rocket.png");
@@ -73,27 +75,32 @@ public class RocketUpgrade extends Upgrade {
 
         Vec3d m = planeEntity.getMotion();
         float pitch = 0;
-        PlayerEntity player = planeEntity.getControllingPlayer();
+        PlayerEntity player = planeEntity.getPlayer();
         if (player != null) {
             if (player.moveForward > 0.0F) {
-                if (player.isSprinting()) {
+                if (planeEntity.isSprinting()) {
                     pitch += 2;
                 }
             } else if (player.moveForward < 0.0F) {
                 pitch -= 2;
             }
         }
+        if (planeEntity.world.rand.nextInt(50) == 0) {
+            planeEntity.attackEntityFrom(DamageSource.ON_FIRE, 1);
+        }
+        if (planeEntity instanceof HelicopterEntity) {
+            pitch = 0;
+        }
         planeEntity.rotationPitch += pitch;
         Vec3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
 
         planeEntity.setMotion(m.add(motion));
         if (!planeEntity.world.isRemote()) {
-            planeEntity.spawnParticle(ParticleTypes.FLAME,new Vector3f(-0.6f, 0f, -1.3f), 5);
-            planeEntity.spawnParticle(ParticleTypes.FLAME,new Vector3f(0.6f, 0f, -1.3f), 5);
+            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f), 5);
+            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f), 5);
 
         }
     }
-
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {

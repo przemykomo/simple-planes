@@ -1,4 +1,11 @@
 {
+    "conditions": [
+        {
+            "type": "forge:mod_loaded",
+            "modid": "biomesoplenty"
+        }
+    ],
+    "group": "simpleplanes:large_plane",
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "I  ",
@@ -7,7 +14,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:ingots/iron"
+            "item": "minecraft:diamond_block"
         },
         "P": {
             "item": "simpleplanes:bop_hellbark_plane"
