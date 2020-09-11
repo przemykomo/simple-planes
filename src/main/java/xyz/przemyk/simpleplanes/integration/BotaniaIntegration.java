@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -28,8 +27,6 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
-import java.util.Objects;
-
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesItems.SIMPLE_PLANES_ITEM_GROUP;
 
 public class BotaniaIntegration implements IModIntegration {
@@ -37,6 +34,7 @@ public class BotaniaIntegration implements IModIntegration {
     public static final PlaneMaterial MANA = null;
     public static UpgradeType MANA_UPGRADE;
     RegistryObject<Item> MANA_UPGRADE_ITEM = null;
+
     @Override
     public void init() {
         System.out.println("Botania To The Sky");
@@ -45,20 +43,20 @@ public class BotaniaIntegration implements IModIntegration {
 //        SimplePlanesRegistries.PLANE_MATERIALS.register(new PlaneMaterial(name));
         SimplePlanesItems.ITEMS.register(name + "_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> {
             PlaneEntity planeEntity = new PlaneEntity(SimplePlanesEntities.PLANE.get(), world, SimplePlanesMaterials.getMaterial(name));
-            MANA_UPGRADE.instanceSupplier.apply(planeEntity);
+            add_mana(planeEntity);
             return planeEntity;
         }));
         SimplePlanesItems.ITEMS.register(name + "_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> {
             PlaneEntity planeEntity = new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE.get(), world, SimplePlanesMaterials.getMaterial(name));
-            MANA_UPGRADE.instanceSupplier.apply(planeEntity);
+            add_mana(planeEntity);
             return planeEntity;
         }));
         SimplePlanesItems.ITEMS.register(name + "_helicopter", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> {
             PlaneEntity planeEntity = new HelicopterEntity(SimplePlanesEntities.HELICOPTER.get(), world, SimplePlanesMaterials.getMaterial(name));
-            MANA_UPGRADE.instanceSupplier.apply(planeEntity);
+            add_mana(planeEntity);
             return planeEntity;
         }));
-        MANA_UPGRADE_ITEM= SimplePlanesItems.ITEMS
+        MANA_UPGRADE_ITEM = SimplePlanesItems.ITEMS
             .register("mana_upgrade", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.mana_upgrade")));
 //        SimplePlanesRegistries.UPGRADE_TYPES.register(new UpgradeType(daisy,ManaUpgrade::new));
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
@@ -66,11 +64,17 @@ public class BotaniaIntegration implements IModIntegration {
 
     }
 
+    private void add_mana(PlaneEntity planeEntity) {
+        Upgrade upgrade = MANA_UPGRADE.instanceSupplier.apply(planeEntity);
+        upgrade.onApply(null, null);
+        planeEntity.upgrades.put(MANA_UPGRADE.getRegistryName(), upgrade);
+    }
+
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void registerUpgrade(RegistryEvent.Register<UpgradeType> event) {
 //        ResourceLocation daisy = new ResourceLocation("botania", "pure_daisy");
-        MANA_UPGRADE = new UpgradeType(MANA_UPGRADE_ITEM.get(), ManaUpgrade::new);
+        MANA_UPGRADE = new UpgradeType(MANA_UPGRADE_ITEM.get(), ManaUpgrade::new, planeEntity -> !planeEntity.isImmuneToFire());
         MANA_UPGRADE.setRegistryName("mana");
         event.getRegistry().register(MANA_UPGRADE);
     }
