@@ -22,8 +22,8 @@ public class HelicopterModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer bone5;
 
     public HelicopterModel() {
-        textureWidth = 32;
-        textureHeight = 32;
+        textureWidth = 16;
+        textureHeight = 16;
 
         Body = new ModelRenderer(this);
         Body.setRotationPoint(0.0F, 17.0F, 0.0F);
