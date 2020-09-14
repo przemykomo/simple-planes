@@ -10,6 +10,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -22,6 +23,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class PlaneItem extends Item {
+    protected PlaneEntity planeSupplierFunc(World worldIn, PlayerEntity playerIn, Hand handIn, BlockPos pos) {
+        return planeSupplier.apply(worldIn);
+    }
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
     private final Function<World, PlaneEntity> planeSupplier;
@@ -61,9 +65,11 @@ public class PlaneItem extends Item {
                 }
             }
 
-            if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
-                PlaneEntity planeEntity = planeSupplier.apply(worldIn);
-                planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
+            if (raytraceresult.getType() == RayTraceResult.Type.BLOCK && !worldIn.isRemote) {
+                Vector3d hitVec = raytraceresult.getHitVec();
+                BlockPos pos = new BlockPos(hitVec);
+                PlaneEntity planeEntity = planeSupplierFunc(worldIn, playerIn, handIn, pos);
+                planeEntity.setPosition(hitVec.getX(), hitVec.getY(), hitVec.getZ());
                 planeEntity.rotationYaw = playerIn.rotationYaw;
                 planeEntity.prevRotationYaw = playerIn.prevRotationYaw;
                 planeEntity.setCustomName(itemstack.getDisplayName());
@@ -71,18 +77,17 @@ public class PlaneItem extends Item {
                 if (entityTag != null) {
                     planeEntity.readAdditional(entityTag);
                 }
-                if (!worldIn.hasNoCollisions(planeEntity, planeEntity.getBoundingBox().grow(-0.1D))) {
-                    return ActionResult.resultFail(itemstack);
-                } else {
-                    if (!worldIn.isRemote) {
-                        worldIn.addEntity(planeEntity);
-                        if (!playerIn.abilities.isCreativeMode) {
-                            itemstack.shrink(1);
-                        }
-                    }
-                    playerIn.addStat(Stats.ITEM_USED.get(this));
-                    return ActionResult.resultSuccess(itemstack);
+//                if (!worldIn.hasNoCollisions(planeEntity, planeEntity.getBoundingBox().grow(-0.1D))) {
+//                    return ActionResult.resultFail(itemstack);
+//                } else {
+                worldIn.addEntity(planeEntity);
+                if (!playerIn.abilities.isCreativeMode) {
+                    itemstack.shrink(1);
                 }
+
+                playerIn.addStat(Stats.ITEM_USED.get(this));
+                return ActionResult.resultSuccess(itemstack);
+//                }
             } else {
                 return ActionResult.resultPass(itemstack);
             }

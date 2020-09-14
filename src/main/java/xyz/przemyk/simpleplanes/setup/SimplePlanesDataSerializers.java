@@ -9,6 +9,7 @@ import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.entities.BlockShip.BlockShipData;
 
 @SuppressWarnings("unused")
 public class SimplePlanesDataSerializers {
@@ -47,4 +48,7 @@ public class SimplePlanesDataSerializers {
 
     public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS
         .register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
+    public static final BlockShipData.Serializer BLOCK_SHIP_SERIALIZER = new BlockShipData.Serializer();
+    public static final RegistryObject<DataSerializerEntry> BLOCK_SHIP_SERIALIZER_ENTRY = DATA_SERIALIZERS
+        .register("block_ship_data", () -> new DataSerializerEntry(BLOCK_SHIP_SERIALIZER));
 }

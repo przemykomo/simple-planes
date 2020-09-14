@@ -125,6 +125,5 @@ public class BotaniaIntegration implements IModIntegration {
         public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
 
         }
-
     }
 }

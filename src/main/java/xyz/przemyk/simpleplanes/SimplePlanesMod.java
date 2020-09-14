@@ -20,6 +20,7 @@ import xyz.przemyk.simpleplanes.render.HelicopterRenderer;
 import xyz.przemyk.simpleplanes.render.LargePlaneRenderer;
 import xyz.przemyk.simpleplanes.render.PlaneGui;
 import xyz.przemyk.simpleplanes.render.PlaneRenderer;
+import xyz.przemyk.simpleplanes.render.airships.BlockShipEntityRenderer;
 import xyz.przemyk.simpleplanes.setup.*;
 
 @Mod(SimplePlanesMod.MODID)
@@ -53,6 +54,7 @@ public class SimplePlanesMod {
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.PLANE.get(), PlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.LARGE_PLANE.get(), LargePlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.HELICOPTER.get(), HelicopterRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.BLOCK_SHIP.get(), BlockShipEntityRenderer::new);
         MinecraftForge.EVENT_BUS.register(new PlaneGui());
         keyBind = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(keyBind);
