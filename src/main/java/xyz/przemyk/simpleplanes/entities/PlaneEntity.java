@@ -3,6 +3,8 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
@@ -14,10 +16,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -337,6 +336,27 @@ public class PlaneEntity extends Entity {
         //just hate my head in the nether ceiling
     }
 
+    /**
+     * collision
+     */
+    public boolean func_241845_aY() {
+        return true;
+    }
+
+    /**
+     * Applies a velocity to the entities, to push them away from eachother.
+     */
+    public void applyEntityCollision(Entity entityIn) {
+        if (entityIn instanceof BoatEntity) {
+            if (entityIn.getBoundingBox().minY < this.getBoundingBox().maxY) {
+                super.applyEntityCollision(entityIn);
+            }
+        } else if (entityIn.getBoundingBox().minY <= this.getBoundingBox().minY) {
+            super.applyEntityCollision(entityIn);
+        }
+
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -356,6 +376,7 @@ public class PlaneEntity extends Entity {
         }
 
         if (world.isRemote && !canPassengerSteer()) {
+            recalculateSize();
 
             tickLerp();
             this.setMotion(Vector3d.ZERO);
@@ -449,6 +470,7 @@ public class PlaneEntity extends Entity {
             this.setMotion(Vector3d.ZERO);
         }
         this.updateRocking();
+        this.tickCollision(vars);
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
         recalculateSize();
         recenterBoundingBox();
@@ -643,6 +665,29 @@ public class PlaneEntity extends Entity {
 
     protected Vector3f getTickPush(Vars vars) {
         return transformPos(new Vector3f(0, 0, vars.push));
+    }
+
+    protected void tickCollision(Vars vars) {
+        this.doBlockCollisions();
+        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow((double) 0.2F, (double) -0.01F, (double) 0.2F), EntityPredicates.pushableBy(this));
+        if (!list.isEmpty()) {
+            boolean flag = !this.world.isRemote && !(this.getControllingPassenger() instanceof PlayerEntity);
+            for (int j = 0; j < list.size(); ++j) {
+                Entity entity = list.get(j);
+                if (!entity.isPassenger(this)) {
+                    if (flag && this.getPassengers().size() < 2 && !entity.isPassenger() && entity.getWidth() < this.getWidth() && entity instanceof LivingEntity && !(entity instanceof WaterMobEntity) && !(entity instanceof PlayerEntity)) {
+                        entity.startRiding(this);
+                    } else {
+                        this.applyEntityCollision(entity);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected boolean canFitPassenger(Entity passenger) {
+        return passenger instanceof PlayerEntity;
     }
 
     protected void tickPitch(Vars vars) {
@@ -1206,7 +1251,7 @@ public class PlaneEntity extends Entity {
         double take_off_speed;
         float max_lift;
         double lift_factor;
-        double gravity;
+        public double gravity;
         double drag;
         double drag_mul;
         double drag_quad;

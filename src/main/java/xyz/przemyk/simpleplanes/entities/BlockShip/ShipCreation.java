@@ -3,12 +3,17 @@ package xyz.przemyk.simpleplanes.entities.BlockShip;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Util;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import xyz.przemyk.simpleplanes.blocks.ChairBlock;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 
 import java.util.HashMap;
@@ -17,6 +22,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class ShipCreation {
+
+    public static final int MAX_SIZE = 2000;
+
     public static BlockShipEntity create_ship(World world, PlayerEntity player, Hand hand, final BlockPos pos) {
 //        int balloons = Integer.parseInt(ConfigUtils.config.get("balloon"));
 //        int floats = Integer.parseInt(ConfigUtils.config.get("float"));
@@ -40,26 +48,36 @@ public class ShipCreation {
         int min_posy = -3;
         to_visit.add(pos);
         BlockState blockState = world.getBlockState(pos);
-        if(islegal(blockState)) {
+        if (islegal(blockState)) {
             visited.add(pos);
         }
         Scan_world scan_world = new Scan_world(world, to_visit, visited, max_posx, max_posz, min_posx, min_posz, max_posy, min_posy).invoke();
 
         BlockShipData data = new BlockShipData();
+        if (visited.size() > MAX_SIZE) {
+            player.sendMessage(new StringTextComponent("Too Big"), Util.DUMMY_UUID);
+            return null;
+        }
         for (Iterator<BlockPos> blockPosIterator = visited.iterator(); blockPosIterator.hasNext(); ) {
             BlockPos corrent_pos = blockPosIterator.next();
             BlockPos diff = corrent_pos.subtract(pos);
 //            BlockPos diff = corrent_pos;
-            int i = diff.getX();
-            int j = diff.getY();
-            int k = diff.getZ();
 
             BlockState blockState1 = world.getBlockState(corrent_pos);
             Block block = blockState1.getBlock();
             System.out.println(block.getRegistryName());
 //            addIfCan(used, block.getTranslationKey(), 1);
-            data.swap(i, j, k, blockState1);
+            if (block instanceof ChairBlock) {
+                data.seats.add(diff);
+            }
+            data.swap(diff, blockState1);
+
         }
+        if (data.seats.size() < 1) {
+            player.sendMessage(new StringTextComponent("No seats"), Util.DUMMY_UUID);
+            return null;
+        }
+
         for (Iterator<BlockPos> blockPosIterator = visited.iterator(); blockPosIterator.hasNext(); ) {
             BlockPos corrent_pos = blockPosIterator.next();
             world.setBlockState(corrent_pos, Blocks.AIR.getDefaultState());
@@ -125,6 +143,7 @@ public class ShipCreation {
 //            }
 //            world.setBlockState(pos.add(Integer.parseInt(vv[1]), Integer.parseInt(vv[2]), Integer.parseInt(vv[3])), Blocks.AIR.getDefaultState());
 //        });
+        data.recalculateSize();
 
         BlockShipEntity entity = new BlockShipEntity(SimplePlanesEntities.BLOCK_SHIP.get(), world);
         int offset = 1;
@@ -134,7 +153,7 @@ public class ShipCreation {
 //            }
 //        }
         entity.setData(data);
-//        entity.setBoundingBox(new AxisAlignedBB(min_posx, min_posy, min_posz, max_posx, min_posy, min_posz));
+        entity.setBoundingBox(new AxisAlignedBB(min_posx, min_posy, min_posz, max_posx, min_posy, min_posz));
 //        entity.setModel(list, getDirection(state), offset, type, storage, addons);
 //        entity.teleport(player.getX(), player.getY(), player.getZ());
 //        world.spawnEntity(entity);
@@ -216,6 +235,10 @@ public class ShipCreation {
         public Scan_world invoke() {
 //            return this;
             while (!to_visit.isEmpty()) {
+                if (visited.size() > MAX_SIZE) {
+                    return this;
+                }
+
                 BlockPos look_around_pos = to_visit.iterator().next();
                 to_visit.remove(look_around_pos);
 

@@ -16,6 +16,8 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
+import java.util.List;
+
 public class HelicopterEntity extends LargePlaneEntity {
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
@@ -133,10 +135,6 @@ public class HelicopterEntity extends LargePlaneEntity {
         return super.canFitPassenger(passenger) && passenger instanceof PlayerEntity;
     }
 
-    @Override
-    public void updatePassenger(Entity passenger) {
-        super.updatePassenger(passenger);
-    }
 
     @Override
     protected Vector3f getPassengerTwoPos(Entity passenger) {

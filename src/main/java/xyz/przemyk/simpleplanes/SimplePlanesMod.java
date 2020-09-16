@@ -33,6 +33,7 @@ public class SimplePlanesMod {
         Config.loadConfig(Config.CONFIG, FMLPaths.CONFIGDIR.get().resolve("simpleplanes-common.toml"));
 
         SimplePlanesEntities.init();
+        SimplePlanesBlocks.init();
         SimplePlanesItems.init();
         SimplePlanesUpgrades.init();
         SimplePlanesSounds.init();

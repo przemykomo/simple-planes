@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -21,6 +22,8 @@ import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.items.InformationItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
+
+import static xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks.CHAIR;
 
 //@ObjectHolder(SimplePlanesMod.MODID)
 @SuppressWarnings("unused")
@@ -73,5 +76,7 @@ public class SimplePlanesItems {
         .register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
     public static final RegistryObject<Item> HEALING = ITEMS
         .register("healing", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.healing")));
+    public static final RegistryObject<Item> CHAIR = ITEMS
+        .register("chair", () -> new BlockItem(SimplePlanesBlocks.CHAIR.get(),(new Item.Properties()).group(SIMPLE_PLANES_ITEM_GROUP)));
     //
 }

@@ -3,10 +3,12 @@ package xyz.przemyk.simpleplanes.render.airships;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import xyz.przemyk.simpleplanes.entities.BlockShip.BlockShipData;
 import xyz.przemyk.simpleplanes.entities.BlockShip.BlockShipEntity;
 
@@ -75,17 +77,30 @@ public class BlockShipEntityModel extends EntityModel<BlockShipEntity> {
         if (ship != null) {
 //            VertexConsumerProvider vertexConsumerProvider = Minecraft.getInstance().getBufferBuilders().getEntityVertexConsumers();
             matrixStackIn.push();
-//            matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
-//            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(this.direction));
+            matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
+//            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
             BlockShipData data = ship.getData();
+//            BlockPos center;
+//            if (data.seats.size() > 0) {
+//                center = data.seats.get(0);
+//                matrixStackIn.translate(center.getX(),center.getY(),center.getZ());
+//            }
+            Vector3d center = data.getCenter();
+            matrixStackIn.translate(-center.getX(), 0 , -center.getZ());
+
+            matrixStackIn.translate(0, -data.p1.getY()-1.5, 0);
+
             for (BlockPos blockpos2 : BlockPos.getAllInBoxMutable(data.p1, data.p2)) {
                 matrixStackIn.push();
                 int x = blockpos2.getX();
                 int y = blockpos2.getY();
                 int z = blockpos2.getZ();
                 BlockState state = data.get(x, y, z);
+                if (state.getBlock() == Blocks.LAPIS_BLOCK) {
+                    System.out.println("lapiz = " + blockpos2);
+                }
 
-                matrixStackIn.translate(x, y - 1.5, z);
+                matrixStackIn.translate(x, y, z);
                 Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStackIn, bufferIn, packedLight, combinedOverlayIn);
                 matrixStackIn.pop();
             }
