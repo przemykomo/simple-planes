@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -96,7 +97,9 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
+            matrixStackIn.push();
             upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+            matrixStackIn.pop();
         }
         String resourceName;
         if (planeEntity.getMaterial().fireResistant)
@@ -110,16 +113,16 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStackIn.push();
-        renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+//        renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
         matrixStackIn.pop();
         matrixStackIn.pop();
 
         super.render(planeEntity, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
-    protected void renderEngine(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        EngineModel.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY);
-    }
+//    protected void renderEngine(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+//        EngineModel.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn, Blocks.FURNACE);
+//    }
 
     protected abstract EntityModel<T> getModel();
 }

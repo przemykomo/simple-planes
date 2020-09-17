@@ -51,6 +51,13 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     }
 
     /**
+     * is taking the engine place
+     */
+    public boolean isEngine() {
+        return false;
+    }
+
+    /**
      * Called to render upgrade model. Loading model outside of this method may crash server.
      *
      * @param matrixStack matrix stack. Don't modify it.

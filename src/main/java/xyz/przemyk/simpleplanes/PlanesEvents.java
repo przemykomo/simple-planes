@@ -16,7 +16,6 @@ import java.util.HashSet;
 
 @Mod.EventBusSubscriber
 public class PlanesEvents {
-    public static final ResourceLocation COAL_TAG = new ResourceLocation("minecraft", "coals");
     public static final ResourceLocation NOT_COAL_TAG = new ResourceLocation("simpleplanes", "not_fuel");
 
     @SubscribeEvent
@@ -32,19 +31,6 @@ public class PlanesEvents {
             //            todo: try this maybe?
 
             PlaneEntity planeEntity = (PlaneEntity) entity;
-            if (!player.world.isRemote && planeEntity.getFuel() < Config.FLY_TICKS_PER_COAL.get() / 4) {
-                //func_230235_a_ - contains
-                int burnTime = ForgeHooks.getBurnTime(itemStack);
-                if (burnTime > 0) {
-                    int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
-                    if (!ItemTags.createOptional(NOT_COAL_TAG).contains(itemStack.getItem())) {
-                        ((PlaneEntity) entity).addFuel(fuel);
-                        if (!player.isCreative()) {
-                            itemStack.shrink(1);
-                        }
-                    }
-                }
-            }
 
             HashSet<Upgrade> upgradesToRemove = new HashSet<>();
             for (Upgrade upgrade : planeEntity.upgrades.values()) {

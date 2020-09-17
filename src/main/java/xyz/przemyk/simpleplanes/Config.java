@@ -26,6 +26,9 @@ public class Config {
     public static ForgeConfigSpec.IntValue FLY_TICKS_PER_MANA;
     public static ForgeConfigSpec.IntValue MANA_COST;
 
+    public static ForgeConfigSpec.IntValue FLY_TICKS_CHARGE_TICK;
+    public static ForgeConfigSpec.IntValue CHARGER_FE_COST;
+
     static {
         BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);
 
@@ -49,6 +52,11 @@ public class Config {
                 .defineInRange("mana_cost", 32000, 0, Integer.MAX_VALUE);
             FLY_TICKS_PER_MANA = BUILDER.comment("number of flight ticks per mana usage")
                 .defineInRange("fly_ticks_per_mana", 800, 0, Integer.MAX_VALUE);
+
+            CHARGER_FE_COST = BUILDER.comment("FE amount the chrager use per tick")
+                .defineInRange("charger_fe_cost", 600, 0, Integer.MAX_VALUE);
+            FLY_TICKS_CHARGE_TICK = BUILDER.comment("number of flight ticks per charging tick")
+                .defineInRange("fly_ticks_charge_tick", 5, 0, Integer.MAX_VALUE);
         }
         BUILDER.pop();
         CONFIG = BUILDER.build();

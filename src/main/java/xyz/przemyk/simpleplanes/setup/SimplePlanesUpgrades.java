@@ -9,6 +9,9 @@ import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.dragon.DragonUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.energy.CoalEngine;
+import xyz.przemyk.simpleplanes.upgrades.energy.FurnceJunkEngine;
+import xyz.przemyk.simpleplanes.upgrades.energy.PowerCell;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.heal.Heal;
@@ -37,4 +40,8 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(SimplePlanesItems.FOLDING.get(), FoldingUpgrade::new));
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", BannerUpgradeType::new);
     public static final RegistryObject<UpgradeType> PAINT = UPGRADE_TYPES.register("paint", PaintUpgradeType::new);
+    public static final RegistryObject<UpgradeType> COAL_ENGINE = UPGRADE_TYPES.register("coal_engine", () -> new UpgradeType(SimplePlanesItems.FURNACE_ENGINE.get(), CoalEngine::new));
+    public static final RegistryObject<UpgradeType> SMOKER_ENGINE = UPGRADE_TYPES.register("smoker_engine", () -> new UpgradeType(Items.SMOKER, FurnceJunkEngine::new));
+    public static final RegistryObject<UpgradeType> POWER_CELL = UPGRADE_TYPES.register("power_cell", () -> new UpgradeType(Items.REDSTONE_LAMP, PowerCell::new));
+
 }

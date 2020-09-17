@@ -131,17 +131,24 @@ public class PlaneEntity extends Entity {
         dataManager.register(DAMAGE_TAKEN, 0f);
     }
 
-    public void addFuel() {
-        addFuel(Config.FLY_TICKS_PER_COAL.get());
+    public void addFuelMaxed() {
+        addFuelMaxed(Config.FLY_TICKS_PER_COAL.get());
     }
 
-    public void addFuel(Integer fuel) {
+    public void addFuelMaxed(Integer fuel) {
         if (!world.isRemote) {
             int old_fuel = getFuel();
             int new_fuel = old_fuel + fuel;
             if (new_fuel > fuel * 3) {
                 new_fuel = old_fuel + fuel / 3;
             }
+            dataManager.set(FUEL, new_fuel);
+        }
+    }
+    public void addFuel(Integer fuel) {
+        if (!world.isRemote) {
+            int old_fuel = getFuel();
+            int new_fuel = old_fuel + fuel;
             dataManager.set(FUEL, new_fuel);
         }
     }
@@ -289,7 +296,7 @@ public class PlaneEntity extends Entity {
         boolean is_player = source.getTrueSource() instanceof PlayerEntity;
         boolean creative_player = is_player && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode;
         if (creative_player || (is_player && this.getDamageTaken() > 30.0F) || health <= 0) {
-            if (!creative_player && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+            if (!creative_player) {
                 explode();
             }
             this.remove();
@@ -309,19 +316,24 @@ public class PlaneEntity extends Entity {
             getPosZ(),
             10, 1, 1, 1, 1);
         world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 0, Explosion.Mode.NONE);
-        dropItem();
+        if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+            dropItem();
+        }
     }
 
     @SuppressWarnings("rawtypes")
     protected void dropItem() {
         ItemStack itemStack = getItem().getDefaultInstance();
+        final CompoundNBT value = new CompoundNBT();
+        value.putBoolean("Used", true);
+        itemStack.setTagInfo("Used", value);
+        entityDropItem(itemStack);
         for (Upgrade upgrade : upgrades.values()) {
             final ItemStack item = upgrade.getDrops();
             if (item != null) {
                 entityDropItem(item);
             }
         }
-        entityDropItem(itemStack);
     }
 
     public Vector2f getHorizontalFrontPos() {
@@ -401,7 +413,7 @@ public class PlaneEntity extends Entity {
 
         recalculateSize();
         int fuel = dataManager.get(FUEL);
-        if (fuel > 0) {
+        if (fuel > 0 && !isParked(vars)) {
             fuel -= vars.passengerSprinting ? 4 : 1;
             setFuel(fuel);
         }
@@ -516,6 +528,16 @@ public class PlaneEntity extends Entity {
 
         this.tickLerp();
 
+    }
+
+    private boolean isParked(Vars vars) {
+        Vector3d oldMotion = getMotion();
+        final boolean parked = (isAboveWater() || isOnGround()) &&
+            (oldMotion.length() < 0.1) &&
+            (!vars.passengerSprinting) &&
+            (vars.moveStrafing == 0) &&
+            (vars.moveForward == 0);
+        return parked;
     }
 
     protected Vars getMotionVars() {
@@ -1014,8 +1036,12 @@ public class PlaneEntity extends Entity {
     public ItemStack getItemStack() {
         ItemStack itemStack = getItem().getDefaultInstance();
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
-            itemStack.setTagInfo("EntityTag", serializeNBT());
+            final CompoundNBT value = serializeNBT();
+            value.putBoolean("Used", true);
+            itemStack.setTagInfo("EntityTag", value);
         }
+
+
         return itemStack;
     }
 
