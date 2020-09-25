@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import com.electronwill.nightconfig.core.ConfigSpec;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -63,6 +64,8 @@ public class SimplePlanesItems {
         .register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
     public static final RegistryObject<Item> HEALING = ITEMS
         .register("healing", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.healing")));
+    public static final RegistryObject<Item> ISLAND = ITEMS
+        .register("island", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.island")));
     public static final RegistryObject<Item> CHARGER_BLOCK = ITEMS
         .register("charger_block", () -> new BlockItem(SimplePlanesBlocks.CHARGER_BLOCK.get(),(new Item.Properties()).group(SIMPLE_PLANES_ITEM_GROUP)));
 

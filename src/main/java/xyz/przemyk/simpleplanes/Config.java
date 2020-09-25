@@ -9,13 +9,14 @@ import java.nio.file.Path;
 public class Config {
     public static final String CATEGORY_GENERAL = "general";
     public static final ForgeConfigSpec.BooleanValue THIEF;
+    public static ForgeConfigSpec.IntValue MAX_FUEL;
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     public static ForgeConfigSpec CONFIG;
 
     public static ForgeConfigSpec.IntValue VERSION;
-    public static final int NEW_VERSION = 2;
+    public static final int NEW_VERSION = 3;
 
     public static ForgeConfigSpec.IntValue FLY_TICKS_PER_COAL;
     public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
@@ -34,8 +35,6 @@ public class Config {
 
         VERSION = BUILDER.comment("Version, do not change")
             .defineInRange("Version", 0, 0, Integer.MAX_VALUE);
-        FLY_TICKS_PER_COAL = BUILDER.comment("Ticks of flying per one coal burn time")
-            .defineInRange("flyTicksPerCoal", 200, 0, Integer.MAX_VALUE);
         TURN_THRESHOLD = BUILDER.comment("For controllers, a threshold for the joystick movement of the plane")
             .defineInRange("turnThreshold", 20, 0, 90);
         EASY_FLIGHT = BUILDER.comment("easier flight mode, disables the extreme movements")
@@ -44,20 +43,31 @@ public class Config {
             .define("planeCrash", true);
         THIEF = BUILDER.comment("can players steal planes")
             .define("plane_heist", true);
-
         BUILDER.pop();
-        BUILDER.push("compatibility");
-        {
-            MANA_COST = BUILDER.comment("mana amount to use when out")
-                .defineInRange("mana_cost", 32000, 0, Integer.MAX_VALUE);
-            FLY_TICKS_PER_MANA = BUILDER.comment("number of flight ticks per mana usage")
-                .defineInRange("fly_ticks_per_mana", 800, 0, Integer.MAX_VALUE);
 
-            CHARGER_FE_COST = BUILDER.comment("FE amount the chrager use per tick")
-                .defineInRange("charger_fe_cost", 600, 0, Integer.MAX_VALUE);
-            FLY_TICKS_CHARGE_TICK = BUILDER.comment("number of flight ticks per charging tick")
-                .defineInRange("fly_ticks_charge_tick", 5, 0, Integer.MAX_VALUE);
-        }
+        BUILDER.push("engines");
+
+        BUILDER.push("coal");
+        FLY_TICKS_PER_COAL = BUILDER.comment("Ticks of flying per one coal burn time")
+            .defineInRange("flyTicksPerCoal", 200, 0, Integer.MAX_VALUE);
+        MAX_FUEL = BUILDER.comment("Max Fuel For Coal Plane")
+            .defineInRange("maxFlyTicksCoal", 2000, 0, Integer.MAX_VALUE);
+        BUILDER.pop();
+        //**************
+        BUILDER.push("botania");
+        MANA_COST = BUILDER.comment("mana amount to use when out")
+            .defineInRange("mana_cost", 32000, 0, Integer.MAX_VALUE);
+        FLY_TICKS_PER_MANA = BUILDER.comment("number of flight ticks per mana usage")
+            .defineInRange("fly_ticks_per_mana", 800, 0, Integer.MAX_VALUE);
+        BUILDER.pop();
+        //**************
+        BUILDER.push("forge energy");
+        CHARGER_FE_COST = BUILDER.comment("FE amount the chrager use per tick")
+            .defineInRange("charger_fe_cost", 600, 0, Integer.MAX_VALUE);
+        FLY_TICKS_CHARGE_TICK = BUILDER.comment("number of flight ticks per charging tick")
+            .defineInRange("fly_ticks_charge_tick", 5, 0, Integer.MAX_VALUE);
+        BUILDER.pop();
+        //**************
         BUILDER.pop();
         CONFIG = BUILDER.build();
     }

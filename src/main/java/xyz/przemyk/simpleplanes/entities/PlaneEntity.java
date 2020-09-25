@@ -57,6 +57,7 @@ import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERN
 
 public class PlaneEntity extends Entity {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
+    protected static final DataParameter<Integer> MAX_FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
     public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(2F, 2F);
 
@@ -95,7 +96,7 @@ public class PlaneEntity extends Entity {
     //so no spam damage
     private int hurtTime;
     //fixing the plane on the ground
-    private int not_moving_time;
+    public int not_moving_time;
     //golden hearths decay
     public int health_timer = 0;
 
@@ -120,6 +121,7 @@ public class PlaneEntity extends Entity {
     @Override
     protected void registerData() {
         dataManager.register(FUEL, 0);
+        dataManager.register(MAX_FUEL, Config.MAX_FUEL.get());
         dataManager.register(MAX_HEALTH, 10);
         dataManager.register(HEALTH, 10);
         dataManager.register(UPGRADES_NBT, new CompoundNBT());

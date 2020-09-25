@@ -9,9 +9,9 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-public class Heal extends Upgrade {
+public class HealUpgrade extends Upgrade {
 
-    public Heal(PlaneEntity planeEntity) {
+    public HealUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.HEAL.get(), planeEntity);
     }
 
