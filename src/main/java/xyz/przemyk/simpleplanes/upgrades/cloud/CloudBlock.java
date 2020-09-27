@@ -75,9 +75,18 @@ public class CloudBlock extends Block {
         if (worldIn.isRemote) {
             return;
         }
-        if (!this.slightlyMelt(worldIn, pos)) {
-            worldIn.getPendingBlockTicks().scheduleTick(pos, this, getScheduledTime(rand));
+        if (this.slightlyMelt(worldIn, pos)) {
+            BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+
+            for (Direction direction : Direction.values()) {
+                blockpos$mutable.setAndMove(pos, direction);
+                BlockState blockstate = worldIn.getBlockState(blockpos$mutable);
+                if (blockstate.isIn(this)) {
+                    this.slightlyMelt(worldIn, blockpos$mutable);
+                }
+            }
         }
+        worldIn.getPendingBlockTicks().scheduleTick(pos, this, getScheduledTime(rand,state.get(AGE)));
     }
 
     private boolean slightlyMelt(World worldIn, BlockPos pos) {
@@ -127,13 +136,13 @@ public class CloudBlock extends Block {
             if (world.rand.nextInt(2) == 0 &&
                 world.getBlockState(pos1).isAir(world, pos1)) {
                 world.setBlockState(pos1, SimplePlanesBlocks.CLOUD.get().getDefaultState());
-                world.getPendingBlockTicks().scheduleTick(pos1, SimplePlanesBlocks.CLOUD.get(), getScheduledTime(world.rand));
+                world.getPendingBlockTicks().scheduleTick(pos1, SimplePlanesBlocks.CLOUD.get(), getScheduledTime(world.rand,0));
             }
         }
     }
 
-    private static int getScheduledTime(Random rand) {
-        return MathHelper.nextInt(rand, 200, 500);
+    private static int getScheduledTime(Random rand,int i) {
+        return MathHelper.nextInt(rand, 50, 100)*(5-i);
     }
 
     private void turnIntoAir(BlockState state, World world, BlockPos pos) {

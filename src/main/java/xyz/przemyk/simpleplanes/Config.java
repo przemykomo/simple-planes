@@ -82,7 +82,7 @@ public class Config {
         LAVA_FLY_TICKS = BUILDER.comment("number of flight ticks per lava fueling")
             .defineInRange("lava_fly_ticks", 2000, 0, Integer.MAX_VALUE);
         LAVA_MAX_FUEL = BUILDER.comment("max flight range for FE plane")
-            .defineInRange("energy_max_fuel", 10000, 0, Integer.MAX_VALUE);
+            .defineInRange("energy_max_fuel", 20000, 0, Integer.MAX_VALUE);
         BUILDER.pop();
         //**************
         BUILDER.pop();
