@@ -39,7 +39,7 @@ public class PlanesClientEvents {
             playerRotationNeedToPop = true;
             double firstPersonYOffset = 0.7D;
             boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-                && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+                && (Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON;
             if (isPlayerRidingInFirstPersonView) {
                 matrixStack.translate(0.0D, firstPersonYOffset, 0.0D);
             }
@@ -90,7 +90,7 @@ public class PlanesClientEvents {
         if ((event.phase == Phase.END) && (player instanceof ClientPlayerEntity)) {
             if (player.getRidingEntity() instanceof PlaneEntity) {
                 PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
-                if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
+                if ((Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON) {
                     float yawDiff = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
                     player.rotationYaw += yawDiff;
                     float relativePlayerYaw = MathHelper.wrapDegrees(player.rotationYaw - planeEntity.rotationYaw);

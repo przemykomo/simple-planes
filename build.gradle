@@ -131,6 +131,9 @@ dependencies {
     compile fg.deobf('curse.maven:rftools-power:3057534')
     compile fg.deobf('curse.maven:rftools-base:3057532')
     compile fg.deobf('curse.maven:mcjtylib:3057531')
+    compile fg.deobf('curse.maven:Lollipop:3057731')
+    compile fg.deobf('curse.maven:powah:3057732')
+    compile fg.deobf('curse.maven:simplepipes:3043040')
 //    compile fg.deobf('curse.maven:biomes-o-plenty:3012271')
 //    compile fg.deobf('curse.maven:oh-the-biomes-youll-go:3046308')
     // Real examples

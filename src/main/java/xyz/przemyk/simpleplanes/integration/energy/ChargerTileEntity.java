@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChargerTileEntity extends TileEntity implements ITickableTileEntity {
-    private LazyOptional<IEnergyStorage> energy = LazyOptional.of(() -> new NbtEnergyStorage(Config.CHARGER_FE_COST.get()*10));
+    private LazyOptional<IEnergyStorage> energy = LazyOptional.of(() -> new NbtEnergyStorage(Config.ENERGY_COST.get()*10));
 
     @Nonnull
     @Override
@@ -43,13 +43,13 @@ public class ChargerTileEntity extends TileEntity implements ITickableTileEntity
             energy.ifPresent(energy -> {
                 AtomicInteger capacity = new AtomicInteger(energy.getEnergyStored());
                 final NbtEnergyStorage energyStorage = (NbtEnergyStorage) energy;
-                final Integer cost = Config.CHARGER_FE_COST.get();
+                final Integer cost = Config.ENERGY_COST.get();
                 final List<PlaneEntity> planes = world.getEntitiesWithinAABB(PlaneEntity.class, new AxisAlignedBB(this.pos, this.pos).grow(5), playerEntity -> true);
                 for (PlaneEntity planeEntity : planes) {
                     if (planeEntity.upgrades.containsKey(SimplePlanesUpgrades.POWER_CELL.getId())) {
                         if (planeEntity.getFuel() < Config.FLY_TICKS_PER_COAL.get() * 10) {
                             if (energyStorage.getEnergyStored() > cost) {
-                                planeEntity.addFuel(Config.FLY_TICKS_CHARGE_TICK.get());
+                                planeEntity.addFuel(Config.ENERGY_FLY_TICKS.get());
                                 capacity.addAndGet(-cost);
                                 energyStorage.consumeEnergy(cost);
                             }

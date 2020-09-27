@@ -9,14 +9,14 @@ import java.nio.file.Path;
 public class Config {
     public static final String CATEGORY_GENERAL = "general";
     public static final ForgeConfigSpec.BooleanValue THIEF;
-    public static ForgeConfigSpec.IntValue MAX_FUEL;
+    public static ForgeConfigSpec.IntValue COAL_MAX_FUEL;
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     public static ForgeConfigSpec CONFIG;
 
     public static ForgeConfigSpec.IntValue VERSION;
-    public static final int NEW_VERSION = 3;
+    public static final int NEW_VERSION = 4;
 
     public static ForgeConfigSpec.IntValue FLY_TICKS_PER_COAL;
     public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
@@ -27,8 +27,14 @@ public class Config {
     public static ForgeConfigSpec.IntValue FLY_TICKS_PER_MANA;
     public static ForgeConfigSpec.IntValue MANA_COST;
 
-    public static ForgeConfigSpec.IntValue FLY_TICKS_CHARGE_TICK;
-    public static ForgeConfigSpec.IntValue CHARGER_FE_COST;
+    public static ForgeConfigSpec.IntValue ENERGY_FLY_TICKS;
+    public static ForgeConfigSpec.IntValue ENERGY_COST;
+    public static ForgeConfigSpec.IntValue ENERGY_MAX_FUEL;
+
+
+    public static ForgeConfigSpec.IntValue LAVA_FLY_TICKS;
+    public static ForgeConfigSpec.IntValue LAVA_COST;
+    public static ForgeConfigSpec.IntValue LAVA_MAX_FUEL;
 
     static {
         BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);
@@ -49,9 +55,9 @@ public class Config {
 
         BUILDER.push("coal");
         FLY_TICKS_PER_COAL = BUILDER.comment("Ticks of flying per one coal burn time")
-            .defineInRange("flyTicksPerCoal", 200, 0, Integer.MAX_VALUE);
-        MAX_FUEL = BUILDER.comment("Max Fuel For Coal Plane")
-            .defineInRange("maxFlyTicksCoal", 2000, 0, Integer.MAX_VALUE);
+            .defineInRange("flyTicksPerCoal", 160, 0, Integer.MAX_VALUE);
+        COAL_MAX_FUEL = BUILDER.comment("Max Fuel For Coal Plane")
+            .defineInRange("maxFlyTicksCoal", 1600, 0, Integer.MAX_VALUE);
         BUILDER.pop();
         //**************
         BUILDER.push("botania");
@@ -62,10 +68,21 @@ public class Config {
         BUILDER.pop();
         //**************
         BUILDER.push("forge energy");
-        CHARGER_FE_COST = BUILDER.comment("FE amount the chrager use per tick")
+        ENERGY_COST = BUILDER.comment("FE amount the chrager use per tick")
             .defineInRange("charger_fe_cost", 600, 0, Integer.MAX_VALUE);
-        FLY_TICKS_CHARGE_TICK = BUILDER.comment("number of flight ticks per charging tick")
+        ENERGY_FLY_TICKS = BUILDER.comment("number of flight ticks per charging tick")
             .defineInRange("fly_ticks_charge_tick", 5, 0, Integer.MAX_VALUE);
+        ENERGY_MAX_FUEL = BUILDER.comment("max flight range for FE plane")
+            .defineInRange("energy_max_fuel", 5, 0, Integer.MAX_VALUE);
+        BUILDER.pop();
+        //**************
+        BUILDER.push("lava");
+        LAVA_COST = BUILDER.comment("Liquid in milibuckets")
+            .defineInRange("lava_cost", 1000, 0, Integer.MAX_VALUE);
+        LAVA_FLY_TICKS = BUILDER.comment("number of flight ticks per lava fueling")
+            .defineInRange("lava_fly_ticks", 2000, 0, Integer.MAX_VALUE);
+        LAVA_MAX_FUEL = BUILDER.comment("max flight range for FE plane")
+            .defineInRange("energy_max_fuel", 10000, 0, Integer.MAX_VALUE);
         BUILDER.pop();
         //**************
         BUILDER.pop();

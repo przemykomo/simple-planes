@@ -11,11 +11,12 @@ import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.dragon.DragonUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.energy.CoalEngine;
 import xyz.przemyk.simpleplanes.upgrades.energy.FurnceJunkEngine;
+import xyz.przemyk.simpleplanes.upgrades.energy.LavaEngine;
 import xyz.przemyk.simpleplanes.upgrades.energy.PowerCell;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.heal.HealUpgrade;
-import xyz.przemyk.simpleplanes.upgrades.island.IslandUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.cloud.CloudUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.paint.PaintUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
@@ -41,10 +42,12 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(SimplePlanesItems.FOLDING.get(), FoldingUpgrade::new));
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", BannerUpgradeType::new);
     public static final RegistryObject<UpgradeType> PAINT = UPGRADE_TYPES.register("paint", PaintUpgradeType::new);
+    public static final RegistryObject<UpgradeType> CLOUD = UPGRADE_TYPES.register("cloud", () -> new UpgradeType(SimplePlanesItems.CLOUD.get(), CloudUpgrade::new));
+    //engines
     public static final RegistryObject<UpgradeType> COAL_ENGINE = UPGRADE_TYPES.register("coal_engine", () -> new UpgradeType(SimplePlanesItems.FURNACE_ENGINE.get(), CoalEngine::new));
     public static final RegistryObject<UpgradeType> SMOKER_ENGINE = UPGRADE_TYPES.register("smoker_engine", () -> new UpgradeType(Items.SMOKER, FurnceJunkEngine::new));
     public static final RegistryObject<UpgradeType> POWER_CELL = UPGRADE_TYPES.register("power_cell", () -> new UpgradeType(Items.REDSTONE_LAMP, PowerCell::new));
-    public static final RegistryObject<UpgradeType> ISLAND = UPGRADE_TYPES.register("island", () -> new UpgradeType(SimplePlanesItems.ISLAND.get(), IslandUpgrade::new));
+    public static final RegistryObject<UpgradeType> LAVA_ENGINE = UPGRADE_TYPES.register("lava_engine", () -> new UpgradeType(Items.BLAST_FURNACE, LavaEngine::new));
 
 
 }

@@ -121,7 +121,7 @@ public class PlaneEntity extends Entity {
     @Override
     protected void registerData() {
         dataManager.register(FUEL, 0);
-        dataManager.register(MAX_FUEL, Config.MAX_FUEL.get());
+        dataManager.register(MAX_FUEL, Config.COAL_MAX_FUEL.get());
         dataManager.register(MAX_HEALTH, 10);
         dataManager.register(HEALTH, 10);
         dataManager.register(UPGRADES_NBT, new CompoundNBT());
@@ -147,6 +147,7 @@ public class PlaneEntity extends Entity {
             dataManager.set(FUEL, new_fuel);
         }
     }
+
     public void addFuel(Integer fuel) {
         if (!world.isRemote) {
             int old_fuel = getFuel();
@@ -169,6 +170,14 @@ public class PlaneEntity extends Entity {
 
     public void setMaxSpeed(float max_speed) {
         dataManager.set(MAX_SPEED, max_speed);
+    }
+
+    public float getMaxFuel() {
+        return dataManager.get(MAX_FUEL);
+    }
+
+    public void setMaxFuel(int max_fuel) {
+        dataManager.set(MAX_FUEL, max_fuel);
     }
 
     public Quaternion getQ() {
