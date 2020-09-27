@@ -26,6 +26,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.energy.AbstractEngine;
 import xyz.przemyk.simpleplanes.upgrades.energy.CoalEngine;
 
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesItems.SIMPLE_PLANES_ITEM_GROUP;
@@ -86,7 +87,7 @@ public class BotaniaIntegration implements IModIntegration {
         event.getRegistry().register(new PlaneMaterial(name, false).setRegistryName(SimplePlanesMod.MODID, name));
     }
 
-    public static class ManaUpgrade extends CoalEngine {
+    public static class ManaUpgrade extends AbstractEngine {
 
         public ManaUpgrade(UpgradeType type, PlaneEntity planeEntity) {
             super(type, planeEntity);

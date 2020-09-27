@@ -1,7 +1,6 @@
-package xyz.przemyk.simpleplanes.upgrades.island;
+package xyz.przemyk.simpleplanes.upgrades.cloud;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -11,13 +10,15 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-public class IslandUpgrade extends Upgrade {
+import static xyz.przemyk.simpleplanes.upgrades.cloud.CloudBlock.placeCloud;
 
-    public IslandUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.ISLAND.get(), planeEntity);
+public class CloudUpgrade extends Upgrade {
+
+    public CloudUpgrade(PlaneEntity planeEntity) {
+        super(SimplePlanesUpgrades.CLOUD.get(), planeEntity);
     }
 
-    private int cooldown = 8;
+    private int cooldown = 16;
     private int height = 128;
 
     @SuppressWarnings("ConstantConditions")
@@ -35,8 +36,12 @@ public class IslandUpgrade extends Upgrade {
 
     @Override
     public boolean tick() {
-        if (cooldown <= 0 || (planeEntity.getOnGround() && planeEntity.not_moving_time > 50)) {
+        if (cooldown <= 0 || (planeEntity.getOnGround() && planeEntity.not_moving_time > 100)) {
             return true;
+        }
+        planeEntity.setMotion(planeEntity.getMotion().scale(0.9));
+        if (planeEntity.ticksExisted % 5 != 0 || planeEntity.world.isRemote) {
+            return false;
         }
         BlockPos.Mutable blockPos = planeEntity.getPosition().toMutable();
         int planeHeight = blockPos.getY();
@@ -44,13 +49,12 @@ public class IslandUpgrade extends Upgrade {
             height = Math.max(planeHeight - 1, 1);
         }
         blockPos.setY(height);
-        if (planeEntity.world.getBlockState(blockPos).isAir(planeEntity.world, blockPos)) {
-            planeEntity.world.setBlockState(blockPos, Blocks.BLACK_CONCRETE.getDefaultState());
-            --cooldown;
-        }
-        planeEntity.setMotion(planeEntity.getMotion().scale(0.9));
+        --cooldown;
+        placeCloud(blockPos, planeEntity.world);
+
         return false;
     }
+
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {

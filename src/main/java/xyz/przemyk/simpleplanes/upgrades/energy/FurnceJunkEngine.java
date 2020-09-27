@@ -15,7 +15,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 import static xyz.przemyk.simpleplanes.PlanesEvents.NOT_COAL_TAG;
 
-public class FurnceJunkEngine extends CoalEngine {
+public class FurnceJunkEngine extends AbstractEngine {
 
     public FurnceJunkEngine(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SMOKER_ENGINE.get(), planeEntity);

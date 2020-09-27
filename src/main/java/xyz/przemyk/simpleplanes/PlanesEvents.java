@@ -2,14 +2,15 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.item.PickaxeItem;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashSet;
@@ -46,6 +47,16 @@ public class PlanesEvents {
             // some upgrade may shrink itemStack so we need to check if it's empty
             if (itemStack.isEmpty()) {
                 return;
+            }
+            if (itemStack.getItem() instanceof PickaxeItem) {
+                if (!event.getWorld().isRemote() && planeEntity.getPosY() > 128 && event.getWorld().getDimensionType().hasSkyLight())
+                    itemStack.damageItem(1, player, (playerEntity) -> {
+                        playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND);
+                    });
+                if (event.getWorld().rand.nextInt(20) == 0) {
+                    player.giveExperiencePoints(10);
+                    player.addItemStackToInventory(SimplePlanesItems.CLOUD.get().getDefaultInstance());
+                }
             }
 
             planeEntity.tryToAddUpgrade(player, itemStack);

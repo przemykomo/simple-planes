@@ -56,7 +56,7 @@ public class PlaneGui extends AbstractGui {
                 mc.getTextureManager().bindTexture(bar);
                 float fuel = planeEntity.getFuel();
 //                fuel = (float) Math.log1p(fuel);
-                float max_fuel = Config.FLY_TICKS_PER_COAL.get() * 10;
+                float max_fuel =planeEntity.getMaxFuel();
 //                max_fuel = (float) Math.log1p(max_fuel);
                 float part = fuel / max_fuel;
                 part = (float) Math.pow(part, 0.5);

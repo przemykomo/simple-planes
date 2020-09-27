@@ -37,7 +37,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         if (Minecraft.getInstance().player != null) {
             ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
             if (playerEntity == entityIn.getControllingPassenger()) {
-                if ((Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON) {
+                if ((Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON) {
 
                     return new Vector3d(0, 0, 0);
                 }
@@ -58,7 +58,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         double firstPersonYOffset = -0.7D;
         //        boolean fpv = Minecraft.getInstance().player != null && Minecraft.getInstance().player == planeEntity.getControllingPassenger() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
         boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-            && (Minecraft.getInstance()).gameSettings.field_243228_bb == PointOfView.FIRST_PERSON;
+            && (Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON;
         if (isPlayerRidingInFirstPersonView) {
             matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
         }
@@ -92,7 +92,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         //        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(planeEntity)));
         boolean enchanted_plane = planeEntity.getHealth() > planeEntity.getMaxHealth();
         IVertexBuilder ivertexbuilder = ItemRenderer
-            .func_239391_c_(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, enchanted_plane);
+            .getArmorVertexBuilder(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, enchanted_plane);
         planeModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -108,7 +108,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
             resourceName = "textures/block/iron_block.png";
         }
 
-        ivertexbuilder = ItemRenderer.func_239391_c_(bufferIn, planeModel.getRenderType(new ResourceLocation(resourceName)), false, planeEntity.hasNoGravity());
+        ivertexbuilder = ItemRenderer.getArmorVertexBuilder(bufferIn, planeModel.getRenderType(new ResourceLocation(resourceName)), false, planeEntity.hasNoGravity());
 
         propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
