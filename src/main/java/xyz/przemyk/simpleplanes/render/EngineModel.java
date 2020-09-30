@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.vector.Vector3f;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
+import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class EngineModel {
@@ -22,8 +23,10 @@ public class EngineModel {
         //		if(true)return;
         if (planeEntity instanceof HelicopterEntity) {
             matrixStackIn.translate(0, -0.8, 0.65);
+        } else if (planeEntity instanceof MegaPlaneEntity) {
+            matrixStackIn.translate(0, 0, -2);
         } else if (planeEntity.isLarge()) {
-            matrixStackIn.translate(0, 0, 1);
+            matrixStackIn.translate(0, 0, 1.1);
         }
 
         matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));

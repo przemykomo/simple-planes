@@ -6,6 +6,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
+import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.dragon.DragonUpgrade;
@@ -21,6 +22,7 @@ import xyz.przemyk.simpleplanes.upgrades.paint.PaintUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.rocket.RocketUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.sprayer.SprayerUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 @SuppressWarnings("unused")
@@ -38,7 +40,7 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> FLOATING = UPGRADE_TYPES.register("floating", () -> new UpgradeType(SimplePlanesItems.FLOATY_BEDDING.get(), FloatingUpgrade::new));
     public static final RegistryObject<UpgradeType> BOOSTER = UPGRADE_TYPES.register("booster", () -> new UpgradeType(SimplePlanesItems.BOOSTER.get(), RocketUpgrade::new, planeEntity -> !planeEntity.isLarge() || planeEntity instanceof HelicopterEntity));
     public static final RegistryObject<UpgradeType> SHOOTER = UPGRADE_TYPES.register("shooter", () -> new UpgradeType(SimplePlanesItems.SHOOTER.get(), ShooterUpgrade::new));
-    public static final RegistryObject<UpgradeType> DRAGON = UPGRADE_TYPES.register("dragon", () -> new UpgradeType(Items.DRAGON_HEAD, DragonUpgrade::new));
+    public static final RegistryObject<UpgradeType> DRAGON = UPGRADE_TYPES.register("dragon", () -> new UpgradeType(Items.DRAGON_HEAD, DragonUpgrade::new,planeEntity -> !(planeEntity instanceof MegaPlaneEntity)));
     public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(SimplePlanesItems.FOLDING.get(), FoldingUpgrade::new));
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", BannerUpgradeType::new);
     public static final RegistryObject<UpgradeType> PAINT = UPGRADE_TYPES.register("paint", PaintUpgradeType::new);
@@ -48,6 +50,9 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> SMOKER_ENGINE = UPGRADE_TYPES.register("smoker_engine", () -> new UpgradeType(Items.SMOKER, FurnceJunkEngine::new));
     public static final RegistryObject<UpgradeType> POWER_CELL = UPGRADE_TYPES.register("power_cell", () -> new UpgradeType(Items.REDSTONE_LAMP, PowerCell::new));
     public static final RegistryObject<UpgradeType> LAVA_ENGINE = UPGRADE_TYPES.register("lava_engine", () -> new UpgradeType(Items.BLAST_FURNACE, LavaEngine::new));
+
+    //storage
+    public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(Items.CHEST, ChestUpgrade::new));
 
 
 }

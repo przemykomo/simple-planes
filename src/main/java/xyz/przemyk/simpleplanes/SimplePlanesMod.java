@@ -16,10 +16,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
-import xyz.przemyk.simpleplanes.render.HelicopterRenderer;
-import xyz.przemyk.simpleplanes.render.LargePlaneRenderer;
-import xyz.przemyk.simpleplanes.render.PlaneGui;
-import xyz.przemyk.simpleplanes.render.PlaneRenderer;
+import xyz.przemyk.simpleplanes.render.*;
 import xyz.przemyk.simpleplanes.setup.*;
 
 @Mod(SimplePlanesMod.MODID)
@@ -54,6 +51,7 @@ public class SimplePlanesMod {
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.PLANE.get(), PlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.LARGE_PLANE.get(), LargePlaneRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.HELICOPTER.get(), HelicopterRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.MEGA_PLANE.get(), MegaPlaneRenderer::new);
         MinecraftForge.EVENT_BUS.register(new PlaneGui());
         keyBind = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(keyBind);

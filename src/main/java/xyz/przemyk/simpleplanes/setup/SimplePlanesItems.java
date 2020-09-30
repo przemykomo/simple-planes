@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
+import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.items.InformationItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
@@ -35,6 +36,7 @@ public class SimplePlanesItems {
             ITEMS.register(name + "_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.PLANE.get(), world, SimplePlanesMaterials.getMaterial(name))));
             ITEMS.register(name + "_large_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE.get(), world, SimplePlanesMaterials.getMaterial(name))));
             ITEMS.register(name + "_helicopter", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER.get(), world, SimplePlanesMaterials.getMaterial(name))));
+            ITEMS.register(name + "_mega_plane", () -> new PlaneItem(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP), world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE.get(), world, SimplePlanesMaterials.getMaterial(name))));
 
         }
 

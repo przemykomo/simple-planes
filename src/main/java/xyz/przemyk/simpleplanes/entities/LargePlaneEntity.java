@@ -38,7 +38,7 @@ public class LargePlaneEntity extends PlaneEntity {
         List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow(0.2F, -0.01F, 0.2F), EntityPredicates.pushableBy(this));
         for (Entity entity : list) {
             if (!this.world.isRemote && !(this.getControllingPassenger() instanceof PlayerEntity) &&
-                !entity.isPassenger(this) && getPassengers().size() < 2 &&
+                !entity.isPassenger(this) &&
                 !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
                 entity.startRiding(this);
             }
@@ -76,12 +76,16 @@ public class LargePlaneEntity extends PlaneEntity {
         if (passengers.size() > 1) {
             super.updatePassenger(passenger);
             if (passengers.indexOf(passenger) != 0) {
-                Vector3f pos = transformPos(getPassengerTwoPos(passenger));
-                passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
+                updatePassengerTwo(passenger);
             }
         } else {
             super.updatePassenger(passenger);
         }
+    }
+
+    public void updatePassengerTwo(Entity passenger) {
+        Vector3f pos = transformPos(getPassengerTwoPos(passenger));
+        passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
     }
 
     protected Vector3f getPassengerTwoPos(Entity passenger) {
