@@ -15,6 +15,7 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
     public final Predicate<PlaneEntity> isPlaneApplicable;
     public final boolean occupyBackSeat;
 
+
     /**
      * Upgrade Type Constructor
      *
@@ -31,6 +32,17 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
         this.occupyBackSeat = occupyBackSeat;
     }
 
+    /**
+     * Upgrade Type Constructor
+     *
+     * @param upgradeItem      After right clicking with this item, stack shrinks and plane gets this upgrade.
+     * @param instanceSupplier Supplier of Upgrade instances
+     * @param occupyBackSeat   Upgrade occupying back seat can only be applied to large plane.
+     */
+    public UpgradeType(Item upgradeItem, Function<PlaneEntity, Upgrade> instanceSupplier, boolean occupyBackSeat) {
+        this(upgradeItem, instanceSupplier, planeEntity -> true, occupyBackSeat);
+    }
+
     public UpgradeType(Item upgradeItem, Function<PlaneEntity, Upgrade> instanceSupplier, Predicate<PlaneEntity> isPlaneApplicable) {
         this(upgradeItem, instanceSupplier, isPlaneApplicable, false);
     }
@@ -44,6 +56,6 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
     }
 
     public ItemStack getDrops() {
-        return upgradeItem.getDefaultInstance();
+        return upgradeItem != null ? upgradeItem.getDefaultInstance() : ItemStack.EMPTY;
     }
 }

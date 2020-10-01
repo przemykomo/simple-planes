@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -62,8 +63,8 @@ public class CloudUpgrade extends Upgrade {
     }
 
     @Override
-    public ItemStack getDrops() {
-        return ItemStack.EMPTY;
+    public NonNullList<ItemStack> getDrops() {
+        return NonNullList.create();
     }
 
     @Override

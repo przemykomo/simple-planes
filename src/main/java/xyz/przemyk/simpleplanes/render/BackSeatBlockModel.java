@@ -18,39 +18,30 @@ public class BackSeatBlockModel {
 
     public static void renderBlock(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLight,
                                    BlockState state) {
-        //		if(true)return;
-        if (planeEntity instanceof HelicopterEntity) {
-            matrixStackIn.translate(0, 0, 1);
-        } else if (planeEntity instanceof MegaPlaneEntity) {
-            matrixStackIn.translate(0.5, 0, 1.1);
-        } else if (planeEntity.isLarge()) {
-            matrixStackIn.translate(0, 0, 0.1);
-        }
-
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));
-        matrixStackIn.translate(-0.4, -1, 0.3);
-        matrixStackIn.scale(0.82f, 0.82f, 0.82f);
+//        moveMatrix(planeEntity, matrixStackIn, 0);
         Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY);
-
     }
+
     public static void renderTileBlock(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLight,
-                                        TileEntity tileEntity) {
-        //		if(true)return;
+                                       TileEntity tileEntity) {
+//        moveMatrix(planeEntity, matrixStackIn, seat);
+        TileEntityRendererDispatcher.instance.renderItem(tileEntity, matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY);
+    }
+
+    public static void moveMatrix(PlaneEntity planeEntity, MatrixStack matrixStackIn, int seat) {
+        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
+        matrixStackIn.translate(-0.4, -1, 0);
+
         if (planeEntity instanceof HelicopterEntity) {
-            matrixStackIn.translate(0, 0, 1);
+            matrixStackIn.translate(0, 0, -1);
         } else if (planeEntity instanceof MegaPlaneEntity) {
-            matrixStackIn.translate(0.5, 0, 1.1);
+            int i = seat / 2;
+            matrixStackIn.translate(0.5 - seat % 2, 0.2, -3.2+ i);
         } else if (planeEntity.isLarge()) {
-            matrixStackIn.translate(0, 0, 0.1);
+            matrixStackIn.translate(0, 0, -1.2);
         }
 
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));
-        matrixStackIn.translate(-0.4, -1, 0.3);
         matrixStackIn.scale(0.82f, 0.82f, 0.82f);
-
-//        TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity,partialTicks, matrixStackIn, bufferIn);
-
-        TileEntityRendererDispatcher.instance.renderItem(tileEntity, matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY);
-
     }
 }

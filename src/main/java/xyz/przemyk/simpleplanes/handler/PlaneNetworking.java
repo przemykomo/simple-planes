@@ -32,6 +32,7 @@ public class PlaneNetworking {
             SimplePlanesDataSerializers.QUATERNION_SERIALIZER::read, // decoder
             PlaneNetworking::handle_q // messageConsumer
         );
+
         INSTANCE.registerMessage(
             MSG_PLANE_BOOST, // index
             Boolean.class, // messageType
@@ -56,6 +57,7 @@ public class PlaneNetworking {
         PROTOCOL_VERSION::equals,
         PROTOCOL_VERSION::equals
     );
+
     public static final SimpleChannel OPEN_INVENTORY = NetworkRegistry.newSimpleChannel(
         new ResourceLocation(SimplePlanesMod.MODID, "plane_inventory"),
         () -> PROTOCOL_VERSION,
@@ -81,17 +83,6 @@ public class PlaneNetworking {
                         }
                     }
                     break;
-                case PLAY_TO_CLIENT:
-                    if (player != null && player.getRidingEntity() instanceof PlaneEntity) {
-                        final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
-                        Upgrade chest = plane.upgrades.getOrDefault(SimplePlanesUpgrades.CHEST.getId(), null);
-                        if (chest instanceof ChestUpgrade) {
-                            ChestUpgrade chest1 = (ChestUpgrade) chest;
-                            if (chest1.inventory != null) {
-                                chest1.openClient(msg);
-                            }
-                        }
-                    }
             }
         });
         ctx.get().setPacketHandled(true);
@@ -127,4 +118,5 @@ public class PlaneNetworking {
         });
         ctx.get().setPacketHandled(true);
     }
+
 }

@@ -24,7 +24,7 @@ public class EngineModel {
         if (planeEntity instanceof HelicopterEntity) {
             matrixStackIn.translate(0, -0.8, 0.65);
         } else if (planeEntity instanceof MegaPlaneEntity) {
-            matrixStackIn.translate(0, 0, -2);
+            matrixStackIn.translate(0, -0.1, -3);
         } else if (planeEntity.isLarge()) {
             matrixStackIn.translate(0, 0, 1.1);
         }

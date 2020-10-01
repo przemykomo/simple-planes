@@ -2,7 +2,6 @@ package xyz.przemyk.simpleplanes.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -76,7 +75,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         }
 
         if (f > 0.0F) {
-            float angle =MathUtil.clamp(f * f1/ 200.0F,-30,30);
+            float angle = MathUtil.clamp(f * f1 / 200.0F, -30, 30);
 //            float angle = 30;
             f = planeEntity.ticksExisted + partialTicks;
             matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));
@@ -95,10 +94,20 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
             .getArmorVertexBuilder(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, enchanted_plane);
         planeModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-
+        int seat = 0;
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
             matrixStackIn.push();
-            upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+            if (upgrade.getType().occupyBackSeat) {
+                for (int i = 0; i < upgrade.getSeats(); i++) {
+                    matrixStackIn.push();
+                    BackSeatBlockModel.moveMatrix(planeEntity, matrixStackIn, seat);
+                    upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+                    seat++;
+                    matrixStackIn.pop();
+                }
+            } else {
+                upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+            }
             matrixStackIn.pop();
         }
         String resourceName;
@@ -113,11 +122,15 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStackIn.push();
-//        renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        renderAdditional(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
         matrixStackIn.pop();
         matrixStackIn.pop();
 
         super.render(planeEntity, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+    }
+
+    protected void renderAdditional(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+
     }
 
 //    protected void renderEngine(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {

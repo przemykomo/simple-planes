@@ -8,6 +8,7 @@ import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.util.NonNullList;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -48,12 +49,22 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
+    public CompoundNBT serializeNBTData() {
+        return serializeNBT();
+    }
+
+    @Override
+    public void deserializeNBTData(CompoundNBT nbt) {
+        deserializeNBT(nbt);
+    }
+
+    @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         BannerModel.renderBanner(this, partialticks, matrixStack, buffer, banner, packedLight, BannerTileEntityRenderer.getModelRender());
     }
 
     @Override
-    public ItemStack getDrops() {
+    public ItemStack getDrop() {
         return banner;
     }
 

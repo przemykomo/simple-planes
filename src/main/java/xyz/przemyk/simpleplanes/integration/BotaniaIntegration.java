@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -27,7 +28,6 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.energy.AbstractEngine;
-import xyz.przemyk.simpleplanes.upgrades.energy.CoalEngine;
 
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesItems.SIMPLE_PLANES_ITEM_GROUP;
 
@@ -98,8 +98,8 @@ public class BotaniaIntegration implements IModIntegration {
         }
 
         @Override
-        public ItemStack getDrops() {
-            return ItemStack.EMPTY;
+        public NonNullList<ItemStack> getDrops() {
+            return NonNullList.create();
         }
 
         @Override

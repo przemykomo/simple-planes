@@ -66,6 +66,16 @@ public class SprayerUpgrade extends Upgrade {
     }
 
     @Override
+    public CompoundNBT serializeNBTData() {
+        return serializeNBT();
+    }
+
+    @Override
+    public void deserializeNBTData(CompoundNBT nbt) {
+        deserializeNBT(nbt);
+    }
+
+    @Override
     public boolean tick() {
         if (fluid > 0) {
             --fluid;

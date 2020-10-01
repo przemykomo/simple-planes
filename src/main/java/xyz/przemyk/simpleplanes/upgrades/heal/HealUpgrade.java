@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.NonNullList;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -46,8 +47,8 @@ public class HealUpgrade extends Upgrade {
     }
 
     @Override
-    public ItemStack getDrops() {
-        return ItemStack.EMPTY;
+    public NonNullList<ItemStack> getDrops() {
+        return NonNullList.create();
     }
 
     @Override

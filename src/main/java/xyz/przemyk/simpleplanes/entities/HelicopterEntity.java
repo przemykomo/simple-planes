@@ -119,11 +119,11 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected void tickRotation(float moveStrafing, boolean passengerSprinting) {
+    protected void tickRotation(Vars vars) {
 
         int yawdiff = 2;
 
-        double turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
+        double turn = vars.moveStrafing > 0 ? yawdiff : vars.moveStrafing == 0 ? 0 : -yawdiff;
         rotationRoll = 0;
         rotationYaw -= turn;
     }
