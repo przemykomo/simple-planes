@@ -76,7 +76,12 @@ public class BotaniaIntegration implements IModIntegration {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void registerUpgrade(RegistryEvent.Register<UpgradeType> event) {
 //        ResourceLocation daisy = new ResourceLocation("botania", "pure_daisy");
-        MANA_UPGRADE = new UpgradeType(MANA_UPGRADE_ITEM.get(), ManaUpgrade::new, planeEntity -> !planeEntity.isImmuneToFire());
+        MANA_UPGRADE = new UpgradeType(MANA_UPGRADE_ITEM.get(), ManaUpgrade::new) {
+            @Override
+            public boolean isPlaneApplicable(PlaneEntity planeEntity) {
+                return !planeEntity.isImmuneToFire();
+            }
+        };
         MANA_UPGRADE.setRegistryName("mana");
         event.getRegistry().register(MANA_UPGRADE);
     }
@@ -120,7 +125,7 @@ public class BotaniaIntegration implements IModIntegration {
 
         @Override
         public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
-            super.onApply(itemStack,playerEntity);
+            super.onApply(itemStack, playerEntity);
             planeEntity.setMaterial("mana");
         }
 

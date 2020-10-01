@@ -47,7 +47,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         if (upgradeType.occupyBackSeat && isFull()) {
             return false;
         }
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable.test(this);
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
     }
 
     @Override

@@ -117,7 +117,7 @@ public class LargePlaneEntity extends PlaneEntity {
                 }
             }
         }
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable.test(this);
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
     }
 
     @Override

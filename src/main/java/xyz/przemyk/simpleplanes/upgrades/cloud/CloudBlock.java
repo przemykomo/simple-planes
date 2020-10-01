@@ -164,7 +164,16 @@ public class CloudBlock extends Block {
 
     @Override
     public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
-        if (!worldIn.isRemote && !entityIn.isSneaking() && worldIn.rand.nextInt(10) == 0) {
+        if (!worldIn.isRemote && !entityIn.isSneaking() && worldIn.rand.nextInt(20) == 0) {
+            slightlyMelt(worldIn, pos);
+        }
+    }
+    /**
+     * Block's chance to react to a living entity falling on it.
+     */
+    public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
+        entityIn.onLivingFall(fallDistance, 0.1F);
+        if(worldIn.rand.nextInt(4) == 0){
             slightlyMelt(worldIn, pos);
         }
     }

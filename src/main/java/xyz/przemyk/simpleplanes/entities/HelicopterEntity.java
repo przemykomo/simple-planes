@@ -15,6 +15,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
@@ -136,6 +138,21 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
+    }
+
+    @Override
+    public boolean canAddUpgrade(UpgradeType upgradeType) {
+        if (upgradeType.occupyBackSeat) {
+            if (getPassengers().size() > 1) {
+                return false;
+            }
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade.getType().occupyBackSeat) {
+                    return false;
+                }
+            }
+        }
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
     }
 
     @Override

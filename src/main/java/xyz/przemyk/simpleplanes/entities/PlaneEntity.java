@@ -1008,13 +1008,20 @@ public class PlaneEntity extends Entity {
             //        if (onGroundIn||isAboveWater()) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).getY();
             if (y1 < 0.867) {
-                crash((float) (getMotion().length() * 5));
+                state.getBlock().onFallenUpon(this.world, pos, this, (float) (getMotion().length() * 5));
             }
-
             this.fallDistance = 0.0F;
         }
 
         //        this.lastYd = this.getMotion().y;
+    }
+    public boolean onLivingFall(float distance, float damageMultiplier) {
+        if (this.isBeingRidden()) {
+            for(Entity entity : this.getPassengers()) {
+                crash(distance*damageMultiplier);
+            }
+        }
+        return false;
     }
 
     @SuppressWarnings("deprecation")
@@ -1042,7 +1049,7 @@ public class PlaneEntity extends Entity {
     }
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && !upgradeType.occupyBackSeat && upgradeType.isPlaneApplicable.test(this);
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && !upgradeType.occupyBackSeat && upgradeType.isPlaneApplicable(this);
     }
 
     public boolean isLarge() {
