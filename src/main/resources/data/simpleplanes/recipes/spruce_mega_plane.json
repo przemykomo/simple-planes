@@ -1,0 +1,45 @@
+{
+    "conditions": [
+        {
+            "conditions": [
+        {
+            "type": "forge:mod_loaded",
+            "modid": "minecraft"
+        }
+    ],
+    "type": "forge:mod_loaded",
+            "modid": "minecraft"
+        }
+    ],
+    "conditions": [
+        {
+            "type": "forge:mod_loaded",
+            "modid": "minecraft"
+        }
+    ],
+    "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:mega_plane",
+    "pattern": [
+        "#OO",
+        "#XO",
+        "#RR"
+    ],
+    "key": {
+        "#": {
+            "item": "simpleplanes:propeller"
+        },
+        "O": {
+            "item": "minecraft:spruce_planks"
+        },
+        "X": {
+            "item": "simpleplanes:spruce_large_plane"
+        },
+        "R": {
+            "item": "minecraft:spruce_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:spruce_mega_plane",
+        "count": 1
+    }
+}

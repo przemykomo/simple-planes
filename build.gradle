@@ -87,10 +87,18 @@ dependencies {
         exclude module: "fabric-loader"
         exclude module: "net.fabricmc.fabric-api"
     }
+    // cotton
     modImplementation("io.github.cottonmc:LibCD:${libcd}") {
         exclude module: "Jankson"
         exclude module: "nbt-crafting"
     }
+    // libcd
+    modImplementation("io.github.cottonmc:LibCD:${libcd}") {
+        exclude module: "Jankson"
+        exclude module: "nbt-crafting"
+    }
+    include "io.github.cottonmc:LibCD:${libcd}"
+
 
     compile 'org.jetbrains:annotations:16.0.2'
     testImplementation 'com.google.code.findbugs:jsr305:3.0.2'

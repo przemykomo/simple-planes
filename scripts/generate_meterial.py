@@ -7,8 +7,8 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-folder1 = r"../src/main/resources\data\simpleplanes\recipes"
-# folder1 = r"../src/main/resources"
+# folder1 = r"../src/main/resources\data\simpleplanes\recipes"
+folder1 = r"../src/main/resources"
 folder2 = "item"
 base = "oak"
 mat = "birch"
@@ -29,6 +29,7 @@ def get_rmp():
     "type":""",
         f"simpleplanes:{base}_plane": f"simpleplanes:{mod_short}{mat}_plane",
         f"simpleplanes:{base}_large_plane": f"simpleplanes:{mod_short}{mat}_large_plane",
+        f"simpleplanes:{base}_mega_plane": f"simpleplanes:{mod_short}{mat}_mega_plane",
         f"simpleplanes:{base}_helicopter": f"simpleplanes:{mod_short}{mat}_helicopter",
         f"minecraft:{base}_boat": f"{mod}:{mat}_boat",
         f"item/{base}": f"item/{mod_short}{mat}",
@@ -77,7 +78,7 @@ def gen(rmp, origin):
     for dirpath, f1 in f:
         filename, file_extension = os.path.splitext(f1)
         path_join = os.path.join(dirpath, f1)
-        if file_extension == ".json" and "helicopter" in filename:
+        if file_extension == ".json" and "mega_plane" in filename:
             replace = path_join.replace(base, f"{mod_short}{mat}")
 
             print("======", replace)
@@ -181,35 +182,35 @@ def image_stats(image, mask):
     return (lMean, lStd, aMean, aStd, bMean, bStd)
 
 
-def im_color():
+def im_color(mat):
     im1 = cv2.imread("item\\oak_large_plane.png")
     if mat == "oak":
         return
-        im1 = cv2.imread("item\\willow_boat.png")
     # plt.imshow(cv2.cvtColor(im1, cv2.COLOR_BGRA2RGB))
     # plt.title("holly")
     # plt.show()
 
     im1 = cv2.cvtColor(im1, cv2.COLOR_BGRA2BGR)
     im2 = cv2.imread(f"item\\{mat}_large_plane.png")
+    im2 = cv2.cvtColor(im2, cv2.COLOR_BGRA2BGR)
 
     eq1 = ~np.all(im1 == im2, axis=2)
 
-    src = cv2.imread("heli\\bop_dead_helicopter.png", cv2.IMREAD_UNCHANGED)
+    src = cv2.imread("mega\\bop_dead_mega_plane.png", cv2.IMREAD_UNCHANGED)
     im_p1 = cv2.cvtColor(src, cv2.COLOR_BGRA2BGR)
-    im_p2 = cv2.cvtColor(cv2.imread("heli\\oak_helicopter.png"), cv2.COLOR_BGRA2BGR)
+    im_p2 = cv2.cvtColor(cv2.imread("mega\\oak_mega_plane.png"), cv2.COLOR_BGRA2BGR)
     eq2 = ~np.all(im_p1 == im_p2, axis=2)
 
     # im1[eq] = 0
     # im2[eq] = 0
-    # plt.imshow(eq2.astype(int))
+    plt.imshow(eq2.astype(int))
     # plt.title("eq2")
     # plt.show()
 
     # plt.imshow(cv2.cvtColor(im2, cv2.COLOR_BGRA2RGB))
     # plt.title(f"{mat}")
     # plt.show()
-    im3 = color_transfer(im2, im_p1, eq1, eq2)
+    im3 = color_transfer(im2, im_p2, eq1, eq2)
     # plt.imshow(cv2.cvtColor(im3, cv2.COLOR_BGRA2RGB))
     # plt.title("transfer")
     # plt.show()
@@ -218,10 +219,11 @@ def im_color():
     # plt.show()
 
     src[..., :-1] = im3
+    src[src[...,-1]<100]=0
     plt.imshow(cv2.cvtColor(src, cv2.COLOR_BGRA2RGB))
-    plt.title(f"{mat}_helicopter.png")
+    plt.title(f"{mat}_mega_plane.png")
     plt.show()
-    cv2.imwrite(f"out/{mat}_helicopter.png", src)
+    cv2.imwrite(f"out/{mat}_mega_plane.png", src)
 
 
 mod_dict = {"bop": "biomesoplenty",
@@ -240,38 +242,49 @@ def recpie_to_fabric():
     listdir = os.listdir(path)
     for f1 in listdir:
         path_join = os.path.join(path, f1)
-        if os.path.isdir(path_join):
+        if os.path.isdir(path_join) or not f1.endswith(".json"):
             continue
         with open(path_join, "r") as myfile:
             data = myfile.read()
-        forge = '"tag": "c:iron_ingots"'
-        fabric = '"item": "minecraft:iron_ingot"'
+        mod = f1.split('_')[0]
+        forge = ':mod_loaded'
+        fabric =f"""{{
+  "when": [
+    {{
+      "libcd:mod_loaded": "{mod}"
+    }}
+  ]
+}}
+"""
         if(forge in data):
-            data = data.replace(forge,fabric)
+            # data = data.replace(forge,fabric)
             print(data)
-            with open(path_join, "w") as myfile:
-                myfile.write(data)
+            with open(path_join+".mcmeta", "w") as myfile:
+                myfile.write(fabric)
 
             # break
 
 
 def main():
     recpie_to_fabric()
+    # im_color()
     return
-    for f1 in os.listdir("out"):
-        mat = f1[:-5]
-        print(f""""simpleplanes:{mat}",""")
-        continue
+    global mat
+    global mod_short
+    global mod
+    for f1 in os.listdir("../src/main/resources/assets/simpleplanes/textures/item"):
+        mat = f1
+        # print(f""""simpleplanes:{mat}",""")
+        # continue
 
-        if "_helicopter" not in mat:
+        if "_large_pl" not in mat:
             continue
         # if "byg" in mat:
         #     continue
-        mat = mat.replace("_helicopter", "")
+        mat = mat.replace("_large_plane.png", "")
         # if "dark" not in mat:
         #     continue
-        # mat = mat.split("_")
-
+        #     mat = mat.split("_")[1]
         Mat = mat.title()
         Mat = Mat.split('_')
         if Mat[0] in ["Bop", "Ft", "Byg"]:
@@ -282,25 +295,27 @@ def main():
         else:
             mod = "minecraft"
             mod_short = ""
-        Mat = "_".join(Mat)
-        mat = Mat.lower()
-        #         print(f"""
-        # "item.simpleplanes.{mat}_plane": "{Mat} Plane",
-        # "item.simpleplanes.{mat}_large_plane": "Large {Mat} Plane",
-        # "item.simpleplanes.{mat}_helicopter": "{Mat} Helicopter",
-        #         """)
-        #         continue
+        # print(f""""mat:{mat}",mod:{mod}""")
+
+
+        Mat = " ".join(Mat)
+        # mat = Mat.lower()
+        print(f"""
+        "item.simpleplanes.{mat}_plane": "{Mat} Plane",
+        "item.simpleplanes.{mat}_large_plane": "Large {Mat} Plane",
+        "item.simpleplanes.{mat}_helicopter": "{Mat} Helicopter",
+        "item.simpleplanes.{mat}_mega_plane": "{Mat} Cargo Plane",
+                """)
+        continue
         # if mat!= "holly":
         #     continue
         print(f"(\"{mat}\"),")
-        # try:
-        #     im_color()
-        # except:
-        #     continue
-        # mat = f1[:-4]
+        # im_color(mat.lower())
+
+        # continue
         rmp = get_rmp()
         gen(rmp, os.path.join(folder2, f1))
-
+        # break
 
 if __name__ == '__main__':
     main()

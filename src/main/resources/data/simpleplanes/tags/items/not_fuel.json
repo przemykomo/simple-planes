@@ -6,7 +6,6 @@
         "minecraft:lava_bucket",
         "#minecraft:banners",
         "#minecraft:boats",
-        "#minecraft:beds",
-        "#forge:chests"
+        "#minecraft:beds"
     ]
 }
