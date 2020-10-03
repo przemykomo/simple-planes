@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpleplanes:item/dark_dark_oak_mega_plane"
+        "layer0": "simpleplanes:item/dark_oak_mega_plane"
     }
 }

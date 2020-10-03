@@ -1,7 +1,7 @@
 {
   "when": [
     {
-      "libcd:mod_loaded": "mana"
+      "libcd:mod_loaded": "botania"
     }
   ]
 }

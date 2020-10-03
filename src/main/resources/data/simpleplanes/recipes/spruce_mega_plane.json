@@ -1,18 +1,6 @@
 {
     "conditions": [
         {
-            "conditions": [
-        {
-            "type": "forge:mod_loaded",
-            "modid": "minecraft"
-        }
-    ],
-    "type": "forge:mod_loaded",
-            "modid": "minecraft"
-        }
-    ],
-    "conditions": [
-        {
             "type": "forge:mod_loaded",
             "modid": "minecraft"
         }

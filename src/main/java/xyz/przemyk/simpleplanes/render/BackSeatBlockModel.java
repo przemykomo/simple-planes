@@ -37,7 +37,7 @@ public class BackSeatBlockModel {
             matrixStackIn.translate(0, 0, -1);
         } else if (planeEntity instanceof MegaPlaneEntity) {
             int i = seat / 2;
-            matrixStackIn.translate(0.5 - seat % 2, 0.2, -3.2+ i);
+            matrixStackIn.translate(0.5 - seat % 2, 0.2, -3.2 + i * 0.8f);
         } else if (planeEntity.isLarge()) {
             matrixStackIn.translate(0, 0, -1.2);
         }

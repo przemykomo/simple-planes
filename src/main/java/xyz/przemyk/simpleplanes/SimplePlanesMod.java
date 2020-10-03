@@ -7,6 +7,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
+import xyz.przemyk.simpleplanes.integration.QuickDebug;
 import xyz.przemyk.simpleplanes.setup.*;
 
 public class SimplePlanesMod implements ModInitializer {
@@ -28,6 +29,7 @@ public class SimplePlanesMod implements ModInitializer {
 //        SimplePlanesUpgrades.init();
 //        SimplePlanesSounds.init();
         SimplePlanesDataSerializers.init();
+        QuickDebug.init();
         PlaneNetworking.init();
         CONFIG = AutoConfig.register(SimplePlanesConfig.class, GsonConfigSerializer::new);
         CONFIG.getConfig();

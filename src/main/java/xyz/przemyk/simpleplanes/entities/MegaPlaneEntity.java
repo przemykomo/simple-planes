@@ -34,7 +34,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         if (this.getPrimaryPassenger() instanceof PlayerEntity) {
             return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
         }
-            return super.getDimensions(poseIn);
+        return super.getDimensions(poseIn);
         //just hate my head in the nether ceiling
     }
 
@@ -87,7 +87,10 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
         motionVars.max_push_speed *= 0.8;
-        motionVars.yaw_multiplayer *= 0.1;
+        motionVars.yaw_multiplayer *= 0.3;
+        motionVars.drag *= 4;
+        motionVars.drag_mul *= 4;
+        motionVars.drag_quad *= 4;
         return motionVars;
     }
 
@@ -95,9 +98,12 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     protected void tickPitch(Vars vars) {
         float pitch = 0f;
         if (vars.moveForward > 0.0F) {
-            pitch = vars.passengerSprinting ? 1.5f : 0.8f;
+            pitch = vars.passengerSprinting ? 0.8f : 0.4f;
         } else if (vars.moveForward < 0.0F) {
-            pitch = vars.passengerSprinting ? -1.5f : -0.8f;
+            pitch = vars.passengerSprinting ? -0.8f : -0.4f;
+        }
+        if (getOnGround()||isAboveWater()) {
+            pitch *= 2;
         }
         this.pitch += pitch;
         if (this.pitch > 20) {
@@ -131,7 +137,8 @@ public class MegaPlaneEntity extends LargePlaneEntity {
                 i += value.getSeats();
             }
         }
-        i = Math.max(i - 2, -1);
+        i = ((i + 1) / 4) + (i / 4);
+//        i = Math.max(i - 2, -1);
         return getPassengerList().size() + i >= 6;
     }
 }

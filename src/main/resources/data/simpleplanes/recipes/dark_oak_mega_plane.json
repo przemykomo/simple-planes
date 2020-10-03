@@ -17,17 +17,17 @@
             "item": "simpleplanes:propeller"
         },
         "O": {
-            "item": "minecraft:dark_dark_oak_planks"
+            "item": "minecraft:dark_oak_planks"
         },
         "X": {
-            "item": "simpleplanes:dark_dark_oak_large_plane"
+            "item": "simpleplanes:dark_oak_large_plane"
         },
         "R": {
-            "item": "minecraft:dark_dark_oak_boat"
+            "item": "minecraft:dark_oak_boat"
         }
     },
     "result": {
-        "item": "simpleplanes:dark_dark_oak_mega_plane",
+        "item": "simpleplanes:dark_oak_mega_plane",
         "count": 1
     }
 }

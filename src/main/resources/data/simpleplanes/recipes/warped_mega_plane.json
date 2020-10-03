@@ -1,18 +1,6 @@
 {
     "conditions": [
         {
-            "conditions": [
-        {
-            "type": "forge:mod_loaded",
-            "modid": "minecraft"
-        }
-    ],
-    "type": "forge:mod_loaded",
-            "modid": "minecraft"
-        }
-    ],
-    "conditions": [
-        {
             "type": "forge:mod_loaded",
             "modid": "minecraft"
         }
@@ -35,7 +23,7 @@
             "item": "simpleplanes:warped_large_plane"
         },
         "R": {
-            "item": "minecraft:warped_boat"
+            "item": "minecraft:netherite_ingot"
         }
     },
     "result": {

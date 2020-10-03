@@ -7,8 +7,8 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-# folder1 = r"../src/main/resources\data\simpleplanes\recipes"
-folder1 = r"../src/main/resources"
+folder1 = r"../src/main/resources\data\simpleplanes\recipes"
+# folder1 = r"../src/main/resources"
 folder2 = "item"
 base = "oak"
 mat = "birch"
@@ -20,13 +20,7 @@ from shutil import copyfile
 
 def get_rmp():
     return {
-        r""""type":""": f""""conditions": [
-        {{
-            "type": "forge:mod_loaded",
-            "modid": "{mod}"
-        }}
-    ],
-    "type":""",
+        r""""modid": "minecraft""""": fr""""modid": "{mod}""""",
         f"simpleplanes:{base}_plane": f"simpleplanes:{mod_short}{mat}_plane",
         f"simpleplanes:{base}_large_plane": f"simpleplanes:{mod_short}{mat}_large_plane",
         f"simpleplanes:{base}_mega_plane": f"simpleplanes:{mod_short}{mat}_mega_plane",
@@ -89,7 +83,6 @@ def gen(rmp, origin):
             print(data)
             with open(replace, "w") as myfile:
                 myfile.write(data)
-
 
 
 def color_transfer(source, target, mask, target_mask):
@@ -219,7 +212,7 @@ def im_color(mat):
     # plt.show()
 
     src[..., :-1] = im3
-    src[src[...,-1]<100]=0
+    src[src[..., -1] < 100] = 0
     plt.imshow(cv2.cvtColor(src, cv2.COLOR_BGRA2RGB))
     plt.title(f"{mat}_mega_plane.png")
     plt.show()
@@ -237,6 +230,7 @@ def recpie_list():
         mat = f1[:-5]
         print(f""""simpleplanes:upgrades/{mat}",""")
 
+
 def recpie_to_fabric():
     path = "../src/main/resources/data/simpleplanes/recipes/"
     listdir = os.listdir(path)
@@ -247,8 +241,10 @@ def recpie_to_fabric():
         with open(path_join, "r") as myfile:
             data = myfile.read()
         mod = f1.split('_')[0]
+        if mod.lower() not in ["bop", "ft", "byg"]:
+            continue
         forge = ':mod_loaded'
-        fabric =f"""{{
+        fabric = f"""{{
   "when": [
     {{
       "libcd:mod_loaded": "{mod}"
@@ -256,10 +252,10 @@ def recpie_to_fabric():
   ]
 }}
 """
-        if(forge in data):
+        if (forge in data):
             # data = data.replace(forge,fabric)
             print(data)
-            with open(path_join+".mcmeta", "w") as myfile:
+            with open(path_join + ".mcmeta", "w") as myfile:
                 myfile.write(fabric)
 
             # break
@@ -297,25 +293,27 @@ def main():
             mod_short = ""
         # print(f""""mat:{mat}",mod:{mod}""")
 
-
         Mat = " ".join(Mat)
-        # mat = Mat.lower()
-        print(f"""
-        "item.simpleplanes.{mat}_plane": "{Mat} Plane",
-        "item.simpleplanes.{mat}_large_plane": "Large {Mat} Plane",
-        "item.simpleplanes.{mat}_helicopter": "{Mat} Helicopter",
-        "item.simpleplanes.{mat}_mega_plane": "{Mat} Cargo Plane",
-                """)
-        continue
+        mat = Mat.lower()
+        # print(f"""
+        # "item.simpleplanes.{mat}_plane": "{Mat} Plane",
+        # "item.simpleplanes.{mat}_large_plane": "Large {Mat} Plane",
+        # "item.simpleplanes.{mat}_helicopter": "{Mat} Helicopter",
+        # "item.simpleplanes.{mat}_mega_plane": "{Mat} Cargo Plane",
+        #         """)
+        # continue
         # if mat!= "holly":
         #     continue
         print(f"(\"{mat}\"),")
+        if (mat == "oak"):
+            continue
         # im_color(mat.lower())
 
         # continue
         rmp = get_rmp()
         gen(rmp, os.path.join(folder2, f1))
         # break
+
 
 if __name__ == '__main__':
     main()

@@ -8,7 +8,7 @@ import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
 @Config(name = "simpleplanes")
 @Config.Gui.Background("minecraft:textures/block/oak_planks.png")
 @Config.Gui.CategoryBackground(category = "coal", background = "minecraft:textures/block/coal_ore.png")
-@Config.Gui.CategoryBackground(category = "lava", background = "minecraft:textures/block/lava.png")
+@Config.Gui.CategoryBackground(category = "lava", background = "minecraft:textures/block/lava_still.png")
 public class SimplePlanesConfig implements ConfigData {
 
     

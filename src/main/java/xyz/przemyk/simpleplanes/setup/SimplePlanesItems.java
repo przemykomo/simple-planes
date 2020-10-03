@@ -36,7 +36,7 @@ public class SimplePlanesItems {
     }
 
     public static final ItemGroup SIMPLE_PLANES_ITEM_GROUP = FabricItemGroupBuilder.build(
-        new Identifier("tutorial", "general"),
+        new Identifier(MODID, "general"),
         () -> new ItemStack(Registry.ITEM.get(new Identifier(MODID, "oak_plane"))));
 
     public static final Item PROPELLER = register("propeller", new Item(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP)));
