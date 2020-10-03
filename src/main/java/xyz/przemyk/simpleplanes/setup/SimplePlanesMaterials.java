@@ -1,12 +1,10 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.RegistryEvent.Register;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.paint.PaintUpgrade;
@@ -17,15 +15,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SimplePlanesMaterials {
+    public static final MutableRegistry<PlaneMaterial> PLANE_MATERIALS = FabricRegistryBuilder.createSimple(PlaneMaterial.class, new Identifier(SimplePlanesMod.MODID, "plane_materials")).buildAndRegister();
 
     public static Set<Entry<RegistryKey<PlaneMaterial>, PlaneMaterial>> getMaterials() {
-        return SimplePlanesRegistries.PLANE_MATERIALS.getEntries();
+        return PLANE_MATERIALS.getEntries();
     }
 
-    public static PlaneMaterial getMaterial(ResourceLocation name) {
-        return SimplePlanesRegistries.PLANE_MATERIALS.getValue(name);
+    public static PlaneMaterial getMaterial(Identifier name) {
+        return PLANE_MATERIALS.get(name);
     }
 
     public static final String[] MATERIALS = new String[]{
@@ -83,32 +81,26 @@ public class SimplePlanesMaterials {
         ("bop_hellbark")
     };
 
-    @ObjectHolder(SimplePlanesMod.MODID + ":oak")
-    public static final PlaneMaterial OAK = null;
-    //        public static final RegistryObject<PlaneMaterial> OAK =
-    //                UPGRADE_TYPES.register("oak", () ->
-    //                        new PlaneMaterial("oak", false));
 
-    @SubscribeEvent
-    public static void registerMaterials(RegistryEvent.Register<PlaneMaterial> event) {
+    public static void init() {
         List<String> fire = Arrays.asList(FIRE_RESISTANT);
         for (String name :
             MATERIALS) {
-            register(event, fire, name);
+            register(fire, name);
         }
         PaintUpgrade.init();
         for (String name :
             PaintUpgrade.PAINTS.values()) {
-            register(event, fire, name);
+            register(fire, name);
         }
         //        event.getRegistry().registerAll(materials);
     }
 
-    public static void register(Register<PlaneMaterial> event, List<String> fire, String name) {
-        event.getRegistry().register(new PlaneMaterial(name, fire.contains(name)).setRegistryName(SimplePlanesMod.MODID, name));
+    public static void register(List<String> fire, String name) {
+        Registry.register(PLANE_MATERIALS, new Identifier(SimplePlanesMod.MODID, name), new PlaneMaterial(name, fire.contains(name)));
     }
 
     public static PlaneMaterial getMaterial(String name) {
-        return getMaterial(new ResourceLocation(SimplePlanesMod.MODID, name));
+        return getMaterial(new Identifier(SimplePlanesMod.MODID, name));
     }
 }

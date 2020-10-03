@@ -1,11 +1,11 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.item.Items;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -29,65 +29,66 @@ import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 @SuppressWarnings("unused")
 public class SimplePlanesUpgrades {
 
-    public static final DeferredRegister<UpgradeType> UPGRADE_TYPES = DeferredRegister.create(UpgradeType.class, SimplePlanesMod.MODID);
+    public static final MutableRegistry<UpgradeType> UPGRADE_TYPES = FabricRegistryBuilder.createSimple(UpgradeType.class, new Identifier(SimplePlanesMod.MODID, "upgrades")).buildAndRegister();
 
-    public static void init() {
-        UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
-    }
-
-    public static final RegistryObject<UpgradeType> SPRAYER = UPGRADE_TYPES.register("sprayer", () -> new UpgradeType(SimplePlanesItems.SPRAYER.get(), SprayerUpgrade::new){
+    public static final UpgradeType SPRAYER = register("sprayer",  new UpgradeType(SimplePlanesItems.SPRAYER, SprayerUpgrade::new) {
         @Override
         public boolean isPlaneApplicable(MegaPlaneEntity planeEntity) {
             return false;
         }
     });
-    public static final RegistryObject<UpgradeType> TNT = UPGRADE_TYPES.register("tnt", () -> new UpgradeType(Items.TNT, TNTUpgrade::new, true));
-    public static final RegistryObject<UpgradeType> HEAL = UPGRADE_TYPES.register("heal", () -> new UpgradeType(SimplePlanesItems.HEALING.get(), HealUpgrade::new));
-    public static final RegistryObject<UpgradeType> FLOATING = UPGRADE_TYPES.register("floating", () -> new UpgradeType(SimplePlanesItems.FLOATY_BEDDING.get(), FloatingUpgrade::new){
+    public static final UpgradeType TNT = register("tnt",  new UpgradeType(Items.TNT, TNTUpgrade::new, true));
+    public static final UpgradeType HEAL = register("heal",  new UpgradeType(SimplePlanesItems.HEALING, HealUpgrade::new));
+    public static final UpgradeType FLOATING = register("floating",  new UpgradeType(SimplePlanesItems.FLOATY_BEDDING, FloatingUpgrade::new) {
         @Override
         public boolean isPlaneApplicable(MegaPlaneEntity planeEntity) {
             return false;
         }
     });
-    public static final RegistryObject<UpgradeType> BOOSTER = UPGRADE_TYPES.register("booster", () -> new UpgradeType(SimplePlanesItems.BOOSTER.get(), RocketUpgrade::new){
+    public static final UpgradeType BOOSTER = register("booster",  new UpgradeType(SimplePlanesItems.BOOSTER, RocketUpgrade::new) {
         @Override
         public boolean isPlaneApplicable(LargePlaneEntity planeEntity) {
             return false;
         }
+
         @Override
         public boolean isPlaneApplicable(MegaPlaneEntity planeEntity) {
             return false;
         }
     });
-    public static final RegistryObject<UpgradeType> SHOOTER = UPGRADE_TYPES.register("shooter", () -> new UpgradeType(SimplePlanesItems.SHOOTER.get(), ShooterUpgrade::new){
+    public static final UpgradeType SHOOTER = register("shooter",  new UpgradeType(SimplePlanesItems.SHOOTER, ShooterUpgrade::new) {
         @Override
         public boolean isPlaneApplicable(MegaPlaneEntity planeEntity) {
             return false;
         }
     });
-    public static final RegistryObject<UpgradeType> DRAGON = UPGRADE_TYPES.register("dragon", () -> new UpgradeType(Items.DRAGON_HEAD, DragonUpgrade::new){
+    public static final UpgradeType DRAGON = register("dragon",  new UpgradeType(Items.DRAGON_HEAD, DragonUpgrade::new) {
         @Override
         public boolean isPlaneApplicable(MegaPlaneEntity planeEntity) {
             return false;
         }
     });
-    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(SimplePlanesItems.FOLDING.get(), FoldingUpgrade::new){
+    public static final UpgradeType FOLDING = register("folding",  new UpgradeType(SimplePlanesItems.FOLDING, FoldingUpgrade::new) {
         @Override
         public boolean isPlaneApplicable(MegaPlaneEntity planeEntity) {
             return false;
         }
     });
-    public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", BannerUpgradeType::new);
-    public static final RegistryObject<UpgradeType> PAINT = UPGRADE_TYPES.register("paint", PaintUpgradeType::new);
-    public static final RegistryObject<UpgradeType> CLOUD = UPGRADE_TYPES.register("cloud", () -> new UpgradeType(SimplePlanesItems.CLOUD.get(), CloudUpgrade::new));
+    public static final UpgradeType BANNER = register("banner", new BannerUpgradeType());
+    public static final UpgradeType PAINT = register("paint", new PaintUpgradeType());
+    public static final UpgradeType CLOUD = register("cloud",  new UpgradeType(SimplePlanesItems.CLOUD, CloudUpgrade::new));
     //engines
-    public static final RegistryObject<UpgradeType> COAL_ENGINE = UPGRADE_TYPES.register("coal_engine", () -> new UpgradeType(SimplePlanesItems.FURNACE_ENGINE.get(), CoalEngine::new));
-    public static final RegistryObject<UpgradeType> SMOKER_ENGINE = UPGRADE_TYPES.register("smoker_engine", () -> new UpgradeType(Items.SMOKER, FurnceJunkEngine::new));
-    public static final RegistryObject<UpgradeType> POWER_CELL = UPGRADE_TYPES.register("power_cell", () -> new UpgradeType(Items.REDSTONE_LAMP, PowerCell::new));
-    public static final RegistryObject<UpgradeType> LAVA_ENGINE = UPGRADE_TYPES.register("lava_engine", () -> new UpgradeType(Items.BLAST_FURNACE, LavaEngine::new));
+    public static final UpgradeType COAL_ENGINE = register("coal_engine",  new UpgradeType(SimplePlanesItems.FURNACE_ENGINE, CoalEngine::new));
+    public static final UpgradeType SMOKER_ENGINE = register("smoker_engine",  new UpgradeType(Items.SMOKER, FurnceJunkEngine::new));
+    public static final UpgradeType POWER_CELL = register("power_cell",  new UpgradeType(Items.REDSTONE_LAMP, PowerCell::new));
+    public static final UpgradeType LAVA_ENGINE = register("lava_engine",  new UpgradeType(Items.BLAST_FURNACE, LavaEngine::new));
 
     //storage
-    public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(Items.CHEST, ChestUpgrade::new, true));
+    public static final UpgradeType CHEST = register("chest",  new UpgradeType(Items.CHEST, ChestUpgrade::new, true));
+
+    private static UpgradeType register(String id, UpgradeType type) {
+        return Registry.register(UPGRADE_TYPES, id, type);
+    }
 
 
 }

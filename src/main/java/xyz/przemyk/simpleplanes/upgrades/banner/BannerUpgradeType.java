@@ -8,7 +8,7 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 public class BannerUpgradeType extends UpgradeType {
 
     public BannerUpgradeType() {
-        super(Items.BLACK_BANNER /* placeholder */, BannerUpgrade::new);
+        super(Items.WHITE_BANNER /* placeholder */, BannerUpgrade::new);
     }
 
     @Override

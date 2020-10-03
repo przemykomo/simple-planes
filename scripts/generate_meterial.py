@@ -90,6 +90,7 @@ def gen(rmp, origin):
                 myfile.write(data)
 
 
+
 def color_transfer(source, target, mask, target_mask):
     """
     Transfers the color distribution from the source to the target
@@ -230,13 +231,32 @@ mod_dict = {"bop": "biomesoplenty",
 
 
 def recpie_list():
-    for f1 in os.listdir("../src/main/resources/data/simpleplanes/recipes/upgrades"):
+    for f1 in os.listdir("../src/main/resources/data/simpleplanes/recipes/"):
         mat = f1[:-5]
         print(f""""simpleplanes:upgrades/{mat}",""")
 
+def recpie_to_fabric():
+    path = "../src/main/resources/data/simpleplanes/recipes/"
+    listdir = os.listdir(path)
+    for f1 in listdir:
+        path_join = os.path.join(path, f1)
+        if os.path.isdir(path_join):
+            continue
+        with open(path_join, "r") as myfile:
+            data = myfile.read()
+        forge = '"tag": "c:iron_ingots"'
+        fabric = '"item": "minecraft:iron_ingot"'
+        if(forge in data):
+            data = data.replace(forge,fabric)
+            print(data)
+            with open(path_join, "w") as myfile:
+                myfile.write(data)
+
+            # break
+
 
 def main():
-    recpie_list()
+    recpie_to_fabric()
     return
     for f1 in os.listdir("out"):
         mat = f1[:-5]

@@ -2,15 +2,16 @@ package xyz.przemyk.simpleplanes.upgrades;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraft.util.Identifier;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 import java.util.function.Function;
 
-public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
+public class UpgradeType{
 
     private final Item upgradeItem;
     public final Function<PlaneEntity, Upgrade> instanceSupplier;
@@ -39,7 +40,7 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
     }
 
     public ItemStack getDrops() {
-        return upgradeItem != null ? upgradeItem.getDefaultInstance() : ItemStack.EMPTY;
+        return upgradeItem != null ? upgradeItem.getDefaultStack() : ItemStack.EMPTY;
     }
 
     public boolean isPlaneApplicable(PlaneEntity planeEntity) {
@@ -58,4 +59,7 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
         return isPlaneApplicable((LargePlaneEntity) planeEntity);
     }
 
+    public Identifier getRegistryName() {
+        return SimplePlanesUpgrades.UPGRADE_TYPES.getId(this);
+    }
 }

@@ -1,16 +1,16 @@
 package xyz.przemyk.simpleplanes.upgrades;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
+public abstract class Upgrade {
 
     private final UpgradeType type;
     protected final PlaneEntity planeEntity;
@@ -28,8 +28,8 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
         return type;
     }
 
-    public NonNullList<ItemStack> getDrops() {
-        return NonNullList.from(getDrop());
+    public DefaultedList<ItemStack> getDrops() {
+        return DefaultedList.copyOf(getDrop());
     }
 
     public ItemStack getDrop() {
@@ -40,10 +40,14 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     /**
      * Called when passenger right clicks with item.
      *
-     * @param event The right click event
+     *
+     * @param player
+     * @param world
+     * @param hand
+     * @param itemStack
      * @return Should this upgrade be removed after this event is called?
      */
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+    public boolean onItemRightClick(PlayerEntity player, World world, Hand hand, ItemStack itemStack) {
         return false;
     }
 
@@ -70,21 +74,20 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
      * @param buffer      Render type buffer
      * @param packedLight packed light
      */
-    public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks);
+    public abstract void render(MatrixStack matrixStack, VertexConsumerProvider buffer, int packedLight, float partialticks);
 
-    @Override
-    public CompoundNBT serializeNBT() {
-        return new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        return new CompoundTag();
     }
 
-    @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-    }
-    public CompoundNBT serializeNBTData() {
-        return new CompoundNBT();
+    public void deserializeNBT(CompoundTag nbt) {
     }
 
-    public void deserializeNBTData(CompoundNBT nbt) {
+    public CompoundTag serializeNBTData() {
+        return new CompoundTag();
+    }
+
+    public void deserializeNBTData(CompoundTag nbt) {
     }
 
     public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {

@@ -14,7 +14,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:ingots/iron"
+            "item": "minecraft:iron_ingot"
         },
         "P": {
             "item": "simpleplanes:ft_citrus_plane"

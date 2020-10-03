@@ -1,16 +1,16 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -35,11 +35,11 @@ public class LargePlaneEntity extends PlaneEntity {
     public void tick() {
         super.tick();
 
-        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow(0.2F, -0.01F, 0.2F), EntityPredicates.pushableBy(this));
+        List<Entity> list = this.world.getOtherEntities(this, this.getBoundingBox().expand(0.2F, -0.01F, 0.2F), EntityPredicates.canBePushedBy(this));
         for (Entity entity : list) {
-            if (!this.world.isRemote && !(this.getControllingPassenger() instanceof PlayerEntity) &&
-                !entity.isPassenger(this) &&
-                !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+            if (!this.world.isClient && !(this.getPrimaryPassenger() instanceof PlayerEntity) &&
+                !entity.hasPassenger(this) &&
+                !entity.hasVehicle() && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
                 entity.startRiding(this);
             }
         }
@@ -51,15 +51,15 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) {
-        if (getPassengers().size() > 1 || passenger.getRidingEntity() == this) {
+    protected boolean canAddPassenger(Entity passenger) {
+        if (getPassengerList().size() > 1 || passenger.getVehicle() == this) {
             return false;
         }
         if (passenger instanceof PlaneEntity) {
             return false;
         }
 
-        if (getPassengers().size() == 1) {
+        if (getPassengerList().size() == 1) {
             for (Upgrade upgrade : upgrades.values()) {
                 if (upgrade.getType().occupyBackSeat) {
                     return false;
@@ -71,30 +71,30 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     @Override
-    public void updatePassenger(Entity passenger) {
-        List<Entity> passengers = getPassengers();
+    public void updatePassengerPosition(Entity passenger) {
+        List<Entity> passengers = getPassengerList();
         if (passengers.size() > 1) {
-            super.updatePassenger(passenger);
+            super.updatePassengerPosition(passenger);
             if (passengers.indexOf(passenger) != 0) {
                 updatePassengerTwo(passenger);
             }
         } else {
-            super.updatePassenger(passenger);
+            super.updatePassengerPosition(passenger);
         }
     }
 
     public void updatePassengerTwo(Entity passenger) {
         Vector3f pos = transformPos(getPassengerTwoPos(passenger));
-        passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
+        passenger.updatePosition(this.getX() + pos.getX(), this.getY() + pos.getY(), this.getZ() + pos.getZ());
     }
 
     protected Vector3f getPassengerTwoPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -1);
+        return new Vector3f(0, (float) (super.getMountedHeightOffset() + passenger.getHeightOffset()), -1);
     }
 
     @Override
     protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_large_plane"));
+        return Registry.ITEM.get(new Identifier(SimplePlanesMod.MODID, getMaterial().name + "_large_plane"));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class LargePlaneEntity extends PlaneEntity {
     @Override
     public boolean canAddUpgrade(UpgradeType upgradeType) {
         if (upgradeType.occupyBackSeat) {
-            if (getPassengers().size() > 1) {
+            if (getPassengerList().size() > 1) {
                 return false;
             }
             for (Upgrade upgrade : upgrades.values()) {

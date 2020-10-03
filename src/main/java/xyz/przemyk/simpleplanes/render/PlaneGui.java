@@ -1,86 +1,90 @@
 package xyz.przemyk.simpleplanes.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.util.ResourceLocation;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.events.RenderHudEvents;
 
-@OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(Dist.CLIENT)
-public class PlaneGui extends AbstractGui {
-    private final ResourceLocation bar = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/hpbar.png");
+@Environment(EnvType.CLIENT)
+public class PlaneGui extends DrawableHelper {
+    private final Identifier bar = new Identifier(SimplePlanesMod.MODID, "textures/gui/hpbar.png");
     private final int tex_width = 182, tex_height = 5, bar_width = 182, bar_height = 6;
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void renderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
-        Minecraft mc = Minecraft.getInstance();
-        int scaledWidth = mc.getMainWindow().getScaledWidth();
-        int scaledHeight = mc.getMainWindow().getScaledHeight();
-        MatrixStack mStack = event.getMatrixStack();
+    public static ActionResult renderGameOverlayPre(RenderHudEvents.Stage stage, MatrixStack matrixStack) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        int scaledWidth = mc.getWindow().getScaledWidth();
+        int scaledHeight = mc.getWindow().getScaledHeight();
 
-        if (mc.player.getRidingEntity() instanceof PlaneEntity) {
-            PlaneEntity planeEntity = (PlaneEntity) mc.player.getRidingEntity();
-            if (event.getType() == ElementType.ALL) {
+        if (mc.player.getVehicle() instanceof PlaneEntity) {
+            PlaneEntity planeEntity = (PlaneEntity) mc.player.getVehicle();
+            if (stage == RenderHudEvents.Stage.FIRST) {
                 if (planeEntity.mountmassage) {
                     planeEntity.mountmassage = false;
                     if (planeEntity instanceof HelicopterEntity) {
-                        Minecraft.getInstance().ingameGUI
-                            .setOverlayMessage(new TranslationTextComponent("helicopter.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                SimplePlanesMod.keyBind.func_238171_j_()), false);
+                        MinecraftClient.getInstance().inGameHud
+                            .setOverlayMessage(new TranslatableText("helicopter.onboard", mc.options.keySneak.getBoundKeyLocalizedText(),
+                                mc.options.keySprint.getBoundKeyLocalizedText()), false);
                     } else {
-                        Minecraft.getInstance().ingameGUI
-                            .setOverlayMessage(new TranslationTextComponent("plane.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                SimplePlanesMod.keyBind.func_238171_j_()), false);
+                        MinecraftClient.getInstance().inGameHud
+                            .setOverlayMessage(new TranslatableText("plane.onboard", mc.options.keySneak.getBoundKeyLocalizedText(),
+                                mc.options.keySprint.getBoundKeyLocalizedText()), false);
                     }
 
                 }
             }
-            if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
-                event.setCanceled(true);
-                int x = scaledWidth / 2 - 91;
-                int y = scaledHeight - 32 + 3;
-
-                mc.getTextureManager().bindTexture(bar);
-                float fuel = planeEntity.getFuel();
-//                fuel = (float) Math.log1p(fuel);
-                float max_fuel =planeEntity.getMaxFuel();
-//                max_fuel = (float) Math.log1p(max_fuel);
-                float part = fuel / max_fuel;
-                part = (float) Math.pow(part, 0.5);
-                part = MathHelper.clamp(part, 0, 1);
-                int currentWidth = (int) (bar_width * part);
-
-                blit(mStack, x, y, 0, 0, tex_width, tex_height);
-                int bar_image_pos = planeEntity.isSprinting() ? tex_height * 2 : tex_height;
-                blit(mStack, x, y, 0, bar_image_pos, currentWidth, tex_height);
-            }
         }
+        return ActionResult.PASS;
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void renderGameOverlayPost(RenderGameOverlayEvent.Post event) {
-//        if(true)return;
-        Minecraft mc = Minecraft.getInstance();
-        int scaledWidth = mc.getMainWindow().getScaledWidth();
-        int scaledHeight = mc.getMainWindow().getScaledHeight();
-        MatrixStack mStack = event.getMatrixStack();
+    public ActionResult renderExperience(RenderHudEvents.Stage stage, MatrixStack matrixStack) {
+        if (stage != RenderHudEvents.Stage.EXP) {
+            return ActionResult.PASS;
+        }
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player.getVehicle() instanceof PlaneEntity) {
+            PlaneEntity planeEntity = (PlaneEntity) mc.player.getVehicle();
 
-        if (mc.player.getRidingEntity() instanceof PlaneEntity) {
-            PlaneEntity planeEntity = (PlaneEntity) mc.player.getRidingEntity();
-            if (event.getType() == ElementType.ALL) {
+            int scaledWidth = mc.getWindow().getScaledWidth();
+            int scaledHeight = mc.getWindow().getScaledHeight();
+            int y = scaledHeight - 32 + 3;
+            int x = scaledWidth / 2 - 91;
+
+            mc.getTextureManager().bindTexture(bar);
+            float fuel = planeEntity.getFuel();
+//                fuel = (float) Math.log1p(fuel);
+            float max_fuel = planeEntity.getMaxFuel();
+//                max_fuel = (float) Math.log1p(max_fuel);
+            float part = fuel / max_fuel;
+            part = (float) Math.pow(part, 0.5);
+            part = MathHelper.clamp(part, 0, 1);
+            int currentWidth = (int) (bar_width * part);
+
+            drawTexture(matrixStack, x, y, 0, 0, tex_width, tex_height);
+            int bar_image_pos = planeEntity.isSprinting() ? tex_height * 2 : tex_height;
+            drawTexture(matrixStack, x, y, 0, bar_image_pos, currentWidth, tex_height);
+            return ActionResult.CONSUME;
+        }
+        return ActionResult.PASS;
+    }
+
+    public ActionResult renderGameOverlayPost(RenderHudEvents.Stage stage,MatrixStack mStack) {
+//        if(true)return;
+        if(stage == RenderHudEvents.Stage.LAST) {
+            MinecraftClient mc = MinecraftClient.getInstance();
+            int scaledWidth = mc.getWindow().getScaledWidth();
+            int scaledHeight = mc.getWindow().getScaledHeight();
+
+            if (mc.player.getVehicle() instanceof PlaneEntity) {
+                PlaneEntity planeEntity = (PlaneEntity) mc.player.getVehicle();
                 mc.getTextureManager().bindTexture(bar);
                 int left_align = scaledWidth / 2 + 91;
 
@@ -105,17 +109,19 @@ public class PlaneGui extends AbstractGui {
                     for (int i = 0; i < rowCount; ++i) {
                         int x = left_align - i * 16 - 16;
                         if (i + heart + 10 < health)
-                            blit(mStack, x, top, GOLD, 15, 16, 9);
+                            drawTexture(mStack, x, top, GOLD, 15, 16, 9);
                         else if (i + heart < health)
-                            blit(mStack, x, top, FULL, 15, 16, 9);
+                            drawTexture(mStack, x, top, FULL, 15, 16, 9);
                         else
-                            blit(mStack, x, top, EMPTY, 15, 16, 9);
+                            drawTexture(mStack, x, top, EMPTY, 15, 16, 9);
                     }
                     right_height += 10;
-                }
-            }
 
+                }
+
+            }
         }
+        return ActionResult.PASS;
     }
 
 }

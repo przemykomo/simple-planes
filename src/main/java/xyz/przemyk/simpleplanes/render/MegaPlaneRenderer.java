@@ -1,13 +1,13 @@
 package xyz.przemyk.simpleplanes.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.ResourceLocation;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
@@ -16,20 +16,24 @@ public class MegaPlaneRenderer extends AbstractPlaneRenderer<MegaPlaneEntity> {
 
     protected MegaPlaneModel planeModel = new MegaPlaneModel();
 
-    @Override
-    protected void renderAdditional(MegaPlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        MegaPlaneWindowsModel windowsModel = new MegaPlaneWindowsModel();
-        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(MegaPlaneWindowsModel.getTexture()));
+    public MegaPlaneRenderer(EntityRenderDispatcher entityRenderDispatcher, EntityRendererRegistry.Context context) {
+        this(entityRenderDispatcher);
+    }
 
-        windowsModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
-        windowsModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+    @Override
+    protected void renderAdditional(MegaPlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn) {
+        MegaPlaneWindowsModel windowsModel = new MegaPlaneWindowsModel();
+        VertexConsumer ivertexbuilder = bufferIn.getBuffer(planeModel.getLayer(MegaPlaneWindowsModel.getTexture()));
+
+        windowsModel.setAngles(planeEntity, partialTicks, 0, 0, 0, 0);
+        windowsModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
 
     }
 
-    public MegaPlaneRenderer(EntityRendererManager renderManager) {
+    public MegaPlaneRenderer(EntityRenderDispatcher renderManager) {
         super(renderManager);
         propellerModel = new MegaPlanePropellerModel();
-        shadowSize = 1.0f;
+        shadowRadius = 1.0f;
     }
 
 //    @Override
@@ -47,10 +51,10 @@ public class MegaPlaneRenderer extends AbstractPlaneRenderer<MegaPlaneEntity> {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public ResourceLocation getEntityTexture(MegaPlaneEntity entity) {
+    public Identifier getTexture(MegaPlaneEntity entity) {
         //        if (entity.isPowered()) {
         //            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace_powered/"+entity.getMaterial().name+".png");
         //        }
-        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
+        return new Identifier(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
     }
 }

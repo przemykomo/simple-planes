@@ -2,35 +2,35 @@ package xyz.przemyk.simpleplanes.render;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class BackSeatBlockModel {
 
-    public static void renderBlock(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLight,
+    public static void renderBlock(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLight,
                                    BlockState state) {
 //        moveMatrix(planeEntity, matrixStackIn, 0);
-        Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY);
+        MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(state, matrixStackIn, bufferIn, packedLight, OverlayTexture.DEFAULT_UV);
     }
 
-    public static void renderTileBlock(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLight,
-                                       TileEntity tileEntity) {
+    public static void renderTileBlock(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLight,
+                                       BlockEntity tileEntity) {
 //        moveMatrix(planeEntity, matrixStackIn, seat);
-        TileEntityRendererDispatcher.instance.renderItem(tileEntity, matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY);
+        BlockEntityRenderDispatcher.INSTANCE.renderEntity(tileEntity, matrixStackIn, bufferIn, packedLight, OverlayTexture.DEFAULT_UV);
     }
 
     public static void moveMatrix(PlaneEntity planeEntity, MatrixStack matrixStackIn, int seat) {
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
+        matrixStackIn.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180));
+        matrixStackIn.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
         matrixStackIn.translate(-0.4, -1, 0);
 
         if (planeEntity instanceof HelicopterEntity) {

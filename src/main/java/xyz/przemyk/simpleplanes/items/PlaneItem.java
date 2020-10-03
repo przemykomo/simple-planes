@@ -4,16 +4,16 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EntityPredicates;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -26,74 +26,74 @@ import java.util.function.Predicate;
 
 public class PlaneItem extends Item {
 
-    private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
+    private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.EXCEPT_SPECTATOR.and(Entity::collides);
     private final Function<World, PlaneEntity> planeSupplier;
 
-    public PlaneItem(Properties properties, Function<World, PlaneEntity> planeSupplier) {
-        super(properties.maxStackSize(1));
+    public PlaneItem(Settings properties, Function<World, PlaneEntity> planeSupplier) {
+        super(properties.maxCount(1));
         this.planeSupplier = planeSupplier;
     }
 
     @Override
-    public ITextComponent getName() {
+    public Text getName() {
         return super.getName();
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack) {
-        return super.hasEffect(stack) || stack.getChildTag("EntityTag") != null;
+    public boolean hasGlint(ItemStack stack) {
+        return super.hasGlint(stack) || stack.getSubTag("EntityTag") != null;
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack itemstack = playerIn.getHeldItem(handIn);
-        RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.ANY);
-        if (raytraceresult.getType() == RayTraceResult.Type.MISS) {
-            return ActionResult.resultPass(itemstack);
+    public TypedActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack itemstack = playerIn.getStackInHand(handIn);
+        HitResult raytraceresult = raycast(worldIn, playerIn, RaycastContext.FluidHandling.ANY);
+        if (raytraceresult.getType() == HitResult.Type.MISS || worldIn.isClient) {
+            return TypedActionResult.pass(itemstack);
         } else {
-            Vector3d vec3d = playerIn.getLook(1.0F);
-            List<Entity> list = worldIn.getEntitiesInAABBexcluding(playerIn, playerIn.getBoundingBox().expand(vec3d.scale(5.0D)).grow(1.0D), ENTITY_PREDICATE);
+            Vec3d vec3d = playerIn.getRotationVec(1.0F);
+            List<Entity> list = worldIn.getOtherEntities(playerIn, playerIn.getBoundingBox().stretch(vec3d.multiply(5.0D)).expand(1.0D), ENTITY_PREDICATE);
             if (!list.isEmpty()) {
-                Vector3d vec3d1 = playerIn.getEyePosition(1.0F);
+                Vec3d vec3d1 = playerIn.getCameraPosVec(1.0F);
 
                 for (Entity entity : list) {
-                    AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(entity.getCollisionBorderSize());
+                    Box axisalignedbb = entity.getBoundingBox().expand(entity.getTargetingMargin());
                     if (axisalignedbb.contains(vec3d1)) {
-                        return ActionResult.resultPass(itemstack);
+                        return TypedActionResult.pass(itemstack);
                     }
                 }
             }
 
-            if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
+            if (raytraceresult.getType() == HitResult.Type.BLOCK) {
                 PlaneEntity planeEntity = planeSupplier.apply(worldIn);
-                UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
+                UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE;
                 Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
-                if (itemstack.getChildTag("Used")==null){
+                if (itemstack.getSubTag("Used") == null) {
                     planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
                     planeEntity.upgradeChanged();
                 }
-                planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
-                planeEntity.rotationYaw = playerIn.rotationYaw;
-                planeEntity.prevRotationYaw = playerIn.prevRotationYaw;
-                planeEntity.setCustomName(itemstack.getDisplayName());
-                CompoundNBT entityTag = itemstack.getChildTag("EntityTag");
+                planeEntity.updatePosition(raytraceresult.getPos().getX(), raytraceresult.getPos().getY(), raytraceresult.getPos().getZ());
+                planeEntity.yaw = playerIn.yaw;
+                planeEntity.prevYaw = playerIn.prevYaw;
+                planeEntity.setCustomName(itemstack.getName());
+                CompoundTag entityTag = itemstack.getSubTag("EntityTag");
                 if (entityTag != null) {
-                    planeEntity.readAdditional(entityTag);
+                    planeEntity.readCustomDataFromTag(entityTag);
                 }
-                if (!worldIn.hasNoCollisions(planeEntity, planeEntity.getBoundingBox().grow(-0.1D))) {
-                    return ActionResult.resultFail(itemstack);
+                if (!worldIn.isSpaceEmpty(planeEntity, planeEntity.getBoundingBox().expand(-0.1D))) {
+                    return TypedActionResult.fail(itemstack);
                 } else {
-                    if (!worldIn.isRemote) {
-                        worldIn.addEntity(planeEntity);
-                        if (!playerIn.abilities.isCreativeMode) {
-                            itemstack.shrink(1);
+                    if (!worldIn.isClient) {
+                        worldIn.spawnEntity(planeEntity);
+                        if (!playerIn.abilities.creativeMode) {
+                            itemstack.decrement(1);
                         }
                     }
-                    playerIn.addStat(Stats.ITEM_USED.get(this));
-                    return ActionResult.resultSuccess(itemstack);
+                    playerIn.incrementStat(Stats.USED.getOrCreateStat(this));
+                    return TypedActionResult.success(itemstack);
                 }
             } else {
-                return ActionResult.resultPass(itemstack);
+                return TypedActionResult.pass(itemstack);
             }
         }
     }

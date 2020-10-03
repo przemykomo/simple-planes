@@ -1,15 +1,15 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -18,8 +18,8 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import java.util.Map;
 
 public class MegaPlaneEntity extends LargePlaneEntity {
-    public static final EntitySize FLYING_SIZE = EntitySize.flexible(6F, 1.5F);
-    public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(6F, 2.5F);
+    public static final EntityDimensions FLYING_SIZE = EntityDimensions.changing(6F, 1.5F);
+    public static final EntityDimensions FLYING_SIZE_EASY = EntityDimensions.changing(6F, 2.5F);
 
     public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
@@ -30,11 +30,11 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     }
 
     @Override
-    public EntitySize getSize(Pose poseIn) {
-        if (this.getControllingPassenger() instanceof PlayerEntity) {
+    public EntityDimensions getDimensions(EntityPose poseIn) {
+        if (this.getPrimaryPassenger() instanceof PlayerEntity) {
             return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
         }
-            return super.getSize(poseIn);
+            return super.getDimensions(poseIn);
         //just hate my head in the nether ceiling
     }
 
@@ -67,10 +67,10 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     }
 
     @Override
-    public void updatePassenger(Entity passenger) {
-        super.updatePassenger(passenger);
+    public void updatePassengerPosition(Entity passenger) {
+        super.updatePassengerPosition(passenger);
         Vector3f pos = transformPos(getPassengerPos(passenger));
-        passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
+        passenger.updatePosition(this.getX() + pos.getX(), this.getY() + pos.getY(), this.getZ() + pos.getZ());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
 
     @Override
     protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_mega_plane"));
+        return Registry.ITEM.get(new Identifier(SimplePlanesMod.MODID, getMaterial().name + "_mega_plane"));
 
     }
 
@@ -99,39 +99,39 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         } else if (vars.moveForward < 0.0F) {
             pitch = vars.passengerSprinting ? -1.5f : -0.8f;
         }
-        rotationPitch += pitch;
-        if (rotationPitch > 20) {
-            rotationPitch = 20;
+        this.pitch += pitch;
+        if (this.pitch > 20) {
+            this.pitch = 20;
         }
     }
 
     private Vector3f getPassengerPos(Entity passenger) {
-        final int i = this.getPassengers().indexOf(passenger);
+        final int i = this.getPassengerList().indexOf(passenger);
         final float z = -(i / 2) * 1.5f;
-        return new Vector3f(-0.5f + i % 2, (float) (getMountedYOffset() + passenger.getYOffset()), z + 1);
+        return new Vector3f(-0.5f + i % 2, (float) (getMountedHeightOffset() + passenger.getHeightOffset()), z + 1);
     }
 
     @Override
-    public double getMountedYOffset() {
+    public double getMountedHeightOffset() {
         return 0.4;
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) {
-        return !isFull() && passenger.getRidingEntity() != this && !(passenger instanceof PlaneEntity);
+    protected boolean canAddPassenger(Entity passenger) {
+        return !isFull() && passenger.getVehicle() != this && !(passenger instanceof PlaneEntity);
     }
 
     @Override
     public boolean isFull() {
         int i = 0;
-        for (Map.Entry<ResourceLocation, Upgrade> entry : upgrades.entrySet()) {
-            ResourceLocation resourceLocation = entry.getKey();
+        for (Map.Entry<Identifier, Upgrade> entry : upgrades.entrySet()) {
+            Identifier resourceLocation = entry.getKey();
             Upgrade value = entry.getValue();
             if (value.getType().occupyBackSeat) {
                 i += value.getSeats();
             }
         }
         i = Math.max(i - 2, -1);
-        return getPassengers().size() + i >= 6;
+        return getPassengerList().size() + i >= 6;
     }
 }

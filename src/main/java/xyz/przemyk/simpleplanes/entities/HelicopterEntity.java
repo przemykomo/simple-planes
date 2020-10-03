@@ -1,17 +1,17 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -61,14 +61,14 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_helicopter"));
+        return Registry.ITEM.get(new Identifier(SimplePlanesMod.MODID, getMaterial().name + "_helicopter"));
     }
 
     @Override
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
-        if (world.isRemote() && Minecraft.getInstance().player == passenger) {
-            (Minecraft.getInstance()).ingameGUI.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
+        if (world.isClient() && MinecraftClient.getInstance().player == passenger) {
+            (MinecraftClient.getInstance()).inGameHud.setOverlayMessage(new LiteralText("sprint to take off"), false);
         }
 
     }
@@ -80,13 +80,13 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     protected void tickPitch(Vars vars) {
         if (vars.moveForward > 0.0F) {
-            rotationPitch = Math.max(rotationPitch - 1, -20);
+            pitch = Math.max(pitch - 1, -20);
         } else if (vars.moveForward < 0 && vars.passengerSprinting) {
-            rotationPitch = Math.min(rotationPitch + 1, 10);
+            pitch = Math.min(pitch + 1, 10);
         } else {
-            rotationPitch = MathUtil.lerpAngle(0.2f, rotationPitch, 0);
+            pitch = MathUtil.lerpAngle(0.2f, pitch, 0);
             double drag = 0.999;
-            setMotion(getMotion().mul(drag, 1, drag));
+            setVelocity(getVelocity().multiply(drag, 1, drag));
 
         }
     }
@@ -109,7 +109,7 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
+    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vec3d motion) {
 
         //        float yaw = MathUtil.getYaw(motion);
         //        double speed = getMotion().length();
@@ -127,23 +127,23 @@ public class HelicopterEntity extends LargePlaneEntity {
 
         double turn = vars.moveStrafing > 0 ? yawdiff : vars.moveStrafing == 0 ? 0 : -yawdiff;
         rotationRoll = 0;
-        rotationYaw -= turn;
+        yaw -= turn;
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) {
-        return super.canFitPassenger(passenger) && passenger instanceof PlayerEntity;
+    protected boolean canAddPassenger(Entity passenger) {
+        return super.canAddPassenger(passenger) && passenger instanceof PlayerEntity;
     }
 
     @Override
-    public void updatePassenger(Entity passenger) {
-        super.updatePassenger(passenger);
+    public void updatePassengerPosition(Entity passenger) {
+        super.updatePassengerPosition(passenger);
     }
 
     @Override
     public boolean canAddUpgrade(UpgradeType upgradeType) {
         if (upgradeType.occupyBackSeat) {
-            if (getPassengers().size() > 1) {
+            if (getPassengerList().size() > 1) {
                 return false;
             }
             for (Upgrade upgrade : upgrades.values()) {
@@ -157,6 +157,6 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Vector3f getPassengerTwoPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -0.8f);
+        return new Vector3f(0, (float) (super.getMountedHeightOffset() + passenger.getHeightOffset()), -0.8f);
     }
 }

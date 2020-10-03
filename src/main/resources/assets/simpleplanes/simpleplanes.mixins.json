@@ -5,11 +5,14 @@
     "package": "xyz.przemyk.simpleplanes.mixin",
     "refmap": "simpleplanes.refmap.json",
     "mixins": [
-        "MixinVillagerEntity"
+        "MixinVillagerEntity",
+        "MixinServerPlayNetworkHandler"
     ],
     "client": [
-        "MixinActiveRenderInfo",
-        "MixinVillagerModel"
+        "MixinCamera",
+        "MixinVillagerModel",
+        "MixinLivingEntityRenderer",
+        "MixinInGameHud"
     ],
     "injectors": {
         "defaultRequire": 1

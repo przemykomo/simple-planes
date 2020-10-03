@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "simpleplanes",
+  "version": "${version}",
+
+  "name": "simpleplanes",
+  "description": "Adds flying planes.",
+  "authors": [
+    "przemyk",
+    "adoxentor"
+  ],
+  "contact": {
+    "homepage": "https://przemyk.xyz/mods/simple-planes/index.html",
+    "sources": "https://github.com/przemykomo/simple-planes",
+    "issues": "https://github.com/przemykomo/simple-planes/issues"
+  },
+  "license": "GNU General Public License",
+  "icon": "assets/simpleplanes/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "xyz.przemyk.simpleplanes.SimplePlanesMod"
+    ],
+    "client": [
+      "xyz.przemyk.simpleplanes.ModEntryClient"
+    ],
+    "server": [
+    ],
+    "modmenu": [
+      "xyz.przemyk.simpleplanes.integration.ModMenuIntegration"
+    ],
+    "mm:early_risers": [
+    ]
+  },
+  "mixins": [
+    "simpleplanes.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.3"
+  },
+  "suggests": {
+    "flamingo": "*"
+  },
+  "custom": {
+    "fabric-renderer-indigo:force_compatibility": true
+  },
+  "accessWidener" : "sp.accesswidener"
+}

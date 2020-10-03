@@ -1,28 +1,25 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.IDataSerializer;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DataSerializerEntry;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.entity.data.TrackedDataHandler;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.math.Quaternion;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import net.minecraft.util.registry.Registry;
 
 @SuppressWarnings("unused")
 public class SimplePlanesDataSerializers {
-    private static final DeferredRegister<DataSerializerEntry> DATA_SERIALIZERS = DeferredRegister
-        .create(ForgeRegistries.DATA_SERIALIZERS, SimplePlanesMod.MODID);
-
+//    private static final DeferredRegister<> DATA_SERIALIZERS = DeferredRegister
+//        .create(ForgeRegistries.DATA_SERIALIZERS, SimplePlanesMod.MODID);
+//
     public static void init() {
-        DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        TrackedDataHandlerRegistry.register(QUATERNION_SERIALIZER);
     }
 
-    public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>() {
+    public static final TrackedDataHandler<Quaternion> QUATERNION_SERIALIZER = new TrackedDataHandler<Quaternion>() {
 
         @Override
-        public void write(PacketBuffer buf, Quaternion q) {
+        public void write(PacketByteBuf buf, Quaternion q) {
             buf.writeFloat(q.getX());
             buf.writeFloat(q.getY());
             buf.writeFloat(q.getZ());
@@ -30,7 +27,7 @@ public class SimplePlanesDataSerializers {
         }
 
         @Override
-        public Quaternion read(PacketBuffer buf) {
+        public Quaternion read(PacketByteBuf buf) {
             try {
                 return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
             } catch (IndexOutOfBoundsException e) {
@@ -40,13 +37,13 @@ public class SimplePlanesDataSerializers {
         }
 
         @Override
-        public Quaternion copyValue(Quaternion q) {
+        public Quaternion copy(Quaternion q) {
             return new Quaternion(q);
         }
     };
 
-    public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS
-        .register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
+//    public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS
+//        .register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
 
 
 }

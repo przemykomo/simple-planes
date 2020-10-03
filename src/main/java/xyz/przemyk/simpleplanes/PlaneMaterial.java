@@ -1,8 +1,7 @@
 package xyz.przemyk.simpleplanes;
 
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class PlaneMaterial extends ForgeRegistryEntry<PlaneMaterial> {
+public class PlaneMaterial{
     public final String name;
     public final boolean fireResistant;
 

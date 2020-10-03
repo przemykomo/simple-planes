@@ -1,9 +1,9 @@
 package xyz.przemyk.simpleplanes.items;
 
-import net.minecraft.item.FireworkRocketItem;
+import net.minecraft.item.FireworkItem;
 
-public class MadManRocketItem extends FireworkRocketItem {
-    public MadManRocketItem(Properties builder) {
+public class MadManRocketItem extends FireworkItem {
+    public MadManRocketItem(Settings builder) {
         super(builder);
     }
 }

@@ -1,24 +1,27 @@
 package xyz.przemyk.simpleplanes;
 
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3d;
 
-public class MathUtil extends MathHelper {
-    public static double angelBetweenVec(Vector3d v1, Vector3d v2) {
+import static net.minecraft.util.math.MathHelper.wrapDegrees;
+
+public class MathUtil  {
+
+    public static double angelBetweenVec(Vec3d v1, Vec3d v2) {
         return Math.toDegrees(Math.acos(normalizedDotProduct(v1, v2)));
     }
 
-    public static double normalizedDotProduct(Vector3d v1, Vector3d v2) {
+    public static double normalizedDotProduct(Vec3d v1, Vec3d v2) {
         return v1.dotProduct(v2) / (v1.length() * v2.length());
     }
 
-    public static float getPitch(Vector3d motion) {
+    public static float getPitch(Vec3d motion) {
         double y = motion.y;
         return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
     }
 
-    public static float getYaw(Vector3d motion) {
+    public static float getYaw(Vec3d motion) {
         return (float) Math.toDegrees(Math.atan2(-motion.x, motion.z));
     }
 
@@ -27,13 +30,13 @@ public class MathUtil extends MathHelper {
     }
 
     public static float lerpAngle180(float perc, float start, float end) {
-        if (degreesDifferenceAbs(start, end) > 90)
+        if (angleBetween(start, end) > 90)
             end += 180;
         return start + perc * wrapDegrees(end - start);
     }
 
     public static double lerpAngle180(double perc, double start, double end) {
-        if (degreesDifferenceAbs(start, end) > 90)
+        if (angleBetween(start, end) > 90)
             end += 180;
         return start + perc * wrapDegrees(end - start);
     }
@@ -42,30 +45,30 @@ public class MathUtil extends MathHelper {
         return start + perc * wrapDegrees(end - start);
     }
 
-    public static double degreesDifferenceAbs(double p_203301_0_, double p_203301_1_) {
-        return Math.abs(wrapSubtractDegrees(p_203301_0_, p_203301_1_));
+    public static double angleBetween(double p_203301_0_, double p_203301_1_) {
+        return Math.abs(subtractAngles(p_203301_0_, p_203301_1_));
     }
 
-    public static double wrapSubtractDegrees(double p_203302_0_, double p_203302_1_) {
+    public static double subtractAngles(double p_203302_0_, double p_203302_1_) {
         return wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch) {
+    public static Vec3d rotationToVector(double yaw, double pitch) {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
         double xzLen = Math.cos(pitch);
         double x = -xzLen * Math.sin(yaw);
         double y = Math.sin(pitch);
         double z = xzLen * Math.cos(-yaw);
-        return new Vector3d(x, y, z);
+        return new Vec3d(x, y, z);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch, double size) {
-        Vector3d vec = rotationToVector(yaw, pitch);
-        return vec.scale(size / vec.length());
+    public static Vec3d rotationToVector(double yaw, double pitch, double size) {
+        Vec3d vec = rotationToVector(yaw, pitch);
+        return vec.multiply(size / vec.length());
     }
 
-    public static double getHorizontalLength(Vector3d vector3d) {
+    public static double getHorizontalLength(Vec3d vector3d) {
         return Math.sqrt(vector3d.x * vector3d.x + vector3d.z * vector3d.z);
     }
 
@@ -93,7 +96,7 @@ public class MathUtil extends MathHelper {
         return angles;
     }
 
-    public static float fastInvSqrt(float number) {
+    public static float fastInverseSqrt(float number) {
         float f = 0.5F * number;
         int i = Float.floatToIntBits(number);
         i = 1597463007 - (i >> 1);
@@ -108,7 +111,7 @@ public class MathUtil extends MathHelper {
         float z = q.getZ();
         float w = q.getW();
         if (f > 1.0E-6F) {
-            float f1 = fastInvSqrt(f);
+            float f1 = fastInverseSqrt(f);
             x *= f1;
             y *= f1;
             z *= f1;
