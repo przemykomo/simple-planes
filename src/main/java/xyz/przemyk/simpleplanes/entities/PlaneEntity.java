@@ -290,7 +290,7 @@ public class PlaneEntity extends Entity {
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
 //        this.setRockingTicks(60);
-        this.setTimeSinceHit(63);
+        this.setTimeSinceHit(20);
         this.setDamageTaken(this.getDamageTaken() + 10 * amount);
 
         if (this.isInvulnerableTo(source) || this.hurtTime > 0) {
@@ -340,7 +340,7 @@ public class PlaneEntity extends Entity {
         final CompoundNBT value = new CompoundNBT();
         value.putBoolean("Used", true);
         itemStack.setTagInfo("Used", value);
-        entityDropItem(itemStack);
+        entityDropItem(itemStack).setInvulnerable(true);
         for (Upgrade upgrade : upgrades.values()) {
             final NonNullList<ItemStack> items = upgrade.getDrops();
             for (ItemStack item : items) {
@@ -987,6 +987,9 @@ public class PlaneEntity extends Entity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
+        if (source.isExplosion()) {
+            return false;
+        }
         if (source.isFireDamage() && material.fireResistant) {
             return true;
         }
@@ -1007,7 +1010,7 @@ public class PlaneEntity extends Entity {
         if ((onGroundIn || isAboveWater()) && Config.PLANE_CRASH.get()) {
             //        if (onGroundIn||isAboveWater()) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).getY();
-            if (y1 < 0.867) {
+            if (y1 < Math.cos(Math.toRadians(getLandingAngle()))) {
                 state.getBlock().onFallenUpon(this.world, pos, this, (float) (getMotion().length() * 5));
             }
             this.fallDistance = 0.0F;
@@ -1015,24 +1018,25 @@ public class PlaneEntity extends Entity {
 
         //        this.lastYd = this.getMotion().y;
     }
+    protected int getLandingAngle() {
+        return 30;
+    }
+
     public boolean onLivingFall(float distance, float damageMultiplier) {
         if (this.isBeingRidden()) {
-            for(Entity entity : this.getPassengers()) {
-                crash(distance*damageMultiplier);
-            }
+            crash(distance*damageMultiplier);
         }
         return false;
     }
 
     @SuppressWarnings("deprecation")
-    private void crash(float damage) {
+    public void crash(float damage) {
         if (!this.world.isRemote && !this.removed) {
             for (Entity entity : getPassengers()) {
-                this.attackEntityFrom(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage + 2);
-
                 float damage_mod = Math.min(1, 1 - ((float) getHealth() / getMaxHealth()));
                 entity.attackEntityFrom(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage * damage_mod);
             }
+            this.attackEntityFrom(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage + 2);
         }
     }
 
@@ -1294,6 +1298,14 @@ public class PlaneEntity extends Entity {
      */
     public float getDamageTaken() {
         return this.dataManager.get(DAMAGE_TAKEN);
+    }
+
+    public boolean hasChest() {
+        return this.upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
+    }
+
+    public double getCameraDistanceMultiplayer() {
+        return 1;
     }
 
 

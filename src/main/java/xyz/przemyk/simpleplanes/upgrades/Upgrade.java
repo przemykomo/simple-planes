@@ -29,7 +29,7 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     }
 
     public NonNullList<ItemStack> getDrops() {
-        return NonNullList.from(getDrop());
+        return NonNullList.from(ItemStack.EMPTY,getDrop());
     }
 
     public ItemStack getDrop() {

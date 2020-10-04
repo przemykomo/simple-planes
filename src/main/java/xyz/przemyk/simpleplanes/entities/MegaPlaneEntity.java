@@ -84,10 +84,18 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     }
 
     @Override
+    public double getCameraDistanceMultiplayer() {
+        return 2;
+    }
+
+    @Override
     protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
         motionVars.max_push_speed *= 0.8;
-        motionVars.yaw_multiplayer *= 0.1;
+        motionVars.yaw_multiplayer *= 0.3;
+        motionVars.drag *= 4;
+        motionVars.drag_mul *= 4;
+        motionVars.drag_quad *= 4;
         return motionVars;
     }
 
@@ -95,13 +103,16 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     protected void tickPitch(Vars vars) {
         float pitch = 0f;
         if (vars.moveForward > 0.0F) {
-            pitch = vars.passengerSprinting ? 1.5f : 0.8f;
+            pitch = vars.passengerSprinting ? 0.8f : 0.4f;
         } else if (vars.moveForward < 0.0F) {
-            pitch = vars.passengerSprinting ? -1.5f : -0.8f;
+            pitch = vars.passengerSprinting ? -0.8f : -0.4f;
         }
-        rotationPitch += pitch;
-        if (rotationPitch > 20) {
-            rotationPitch = 20;
+        if (getOnGround()||isAboveWater()) {
+            pitch *= 2;
+        }
+        this.rotationPitch += pitch;
+        if (this.rotationPitch > 20) {
+            this.rotationPitch = 20;
         }
     }
 
@@ -114,6 +125,11 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     @Override
     public double getMountedYOffset() {
         return 0.4;
+    }
+
+    @Override
+    protected int getLandingAngle() {
+        return 20;
     }
 
     @Override
@@ -131,7 +147,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
                 i += value.getSeats();
             }
         }
-        i = Math.max(i - 2, -1);
+        i = ((i + 1) / 4) + (i / 4);
         return getPassengers().size() + i >= 6;
     }
 }

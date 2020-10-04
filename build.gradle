@@ -73,6 +73,24 @@ minecraft {
             properties 'fml.earlyprogresswindow': 'false'
             properties 'mixin.env.disableRefMap': 'true'
 
+            mods {
+                simpleplanes {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+            properties 'forge.logging.console.level': 'debug'
+            properties 'fml.earlyprogresswindow': 'false'
+            properties 'mixin.env.disableRefMap': 'true'
 
             jvmArgs '-Xmx5G'
             jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5010'
