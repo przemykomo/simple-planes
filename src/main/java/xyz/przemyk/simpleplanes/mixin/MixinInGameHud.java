@@ -52,7 +52,7 @@ public abstract class MixinInGameHud {
 //    public int redirectShouldRenderHunger(int health){
 //        return 1;
 //    }
-    @Redirect(method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;F)V",
+    @Redirect(method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;)V",
         at = @At(value = "INVOKE",
             target = "net/minecraft/client/gui/hud/InGameHud.getHeartCount(Lnet/minecraft/entity/LivingEntity;)I"))
     public int redirectShouldRenderHunger(InGameHud _this, LivingEntity entity) {

@@ -7,6 +7,10 @@ import net.minecraft.entity.passive.HorseBaseEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 @Mixin(ClientPlayerInteractionManager.class)
 public abstract class MixinClientPlayerInteractionManager {
@@ -14,14 +18,16 @@ public abstract class MixinClientPlayerInteractionManager {
     @Shadow
     MinecraftClient client;
 
-    @Overwrite
-    public boolean hasRidingInventory() {
+    @Inject(method="hasRidingInventory()Z",at=@At("TAIL"),cancellable = true)
+    public void hasRidingInventory(CallbackInfoReturnable<Boolean> cbi) {
         Entity vehicle = this.client.player.getVehicle();
-
-        return this.client.player.hasVehicle() &&
+        if(this.client.player.hasVehicle() &&
             (vehicle instanceof HorseBaseEntity||
-                (vehicle instanceof PlaneEntity&&((PlaneEntity)vehicle).hasChest()));
+                (vehicle instanceof PlaneEntity&&((PlaneEntity)vehicle).hasChest())))
+        {
+            cbi.setReturnValue(true);
+        }
     }
-    ;
+
 
 }

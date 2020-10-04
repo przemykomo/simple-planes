@@ -35,6 +35,16 @@ public abstract class MixinVillagerModel<T extends Entity> extends CompositeEnti
     public ModelPart nose;
 
 
+    /**
+     * @param entityIn
+     * @param limbSwing
+     * @param limbSwingAmount
+     * @param ageInTicks
+     * @param netHeadYaw
+     * @param headPitch
+     * @author a
+     * @reason a
+     */
     @Overwrite
     public void setAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         boolean flag = false;

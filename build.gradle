@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
 }
 //repositories {
@@ -64,14 +64,21 @@ dependencies {
 
     // ClotConfig
     modApi("me.shedaniel.cloth:config-2:${clothconfig_version}") {
-        exclude(module: "fabric-api")
+        exclude module: 'fabric-api'
+    }
+    include("me.shedaniel.cloth:config-2:${clothconfig_version}") {
+        exclude module: 'fabric-api'
     }
     modApi("me.shedaniel.cloth.api:cloth-client-events-v0:${cloth_client_events_v0_version}") {
         transitive(false)
+        exclude module: 'fabric-api'
     }
 
     // AutoConfig
     modApi("me.sargunvohra.mcmods:autoconfig1u:${autoconfig_version}") {
+        exclude module: "net.fabricmc.fabric-api"
+    }
+    include("me.sargunvohra.mcmods:autoconfig1u:${autoconfig_version}") {
         exclude module: "net.fabricmc.fabric-api"
     }
 
@@ -79,7 +86,7 @@ dependencies {
     modApi("io.github.prospector:modmenu:${modmenu_version}") {
     exclude module: "fabric-loader"
         exclude module: "net.fabricmc.fabric-api"
-        exclude(module: "fabric-api")
+        exclude module: 'fabric-api'
         transitive(false)
     }
     // loads faster
@@ -97,7 +104,9 @@ dependencies {
         exclude module: "Jankson"
         exclude module: "nbt-crafting"
     }
-    include "io.github.cottonmc:LibCD:${libcd}"
+    include("io.github.cottonmc:LibCD:${libcd}"){
+        exclude module: 'fabric-api'
+    }
 
 
     compile 'org.jetbrains:annotations:16.0.2'
