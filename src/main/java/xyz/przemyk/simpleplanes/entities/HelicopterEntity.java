@@ -74,6 +74,11 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
+    public double getCameraDistanceMultiplayer() {
+        return super.getCameraDistanceMultiplayer();
+    }
+
+    @Override
     protected boolean isEasy() {
         return true;
     }

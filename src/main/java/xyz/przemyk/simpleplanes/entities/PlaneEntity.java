@@ -291,7 +291,7 @@ public class PlaneEntity extends Entity {
     @Override
     public boolean damage(DamageSource source, float amount) {
 //        this.setRockingTicks(60);
-        this.setTimeSinceHit(63);
+        this.setTimeSinceHit(20);
         this.setDamageTaken(this.getDamageTaken() + 10 * amount);
 
         if (this.isInvulnerableTo(source) || this.hurtTime > 0) {
@@ -480,16 +480,17 @@ public class PlaneEntity extends Entity {
         calculateDimensions();
         refreshPosition();
         if (!this.onGround || squaredHorizontalLength(this.getVelocity()) > (double) 1.0E-5F || (this.age + this.getEntityId()) % 4 == 0) {
-            double speed_before = Math.sqrt(squaredHorizontalLength(this.getVelocity()));
             boolean onGroundOld = this.onGround;
             Vec3d preMotion = getVelocity();
+            double speed_before = preMotion.length();
+
             if (preMotion.length() > 0.5 || vars.moveForward != 0) {
                 onGround = true;
             }
             this.move(MovementType.SELF, this.getVelocity());
             onGround = ((preMotion.getY()) == 0.0) ? onGroundOld : onGround;
-            if (this.horizontalCollision && !this.world.isClient && SimplePlanesMod.CONFIG.getConfig().PLANE_CRASH && groundTicks <= 0) {
-                double speed_after = Math.sqrt(squaredHorizontalLength(this.getVelocity()));
+            if (this.horizontalCollision && !this.world.isClient && SimplePlanesMod.CONFIG.getConfig().PLANE_CRASH && groundTicks <= 10) {
+                double speed_after = getVelocity().length();
                 double speed_diff = speed_before - speed_after;
                 float f2 = (float) (speed_diff * 10.0D - 5.0D);
                 if (f2 > 5.0F) {
@@ -988,6 +989,9 @@ public class PlaneEntity extends Entity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
+        if (source.isExplosive()) {
+            return false;
+        }
         if (source.isFire() && material.fireResistant) {
             return true;
         }
@@ -1008,7 +1012,7 @@ public class PlaneEntity extends Entity {
         if ((onGroundIn || isAboveWater()) && SimplePlanesMod.CONFIG.getConfig().PLANE_CRASH) {
             //        if (onGroundIn||isAboveWater()) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).getY();
-            if (y1 < 0.867) {
+            if (y1 < Math.cos(Math.toRadians(getLandingAngle()))) {
                 state.getBlock().onLandedUpon(this.world, pos, this, (float) (getVelocity().length() * 5));
             }
             this.fallDistance = 0.0F;
@@ -1017,24 +1021,24 @@ public class PlaneEntity extends Entity {
         //        this.lastYd = this.getMotion().y;
     }
 
+    protected int getLandingAngle() {
+        return 30;
+    }
+
     public boolean handleFallDamage(float distance, float damageMultiplier) {
         if (this.hasPassengers()) {
-            for (Entity entity : this.getPassengerList()) {
-                crash(distance * damageMultiplier);
-            }
+            crash(distance * damageMultiplier);
         }
         return false;
     }
 
-    @SuppressWarnings("deprecation")
-    private void crash(float damage) {
+    public void crash(float damage) {
         if (!this.world.isClient && !this.removed) {
             for (Entity entity : getPassengerList()) {
-                this.damage(new PlaneCrashDamageSource(this), damage + 2);
-
                 float damage_mod = Math.min(1, 1 - ((float) getHealth() / getMaxHealth()));
                 entity.damage(new PlaneCrashDamageSource(this), damage * damage_mod);
             }
+            this.damage(new PlaneCrashDamageSource(this), damage + 2);
         }
     }
 
@@ -1301,6 +1305,10 @@ public class PlaneEntity extends Entity {
 
     public boolean hasChest() {
         return this.upgrades.containsKey(SimplePlanesUpgrades.CHEST.getRegistryName());
+    }
+
+    public double getCameraDistanceMultiplayer() {
+        return 1;
     }
 
 

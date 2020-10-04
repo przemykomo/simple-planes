@@ -84,6 +84,11 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     }
 
     @Override
+    public double getCameraDistanceMultiplayer() {
+        return 2;
+    }
+
+    @Override
     protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
         motionVars.max_push_speed *= 0.8;
@@ -120,6 +125,11 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     @Override
     public double getMountedHeightOffset() {
         return 0.4;
+    }
+
+    @Override
+    protected int getLandingAngle() {
+        return 20;
     }
 
     @Override

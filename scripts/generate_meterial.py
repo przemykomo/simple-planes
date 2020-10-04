@@ -6,6 +6,8 @@ from os.path import isfile, join
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from color_transfer import color_transfer
+from shutil import copyfile
 
 folder1 = r"../src/main/resources\data\simpleplanes\recipes"
 # folder1 = r"../src/main/resources"
@@ -14,8 +16,11 @@ base = "oak"
 mat = "birch"
 mod = "byg"
 mod_short = "byg_"
-from color_transfer import color_transfer
-from shutil import copyfile
+mod_dict = {"bop": "biomesoplenty",
+            "": "minecraft",
+            "byg": "byg",
+            "ft": "fruittrees"}
+
 
 
 def get_rmp():
@@ -184,33 +189,35 @@ def im_color(mat):
     # plt.show()
 
     im1 = cv2.cvtColor(im1, cv2.COLOR_BGRA2BGR)
-    im2 = cv2.imread(f"item\\{mat}_large_plane.png")
+    im2 = cv2.imread(f"item\\{mod_short}{mat}_large_plane.png")
     im2 = cv2.cvtColor(im2, cv2.COLOR_BGRA2BGR)
 
     eq1 = ~np.all(im1 == im2, axis=2)
 
-    src = cv2.imread("mega\\bop_dead_mega_plane.png", cv2.IMREAD_UNCHANGED)
-    im_p1 = cv2.cvtColor(src, cv2.COLOR_BGRA2BGR)
-    im_p2 = cv2.cvtColor(cv2.imread("mega\\oak_mega_plane.png"), cv2.COLOR_BGRA2BGR)
+    im_p1 = cv2.imread("mega\\bop_dead_mega_plane.png", cv2.IMREAD_UNCHANGED)
+    src = im_p1
+    im_p1 = cv2.cvtColor(im_p1, cv2.COLOR_BGRA2BGR)
+    im_p2 = cv2.imread("mega\\oak_mega_plane.png", cv2.IMREAD_UNCHANGED)
+    src = im_p2
+    im_p2 = cv2.cvtColor(im_p2, cv2.COLOR_BGRA2BGR)
     eq2 = ~np.all(im_p1 == im_p2, axis=2)
 
     # im1[eq] = 0
     # im2[eq] = 0
-    plt.imshow(eq2.astype(int))
+    # plt.imshow(eq2.astype(int))
     # plt.title("eq2")
     # plt.show()
 
     # plt.imshow(cv2.cvtColor(im2, cv2.COLOR_BGRA2RGB))
     # plt.title(f"{mat}")
     # plt.show()
-    im3 = color_transfer(im2, im_p2, eq1, eq2)
+    im3 = color_transfer(im2, im_p1, eq1, eq2)
     # plt.imshow(cv2.cvtColor(im3, cv2.COLOR_BGRA2RGB))
     # plt.title("transfer")
     # plt.show()
     # plt.imshow(cv2.cvtColor(im_p1, cv2.COLOR_BGRA2RGB))
     # plt.title("oak plane")
     # plt.show()
-
     src[..., :-1] = im3
     src[src[..., -1] < 100] = 0
     plt.imshow(cv2.cvtColor(src, cv2.COLOR_BGRA2RGB))
@@ -219,16 +226,13 @@ def im_color(mat):
     cv2.imwrite(f"out/{mat}_mega_plane.png", src)
 
 
-mod_dict = {"bop": "biomesoplenty",
-            "": "minecraft",
-            "byg": "byg",
-            "ft": "fruittrees"}
 
 
 def recpie_list():
     for f1 in os.listdir("../src/main/resources/data/simpleplanes/recipes/"):
-        mat = f1[:-5]
-        print(f""""simpleplanes:upgrades/{mat}",""")
+        if f1.endswith("json"):
+            mat = f1[:-5]
+            print(f""""simpleplanes:{mat}",""")
 
 
 def recpie_to_fabric():
@@ -262,9 +266,10 @@ def recpie_to_fabric():
 
 
 def main():
-    recpie_to_fabric()
+    # recpie_to_fabric()
+    # recpie_list()
     # im_color()
-    return
+    # return
     global mat
     global mod_short
     global mod
@@ -293,7 +298,8 @@ def main():
             mod_short = ""
         # print(f""""mat:{mat}",mod:{mod}""")
 
-        Mat = " ".join(Mat)
+        # Mat = " ".join(Mat)
+        Mat = "_".join(Mat)
         mat = Mat.lower()
         # print(f"""
         # "item.simpleplanes.{mat}_plane": "{Mat} Plane",
@@ -305,11 +311,9 @@ def main():
         # if mat!= "holly":
         #     continue
         print(f"(\"{mat}\"),")
-        if (mat == "oak"):
-            continue
-        # im_color(mat.lower())
+        im_color(mat.lower())
 
-        # continue
+        continue
         rmp = get_rmp()
         gen(rmp, os.path.join(folder2, f1))
         # break

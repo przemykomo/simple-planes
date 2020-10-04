@@ -12,7 +12,8 @@ public class MixinHelper {
     public static double onCalcCameraDistanceOverwrite(Camera ac, double d) {
         Entity entity = ac.getFocusedEntity();
         if (entity.hasVehicle() && entity.getVehicle() instanceof PlaneEntity) {
-            return (d * 2);
+            PlaneEntity vehicle = (PlaneEntity) entity.getVehicle();
+            return (d * vehicle.getCameraDistanceMultiplayer());
         }
         return (d);
     }
