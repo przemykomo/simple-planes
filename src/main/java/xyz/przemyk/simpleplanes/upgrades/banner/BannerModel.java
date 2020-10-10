@@ -2,55 +2,128 @@ package xyz.przemyk.simpleplanes.upgrades.banner;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.DyeColor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBanner;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.BannerTextures;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.tileentity.TileEntityBannerRenderer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.tileentity.BannerTileEntity;
+import net.minecraft.tileentity.TileEntityBanner;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
+import org.lwjgl.util.vector.Vector3f;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-public class BannerModel {
-    private static final BannerTileEntity BANNER_TE = new BannerTileEntity();
+import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesX;
+import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesY;
 
-    public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, ItemStack banner,
-                                    int packedLight, ModelRenderer modelRenderer) {
+public class BannerModel {
+    private static final TileEntityBanner BANNER_TE = new TileEntityBanner();
+    private static final ModelBanner bannerModel = new ModelBanner();
+
+    public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks,  ItemStack banner) {
         //		if(true)return;
         PlaneEntity planeEntity = bannerUpgrade.getPlaneEntity();
         if (!banner.isEmpty()) {
-            matrixStackIn.push();
-            matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90));
-            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
-            matrixStackIn.translate(0.7, 2.35, 0.05);
+            GlStateManager.pushMatrix();
+            GlStateManager.rotate(rotationDegreesX(90));
+            GlStateManager.rotate(rotationDegreesY(90));
+            GlStateManager.translate(0.7, 2.35, 0.05);
             if (planeEntity.isLarge()) {
-                matrixStackIn.translate(0, 1.1, 0);
+                GlStateManager.translate(0, 1.1, 0);
             }
-            matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-            final BannerItem item = (BannerItem) banner.getItem();
-            BANNER_TE.loadFromItemStack(banner, item.getColor());
+            GlStateManager.scale(0.5f, 0.5f, 0.5f);
+            final ItemBanner item = (ItemBanner) banner.getItem();
+            BANNER_TE.setItemValues(banner, true);
             final float f2 = partialTicks + planeEntity.ticksExisted;
             float r = (0.05F * MathHelper.cos(f2 / 5)) * (float) 180;
             r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.prevRotationYaw, planeEntity.rotationYaw);
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
-            matrixStackIn.rotate(Vector3f.XP.rotationDegrees(r));
-            List<Pair<BannerPattern, DyeColor>> list = BANNER_TE.getPatternList();
-            BannerTileEntityRenderer
-                .func_230180_a_(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, modelRenderer, ModelBakery.LOCATION_BANNER_BASE, true,
-                    list);
+            GlStateManager.rotate(rotationDegreesX(r));
+            render(BANNER_TE,0,0,0,partialTicks,0);
 
-            matrixStackIn.pop();
+            GlStateManager.popMatrix();
 
         }
     }
+    public static void render(TileEntityBanner te, double x, double y, double z, float partialTicks, float alpha)
+    {
+        boolean flag = te.getWorld() != null;
+        boolean flag1 = !flag || te.getBlockType() == Blocks.STANDING_BANNER;
+        int i = flag ? te.getBlockMetadata() : 0;
+        long j = flag ? te.getWorld().getTotalWorldTime() : 0L;
+        GlStateManager.pushMatrix();
+        float f = 0.6666667F;
+
+        if (flag1)
+        {
+            GlStateManager.translate((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F);
+            float f1 = (float)(i * 360) / 16.0F;
+            GlStateManager.rotate(-f1, 0.0F, 1.0F, 0.0F);
+            bannerModel.bannerStand.showModel = true;
+        }
+        else
+        {
+            float f2 = 0.0F;
+
+            if (i == 2)
+            {
+                f2 = 180.0F;
+            }
+
+            if (i == 4)
+            {
+                f2 = 90.0F;
+            }
+
+            if (i == 5)
+            {
+                f2 = -90.0F;
+            }
+
+            GlStateManager.translate((float)x + 0.5F, (float)y - 0.16666667F, (float)z + 0.5F);
+            GlStateManager.rotate(-f2, 0.0F, 1.0F, 0.0F);
+            GlStateManager.translate(0.0F, -0.3125F, -0.4375F);
+            bannerModel.bannerStand.showModel = false;
+        }
+
+        BlockPos blockpos = te.getPos();
+        float f3 = (float)(blockpos.getX() * 7 + blockpos.getY() * 9 + blockpos.getZ() * 13) + (float)j + partialTicks;
+        bannerModel.bannerSlate.rotateAngleX = (-0.0125F + 0.01F * MathHelper.cos(f3 * (float)Math.PI * 0.02F)) * (float)Math.PI;
+        GlStateManager.enableRescaleNormal();
+        ResourceLocation resourcelocation = getBannerResourceLocation(te);
+
+        if (resourcelocation != null)
+        {
+
+            TextureManager texturemanager= Minecraft.getMinecraft().renderEngine;
+            if (texturemanager != null)
+            {
+                texturemanager.bindTexture(resourcelocation);
+            }
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(0.6666667F, -0.6666667F, -0.6666667F);
+            bannerModel.renderBanner();
+            GlStateManager.popMatrix();
+        }
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
+        GlStateManager.popMatrix();
+    }
+    @Nullable
+    private static ResourceLocation getBannerResourceLocation(TileEntityBanner bannerObj)
+    {
+        return BannerTextures.BANNER_DESIGNS.getResourceLocation(bannerObj.getPatternResourceLocation(), bannerObj.getPatternList(), bannerObj.getColorList());
+    }
+
 }

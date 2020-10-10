@@ -1,0 +1,16 @@
+[
+{
+  "modid": "simpleplanes",
+  "name": "simpleplanes",
+  "description": "Adds flying planes",
+  "version": "1.12.2-3.0.1.0",
+  "mcversion": "1.12.2",
+  "url": "https://przemyk.xyz/mods/simple-planes/index.html",
+  "updateUrl": "",
+  "authorList": ["adoxentor","przemyk"],
+  "credits": "",
+  "logoFile": "assets/simpleplanes/logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]

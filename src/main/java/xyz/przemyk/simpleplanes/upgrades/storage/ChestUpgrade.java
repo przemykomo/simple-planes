@@ -1,81 +1,63 @@
 package xyz.przemyk.simpleplanes.upgrades.storage;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.IInventoryChangedListener;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.ChestContainer;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IInteractionObject;
+import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.render.BackSeatBlockModel;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import javax.annotation.Nullable;
 
-public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, INamedContainerProvider {
-    ChestTileEntity tileEntity;
+public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, IInteractionObject {
+    TileEntityChest tileEntity;
+    public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/storage.png");
 
     public IInventory inventory;
-    public float lidAngle;
     private float partialticks = 0;
     private boolean open = false;
     private int size = 1;
 
     public ChestUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.CHEST.get(), planeEntity);
+        super(SimplePlanesUpgrades.CHEST, planeEntity);
         initChest();
-        lidAngle = 0f;
     }
 
     protected void initChest() {
         IInventory inventory = this.inventory;
-        this.inventory = new Inventory(size * 9) {
+        this.inventory = new InventoryBasic("chest", false, size * 9) {
             @Override
-            public void openInventory(PlayerEntity player) {
+            public void openInventory(EntityPlayer player) {
                 ChestUpgrade.this.openInventory(player);
-                PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), true);
+//                PlaneNetworking.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerEntityPlayer) player), true);
             }
 
             @Override
-            public void closeInventory(PlayerEntity player) {
+            public void closeInventory(EntityPlayer player) {
                 ChestUpgrade.this.closeInventory(player);
-                PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), false);
+//                PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerEntityPlayer) player), false);
             }
         };
-        tileEntity = new ChestTileEntity() {
-            @Override
-            public float getLidAngle(float partialTicks) {
-                return ChestUpgrade.this.lidAngle;
-//                return super.getLidAngle(ChestUpgrade.this.partialticks);
-            }
+        tileEntity = new TileEntityChest() {
 
-            @Override
-            public BlockState getBlockState() {
-                return Blocks.CHEST.getDefaultState();
-            }
+
+//            @Override
+//            public BlockState getBlockState() {
+//                return Blocks.CHEST.getDefaultState();
+//            }
         };
 //        this.inventory = tileEntity;
         if (inventory != null) {
@@ -107,42 +89,44 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
 
     @Override
     public boolean tick() {
-        if (open && this.lidAngle == 0.0F) {
+        tileEntity.prevLidAngle = tileEntity.lidAngle;
+        if (open && tileEntity.lidAngle == 0.0F) {
             planeEntity.playSound(SoundEvents.BLOCK_CHEST_OPEN, 0.5F, planeEntity.world.rand.nextFloat() * 0.1F + 0.9F);
         }
 
-        if (!open && this.lidAngle > 0.0F || open && this.lidAngle < 1.0F) {
-            float prevLidAngle = this.lidAngle;
+        if (!open && tileEntity.lidAngle > 0.0F || open && tileEntity.lidAngle < 1.0F) {
+            float prevLidAngle = tileEntity.lidAngle;
             if (open) {
-                this.lidAngle += 0.01F;
+                tileEntity.lidAngle += 0.01F;
             } else {
-                this.lidAngle -= 0.01F;
+                tileEntity.lidAngle -= 0.01F;
             }
 
-            if (this.lidAngle > 1.0F) {
-                this.lidAngle = 1.0F;
+            if (tileEntity.lidAngle > 1.0F) {
+                tileEntity.lidAngle = 1.0F;
             }
 
-            if (this.lidAngle < 0.5F && prevLidAngle >= 0.5F) {
+            if (tileEntity.lidAngle < 0.5F && prevLidAngle >= 0.5F) {
                 planeEntity.playSound(SoundEvents.BLOCK_CHEST_CLOSE, 0.5F, planeEntity.world.rand.nextFloat() * 0.1F + 0.9F);
             }
 
-            if (this.lidAngle < 0.0F) {
-                this.lidAngle = 0.0F;
+            if (tileEntity.lidAngle < 0.0F) {
+                tileEntity.lidAngle = 0.0F;
             }
         }
 
         return super.tick();
     }
 
-    public void openInventory(PlayerEntity player) {
+
+    public void openInventory(EntityPlayer player) {
 //        tileEntity.openInventory(player);
 //        inventory.openInventory(player);
         this.open = true;
         planeEntity.upgradeChanged();
     }
 
-    public void closeInventory(PlayerEntity player) {
+    public void closeInventory(EntityPlayer player) {
 //        tileEntity.closeInventory(player);
 //        inventory.openInventory(player);
 
@@ -151,108 +135,98 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        ListNBT listnbt = nbt.getList("Items", 10);
-        size = nbt.getInt("size");
+    public void deserializeNBT(NBTTagCompound nbt) {
+        NBTTagList listnbt = nbt.getTagList("Items", 10);
+        size = nbt.getInteger("size");
         this.initChest();
 
-        for (int i = 0; i < listnbt.size(); ++i) {
-            CompoundNBT compoundnbt = listnbt.getCompound(i);
+        for (int i = 0; i < listnbt.tagCount(); ++i) {
+            NBTTagCompound compoundnbt = listnbt.getCompoundTagAt(i);
             int j = compoundnbt.getByte("Slot") & 255;
             if (j < this.inventory.getSizeInventory()) {
-                this.inventory.setInventorySlotContents(j, ItemStack.read(compoundnbt));
+                this.inventory.setInventorySlotContents(j, new ItemStack(compoundnbt));
             }
         }
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compound = new CompoundNBT();
-        compound.putInt("size", size);
-        ListNBT listnbt = new ListNBT();
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("size", size);
+        NBTTagList listnbt = new NBTTagList();
         for (int i = 0; i < this.inventory.getSizeInventory(); ++i) {
             ItemStack itemstack = this.inventory.getStackInSlot(i);
             if (!itemstack.isEmpty()) {
-                CompoundNBT compoundnbt = new CompoundNBT();
-                compoundnbt.putByte("Slot", (byte) i);
-                itemstack.write(compoundnbt);
-                listnbt.add(compoundnbt);
+                NBTTagCompound compoundnbt = new NBTTagCompound();
+                compoundnbt.setByte("Slot", (byte) i);
+                itemstack.writeToNBT(compoundnbt);
+                listnbt.appendTag(compoundnbt);
             }
         }
-        compound.put("Items", listnbt);
+        compound.setTag("Items", listnbt);
         return compound;
     }
 
     @Override
-    public CompoundNBT serializeNBTData() {
-        CompoundNBT compound = super.serializeNBTData();
-        compound.putBoolean("open", open);
-        compound.putInt("size", size);
+    public NBTTagCompound serializeNBTData() {
+        NBTTagCompound compound = super.serializeNBTData();
+        compound.setBoolean("open", open);
+        compound.setInteger("size", size);
 
         return compound;
     }
 
     @Override
-    public void deserializeNBTData(CompoundNBT nbt) {
+    public void deserializeNBTData(NBTTagCompound nbt) {
         if (planeEntity.world.isRemote) {
             open = nbt.getBoolean("open");
         } else {
             open = false;
         }
-        size = nbt.getInt("size");
+        size = nbt.getInteger("size");
         super.deserializeNBTData(nbt);
     }
 
 
+//    @Override
+//    public void render(float partialticks, float scale) {
+//        this.partialticks = partialticks;
+//        tileEntity.setWorld(null);
+////        tileEntity.setWorldAndPos(null, BlockPos.ZERO);
+//        BackSeatBlockModel.renderTileBlock(planeEntity, partialticks, tileEntity);
+//    }
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        this.partialticks = partialticks;
-        tileEntity.setWorldAndPos(null, BlockPos.ZERO);
-        BackSeatBlockModel.renderTileBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, tileEntity);
+    public void render(float partialticks, float scale) {
+        BackSeatBlockModel.renderBlock(planeEntity, partialticks, scale);
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent(SimplePlanesMod.MODID + ":chest");
+    public ResourceLocation getTexture() {
+        return TEXTURE;
     }
 
-    @Nullable
+//    @Override
+//    public ITextComponent getDisplayName() {
+//        return new TranslationTextComponent(SimplePlanesMod.MODID + ":chest");
+//    }
+    public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
+    {
+//        this.fillWithLoot(playerIn);
+        return new ContainerChest(playerInventory, inventory, playerIn);
+    }
+
     @Override
-    public Container createMenu(int id, PlayerInventory playerInventoryIn, PlayerEntity playerEntity) {
-        ContainerType<?> type;
-        switch (size) {
-            case 1:
-                type = ContainerType.GENERIC_9X1;
-                break;
-            case 2:
-                type = ContainerType.GENERIC_9X2;
-                break;
-            case 3:
-                type = ContainerType.GENERIC_9X3;
-                break;
-            case 4:
-                type = ContainerType.GENERIC_9X4;
-                break;
-            case 5:
-                type = ContainerType.GENERIC_9X5;
-                break;
-            case 6:
-                type = ContainerType.GENERIC_9X6;
-                break;
-            default:
-                type = ContainerType.GENERIC_3X3;
-                break;
-        }
-        return new ChestContainer(type, id, playerInventoryIn, inventory, size);
+    public String getGuiID() {
+        return "simpleplanes:chest_upgrade";
     }
 
 
     @Override
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        if (event.getItemStack().getItem() == Items.CHEST && size < 6 && !this.open && !planeEntity.isFull()) {
+    public boolean onItemRightClick(EntityPlayer player, World world, EnumHand hand, ItemStack itemStack) {
+        if (getType().IsThisItem(itemStack) && size < 6 && !this.open && !planeEntity.isFull()) {
             size++;
             initChest();
-            event.getItemStack().shrink(1);
+            itemStack.shrink(1);
             planeEntity.upgradeChanged();
         }
         return false;
@@ -276,5 +250,20 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
     @Override
     public int getSeats() {
         return size;
+    }
+
+    @Override
+    public String getName() {
+        return "plane chest";
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TextComponentTranslation("plane chest");
     }
 }

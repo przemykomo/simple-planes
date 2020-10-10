@@ -1,16 +1,13 @@
 package xyz.przemyk.simpleplanes;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.PickaxeItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashSet;
@@ -21,7 +18,7 @@ public class PlanesEvents {
 
     @SubscribeEvent
     public static void interact(PlayerInteractEvent.RightClickItem event) {
-        PlayerEntity player = event.getPlayer();
+        EntityPlayer player = event.getEntityPlayer();
         Entity entity = player.getLowestRidingEntity();
         if (entity instanceof PlaneEntity) {
             ItemStack itemStack = player.getHeldItem(event.getHand());
@@ -30,33 +27,22 @@ public class PlanesEvents {
                 return;
             }
             PlaneEntity planeEntity = (PlaneEntity) entity;
-
-            HashSet<Upgrade> upgradesToRemove = new HashSet<>();
-            for (Upgrade upgrade : planeEntity.upgrades.values()) {
-                if (upgrade.onItemRightClick(event)) {
-                    upgradesToRemove.add(upgrade);
-                }
-            }
-
-            for (Upgrade upgrade : upgradesToRemove) {
-                planeEntity.upgrades.remove(upgrade.getType().getRegistryName());
-            }
+            planeEntity.rightClickUpgrades(player,event.getHand(),itemStack);
 
             // some upgrade may shrink itemStack so we need to check if it's empty
             if (itemStack.isEmpty()) {
                 return;
             }
-            if (itemStack.getItem() instanceof PickaxeItem) {
-                if (!event.getWorld().isRemote() && planeEntity.getPosY() > 110 && planeEntity.getPosY() < 160 && event.getWorld().getDimensionType().hasSkyLight()) {
-                    itemStack.damageItem(1, player, (playerEntity) -> {
-                        playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND);
-                    });
-                    if (event.getWorld().rand.nextInt(50) == 0) {
-                        player.giveExperiencePoints(100);
-                        player.addItemStackToInventory(SimplePlanesItems.CLOUD.get().getDefaultInstance());
-                    }
-                }
-            }
+//            if (itemStack.getItem() instanceof ItemPickaxe) {
+//                //todo: only if has clouds
+//                if (!event.getWorld().isRemote && planeEntity.posY > 110 && planeEntity.posY < 160) {
+//                    itemStack.damageItem(1,player);
+//                    if (event.getWorld().rand.nextInt(50) == 0) {
+//                        player.addExperience(100);
+//                        player.addItemStackToInventory(SimplePlanesItems.CLOUD.getDefaultInstance());
+//                    }
+//                }
+//            }
 
             planeEntity.tryToAddUpgrade(player, itemStack);
         }

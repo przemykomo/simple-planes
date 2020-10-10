@@ -2,13 +2,12 @@ package xyz.przemyk.simpleplanes.upgrades.rocket;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class RocketModel extends EntityModel<PlaneEntity> {
+public class RocketModel extends ModelBase {
     public static final RocketModel INSTANCE = new RocketModel();
 
     private final ModelRenderer Body;
@@ -18,24 +17,19 @@ public class RocketModel extends EntityModel<PlaneEntity> {
         textureHeight = 32;
 
         Body = new ModelRenderer(this);
-        Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-        setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
+        Body.setRotationPoint(0, 17, 0);
+        setRotationAngle(Body, 0, 0, 0);
 
         ModelRenderer booster = new ModelRenderer(this);
-        booster.setRotationPoint(0.0F, 0.0F, 0.0F);
+        booster.setRotationPoint(0, 0, 0);
         Body.addChild(booster);
-        booster.setTextureOffset(0, 0).addBox(8.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
-        booster.setTextureOffset(0, 13).addBox(-12.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
+        booster.setTextureOffset(0, 0).addBox(8, -5, 9, 4, 4, 9, 0);
+        booster.setTextureOffset(0, 13).addBox(-12, -5, 9, 4, 4, 9, 0);
     }
 
     @Override
-    public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        //previously the render function, render code was moved to a method below
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        Body.render(matrixStack, buffer, packedLight, packedOverlay);
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        Body.render(scale);
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

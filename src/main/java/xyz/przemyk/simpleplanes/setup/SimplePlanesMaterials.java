@@ -1,15 +1,13 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.upgrades.paint.PaintUpgrade;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,10 +15,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID)
 public class SimplePlanesMaterials {
 
-    public static Set<Entry<RegistryKey<PlaneMaterial>, PlaneMaterial>> getMaterials() {
+    public static Set<Entry<ResourceLocation, PlaneMaterial>> getMaterials() {
         return SimplePlanesRegistries.PLANE_MATERIALS.getEntries();
     }
 
@@ -83,7 +81,7 @@ public class SimplePlanesMaterials {
         ("bop_hellbark")
     };
 
-    @ObjectHolder(SimplePlanesMod.MODID + ":oak")
+    @GameRegistry.ObjectHolder(SimplePlanesMod.MODID + ":oak")
     public static final PlaneMaterial OAK = null;
     //        public static final RegistryObject<PlaneMaterial> OAK =
     //                UPGRADE_TYPES.register("oak", () ->
@@ -96,16 +94,16 @@ public class SimplePlanesMaterials {
             MATERIALS) {
             register(event, fire, name);
         }
-        PaintUpgrade.init();
-        for (String name :
-            PaintUpgrade.PAINTS.values()) {
-            register(event, fire, name);
-        }
+//        PaintUpgrade.init();
+//        for (String name :
+//            PaintUpgrade.PAINTS.values()) {
+//            register(event, fire, name);
+//        }
         //        event.getRegistry().registerAll(materials);
     }
 
     public static void register(Register<PlaneMaterial> event, List<String> fire, String name) {
-        event.getRegistry().register(new PlaneMaterial(name, fire.contains(name)).setRegistryName(SimplePlanesMod.MODID, name));
+        event.getRegistry().register(new PlaneMaterial(name, fire.contains(name)).setRegistryName(new ResourceLocation(SimplePlanesMod.MODID, name)));
     }
 
     public static PlaneMaterial getMaterial(String name) {

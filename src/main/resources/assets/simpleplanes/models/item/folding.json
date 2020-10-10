@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "minecraft:item/elytra"
+        "layer0": "minecraft:items/elytra"
     }
 }

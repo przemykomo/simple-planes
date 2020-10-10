@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.energy;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -21,7 +21,7 @@ public abstract class AbstractEngine extends Upgrade {
     }
 
     @Override
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    public void onApply(ItemStack itemStack, EntityPlayer playerEntity) {
         for (Map.Entry<ResourceLocation, Upgrade> entry : planeEntity.upgrades.entrySet()) {
             ResourceLocation resourceLocation = entry.getKey();
             Upgrade upgrade = entry.getValue();

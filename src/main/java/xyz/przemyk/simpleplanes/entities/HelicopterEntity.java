@@ -2,16 +2,15 @@ package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.lwjgl.util.vector.Quaternion;
+import org.lwjgl.util.vector.Vector3f;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -19,21 +18,21 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
-        super(entityTypeIn, worldIn);
+    public HelicopterEntity(World worldIn) {
+        super(worldIn);
     }
 
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
-        super(entityTypeIn, worldIn, material);
+    public HelicopterEntity(World worldIn, PlaneMaterial material) {
+        super(worldIn, material);
     }
 
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
-        super(entityTypeIn, worldIn, material, x, y, z);
+    public HelicopterEntity(World worldIn, PlaneMaterial material, double x, double y, double z) {
+        super(worldIn, material, x, y, z);
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void onUpdate() {
+        super.onUpdate();
     }
 
     @Override
@@ -67,8 +66,8 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
-        if (world.isRemote() && Minecraft.getInstance().player == passenger) {
-            (Minecraft.getInstance()).ingameGUI.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
+        if (world.isRemote && Minecraft.getMinecraft().player == passenger) {
+            (Minecraft.getMinecraft()).ingameGUI.setOverlayMessage(new TextComponentString("sprint to take off"), false);
         }
 
     }
@@ -91,7 +90,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         } else {
             rotationPitch = MathUtil.lerpAngle(0.2f, rotationPitch, 0);
             double drag = 0.999;
-            setMotion(getMotion().mul(drag, 1, drag));
+            setMotion(getMotion().scale(drag));
 
         }
     }
@@ -114,7 +113,7 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
+    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vec3d motion) {
 
         //        float yaw = MathUtil.getYaw(motion);
         //        double speed = getMotion().length();
@@ -137,7 +136,7 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected boolean canFitPassenger(Entity passenger) {
-        return super.canFitPassenger(passenger) && passenger instanceof PlayerEntity;
+        return super.canFitPassenger(passenger) && passenger instanceof EntityPlayer;
     }
 
     @Override

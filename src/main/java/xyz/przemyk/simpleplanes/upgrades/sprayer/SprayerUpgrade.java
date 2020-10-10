@@ -1,31 +1,27 @@
 package xyz.przemyk.simpleplanes.upgrades.sprayer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CampfireBlock;
 import net.minecraft.block.IGrowable;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -39,24 +35,25 @@ public class SprayerUpgrade extends Upgrade {
     public static final AxisAlignedBB AFFECT_ENTITIES = new AxisAlignedBB(-3, -3, -3, 3, 0, 3);
 
     public SprayerUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SPRAYER.get(), planeEntity);
+        super(SimplePlanesUpgrades.SPRAYER, planeEntity);
     }
 
     private int fluid = 0;
-    private Effect effect = null;
+    private Potion effect = null;
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compoundNBT = new CompoundNBT();
-        compoundNBT.putInt("fluid", fluid);
-        compoundNBT.putString("effect", effect == null ? "empty" : effect.getRegistryName().toString());
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound compoundNBT = new NBTTagCompound();
+        compoundNBT.setInteger("fluid", fluid);
+        String value = (effect == null) ? "empty" : effect.getRegistryName().toString();
+        compoundNBT.setString("effect", value);
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compoundNBT) {
-        fluid = compoundNBT.getInt("fluid");
+    public void deserializeNBT(NBTTagCompound compoundNBT) {
+        fluid = compoundNBT.getInteger("fluid");
         String effectName = compoundNBT.getString("effect");
         if (effectName.equals("empty")) {
             effect = null;
@@ -66,12 +63,12 @@ public class SprayerUpgrade extends Upgrade {
     }
 
     @Override
-    public CompoundNBT serializeNBTData() {
+    public NBTTagCompound serializeNBTData() {
         return serializeNBT();
     }
 
     @Override
-    public void deserializeNBTData(CompoundNBT nbt) {
+    public void deserializeNBTData(NBTTagCompound nbt) {
         deserializeNBT(nbt);
     }
 
@@ -84,64 +81,65 @@ public class SprayerUpgrade extends Upgrade {
                 int i2 = l1 >> 16 & 255;
                 int j2 = l1 >> 8 & 255;
                 int j1 = l1 & 255;
-                planeEntity.world.addOptionalParticle(ParticleTypes.ENTITY_EFFECT,
+                planeEntity.world.spawnParticle(EnumParticleTypes.SPELL,
                     planeEntity.getPosX() - MathHelper.sin((planeEntity.rotationYaw - 50) * ((float) Math.PI / 180F)),
                     planeEntity.getPosY() + 0.5,
                     planeEntity.getPosZ() + MathHelper.cos((planeEntity.rotationYaw - 50) * ((float) Math.PI / 180F)),
                     ((float) i2 / 255.0F), ((float) j2 / 255.0F), (float) j1 / 255.0F);
-                planeEntity.world.addOptionalParticle(ParticleTypes.ENTITY_EFFECT,
+                planeEntity.world.spawnParticle(EnumParticleTypes.SPELL,
                     planeEntity.getPosX() - MathHelper.sin((planeEntity.rotationYaw + 50) * ((float) Math.PI / 180F)),
                     planeEntity.getPosY() + 0.5,
                     planeEntity.getPosZ() + MathHelper.cos((planeEntity.rotationYaw + 50) * ((float) Math.PI / 180F)),
                     ((float) i2 / 255.0F), ((float) j2 / 255.0F), (float) j1 / 255.0F);
             }
 
-            if (!planeEntity.world.isRemote()) {
-                BlockPos.Mutable blockPos = new BlockPos.Mutable();
+            if (!planeEntity.world.isRemote) {
+                BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
                 double range = fluid % 4;
                 fire_fight(blockPos, range);
 
                 if (planeEntity.ticksExisted % 5 == 0) {
-                    ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.CLOUD,
+                    (planeEntity.world).spawnParticle(EnumParticleTypes.CLOUD,
                         planeEntity.getPosX() - MathHelper.sin((planeEntity.rotationYaw - 50) * ((float) Math.PI / 180F)),
                         planeEntity.getPosY() + 0.5,
                         planeEntity.getPosZ() + MathHelper.cos((planeEntity.rotationYaw - 50) * ((float) Math.PI / 180F)),
-                        0, 0, 0, 0, 0.0);
+                        0, 0, 0.0f);
 
-                    ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.CLOUD,
+                    (planeEntity.world).spawnParticle(EnumParticleTypes.CLOUD,
                         planeEntity.getPosX() - MathHelper.sin((planeEntity.rotationYaw + 50) * ((float) Math.PI / 180F)),
                         planeEntity.getPosY() + 0.5,
                         planeEntity.getPosZ() + MathHelper.cos((planeEntity.rotationYaw + 50) * ((float) Math.PI / 180F)),
-                        0, 0, 0, 0, 0.0);
+                        0, 0, 0.0f);
 
-                    ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.CLOUD,
+                    (planeEntity.world).spawnParticle(EnumParticleTypes.CLOUD,
                         planeEntity.getPosX() - 2 * MathHelper.sin((planeEntity.rotationYaw - 80) * ((float) Math.PI / 180F)),
                         planeEntity.getPosY() + 0.5,
                         planeEntity.getPosZ() + 2 * MathHelper.cos((planeEntity.rotationYaw - 80) * ((float) Math.PI / 180F)),
-                        0, 0, 0, 0, 0.0);
+                        0, 0, 0.0f);
 
-                    ((ServerWorld) planeEntity.world).spawnParticle(ParticleTypes.CLOUD,
+                    (planeEntity.world).spawnParticle(EnumParticleTypes.CLOUD,
                         planeEntity.getPosX() - 2 * MathHelper.sin((planeEntity.rotationYaw + 80) * ((float) Math.PI / 180F)),
                         planeEntity.getPosY() + 0.5,
                         planeEntity.getPosZ() + 2 * MathHelper.cos((planeEntity.rotationYaw + 80) * ((float) Math.PI / 180F)),
-                        0, 0, 0, 0, 0.0);
+                        0, 0, 0.0f);
 
-                    blockPos.setPos(planeEntity.getPosXRandom(3.0), Math.min(255, planeEntity.getPosY() + 2), planeEntity.getPosZRandom(3.0));
+                    blockPos.setPos(planeEntity.getPosX(), Math.min(255, planeEntity.getPosY() + 2), planeEntity.getPosZ());
+                    blockPos.add(Math.random() * 3, 0, Math.random() * 3);
                     for (int j = 0; j < 6; ++j) {
-                        BlockState blockState = planeEntity.world.getBlockState(blockPos);
+                        IBlockState blockState = planeEntity.world.getBlockState(blockPos);
                         extinguishFires(blockPos);
                         Block block = blockState.getBlock();
                         if (block instanceof IGrowable) {
-                            ((IGrowable) block).grow((ServerWorld) planeEntity.world, planeEntity.world.rand, blockPos, blockState);
+                            ((IGrowable) block).grow(planeEntity.world, planeEntity.world.rand, blockPos, blockState);
                             break;
                         }
-                        blockPos.move(Direction.DOWN);
+                        blockPos.move(EnumFacing.DOWN);
                     }
 
                     if (effect != null) {
-                        for (LivingEntity entity : planeEntity.world
-                            .getEntitiesWithinAABB(LivingEntity.class, AFFECT_ENTITIES.offset(planeEntity.getPositionVec()))) {
-                            entity.addPotionEffect(new EffectInstance(effect, 100));
+                        for (EntityLiving entity : planeEntity.world
+                            .getEntitiesWithinAABB(EntityLiving.class, AFFECT_ENTITIES.offset(planeEntity.getPositionVector()))) {
+                            entity.addPotionEffect(new PotionEffect(effect, 100));
                         }
                     }
                 }
@@ -151,35 +149,35 @@ public class SprayerUpgrade extends Upgrade {
         return false;
     }
 
-    private void fire_fight(BlockPos.Mutable blockPos, double range) {
-        int i1 = this.effect == Effects.FIRE_RESISTANCE ? 10 : 3;
+    private void fire_fight(BlockPos.MutableBlockPos blockPos, double range) {
+        int i1 = this.effect == MobEffects.FIRE_RESISTANCE ? 10 : 3;
         for (int i = 0; i < i1; ++i) {
-            blockPos.setPos(planeEntity.getPosXRandom(range), Math.min(255, planeEntity.getPosY() + 2), planeEntity.getPosZRandom(range));
+            blockPos.setPos(planeEntity.getPosX(), Math.min(255, planeEntity.getPosY() + 2), planeEntity.getPosZ());
+            blockPos.add(Math.random() * 3, 0, Math.random() * 3);
             for (int j = 0; j < 6; ++j) {
-                BlockState blockState = planeEntity.world.getBlockState(blockPos);
+                IBlockState blockState = planeEntity.world.getBlockState(blockPos);
                 extinguishFires(blockPos);
-                if (blockState.isSolid()) {
+                if (!blockState.isTranslucent()) {
                     break;
                 }
-                blockPos.move(Direction.DOWN);
+                blockPos.move(EnumFacing.DOWN);
             }
         }
     }
 
     @Override
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
-        if (itemStack.getItem() == Items.POTION && fluid < 20) {
+    public boolean onItemRightClick(EntityPlayer player, World world, EnumHand hand, ItemStack itemStack) {
+        if (itemStack.getItem() == Items.POTIONITEM && fluid < 20) {
             planeEntity.upgradeChanged();
             fluid = 60;
-            List<EffectInstance> effectInstances = PotionUtils.getEffectsFromStack(itemStack);
+            List<PotionEffect> effectInstances = PotionUtils.getEffectsFromStack(itemStack);
             if (effectInstances.size() == 0) {
                 effect = null;
             } else {
                 effect = effectInstances.get(0).getPotion();
             }
-            if (!event.getPlayer().isCreative()) {
-                event.getPlayer().setHeldItem(event.getHand(), new ItemStack(Items.GLASS_BOTTLE));
+            if (!player.isCreative()) {
+                player.setHeldItem(hand, new ItemStack(Items.GLASS_BOTTLE));
             }
         }
 
@@ -187,25 +185,23 @@ public class SprayerUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(SprayerModel.INSTANCE.getRenderType(TEXTURE));
+    public void render(float partialticks, float scale) {
         if (!planeEntity.isLarge() || planeEntity instanceof HelicopterEntity) {
-            SprayerModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            SprayerModel.INSTANCE.render(planeEntity,1,1,1,1,1,scale);
         } else {
-            LargeSprayerModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            LargeSprayerModel.INSTANCE.render(planeEntity,1,1,1,1,1,scale);
         }
     }
 
     private void extinguishFires(BlockPos pos) {
-        BlockState blockstate = planeEntity.world.getBlockState(pos);
-        if (blockstate.isIn(BlockTags.FIRE)) {
-            planeEntity.world.removeBlock(pos, false);
-        } else if (CampfireBlock.isLit(blockstate)) {
-            planeEntity.world.playEvent((planeEntity.getPlayer()), 1009, pos, 0);
-            CampfireBlock.extinguish(planeEntity.world, pos, blockstate);
-            planeEntity.world.setBlockState(pos, blockstate.with(CampfireBlock.LIT, Boolean.FALSE));
+        IBlockState blockstate = planeEntity.world.getBlockState(pos);
+        if (blockstate.getBlock() == Blocks.FIRE) {
+            planeEntity.world.setBlockToAir(pos);
         }
-
     }
 
+    @Override
+    public ResourceLocation getTexture() {
+        return TEXTURE;
+    }
 }

@@ -1,15 +1,9 @@
 package xyz.przemyk.simpleplanes.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 
 public class MegaPlaneRenderer extends AbstractPlaneRenderer<MegaPlaneEntity> {
@@ -17,29 +11,27 @@ public class MegaPlaneRenderer extends AbstractPlaneRenderer<MegaPlaneEntity> {
     protected MegaPlaneModel planeModel = new MegaPlaneModel();
 
     @Override
-    protected void renderAdditional(MegaPlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+    protected void renderAdditional(MegaPlaneEntity planeEntity, float partialTicks) {
         MegaPlaneWindowsModel windowsModel = new MegaPlaneWindowsModel();
-        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(MegaPlaneWindowsModel.getTexture()));
-
-        windowsModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
-        windowsModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        windowsModel.render(planeEntity,0,0,0,0,0,0);
 
     }
 
-    public MegaPlaneRenderer(EntityRendererManager renderManager) {
+
+    public MegaPlaneRenderer(RenderManager renderManager) {
         super(renderManager);
         propellerModel = new MegaPlanePropellerModel();
         shadowSize = 1.0f;
     }
 
 //    @Override
-//    protected void renderEngine(LargePlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-//        matrixStackIn.translate(0, 0, 1);
-//        super.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+//    protected void renderEngine(LargePlaneEntity planeEntity, float partialTicks, MatrixStack GlStateManager, IRenderTypeBuffer bufferIn, int packedLightIn) {
+//        GlStateManager.translate(0, 0, 1);
+//        super.renderEngine(planeEntity, partialTicks, GlStateManager, bufferIn, packedLightIn);
 //    }
 
     @Override
-    protected EntityModel<MegaPlaneEntity> getModel() {
+    protected ModelBase getModel() {
         propellerModel = new MegaPlanePropellerModel();
 
         return new MegaPlaneModel();

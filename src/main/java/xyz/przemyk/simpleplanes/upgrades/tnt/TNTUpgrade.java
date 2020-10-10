@@ -1,13 +1,13 @@
 package xyz.przemyk.simpleplanes.upgrades.tnt;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.item.TNTEntity;
+import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.render.BackSeatBlockModel;
@@ -18,18 +18,20 @@ public class TNTUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/tnt.png");
 
     public TNTUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.TNT.get(), planeEntity);
+        super(SimplePlanesUpgrades.TNT, planeEntity);
     }
 
     @Override
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
+    public boolean onItemRightClick(EntityPlayer player, World world, EnumHand hand, ItemStack itemStack) {
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
-            TNTEntity tntEntity = new TNTEntity(planeEntity.world, planeEntity.getPosX() - 1.0, planeEntity.getPosY(), planeEntity.getPosZ(),
-                event.getPlayer());
-            tntEntity.setMotion(planeEntity.getMotion());
-            planeEntity.world.addEntity(tntEntity);
-            itemStack.damageItem(1, event.getPlayer(), playerEntity -> playerEntity.sendBreakAnimation(event.getHand()));
+            EntityTNTPrimed tntEntity = new EntityTNTPrimed(planeEntity.world, planeEntity.getPosX() - 1.0, planeEntity.getPosY(), planeEntity.getPosZ(),
+                player);
+            Vec3d motion = planeEntity.getMotion();
+            tntEntity.motionX = motion.x;
+            tntEntity.motionY = motion.y;
+            tntEntity.motionZ = motion.z;
+            planeEntity.world.spawnEntity(tntEntity);
+            itemStack.damageItem(1, player);
             return true;
         }
 
@@ -37,7 +39,12 @@ public class TNTUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        BackSeatBlockModel.renderBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, Blocks.TNT.getDefaultState());
+    public void render(float partialticks, float scale) {
+        BackSeatBlockModel.renderBlock(planeEntity, partialticks, scale);
+    }
+
+    @Override
+    public ResourceLocation getTexture() {
+        return TEXTURE;
     }
 }

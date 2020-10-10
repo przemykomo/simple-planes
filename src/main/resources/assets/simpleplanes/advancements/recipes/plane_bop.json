@@ -1,0 +1,64 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "simpleplanes:bop_cherry_helicopter",
+            "simpleplanes:bop_cherry_large_plane",
+            "simpleplanes:bop_cherry_mega_plane",
+            "simpleplanes:bop_cherry_plane",
+            "simpleplanes:bop_dead_helicopter",
+            "simpleplanes:bop_dead_large_plane",
+            "simpleplanes:bop_dead_mega_plane",
+            "simpleplanes:bop_dead_plane",
+            "simpleplanes:bop_fir_helicopter",
+            "simpleplanes:bop_fir_large_plane",
+            "simpleplanes:bop_fir_mega_plane",
+            "simpleplanes:bop_fir_plane",
+            "simpleplanes:bop_hellbark_helicopter",
+            "simpleplanes:bop_hellbark_large_plane",
+            "simpleplanes:bop_hellbark_mega_plane",
+            "simpleplanes:bop_hellbark_plane",
+            "simpleplanes:bop_jacaranda_helicopter",
+            "simpleplanes:bop_jacaranda_large_plane",
+            "simpleplanes:bop_jacaranda_mega_plane",
+            "simpleplanes:bop_jacaranda_plane",
+            "simpleplanes:bop_magic_helicopter",
+            "simpleplanes:bop_magic_large_plane",
+            "simpleplanes:bop_magic_mega_plane",
+            "simpleplanes:bop_magic_plane",
+            "simpleplanes:bop_mahogany_helicopter",
+            "simpleplanes:bop_mahogany_large_plane",
+            "simpleplanes:bop_mahogany_mega_plane",
+            "simpleplanes:bop_mahogany_plane",
+            "simpleplanes:bop_palm_helicopter",
+            "simpleplanes:bop_palm_large_plane",
+            "simpleplanes:bop_palm_mega_plane",
+            "simpleplanes:bop_palm_plane",
+            "simpleplanes:bop_redwood_helicopter",
+            "simpleplanes:bop_redwood_large_plane",
+            "simpleplanes:bop_redwood_mega_plane",
+            "simpleplanes:bop_redwood_plane",
+            "simpleplanes:bop_umbran_helicopter",
+            "simpleplanes:bop_umbran_large_plane",
+            "simpleplanes:bop_umbran_mega_plane",
+            "simpleplanes:bop_umbran_plane",
+            "simpleplanes:bop_willow_helicopter",
+            "simpleplanes:bop_willow_large_plane",
+            "simpleplanes:bop_willow_mega_plane",
+            "simpleplanes:bop_willow_plane",
+        ]
+    },
+    "criteria": {
+        "in_fire": {
+            "trigger": "minecraft:enter_block",
+            "conditions": {
+                "block": "minecraft:fire"
+            }
+        }
+    },
+    "requirements": [
+        [
+            "in_fire"
+        ]
+    ]
+}

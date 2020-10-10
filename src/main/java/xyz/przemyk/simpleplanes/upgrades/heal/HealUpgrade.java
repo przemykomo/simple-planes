@@ -1,10 +1,8 @@
 package xyz.przemyk.simpleplanes.upgrades.heal;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -13,22 +11,22 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 public class HealUpgrade extends Upgrade {
 
     public HealUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.HEAL.get(), planeEntity);
+        super(SimplePlanesUpgrades.HEAL, planeEntity);
     }
 
     private int cooldown = 10;
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compoundNBT = new CompoundNBT();
-        compoundNBT.putInt("cooldown", cooldown);
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound compoundNBT = new NBTTagCompound();
+        compoundNBT.setInteger("cooldown", cooldown);
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compoundNBT) {
-        cooldown = compoundNBT.getInt("cooldown");
+    public void deserializeNBT(NBTTagCompound compoundNBT) {
+        cooldown = compoundNBT.getInteger("cooldown");
     }
 
     @Override
@@ -42,7 +40,7 @@ public class HealUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
+    public void render(float partialticks, float scale) {
 
     }
 
@@ -52,7 +50,7 @@ public class HealUpgrade extends Upgrade {
     }
 
     @Override
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    public void onApply(ItemStack itemStack, EntityPlayer playerEntity) {
         int health = planeEntity.getHealth();
         int m = planeEntity.getMaxHealth() * 2;
         if (health < m) {

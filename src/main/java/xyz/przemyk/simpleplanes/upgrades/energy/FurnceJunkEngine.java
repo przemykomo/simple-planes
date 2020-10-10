@@ -1,39 +1,42 @@
 package xyz.przemyk.simpleplanes.upgrades.energy;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ItemTags;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.Config;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.render.EngineModel;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
-import static xyz.przemyk.simpleplanes.PlanesEvents.NOT_COAL_TAG;
-
-public class FurnceJunkEngine extends AbstractEngine {
+public class FurnceJunkEngine extends CoalEngine {
+    public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/engine_j.png");
+    public static final ResourceLocation TEXTURE_LIT = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/engine_j_lit.png");
 
     public FurnceJunkEngine(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.SMOKER_ENGINE.get(), planeEntity);
+        super(SimplePlanesUpgrades.SMOKER_ENGINE, planeEntity);
     }
 
     @Override
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        PlayerEntity player = event.getPlayer();
-        ItemStack itemStack = event.getItemStack();
-        if (!player.world.isRemote && planeEntity.getFuel() < Config.FLY_TICKS_PER_COAL.get() / 4) {
+    public boolean onItemRightClick(EntityPlayer player, World world, EnumHand hand, ItemStack itemStack) {
+        if (!player.world.isRemote && planeEntity.getFuel() < Config.INSTANCE.FLY_TICKS_PER_COAL / 4) {
             //func_230235_a_ - contains
-            int burnTime = ForgeHooks.getBurnTime(itemStack);
+            int burnTime = TileEntityFurnace.getItemBurnTime(itemStack);
             if (burnTime > 0) {
-                int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
-                if (!ItemTags.createOptional(NOT_COAL_TAG).contains(itemStack.getItem())) {
-                    planeEntity.addFuelMaxed(fuel);
-                    if (!player.isCreative()) {
-                        itemStack.shrink(1);
+                int fuel = (int) ((burnTime / 1600f) * Config.INSTANCE.FLY_TICKS_PER_COAL);
+                planeEntity.addFuelMaxed(fuel);
+                if (!player.isCreative()) {
+                    Item item = itemStack.getItem();
+                    itemStack.shrink(1);
+                    if (itemStack.isEmpty()) {
+                        ItemStack item1 = item.getContainerItem(itemStack);
+                        if (!item1.isEmpty()) {
+                            player.setHeldItem(hand, item1);
+                        }
                     }
                 }
             }
@@ -41,9 +44,8 @@ public class FurnceJunkEngine extends AbstractEngine {
         return false;
     }
 
-
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        EngineModel.renderEngine(planeEntity, partialticks, matrixStack, buffer, packedLight, Blocks.SMOKER);
+    public ResourceLocation getTexture() {
+        return planeEntity.isPowered() ? TEXTURE_LIT : TEXTURE;
     }
 }

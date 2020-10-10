@@ -1,16 +1,17 @@
 package xyz.przemyk.simpleplanes.upgrades;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
+public abstract class Upgrade implements INBTSerializable<NBTTagCompound> {
 
     private final UpgradeType type;
     protected final PlaneEntity planeEntity;
@@ -40,10 +41,14 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     /**
      * Called when passenger right clicks with item.
      *
-     * @param event The right click event
+     *
+     * @param player
+     * @param world
+     * @param hand
+     * @param itemStack
      * @return Should this upgrade be removed after this event is called?
      */
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+    public boolean onItemRightClick(EntityPlayer player, World world, EnumHand hand, ItemStack itemStack) {
         return false;
     }
 
@@ -66,28 +71,27 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     /**
      * Called to render upgrade model. Loading model outside of this method may crash server.
      *
-     * @param matrixStack matrix stack. Don't modify it.
-     * @param buffer      Render type buffer
-     * @param packedLight packed light
      */
-    public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks);
+    public abstract void render(float partialticks, float scale);
+    public ResourceLocation getTexture(){
+        return null;
+    }
+    @Override
+    public NBTTagCompound serializeNBT() {
+        return new NBTTagCompound();
+    }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        return new CompoundNBT();
+    public void deserializeNBT(NBTTagCompound nbt) {
+    }
+    public NBTTagCompound serializeNBTData() {
+        return new NBTTagCompound();
     }
 
-    @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-    }
-    public CompoundNBT serializeNBTData() {
-        return new CompoundNBT();
+    public void deserializeNBTData(NBTTagCompound nbt) {
     }
 
-    public void deserializeNBTData(CompoundNBT nbt) {
-    }
-
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    public void onApply(ItemStack itemStack, EntityPlayer playerEntity) {
     }
 
     public void onRemove() {

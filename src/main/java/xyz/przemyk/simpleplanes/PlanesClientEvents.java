@@ -1,37 +1,35 @@
 package xyz.przemyk.simpleplanes;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.client.settings.PointOfView;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import org.lwjgl.util.vector.Quaternion;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
+import xyz.przemyk.simpleplanes.proxy.ClientProxy;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
+//import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 
-import static xyz.przemyk.simpleplanes.SimplePlanesMod.keyBind;
+import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesX;
+import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesY;
 
-@OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Side.CLIENT)
 public class PlanesClientEvents {
     private static boolean playerRotationNeedToPop = false;
 
@@ -41,26 +39,25 @@ public class PlanesClientEvents {
         Entity entity = event.getEntity().getLowestRidingEntity();
         if (entity instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) entity;
-            MatrixStack matrixStack = event.getMatrixStack();
-            matrixStack.push();
+            GlStateManager.pushMatrix();
             playerRotationNeedToPop = true;
             double firstPersonYOffset = 0.7D;
-            boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-                && (Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON;
+            boolean isPlayerRidingInFirstPersonView = Minecraft.getMinecraft().player != null && planeEntity.isPassenger(Minecraft.getMinecraft().player)
+                && (Minecraft.getMinecraft()).gameSettings.thirdPersonView == 0;
             if (isPlayerRidingInFirstPersonView) {
-                matrixStack.translate(0.0D, firstPersonYOffset, 0.0D);
+                GlStateManager.translate(0.0D, firstPersonYOffset, 0.0D);
             }
 
-            matrixStack.translate(0, 0.7, 0);
+            GlStateManager.translate(0, 0.7, 0);
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
             quaternion.set(quaternion.getX(), -quaternion.getY(), -quaternion.getZ(), quaternion.getW());
-            matrixStack.rotate(quaternion);
+            GlStateManager.rotate(quaternion);
             final float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
 
-            matrixStack.rotate(Vector3f.YP.rotationDegrees(rotationYaw));
-            matrixStack.translate(0, -0.7, 0);
+            GlStateManager.rotate(rotationDegreesY(rotationYaw));
+            GlStateManager.translate(0, -0.7, 0);
             if (isPlayerRidingInFirstPersonView) {
-                matrixStack.translate(0.0D, -firstPersonYOffset, 0.0D);
+                GlStateManager.translate(0.0D, -firstPersonYOffset, 0.0D);
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
                 event.getEntity().rotationYawHead = planeEntity.rotationYaw * 2 - event.getEntity().rotationYawHead;
@@ -76,7 +73,7 @@ public class PlanesClientEvents {
     public static void onRenderPost(RenderLivingEvent.Post event) {
         if (playerRotationNeedToPop) {
             playerRotationNeedToPop = false;
-            event.getMatrixStack().pop();
+            GlStateManager.popMatrix();
             Entity entity = event.getEntity().getLowestRidingEntity();
             PlaneEntity planeEntity = (PlaneEntity) entity;
 
@@ -92,12 +89,12 @@ public class PlanesClientEvents {
     static boolean old_sprint = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onClientPlayerTick(PlayerTickEvent event) {
-        final PlayerEntity player = event.player;
-        if ((event.phase == Phase.END) && (player instanceof ClientPlayerEntity)) {
+    public static void onClientPlayerTick(TickEvent.PlayerTickEvent event) {
+        final EntityPlayer player = event.player;
+        if ((event.phase == TickEvent.Phase.END) && (player instanceof EntityPlayerSP)) {
             if (player.getRidingEntity() instanceof PlaneEntity) {
                 PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
-                if ((Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON) {
+                if ((Minecraft.getMinecraft()).gameSettings.thirdPersonView == 0) {
                     float yawDiff = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
                     player.rotationYaw += yawDiff;
                     float relativePlayerYaw = MathHelper.wrapDegrees(player.rotationYaw - planeEntity.rotationYaw);
@@ -117,10 +114,11 @@ public class PlanesClientEvents {
                     planeEntity.applyYawToEntity(player);
                 }
 
-                boolean isSprinting = keyBind.isKeyDown();
-                final ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) player;
+                final EntityPlayerSP clientEntityPlayer = (EntityPlayerSP) player;
+                boolean isSprinting = ClientProxy.keyBind.isKeyDown()||clientEntityPlayer.isSprinting()||Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown();
+
                 if (isSprinting != old_sprint || Math.random() < 0.1) {
-                    PlaneNetworking.INSTANCE.sendToServer(isSprinting);
+                    PlaneNetworking.INSTANCE.sendToServer(new PlaneNetworking.BoostMSG.MSG(isSprinting));
                 }
                 old_sprint = isSprinting;
             } else {
@@ -134,50 +132,40 @@ public class PlanesClientEvents {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
-        final Entity entity = event.getInfo().getRenderViewEntity();
-        if (entity instanceof ClientPlayerEntity && entity.getRidingEntity() instanceof PlaneEntity) {
+        final Entity entity = event.getEntity();
+        if (entity instanceof EntityPlayerSP && entity.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) entity.getRidingEntity();
-            ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
+            EntityPlayerSP playerEntity = (EntityPlayerSP) entity;
 
-            if (!event.getInfo().isThirdPerson()) {
+            if ((Minecraft.getMinecraft()).gameSettings.thirdPersonView == 0) {
                 double partialTicks = event.getRenderPartialTicks();
 
                 Quaternion q_prev = planeEntity.getQ_Prev();
                 int max = 105;
-                float diff = MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw, playerEntity.prevRotationYaw), -max, max);
+                float diff = (float) MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw, playerEntity.prevRotationYaw), -max, max);
                 float pitch = MathHelper.clamp(event.getPitch(), -45, 45);
-                q_prev.multiply(Vector3f.YP.rotationDegrees(diff));
-                q_prev.multiply(Vector3f.XP.rotationDegrees(pitch));
+                Quaternion.mul(q_prev,rotationDegreesY(diff),q_prev);
+                Quaternion.mul(q_prev,rotationDegreesX(pitch),q_prev);
                 MathUtil.EulerAngles angles_prev = MathUtil.toEulerAngles(q_prev);
 
                 Quaternion q_client = planeEntity.getQ_Client();
-                diff = MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
-                q_client.multiply(Vector3f.YP.rotationDegrees(diff));
-                q_client.multiply(Vector3f.XP.rotationDegrees(pitch));
+                diff = (float) MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
+                Quaternion.mul(q_client,rotationDegreesY(diff),q_client);
+                Quaternion.mul(q_client,rotationDegreesX(pitch),q_client);
                 MathUtil.EulerAngles angles = MathUtil.toEulerAngles(q_client);
 
                 event.setPitch(-(float) MathUtil.lerpAngle180(partialTicks, angles_prev.pitch, angles.pitch));
-                event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw));
+                event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw)+180);
                 event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, angles_prev.roll, angles.roll));
             }
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void fovModifier(EntityViewRenderEvent.FOVModifier event) {
-        final Entity entity = event.getInfo().getRenderViewEntity();
-        if (entity instanceof ClientPlayerEntity && entity.getRidingEntity() instanceof PlaneEntity) {
-            if (event.getInfo().isThirdPerson()) {
-//                event.setFOV(100);
-            }
-        }
-    }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void planeInventory(GuiOpenEvent event) {
-        final ClientPlayerEntity player = Minecraft.getInstance().player;
-        if (event.getGui() instanceof InventoryScreen && player.getRidingEntity() instanceof PlaneEntity) {
-//            event.setCanceled(true);
+        final EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (event.getGui() instanceof GuiInventory && player.getRidingEntity() instanceof PlaneEntity) {
             final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
             Upgrade chest = plane.upgrades.getOrDefault(SimplePlanesUpgrades.CHEST.getId(), null);
             if (chest instanceof ChestUpgrade) {
@@ -186,7 +174,7 @@ public class PlanesClientEvents {
                 IInventory inventory = chest1.inventory;
                 if (inventory != null) {
                     event.setCanceled(true);
-                    PlaneNetworking.OPEN_INVENTORY.sendToServer(true);
+                    PlaneNetworking.INSTANCE.sendToServer(new PlaneNetworking.InventoryMSG.MSG());
                 }
 //                StringTextComponent hi = new StringTextComponent("hi");
 //                ScreenManager.openScreen(ContainerType.GENERIC_9X3,event.getGui().getMinecraft(),0,hi);

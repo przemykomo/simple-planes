@@ -1,0 +1,24 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:large_plane",
+    "pattern": [
+        "I  ",
+        "IPB",
+        "I  "
+    ],
+    "key": {
+        "I": {
+            "item": "minecraft:iron_ingot"
+        },
+        "P": {
+            "item": "simpleplanes:spruce_plane"
+        },
+        "B": {
+            "item": "minecraft:wooden_slab",
+            "data": 1
+        }
+    },
+    "result": {
+        "item": "simpleplanes:spruce_large_plane"
+    }
+}

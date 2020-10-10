@@ -1,0 +1,34 @@
+{
+    "conditions": [
+        {
+            "type": "forge:mod_loaded",
+            "modid": "minecraft"
+        }
+    ],
+    "type": "minecraft:crafting_shaped",
+    "group": "simpleplanes:mega_plane",
+    "pattern": [
+        "#OO",
+        "#XO",
+        "#RR"
+    ],
+    "key": {
+        "#": {
+            "item": "simpleplanes:propeller"
+        },
+        "O": {
+            "item": "minecraft:planks",
+            "data": 3
+        },
+        "X": {
+            "item": "simpleplanes:jungle_large_plane"
+        },
+        "R": {
+            "item": "minecraft:jungle_boat"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:jungle_mega_plane",
+        "count": 1
+    }
+}

@@ -1,16 +1,15 @@
 package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.lwjgl.util.vector.Vector3f;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -19,27 +18,27 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import java.util.List;
 
 public class LargePlaneEntity extends PlaneEntity {
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
-        super(entityTypeIn, worldIn);
+    public LargePlaneEntity( World worldIn) {
+        super( worldIn);
     }
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
-        super(entityTypeIn, worldIn, material);
+    public LargePlaneEntity( World worldIn, PlaneMaterial material) {
+        super( worldIn, material);
     }
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
-        super(entityTypeIn, worldIn, material, x, y, z);
+    public LargePlaneEntity( World worldIn, PlaneMaterial material, double x, double y, double z) {
+        super( worldIn, material, x, y, z);
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void onUpdate() {
+        super.onUpdate();
 
-        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow(0.2F, -0.01F, 0.2F), EntityPredicates.pushableBy(this));
+        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().grow(0.2F, -0.01F, 0.2F), EntitySelectors.getTeamCollisionPredicate(this));
         for (Entity entity : list) {
-            if (!this.world.isRemote && !(this.getControllingPassenger() instanceof PlayerEntity) &&
+            if (!this.world.isRemote && !(this.getControllingPassenger() instanceof EntityPlayer) &&
                 !entity.isPassenger(this) &&
-                !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+                !entity.isRiding() && entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
                 entity.startRiding(this);
             }
         }
@@ -104,9 +103,9 @@ public class LargePlaneEntity extends PlaneEntity {
 
     @Override
     protected void spawnSmokeParticles(int fuel) {
-        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -2), 0);
+        spawnParticle(EnumParticleTypes.SMOKE_NORMAL, new Vector3f(0, 0.8f, -2), 0);
         if (fuel > 4 && fuel < 100) {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -2), 5);
+            spawnParticle(EnumParticleTypes.SMOKE_LARGE, new Vector3f(0, 0.8f, -2), 5);
         }
     }
 

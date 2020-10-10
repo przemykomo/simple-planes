@@ -2,7 +2,8 @@ package xyz.przemyk.simpleplanes.upgrades;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
@@ -10,11 +11,12 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Function;
 
-public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
+public class UpgradeType implements IForgeRegistryEntry<UpgradeType> {
 
     private final Item upgradeItem;
     public final Function<PlaneEntity, Upgrade> instanceSupplier;
     public final boolean occupyBackSeat;
+    private ResourceLocation Id;
 
     /**
      * Upgrade Type Constructor
@@ -56,6 +58,25 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
 
     public boolean isPlaneApplicable(MegaPlaneEntity planeEntity) {
         return isPlaneApplicable((LargePlaneEntity) planeEntity);
+    }
+
+    public ResourceLocation getId() {
+        return this.Id;
+    }
+
+    @Override
+    public UpgradeType setRegistryName(ResourceLocation name) {
+        this.Id = name;
+        return this;
+    }
+
+    public ResourceLocation getRegistryName() {
+        return this.Id;
+    }
+
+    @Override
+    public Class<UpgradeType> getRegistryType() {
+        return UpgradeType.class;
     }
 
 }

@@ -1,19 +1,16 @@
 package xyz.przemyk.simpleplanes.items;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.stats.Stats;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -22,81 +19,102 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class PlaneItem extends Item {
 
-    private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
     private final Function<World, PlaneEntity> planeSupplier;
 
-    public PlaneItem(Properties properties, Function<World, PlaneEntity> planeSupplier) {
-        super(properties.maxStackSize(1));
+    public PlaneItem(Function<World, PlaneEntity> planeSupplier) {
+        super();
+        setMaxStackSize(1);
         this.planeSupplier = planeSupplier;
     }
 
-    @Override
-    public ITextComponent getName() {
-        return super.getName();
-    }
 
     @Override
     public boolean hasEffect(ItemStack stack) {
-        return super.hasEffect(stack) || stack.getChildTag("EntityTag") != null;
+        return super.hasEffect(stack) || stack.getSubCompound("EntityTag") != null;
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
-        RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.ANY);
-        if (raytraceresult.getType() == RayTraceResult.Type.MISS) {
-            return ActionResult.resultPass(itemstack);
-        } else {
-            Vector3d vec3d = playerIn.getLook(1.0F);
-            List<Entity> list = worldIn.getEntitiesInAABBexcluding(playerIn, playerIn.getBoundingBox().expand(vec3d.scale(5.0D)).grow(1.0D), ENTITY_PREDICATE);
-            if (!list.isEmpty()) {
-                Vector3d vec3d1 = playerIn.getEyePosition(1.0F);
+        if(worldIn.isRemote){
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+        }
+        float f = 1.0F;
+        float f1 = playerIn.prevRotationPitch + (playerIn.rotationPitch - playerIn.prevRotationPitch) * 1.0F;
+        float f2 = playerIn.prevRotationYaw + (playerIn.rotationYaw - playerIn.prevRotationYaw) * 1.0F;
+        double d0 = playerIn.prevPosX + (playerIn.posX - playerIn.prevPosX) * 1.0D;
+        double d1 = playerIn.prevPosY + (playerIn.posY - playerIn.prevPosY) * 1.0D + (double) playerIn.getEyeHeight();
+        double d2 = playerIn.prevPosZ + (playerIn.posZ - playerIn.prevPosZ) * 1.0D;
+        Vec3d vec3d = new Vec3d(d0, d1, d2);
+        float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
+        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
+        float f5 = -MathHelper.cos(-f1 * 0.017453292F);
+        float f6 = MathHelper.sin(-f1 * 0.017453292F);
+        float f7 = f4 * f5;
+        float f8 = f3 * f5;
+        double d3 = 5.0D;
+        Vec3d vec3d1 = vec3d.add((double) f7 * 5.0D, (double) f6 * 5.0D, (double) f8 * 5.0D);
+        RayTraceResult raytraceresult = worldIn.rayTraceBlocks(vec3d, vec3d1, true);
+        if (raytraceresult == null) {
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+        }
+        Vec3d vec3d2 = playerIn.getLook(1.0F);
+        boolean flag = false;
+        List<Entity> list = worldIn.getEntitiesWithinAABBExcludingEntity(playerIn, playerIn.getEntityBoundingBox().expand(vec3d2.x * 5.0D, vec3d2.y * 5.0D, vec3d2.z * 5.0D).grow(1.0D));
 
-                for (Entity entity : list) {
-                    AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(entity.getCollisionBorderSize());
-                    if (axisalignedbb.contains(vec3d1)) {
-                        return ActionResult.resultPass(itemstack);
-                    }
-                }
-            }
+        for (int i = 0; i < list.size(); ++i) {
+            Entity entity = list.get(i);
 
-            if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
-                PlaneEntity planeEntity = planeSupplier.apply(worldIn);
-                UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
-                Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
-                if (itemstack.getChildTag("Used")==null){
-                    planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
-                    planeEntity.upgradeChanged();
+            if (entity.canBeCollidedWith()) {
+                AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow((double) entity.getCollisionBorderSize());
+
+                if (axisalignedbb.contains(vec3d)) {
+                    flag = true;
                 }
-                planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
-                planeEntity.rotationYaw = playerIn.rotationYaw;
-                planeEntity.prevRotationYaw = playerIn.prevRotationYaw;
-                planeEntity.setCustomName(itemstack.getDisplayName());
-                CompoundNBT entityTag = itemstack.getChildTag("EntityTag");
-                if (entityTag != null) {
-                    planeEntity.readAdditional(entityTag);
-                }
-                if (!worldIn.hasNoCollisions(planeEntity, planeEntity.getBoundingBox().grow(-0.1D))) {
-                    return ActionResult.resultFail(itemstack);
-                } else {
-                    if (!worldIn.isRemote) {
-                        worldIn.addEntity(planeEntity);
-                        if (!playerIn.abilities.isCreativeMode) {
-                            itemstack.shrink(1);
-                        }
-                    }
-                    playerIn.addStat(Stats.ITEM_USED.get(this));
-                    return ActionResult.resultSuccess(itemstack);
-                }
-            } else {
-                return ActionResult.resultPass(itemstack);
             }
         }
+
+        if (flag) {
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+        } else if (raytraceresult.typeOfHit != RayTraceResult.Type.BLOCK) {
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+        }
+
+        PlaneEntity planeEntity = planeSupplier.apply(worldIn);
+        UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE;
+        Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
+        if (itemstack.getSubCompound("Used") == null) {
+            planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
+            planeEntity.upgradeChanged();
+        }
+        planeEntity.setPosition(raytraceresult.getBlockPos().getX(), raytraceresult.getBlockPos().getY()+1, raytraceresult.getBlockPos().getZ());
+        planeEntity.rotationYaw = playerIn.rotationYaw;
+        planeEntity.prevRotationYaw = playerIn.prevRotationYaw;
+        planeEntity.setCustomNameTag(itemstack.getDisplayName());
+        NBTTagCompound entityTag = itemstack.getSubCompound("EntityTag");
+        if (entityTag != null) {
+            planeEntity.readEntityFromNBT(entityTag);
+        }
+        if (!worldIn.checkNoEntityCollision(planeEntity.getCollisionBoundingBox().grow(-0.1D), planeEntity)) {
+            return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
+        } else {
+            boolean b = worldIn.spawnEntity(planeEntity);
+            if (!playerIn.capabilities.isCreativeMode) {
+                itemstack.shrink(1);
+            }
+            playerIn.addStat(StatList.getObjectUseStats(this));
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
+        }
     }
+
 
     @Override
     public String getTranslationKey(ItemStack stack) {

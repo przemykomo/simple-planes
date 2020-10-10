@@ -1,18 +1,20 @@
 package xyz.przemyk.simpleplanes.upgrades.banner;
 
-import net.minecraft.item.BannerItem;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class BannerUpgradeType extends UpgradeType {
 
     public BannerUpgradeType() {
-        super(Items.BLACK_BANNER /* placeholder */, BannerUpgrade::new);
+        super(ForgeRegistries.ITEMS.getValue(new ResourceLocation("banner")) /* placeholder */, BannerUpgrade::new);
     }
 
     @Override
     public boolean IsThisItem(ItemStack itemStack) {
-        return itemStack.getItem() instanceof BannerItem;
+        return itemStack.getItem() instanceof ItemBanner;
     }
 }

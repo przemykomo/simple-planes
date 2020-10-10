@@ -2,14 +2,13 @@ package xyz.przemyk.simpleplanes.upgrades.sprayer;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class LargeSprayerModel extends EntityModel<LargePlaneEntity> {
+public class LargeSprayerModel extends ModelBase {
     public static final LargeSprayerModel INSTANCE = new LargeSprayerModel();
 
     private final ModelRenderer Body;
@@ -22,38 +21,33 @@ public class LargeSprayerModel extends EntityModel<LargePlaneEntity> {
         textureHeight = 64;
 
         Body = new ModelRenderer(this);
-        Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-        setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
+        Body.setRotationPoint(0, 17, 0);
+        setRotationAngle(Body, 0, 0, 0);
 
         sprayer = new ModelRenderer(this);
-        sprayer.setRotationPoint(0.0F, 0.0F, 0.0F);
+        sprayer.setRotationPoint(0, 0, 0);
         Body.addChild(sprayer);
 
         spray_lest = new ModelRenderer(this);
-        spray_lest.setRotationPoint(0.0F, 0.0F, 0.0F);
+        spray_lest.setRotationPoint(0, 0, 0);
         sprayer.addChild(spray_lest);
-        setRotationAngle(spray_lest, 0.0F, 0.0F, -0.0873F);
-        spray_lest.setTextureOffset(9, 17).addBox(13.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
-        spray_lest.setTextureOffset(0, 14).addBox(28.0F, 0.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
-        spray_lest.setTextureOffset(0, 4).addBox(8.0F, -2.0F, -12.0F, 23.0F, 1.0F, 3.0F, 0.0F, false);
+        setRotationAngle(spray_lest, 0, 0, -0.0873F);
+        spray_lest.setTextureOffset(9, 17).addBox(13, 0, -12, 3, 3, 3, 0);
+        spray_lest.setTextureOffset(0, 14).addBox(28, 0, -12, 3, 3, 3, 0);
+        spray_lest.setTextureOffset(0, 4).addBox(8, -2, -12, 23, 1, 3, 0);
 
         spray_right = new ModelRenderer(this);
-        spray_right.setRotationPoint(0.0F, 3.0F, 0.0F);
+        spray_right.setRotationPoint(0, 3, 0);
         sprayer.addChild(spray_right);
-        setRotationAngle(spray_right, 0.0F, 0.0F, 0.0873F);
-        spray_right.setTextureOffset(9, 11).addBox(-16.0F, -3.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
-        spray_right.setTextureOffset(0, 8).addBox(-31.0F, -3.0F, -12.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
-        spray_right.setTextureOffset(0, 0).addBox(-31.0F, -5.0F, -12.0F, 23.0F, 1.0F, 3.0F, 0.0F, false);
+        setRotationAngle(spray_right, 0, 0, 0.0873F);
+        spray_right.setTextureOffset(9, 11).addBox(-16, -3, -12, 3, 3, 3, 0);
+        spray_right.setTextureOffset(0, 8).addBox(-31, -3, -12, 3, 3, 3, 0);
+        spray_right.setTextureOffset(0, 0).addBox(-31, -5, -12, 23, 1, 3, 0);
     }
 
     @Override
-    public void setRotationAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        //previously the render function, render code was moved to a method below
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        Body.render(matrixStack, buffer, packedLight, packedOverlay);
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        Body.render(scale);
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

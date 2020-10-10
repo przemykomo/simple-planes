@@ -2,8 +2,8 @@ package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
@@ -11,7 +11,7 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID)
 public class SimplePlanesRegistries {
 
     public static IForgeRegistry<PlaneMaterial> PLANE_MATERIALS;

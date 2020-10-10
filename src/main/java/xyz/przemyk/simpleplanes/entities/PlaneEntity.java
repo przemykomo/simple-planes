@@ -1,36 +1,28 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.GameRules;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import org.lwjgl.util.vector.Quaternion;
+import org.lwjgl.util.vector.Vector3f;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
@@ -44,6 +36,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,10 +45,11 @@ import static net.minecraft.util.math.MathHelper.wrapDegrees;
 import static xyz.przemyk.simpleplanes.MathUtil.*;
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
-public class PlaneEntity extends Entity {
+public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     protected static final DataParameter<Integer> MAX_FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
+    public static final EntitySize STANDING_SIZE = EntitySize.flexible(2F, 0.5F);
     public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(2F, 2F);
 
     //negative values mean left
@@ -64,9 +58,9 @@ public class PlaneEntity extends Entity {
     public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
     public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, QUATERNION_SERIALIZER);
     public static final DataParameter<String> MATERIAL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.STRING);
-    public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
-    public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
-    public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
+    public Quaternion Q_Client = new Quaternion();
+    public Quaternion Q_Prev = new Quaternion();
+    public static final DataParameter<NBTTagCompound> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_TAG);
     public static final DataParameter<Integer> ROCKING_TICKS = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> TIME_SINCE_HIT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
@@ -99,31 +93,37 @@ public class PlaneEntity extends Entity {
 
 
     //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn) {
-        this(entityTypeIn, worldIn, SimplePlanesMaterials.OAK);
+    public PlaneEntity(World worldIn) {
+        this(worldIn, SimplePlanesMaterials.OAK);
     }
 
     //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
-        super(entityTypeIn, worldIn);
+    public PlaneEntity(World worldIn, PlaneMaterial material) {
+        super(worldIn);
         this.stepHeight = 0.9999f;
         this.setMaterial(material);
         setMaxSpeed(1f);
+        EntitySize size = getSize();
+        setSize(size);
     }
 
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
-        this(entityTypeIn, worldIn, material);
+    private void setSize(EntitySize size) {
+        setSize(size.width, size.hight);
+    }
+
+    public PlaneEntity(World worldIn, PlaneMaterial material, double x, double y, double z) {
+        this(worldIn, material);
         setPosition(x, y, z);
     }
 
     @Override
-    protected void registerData() {
+    protected void entityInit() {
         dataManager.register(FUEL, 0);
-        dataManager.register(MAX_FUEL, Config.COAL_MAX_FUEL.get());
+        dataManager.register(MAX_FUEL, Config.INSTANCE.COAL_MAX_FUEL);
         dataManager.register(MAX_HEALTH, 10);
         dataManager.register(HEALTH, 10);
-        dataManager.register(UPGRADES_NBT, new CompoundNBT());
-        dataManager.register(Q, Quaternion.ONE);
+        dataManager.register(UPGRADES_NBT, new NBTTagCompound());
+        dataManager.register(Q, new Quaternion());
         dataManager.register(MAX_SPEED, 0.25f);
         dataManager.register(MATERIAL, "oak");
         dataManager.register(ROCKING_TICKS, 0);
@@ -132,7 +132,7 @@ public class PlaneEntity extends Entity {
     }
 
     public void addFuelMaxed() {
-        addFuelMaxed(Config.FLY_TICKS_PER_COAL.get());
+        addFuelMaxed(Config.INSTANCE.FLY_TICKS_PER_COAL);
     }
 
     public void addFuelMaxed(Integer fuel) {
@@ -195,7 +195,7 @@ public class PlaneEntity extends Entity {
     }
 
     public Quaternion getQ_Prev() {
-        return Q_Prev.copy();
+        return new Quaternion(Q_Prev);
     }
 
     public void setQ_prev(Quaternion q) {
@@ -235,6 +235,7 @@ public class PlaneEntity extends Entity {
     public void setMaterial(PlaneMaterial material) {
         dataManager.set(MATERIAL, material.name);
         this.material = material;
+        this.isImmuneToFire = this.material.fireResistant;
     }
 
     public boolean isPowered() {
@@ -242,31 +243,50 @@ public class PlaneEntity extends Entity {
     }
 
     @Override
-    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
-        if (tryToAddUpgrade(player, player.getHeldItem(hand))) {
-            return ActionResultType.SUCCESS;
+    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
+        ItemStack itemStack = player.getHeldItem(hand);
+        if (tryToAddUpgrade(player, itemStack)) {
+            return true;
         }
-        if (player.isSneaking() && player.getHeldItem(hand).isEmpty()) {
+        if (player.isSneaking() && itemStack.isEmpty()) {
             boolean hasplayer = false;
             for (Entity passenger : getPassengers()) {
-                if ((passenger instanceof PlayerEntity)) {
+                if ((passenger instanceof EntityPlayer)) {
                     hasplayer = true;
                     break;
                 }
             }
-            if ((!hasplayer) || Config.THIEF.get()) {
+            if ((!hasplayer) || Config.INSTANCE.THIEF) {
                 this.removePassengers();
             }
-            return ActionResultType.SUCCESS;
+            return true;
         }
         if (!this.world.isRemote) {
-            return player.startRiding(this) ? ActionResultType.CONSUME : ActionResultType.FAIL;
+            rightClickUpgrades(player, hand, itemStack);
+
+            return player.startRiding(this);
         } else {
-            return player.getLowestRidingEntity() == this.getLowestRidingEntity() ? ActionResultType.FAIL : ActionResultType.SUCCESS;
+            return player.getLowestRidingEntity() == this.getLowestRidingEntity();
         }
     }
 
-    public boolean tryToAddUpgrade(PlayerEntity player, ItemStack itemStack) {
+    public void rightClickUpgrades(EntityPlayer player, EnumHand hand, ItemStack itemStack) {
+        HashSet<Upgrade> upgradesToRemove = new HashSet<>();
+        for (Upgrade upgrade : this.upgrades.values()) {
+            if (upgrade.onItemRightClick(player, world, hand, itemStack)) {
+                upgradesToRemove.add(upgrade);
+            }
+        }
+
+        for (Upgrade upgrade : upgradesToRemove) {
+            this.upgrades.remove(upgrade.getType().getRegistryName());
+        }
+        if(!upgradesToRemove.isEmpty()){
+            upgradeChanged();
+        }
+    }
+
+    public boolean tryToAddUpgrade(EntityPlayer player, ItemStack itemStack) {
         for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
             if (upgradeType.IsThisItem(itemStack) && canAddUpgrade(upgradeType)) {
                 upgrade(player, itemStack, upgradeType);
@@ -276,7 +296,7 @@ public class PlaneEntity extends Entity {
         return false;
     }
 
-    public void upgrade(PlayerEntity player, ItemStack itemStack, UpgradeType upgradeType) {
+    public void upgrade(EntityPlayer player, ItemStack itemStack, UpgradeType upgradeType) {
         Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
         upgrade.onApply(itemStack, player);
         if (!player.isCreative()) {
@@ -296,7 +316,7 @@ public class PlaneEntity extends Entity {
         if (this.isInvulnerableTo(source) || this.hurtTime > 0) {
             return false;
         }
-        if (this.world.isRemote || this.removed) {
+        if (this.world.isRemote || this.isDead) {
             return false;
         }
         int health = getHealth();
@@ -306,30 +326,30 @@ public class PlaneEntity extends Entity {
 
         setHealth(health -= amount);
         this.hurtTime = 10;
-        boolean is_player = source.getTrueSource() instanceof PlayerEntity;
-        boolean creative_player = is_player && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode;
+        boolean is_player = source.getTrueSource() instanceof EntityPlayer;
+        boolean creative_player = is_player && ((EntityPlayer) source.getTrueSource()).capabilities.isCreativeMode;
         if (creative_player || (is_player && this.getDamageTaken() > 30.0F) || health <= 0) {
             if (!creative_player) {
                 explode();
             }
-            this.remove();
+            this.setDead();
         }
         return true;
     }
 
     private void explode() {
-        ((ServerWorld) world).spawnParticle(ParticleTypes.SMOKE,
+        ((WorldServer) world).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
             getPosX(),
             getPosY(),
             getPosZ(),
-            5, 1, 1, 1, 2);
-        ((ServerWorld) world).spawnParticle(ParticleTypes.POOF,
-            getPosX(),
-            getPosY(),
-            getPosZ(),
-            10, 1, 1, 1, 1);
-        world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 0, Explosion.Mode.NONE);
-        if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+            (double) 5, 1, 1, 1, 2);
+//        ((ServerWorld) world).spawnParticle(ParticleTypes.POOF,
+//            getPosX(),
+//            getPosY(),
+//            getPosZ(),
+//            10, 1, 1, 1, 1);
+        world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 0, false);
+        if (this.world.getGameRules().getBoolean("doMobLoot")) {
             dropItem();
         }
     }
@@ -337,10 +357,9 @@ public class PlaneEntity extends Entity {
     @SuppressWarnings("rawtypes")
     protected void dropItem() {
         ItemStack itemStack = getItem().getDefaultInstance();
-        final CompoundNBT value = new CompoundNBT();
-        value.putBoolean("Used", true);
+        final NBTTagCompound value = new NBTTagCompound();
+        value.setBoolean("Used", true);
         itemStack.setTagInfo("Used", value);
-        entityDropItem(itemStack).setInvulnerable(true);
         for (Upgrade upgrade : upgrades.values()) {
             final NonNullList<ItemStack> items = upgrade.getDrops();
             for (ItemStack item : items) {
@@ -351,16 +370,19 @@ public class PlaneEntity extends Entity {
         }
     }
 
-    public Vector2f getHorizontalFrontPos() {
-        return new Vector2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
+    public EntityItem entityDropItem(ItemStack itemStack) {
+        return entityDropItem(itemStack, 0);
     }
 
-    @Override
-    public EntitySize getSize(Pose poseIn) {
-        if (this.getControllingPassenger() instanceof PlayerEntity) {
+//    public Vector2f getHorizontalFrontPos() {
+//        return new Vector2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
+//    }
+
+    public EntitySize getSize() {
+        if (this.getControllingPassenger() instanceof EntityPlayer) {
             return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
         }
-        return super.getSize(poseIn);
+        return STANDING_SIZE;
         //just hate my head in the nether ceiling
     }
 
@@ -372,17 +394,17 @@ public class PlaneEntity extends Entity {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void onUpdate() {
+        super.onUpdate();
 
         if (Double.isNaN(getMotion().length()))
-            setMotion(Vector3d.ZERO);
+            setMotion(Vec3d.ZERO);
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
         prevRotationRoll = rotationRoll;
         if (isPowered()) {
             if (poweredTicks % 50 == 0) {
-                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
+                playSound(SimplePlanesSounds.PLANE_LOOP, 0.05F, 1.0F);
             }
             ++poweredTicks;
         } else {
@@ -392,9 +414,10 @@ public class PlaneEntity extends Entity {
         if (world.isRemote && !canPassengerSteer()) {
 
             tickLerp();
-            this.setMotion(Vector3d.ZERO);
+            this.setMotion(Vec3d.ZERO);
             tickDeltaRotation(getQ_Client());
             tickUpgrades();
+            recalculateSize();
 
             return;
         }
@@ -410,13 +433,13 @@ public class PlaneEntity extends Entity {
             vars.passive_engine_push = 0;
         }
 
-        LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
-        vars.moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
-        vars.turn_threshold = Config.TURN_THRESHOLD.get() / 100d;
+        EntityLivingBase controllingPassenger = (EntityLivingBase) getControllingPassenger();
+        vars.moveForward = controllingPassenger instanceof EntityPlayer ? controllingPassenger.moveForward : 0;
+        vars.turn_threshold = Config.INSTANCE.TURN_THRESHOLD / 100d;
         if (abs(vars.moveForward) < vars.turn_threshold) {
             vars.moveForward = 0;
         }
-        vars.moveStrafing = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveStrafing : 0;
+        vars.moveStrafing = controllingPassenger instanceof EntityPlayer ? controllingPassenger.moveStrafing : 0;
         if (abs(vars.moveStrafing) < vars.turn_threshold) {
             vars.moveStrafing = 0;
         }
@@ -432,7 +455,7 @@ public class PlaneEntity extends Entity {
 
         EulerAngles angelsOld = toEulerAngles(q).copy();
 
-        Vector3d oldMotion = getMotion();
+        Vec3d oldMotion = getMotion();
 
         recalculateSize();
         int fuel = dataManager.get(FUEL);
@@ -472,22 +495,22 @@ public class PlaneEntity extends Entity {
         //do not move when slow
         double l = 0.002;
         if (oldMotion.length() < l && getMotion().length() < l && groundTicks > -50) {
-            this.setMotion(Vector3d.ZERO);
+            this.setMotion(Vec3d.ZERO);
         }
-        this.updateRocking();
+//        this.updateRocking();
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
         recalculateSize();
-        recenterBoundingBox();
+//        recenterBoundingBox();
         if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) {
             double speed_before = Math.sqrt(horizontalMag(this.getMotion()));
             boolean onGroundOld = this.onGround;
-            Vector3d preMotion = getMotion();
+            Vec3d preMotion = getMotion();
             if (preMotion.length() > 0.5 || vars.moveForward != 0) {
                 onGround = true;
             }
-            this.move(MoverType.SELF, this.getMotion());
-            onGround = ((preMotion.getY()) == 0.0) ? onGroundOld : onGround;
-            if (this.collidedHorizontally && !this.world.isRemote && Config.PLANE_CRASH.get() && groundTicks <= 0) {
+            this.move(MoverType.SELF, motionX, motionY, motionZ);
+            onGround = ((preMotion.y) == 0.0) ? onGroundOld : onGround;
+            if (this.collidedHorizontally && !this.world.isRemote && Config.INSTANCE.PLANE_CRASH && groundTicks <= 0) {
                 double speed_after = Math.sqrt(horizontalMag(this.getMotion()));
                 double speed_diff = speed_before - speed_after;
                 float f2 = (float) (speed_diff * 10.0D - 5.0D);
@@ -501,12 +524,12 @@ public class PlaneEntity extends Entity {
             spawnSmokeParticles(fuel);
         }
 
-        //back to q
-        q.multiply(new Quaternion(Vector3f.ZP, ((float) (rotationRoll - angelsOld.roll)), true));
-        q.multiply(new Quaternion(Vector3f.XN, ((float) (rotationPitch - angelsOld.pitch)), true));
-        q.multiply(new Quaternion(Vector3f.YP, ((float) (rotationYaw - angelsOld.yaw)), true));
+        //back to q.
+        hamiltonProduct(q, rotationDegreesZ((float) (rotationRoll - angelsOld.roll)));
+        hamiltonProduct(q, rotationDegreesX((float) -(rotationPitch - angelsOld.pitch)));
+        hamiltonProduct(q, rotationDegreesY((float) (rotationYaw - angelsOld.yaw)));
 
-        q = MathUtil.normalizeQuaternion(q);
+        q = normalizeQuaternion(q);
 
         setQ_prev(getQ_Client());
         setQ(q);
@@ -515,12 +538,12 @@ public class PlaneEntity extends Entity {
         if (world.isRemote && canPassengerSteer()) {
             setQ_Client(q);
 
-            PlaneNetworking.INSTANCE.sendToServer(getQ());
+            PlaneNetworking.INSTANCE.sendToServer(new PlaneNetworking.QuaternionMSG.MSG(getQ()));
         } else {
-            if (getPlayer() instanceof ServerPlayerEntity) {
-                ServerPlayerEntity player = (ServerPlayerEntity) getPlayer();
-                player.connection.vehicleFloatingTickCount = 0;
-            }
+//            if (getPlayer() instanceof ServerEntityPlayer) {
+//                ServerEntityPlayer player = (ServerEntityPlayer) getPlayer();
+//                player.connection.vehicleFloatingTickCount = 0;
+//            }
         }
         if (this.hurtTime > 0) {
             --this.hurtTime;
@@ -544,6 +567,18 @@ public class PlaneEntity extends Entity {
 
     }
 
+    public double horizontalMag(Vec3d motion) {
+        return motion.x * motion.x + motion.z * motion.z;
+    }
+
+    public void recalculateSize() {
+        this.setSize(this.getSize());
+    }
+
+    public Vec3d getMotion() {
+        return new Vec3d(motionX, motionY, motionZ);
+    }
+
     public void tickUpgrades() {
         HashSet<Upgrade> upgradesToRemove = new HashSet<>();
         for (Upgrade upgrade : upgrades.values()) {
@@ -555,6 +590,9 @@ public class PlaneEntity extends Entity {
         for (Upgrade upgrade : upgradesToRemove) {
             upgrades.remove(upgrade.getType().getRegistryName());
         }
+        if(!upgradesToRemove.isEmpty()){
+            upgradeChanged();
+        }
     }
 
     public boolean isFull() {
@@ -565,14 +603,18 @@ public class PlaneEntity extends Entity {
         return vars.passengerSprinting ? 4 : 1;
     }
 
-    private boolean isParked(Vars vars) {
-        Vector3d oldMotion = getMotion();
+    public boolean isParked(Vars vars) {
+        Vec3d oldMotion = getMotion();
         final boolean parked = (isAboveWater() || isOnGround()) &&
             (oldMotion.length() < 0.1) &&
             (!vars.passengerSprinting) &&
             (vars.moveStrafing == 0) &&
             (vars.moveForward == 0);
         return parked;
+    }
+
+    private boolean isOnGround() {
+        return onGround;
     }
 
     protected Vars getMotionVars() {
@@ -585,7 +627,7 @@ public class PlaneEntity extends Entity {
         rotationYaw = (float) angels1.yaw;
         rotationRoll = (float) angels1.roll;
 
-        float d = MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
+        float d = (float) wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
         if (rotationRoll >= 90 && prevRotationRoll <= 90) {
             d = 0;
         }
@@ -613,7 +655,7 @@ public class PlaneEntity extends Entity {
             float roll = rotationRoll;
             if (degreesDifferenceAbs(rotationPitch, 0) < 45) {
                 for (int i = 0; i < 360; i += 180) {
-                    if (MathHelper.degreesDifferenceAbs(rotationRoll, i) < 80) {
+                    if (degreesDifferenceAbs(rotationRoll, i) < 80) {
                         roll = lerpAngle(0.1f * f1, rotationRoll, i);
                         break;
                     }
@@ -636,7 +678,7 @@ public class PlaneEntity extends Entity {
                     rotationRoll = clamp(rotationRoll - f1, -r, 0);
                 }
                 final double roll_old = toEulerAngles(getQ()).roll;
-                if (MathUtil.degreesDifferenceAbs(roll_old, 0) < 90) {
+                if (degreesDifferenceAbs(roll_old, 0) < 90) {
                     turn = MathHelper.clamp(roll_old * vars.yaw_multiplayer, -yawdiff, yawdiff);
                 } else {
                     turn = MathHelper.clamp((180 - roll_old) * vars.yaw_multiplayer, -yawdiff, yawdiff);
@@ -648,7 +690,7 @@ public class PlaneEntity extends Entity {
 
         } else if (moveStrafing == 0) {
             for (int i = 0; i < 360; i += 180) {
-                if (MathHelper.degreesDifferenceAbs(rotationRoll, i) < 80) {
+                if (degreesDifferenceAbs(rotationRoll, i) < 80) {
                     rotationRoll = lerpAngle(0.01f * f1, rotationRoll, i);
                     break;
                 }
@@ -664,11 +706,11 @@ public class PlaneEntity extends Entity {
     }
 
     protected boolean isEasy() {
-        return Config.EASY_FLIGHT.get();
+        return Config.INSTANCE.EASY_FLIGHT;
     }
 
     protected void tickMotion(Vars vars) {
-        Vector3d motion;
+        Vec3d motion;
         if (!isPowered()) {
             vars.push = 0;
         }
@@ -678,18 +720,19 @@ public class PlaneEntity extends Entity {
         speed -= speed * speed * vars.drag_quad + speed * vars.drag_mul + vars.drag;
         speed = Math.max(speed, 0);
         if (speed > vars.max_speed) {
-            speed = MathUtil.lerp(0.2, speed, vars.max_speed);
+            speed = lerp(0.2, speed, vars.max_speed);
         }
 
         if (speed == 0) {
-            motion = Vector3d.ZERO;
+            motion = Vec3d.ZERO;
         }
         if (motion.length() > 0)
             motion = motion.scale(speed / motion.length());
 
-        Vector3d pushVec = new Vector3d(getTickPush(vars));
+        Vector3f tickPush = getTickPush(vars);
+        Vec3d pushVec = new Vec3d(tickPush.x, tickPush.y, tickPush.z);
         if (pushVec.length() != 0 && motion.length() > 0.1) {
-            double dot = MathUtil.normalizedDotProduct(pushVec, motion);
+            double dot = normalizedDotProduct(pushVec, motion);
             pushVec = pushVec.scale(MathUtil.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 1));
         }
 
@@ -741,7 +784,7 @@ public class PlaneEntity extends Entity {
         }
         rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
 
-        if (MathUtil.degreesDifferenceAbs(rotationPitch, 0) > 1 && getMotion().length() < 0.1) {
+        if (degreesDifferenceAbs(rotationPitch, 0) > 1 && getMotion().length() < 0.1) {
             vars.push = 0;
         }
         if (getMotion().length() < vars.take_off_speed) {
@@ -757,7 +800,8 @@ public class PlaneEntity extends Entity {
         }
         float f;
         BlockPos pos = new BlockPos(this.getPosX(), this.getPosY() - 1.0D, this.getPosZ());
-        f = this.world.getBlockState(pos).getSlipperiness(this.world, pos, this);
+        IBlockState blockState = this.world.getBlockState(pos);
+        f = blockState.getBlock().getSlipperiness(blockState, world, pos, this);
         vars.drag_mul *= 20 * (3 - f);
         return speeding_up;
     }
@@ -766,14 +810,14 @@ public class PlaneEntity extends Entity {
         return 15;
     }
 
-    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
-        float yaw = MathUtil.getYaw(motion);
-        float pitch = MathUtil.getPitch(motion);
+    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vec3d motion) {
+        float yaw = getYaw(motion);
+        float pitch = getPitch(motion);
         if (degreesDifferenceAbs(yaw, rotationYaw) > 5 && (getOnGround() || isAboveWater())) {
             setMotion(motion.scale(0.98));
         }
 
-        float d = degreesDifferenceAbs(pitch, rotationPitch);
+        float d = (float) degreesDifferenceAbs(pitch, rotationPitch);
         if (d > 180) {
             d = d - 180;
         }
@@ -789,17 +833,17 @@ public class PlaneEntity extends Entity {
         lift *= cos_roll;
         d *= cos_roll;
 
-        setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
+        setMotion(rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
             lerpAngle180(vars.pitch_to_motion * d, pitch, rotationPitch) + lift,
             speed));
         if (!getOnGround() && !isAboveWater() && motion.length() > 0.1) {
 
-            if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90) {
+            if (degreesDifferenceAbs(pitch, rotationPitch) > 90) {
                 pitch = wrapDegrees(pitch + 180);
             }
             if (Math.abs(rotationPitch) < 85) {
 
-                yaw = MathUtil.getYaw(getMotion());
+                yaw = getYaw(getMotion());
                 if (degreesDifferenceAbs(yaw, rotationYaw) > 90) {
                     yaw = yaw - 180;
                 }
@@ -811,19 +855,32 @@ public class PlaneEntity extends Entity {
         return q;
     }
 
+    public void setMotion(Vec3d motion) {
+        motionX = motion.x;
+        motionY = motion.y;
+        motionZ = motion.z;
+    }
+
+    public void setMotion(double x, double y, double z) {
+        motionX = x;
+        motionY = y;
+        motionZ = z;
+    }
+
+
     protected void spawnSmokeParticles(int fuel) {
-        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -1), 0);
-        if (((fuel > 4) && (fuel < (Config.FLY_TICKS_PER_COAL.get() / 3)))) {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -1), 5);
+        spawnParticle(EnumParticleTypes.SMOKE_NORMAL, new Vector3f(0, 0.8f, -1), 0);
+        if (((fuel > 4) && (fuel < (Config.INSTANCE.FLY_TICKS_PER_COAL / 3)))) {
+            spawnParticle(EnumParticleTypes.SMOKE_LARGE, new Vector3f(0, 0.8f, -1), 5);
         }
     }
 
-    public void spawnParticle(IParticleData particleData, Vector3f relPos, int particleCount) {
+    public void spawnParticle(EnumParticleTypes particleData, Vector3f relPos, int particleCount) {
         relPos = new Vector3f(relPos.getX(), relPos.getY() - 0.3f, relPos.getZ());
         relPos = transformPos(relPos);
         relPos = new Vector3f(relPos.getX(), relPos.getY() + 0.9f, relPos.getZ());
-        Vector3d motion = getMotion();
-        ((ServerWorld) world).spawnParticle(particleData,
+        Vec3d motion = getMotion();
+        ((WorldServer) world).spawnParticle(particleData,
             getPosX() + relPos.getX(),
             getPosY() + relPos.getY(),
             getPosZ() + relPos.getZ(),
@@ -831,10 +888,11 @@ public class PlaneEntity extends Entity {
     }
 
     public Vector3f transformPos(Vector3f relPos) {
-        EulerAngles angels = MathUtil.toEulerAngles(getQ_Client());
+        relPos = new Vector3f(relPos);
+        EulerAngles angels = toEulerAngles(getQ_Client());
         angels.yaw = -angels.yaw;
         angels.roll = -angels.roll;
-        relPos.transform(MathUtil.toQuaternion(angels.yaw, angels.pitch, angels.roll));
+        transformVec(relPos, toQuaternion(angels.yaw, angels.pitch, angels.roll));
         return relPos;
     }
 
@@ -845,14 +903,14 @@ public class PlaneEntity extends Entity {
     }
 
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        dataManager.set(FUEL, compound.getInt("Fuel"));
+    public void readEntityFromNBT(NBTTagCompound compound) {
+        dataManager.set(FUEL, compound.getInteger("Fuel"));
         dataManager.set(MAX_SPEED, compound.getFloat("max_speed"));
-        int max_health = compound.getInt("max_health");
+        int max_health = compound.getInteger("max_health");
         if (max_health <= 0)
             max_health = 20;
         dataManager.set(MAX_HEALTH, max_health);
-        int health = compound.getInt("health");
+        int health = compound.getInteger("health");
         if (health <= 0)
             health = 1;
         dataManager.set(HEALTH, health);
@@ -860,54 +918,63 @@ public class PlaneEntity extends Entity {
         if (material.isEmpty())
             material = "oak";
         setMaterial(material);
-        CompoundNBT upgradesNBT = compound.getCompound("upgrades");
+        NBTTagCompound upgradesNBT = compound.getCompoundTag("upgrades");
         dataManager.set(UPGRADES_NBT, upgradesNBT);
         deserializeUpgrades(upgradesNBT);
     }
 
-    private void deserializeUpgrades(CompoundNBT upgradesNBT) {
-        for (String key : upgradesNBT.keySet()) {
+    private void deserializeUpgrades(NBTTagCompound upgradesNBT) {
+        for (String key : upgradesNBT.getKeySet()) {
             ResourceLocation resourceLocation = new ResourceLocation(key);
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
             if (upgradeType != null) {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
-                upgrade.deserializeNBT(upgradesNBT.getCompound(key));
+                upgrade.deserializeNBT(upgradesNBT.getCompoundTag(key));
                 upgrades.put(resourceLocation, upgrade);
             }
         }
     }
 
-    private void deserializeUpgradesData(CompoundNBT upgradesNBT) {
-        for (String key : upgradesNBT.keySet()) {
+    private void deserializeUpgradesData(NBTTagCompound upgradesNBT) {
+        for (String key : upgradesNBT.getKeySet()) {
             ResourceLocation resourceLocation = new ResourceLocation(key);
             if (upgrades.containsKey(resourceLocation)) {
-                upgrades.get(resourceLocation).deserializeNBTData(upgradesNBT.getCompound(key));
+                upgrades.get(resourceLocation).deserializeNBTData(upgradesNBT.getCompoundTag(key));
             } else {
                 UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
                 if (upgradeType != null) {
                     Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
-                    upgrade.deserializeNBTData(upgradesNBT.getCompound(key));
+                    upgrade.deserializeNBTData(upgradesNBT.getCompoundTag(key));
                     upgrades.put(resourceLocation, upgrade);
                 }
             }
         }
+        ArrayList<ResourceLocation> toRemove = new ArrayList<>();
+        for (ResourceLocation key : upgrades.keySet()) {
+            if(!upgradesNBT.getKeySet().contains(key.toString())){
+                toRemove.add(key);
+            }
+        }
+        for (ResourceLocation key :toRemove){
+            upgrades.remove(key);
+        }
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        compound.putInt("Fuel", dataManager.get(FUEL));
-        compound.putInt("health", dataManager.get(HEALTH));
-        compound.putInt("max_health", dataManager.get(MAX_HEALTH));
-        compound.putFloat("max_speed", dataManager.get(MAX_SPEED));
-        compound.putString("material", dataManager.get(MATERIAL));
-        compound.put("upgrades", getUpgradesNBT());
+    public void writeEntityToNBT(NBTTagCompound compound) {
+        compound.setInteger("Fuel", dataManager.get(FUEL));
+        compound.setInteger("health", dataManager.get(HEALTH));
+        compound.setInteger("max_health", dataManager.get(MAX_HEALTH));
+        compound.setFloat("max_speed", dataManager.get(MAX_SPEED));
+        compound.setString("material", dataManager.get(MATERIAL));
+        compound.setTag("upgrades", getUpgradesNBT());
     }
 
     @SuppressWarnings("ConstantConditions")
-    private CompoundNBT getUpgradesNBT() {
-        CompoundNBT upgradesNBT = new CompoundNBT();
+    private NBTTagCompound getUpgradesNBT() {
+        NBTTagCompound upgradesNBT = new NBTTagCompound();
         for (Upgrade upgrade : upgrades.values()) {
-            upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
+            upgradesNBT.setTag(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
         }
         return upgradesNBT;
     }
@@ -918,10 +985,10 @@ public class PlaneEntity extends Entity {
      * @return
      */
     @SuppressWarnings("ConstantConditions")
-    private CompoundNBT getUpgradesNBTData() {
-        CompoundNBT upgradesNBT = new CompoundNBT();
+    private NBTTagCompound getUpgradesNBTData() {
+        NBTTagCompound upgradesNBT = new NBTTagCompound();
         for (Upgrade upgrade : upgrades.values()) {
-            upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBTData());
+            upgradesNBT.setTag(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBTData());
         }
         return upgradesNBT;
     }
@@ -931,7 +998,6 @@ public class PlaneEntity extends Entity {
         return true;
     }
 
-    @Override
     public boolean canBeRiddenInWater(Entity rider) {
         return upgrades.containsKey(SimplePlanesUpgrades.FLOATING.getId());
     }
@@ -939,6 +1005,11 @@ public class PlaneEntity extends Entity {
     @Override
     public boolean canBeCollidedWith() {
         return true;
+    }
+
+    @Nullable
+    public AxisAlignedBB getCollisionBoundingBox() {
+        return this.getEntityBoundingBox();
     }
 
     //    @Nullable
@@ -955,21 +1026,21 @@ public class PlaneEntity extends Entity {
     //        return COLLISION_AABB.offset(getPositionVec());
     //    }
 
-    @Override
-    public IPacket<?> createSpawnPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
+//    @Override
+//    public IPacket<?> createSpawnPacket() {
+//        return NetworkHooks.getEntitySpawningPacket(this);
+//    }
 
     @Override
     public void notifyDataManagerChange(DataParameter<?> key) {
         super.notifyDataManagerChange(key);
-        if (UPGRADES_NBT.equals(key) && world.isRemote()) {
+        if (UPGRADES_NBT.equals(key) && world.isRemote) {
             deserializeUpgradesData(dataManager.get(UPGRADES_NBT));
         }
-        if (MATERIAL.equals(key) && world.isRemote()) {
+        if (MATERIAL.equals(key) && world.isRemote) {
             this.material = SimplePlanesMaterials.getMaterial((dataManager.get(MATERIAL)));
         }
-        if (Q.equals(key) && world.isRemote() && !canPassengerSteer()) {
+        if (Q.equals(key) && world.isRemote && !canPassengerSteer()) {
             if (firstUpdate) {
                 lerpStepsQ = 0;
                 setQ_Client(getQ());
@@ -985,7 +1056,6 @@ public class PlaneEntity extends Entity {
         return 0.375;
     }
 
-    @Override
     public boolean isInvulnerableTo(DamageSource source) {
         if (source.isExplosion()) {
             return false;
@@ -996,18 +1066,14 @@ public class PlaneEntity extends Entity {
         if (source.getTrueSource() != null && source.getTrueSource().isRidingSameEntity(this)) {
             return true;
         }
-        return super.isInvulnerableTo(source);
+        return false;
     }
 
-    @Override
-    public boolean isImmuneToFire() {
-        return this.material.fireResistant;
-    }
 
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
+    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos) {
 
-        if ((onGroundIn || isAboveWater()) && Config.PLANE_CRASH.get()) {
+        if ((onGroundIn || isAboveWater()) && Config.INSTANCE.PLANE_CRASH) {
             //        if (onGroundIn||isAboveWater()) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).getY();
             if (y1 < Math.cos(Math.toRadians(getLandingAngle()))) {
@@ -1018,20 +1084,21 @@ public class PlaneEntity extends Entity {
 
         //        this.lastYd = this.getMotion().y;
     }
+
     protected int getLandingAngle() {
         return 30;
     }
 
     public boolean onLivingFall(float distance, float damageMultiplier) {
         if (this.isBeingRidden()) {
-            crash(distance*damageMultiplier);
+            crash(distance * damageMultiplier);
         }
         return false;
     }
 
     @SuppressWarnings("deprecation")
     public void crash(float damage) {
-        if (!this.world.isRemote && !this.removed) {
+        if (!this.world.isRemote && !this.isDead) {
             for (Entity entity : getPassengers()) {
                 float damage_mod = Math.min(1, 1 - ((float) getHealth() / getMaxHealth()));
                 entity.attackEntityFrom(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage * damage_mod);
@@ -1041,7 +1108,7 @@ public class PlaneEntity extends Entity {
     }
 
     public boolean isCreative() {
-        return getControllingPassenger() instanceof PlayerEntity && ((PlayerEntity) getControllingPassenger()).isCreative();
+        return getControllingPassenger() instanceof EntityPlayer && ((EntityPlayer) getControllingPassenger()).isCreative();
     }
 
     public boolean getOnGround() {
@@ -1049,7 +1116,7 @@ public class PlaneEntity extends Entity {
     }
 
     public boolean isAboveWater() {
-        return this.world.getBlockState(new BlockPos(this.getPositionVec().add(0, 0.4, 0))).getBlock() == Blocks.WATER;
+        return this.world.getBlockState(new BlockPos(this.getPositionVector().add(0, 0.4, 0))).getBlock() == Blocks.WATER;
     }
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {
@@ -1062,7 +1129,7 @@ public class PlaneEntity extends Entity {
 
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
-        boolean b = (passenger instanceof PlayerEntity) && ((PlayerEntity) passenger).isUser();
+        boolean b = (passenger instanceof EntityPlayer) && ((EntityPlayer) passenger).isUser();
 
         if (this.isPassenger(passenger) && !b) {
             this.applyYawToEntity(passenger);
@@ -1080,7 +1147,7 @@ public class PlaneEntity extends Entity {
 
         entityToUpdate.setRenderYawOffset(this.rotationYaw);
 
-        float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
+        float f = wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
         float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
 
         float perc = deltaRotationTicks > 0 ? 1f / deltaRotationTicks : 1f;
@@ -1093,29 +1160,28 @@ public class PlaneEntity extends Entity {
     }
 
     //on dismount
-    public Vector3d func_230268_c_(LivingEntity livingEntity) {
+    @Override
+    public void removePassenger(Entity passenger) {
+        super.removePassenger(passenger);
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
-            if (livingEntity instanceof PlayerEntity) {
-                final PlayerEntity playerEntity = (PlayerEntity) livingEntity;
+            if (passenger instanceof EntityPlayer) {
+                final EntityPlayer playerEntity = (EntityPlayer) passenger;
 
-                if (!playerEntity.isCreative() && this.getPassengers().size() == 0 && this.isAlive()) {
+                if (!playerEntity.isCreative() && this.getPassengers().size() == 0 && !this.isDead) {
                     ItemStack itemStack = getItemStack();
 
                     playerEntity.addItemStackToInventory(itemStack);
-                    this.remove();
-                    return super.func_230268_c_(livingEntity);
                 }
             }
         }
-        return super.func_230268_c_(livingEntity);
     }
 
     @SuppressWarnings("rawtypes")
     public ItemStack getItemStack() {
         ItemStack itemStack = getItem().getDefaultInstance();
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
-            final CompoundNBT value = serializeNBT();
-            value.putBoolean("Used", true);
+            final NBTTagCompound value = serializeNBT();
+            value.setBoolean("Used", true);
             itemStack.setTagInfo("EntityTag", value);
         }
 
@@ -1138,7 +1204,8 @@ public class PlaneEntity extends Entity {
         if (this.canPassengerSteer()) {
             this.lerpSteps = 0;
             this.lerpStepsQ = 0;
-            this.setPacketCoordinates(this.getPosX(), this.getPosY(), this.getPosZ());
+
+//            this.setPacketCoordinates(this.getPosX(), this.getPosY(), this.getPosZ());
             return;
         }
 
@@ -1160,7 +1227,7 @@ public class PlaneEntity extends Entity {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    //    @OnlyIn(Dist.CLIENT)
     public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) {
         if (x == getPosX() && y == getPosY() && z == getPosZ()) {
             return;
@@ -1200,9 +1267,9 @@ public class PlaneEntity extends Entity {
         }
     }
 
-    public PlayerEntity getPlayer() {
-        if (getControllingPassenger() instanceof PlayerEntity) {
-            return (PlayerEntity) getControllingPassenger();
+    public EntityPlayer getPlayer() {
+        if (getControllingPassenger() instanceof EntityPlayer) {
+            return (EntityPlayer) getControllingPassenger();
         }
         return null;
     }
@@ -1238,7 +1305,7 @@ public class PlaneEntity extends Entity {
 
             this.rockingIntensity = MathHelper.clamp(this.rockingIntensity, 0.0F, 1.0F);
             this.prevRockingAngle = this.rockingAngle;
-            this.rockingAngle = 10.0F * (float) Math.sin((double) (0.5F * (float) this.world.getGameTime())) * this.rockingIntensity;
+            this.rockingAngle = 10.0F * (float) Math.sin((double) (0.5F * (float) this.world.getWorldTime())) * this.rockingIntensity;
         } else {
             if (!this.rocking) {
                 this.setRockingTicks(0);
@@ -1251,12 +1318,12 @@ public class PlaneEntity extends Entity {
                 int j = 60 - k - 1;
                 if (j > 0 && k == 0) {
                     this.setRockingTicks(0);
-                    Vector3d vector3d = this.getMotion();
+                    Vec3d vector3d = this.getMotion();
                     if (this.field_203060_aN) {
                         this.setMotion(vector3d.add(0.0D, -0.7D, 0.0D));
                         this.removePassengers();
                     } else {
-                        this.setMotion(vector3d.x, this.isPassenger(PlayerEntity.class) ? 2.7D : 0.6D, vector3d.z);
+                        this.setMotion(vector3d.x, this.isRiding() ? 2.7D : 0.6D, vector3d.z);
                     }
                 }
 
@@ -1266,9 +1333,10 @@ public class PlaneEntity extends Entity {
 
     }
 
-    @OnlyIn(Dist.CLIENT)
+
+    //    @(Dist.CLIENT)
     public float getRockingAngle(float partialTicks) {
-        return MathHelper.lerp(partialTicks, this.prevRockingAngle, this.rockingAngle);
+        return MathUtil.lerp(partialTicks, this.prevRockingAngle, this.rockingAngle);
     }
 
     /**
@@ -1301,11 +1369,49 @@ public class PlaneEntity extends Entity {
     }
 
     public boolean hasChest() {
-        return this.upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
+        return false;
+//        return this.upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
     }
 
     public double getCameraDistanceMultiplayer() {
         return 1;
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public void setPosX(double posX) {
+        this.posX = posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public void setPosY(double posY) {
+        this.posY = posY;
+    }
+
+    public double getPosZ() {
+        return posZ;
+    }
+
+    public void setPosZ(double posZ) {
+        this.posZ = posZ;
+    }
+
+    @Override
+    public void writeSpawnData(ByteBuf buffer) {
+        NBTTagCompound nbtData = new NBTTagCompound();
+        writeEntityToNBT(nbtData);
+        ByteBufUtils.writeTag(buffer, nbtData);
+    }
+
+    @Override
+    public void readSpawnData(ByteBuf additionalData) {
+        NBTTagCompound compound = ByteBufUtils.readTag(additionalData);
+        readEntityFromNBT(compound);
     }
 
 

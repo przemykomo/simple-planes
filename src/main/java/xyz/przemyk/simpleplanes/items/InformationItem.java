@@ -15,12 +15,14 @@ public class InformationItem extends Item {
     private final ITextComponent information;
 
     public InformationItem(ITextComponent information) {
-        super(new Properties().group(SimplePlanesItems.SIMPLE_PLANES_ITEM_GROUP));
+        super();
         this.information = information;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(information);
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(information.getFormattedText());
+        super.addInformation(stack, worldIn, tooltip, flagIn);
     }
+
 }

@@ -1,15 +1,12 @@
 package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.lwjgl.util.vector.Vector3f;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -21,25 +18,25 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(6F, 1.5F);
     public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(6F, 2.5F);
 
-    public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
-        super(entityTypeIn, worldIn);
+    public MegaPlaneEntity( World worldIn) {
+        super( worldIn);
     }
 
-    public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
-        super(entityTypeIn, worldIn, material, x, y, z);
+    public MegaPlaneEntity( World worldIn, PlaneMaterial material, double x, double y, double z) {
+        super( worldIn, material, x, y, z);
     }
 
     @Override
-    public EntitySize getSize(Pose poseIn) {
-        if (this.getControllingPassenger() instanceof PlayerEntity) {
+    public EntitySize getSize() {
+        if (this.getControllingPassenger() instanceof EntityPlayer) {
             return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
         }
-            return super.getSize(poseIn);
+        return FLYING_SIZE;
         //just hate my head in the nether ceiling
     }
 
-    public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
-        super(entityTypeIn, worldIn, material);
+    public MegaPlaneEntity( World worldIn, PlaneMaterial material) {
+        super( worldIn, material);
     }
 
     @Override

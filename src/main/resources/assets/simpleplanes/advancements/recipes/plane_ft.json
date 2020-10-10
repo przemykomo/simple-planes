@@ -1,0 +1,30 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "simpleplanes:ft_cherry_helicopter",
+            "simpleplanes:ft_cherry_large_plane",
+            "simpleplanes:ft_cherry_mega_plane",
+            "simpleplanes:ft_cherry_plane",
+            "simpleplanes:ft_citrus_helicopter",
+            "simpleplanes:ft_citrus_large_plane",
+            "simpleplanes:ft_citrus_mega_plane",
+            "simpleplanes:ft_citrus_plane",
+            "simpleplanes:ft_ft_cherry_mega_plane",
+            "simpleplanes:ft_ft_citrus_mega_plane",
+        ]
+    },
+    "criteria": {
+        "in_fire": {
+            "trigger": "minecraft:enter_block",
+            "conditions": {
+                "block": "minecraft:fire"
+            }
+        }
+    },
+    "requirements": [
+        [
+            "in_fire"
+        ]
+    ]
+}

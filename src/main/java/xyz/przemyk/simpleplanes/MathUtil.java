@@ -1,24 +1,62 @@
 package xyz.przemyk.simpleplanes;
 
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
+import org.lwjgl.util.vector.Quaternion;
+import org.lwjgl.util.vector.Vector3f;
 
 public class MathUtil extends MathHelper {
-    public static double angelBetweenVec(Vector3d v1, Vector3d v2) {
+    public static void hamiltonProduct(Quaternion this_, Quaternion other) {
+        float f = this_.getX();
+        float g = this_.getY();
+        float h = this_.getZ();
+        float i = this_.getW();
+        float j = other.getX();
+        float k = other.getY();
+        float l = other.getZ();
+        float m = other.getW();
+        this_.x = i * j + f * m + g * l - h * k;
+        this_.y = i * k - f * l + g * m + h * j;
+        this_.z = i * l + f * k - g * j + h * m;
+        this_.w = i * m - f * j - g * k - h * l;
+    }
+
+    public static Quaternion rotationDegreesX(float rotationAngle) {
+        rotationAngle *= 0.017453292F;
+        float f = sin(rotationAngle / 2.0F);
+        float w = cos(rotationAngle / 2.0F);
+        return new Quaternion(f, 0, 0, w);
+    }
+
+    public static Quaternion rotationDegreesY(float rotationAngle) {
+        rotationAngle *= 0.017453292F;
+        float f = sin(rotationAngle / 2.0F);
+        float w = cos(rotationAngle / 2.0F);
+        return new Quaternion(0, f, 0, w);
+    }
+
+    public static Quaternion rotationDegreesZ(float rotationAngle) {
+        rotationAngle *= 0.017453292F;
+        float f = sin(rotationAngle / 2.0F);
+        float w = cos(rotationAngle / 2.0F);
+        return new Quaternion(0, 0, f, w);
+    }
+
+
+    public static double angelBetweenVec(Vec3d v1, Vec3d v2) {
         return Math.toDegrees(Math.acos(normalizedDotProduct(v1, v2)));
     }
 
-    public static double normalizedDotProduct(Vector3d v1, Vector3d v2) {
+    public static double normalizedDotProduct(Vec3d v1, Vec3d v2) {
         return v1.dotProduct(v2) / (v1.length() * v2.length());
     }
 
-    public static float getPitch(Vector3d motion) {
+    public static float getPitch(Vec3d motion) {
         double y = motion.y;
         return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
     }
 
-    public static float getYaw(Vector3d motion) {
+    public static float getYaw(Vec3d motion) {
         return (float) Math.toDegrees(Math.atan2(-motion.x, motion.z));
     }
 
@@ -50,23 +88,23 @@ public class MathUtil extends MathHelper {
         return wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch) {
+    public static Vec3d rotationToVector(double yaw, double pitch) {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
         double xzLen = Math.cos(pitch);
         double x = -xzLen * Math.sin(yaw);
         double y = Math.sin(pitch);
         double z = xzLen * Math.cos(-yaw);
-        return new Vector3d(x, y, z);
+        return new Vec3d(x, y, z);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch, double size) {
-        Vector3d vec = rotationToVector(yaw, pitch);
+    public static Vec3d rotationToVector(double yaw, double pitch, double size) {
+        Vec3d vec = rotationToVector(yaw, pitch);
         return vec.scale(size / vec.length());
     }
 
-    public static double getHorizontalLength(Vector3d vector3d) {
-        return Math.sqrt(vector3d.x * vector3d.x + vector3d.z * vector3d.z);
+    public static double getHorizontalLength(Vec3d Vec3d) {
+        return Math.sqrt(Vec3d.x * Vec3d.x + Vec3d.z * Vec3d.z);
     }
 
     public static EulerAngles toEulerAngles(Quaternion q) {
@@ -189,6 +227,23 @@ public class MathUtil extends MathHelper {
             start.getW() * (s0) + end.getW() * s1
         );
         return normalizeQuaternion(quaternion);
+    }
+
+    public static double lerp(double delta, double start, double end) {
+        return start + delta * (end - start);
+    }
+
+    public static float lerp(float delta, float start, float end) {
+        return start + delta * (end - start);
+    }
+
+    public static void transformVec(Vector3f vec, Quaternion rotation) {
+        Quaternion quaternion = new Quaternion(rotation);
+        hamiltonProduct(quaternion,new Quaternion(vec.getX(), vec.getY(), vec.getZ(), 0.0F));
+        Quaternion quaternion2 = new Quaternion(rotation);
+        quaternion2.negate();
+        hamiltonProduct(quaternion,quaternion2);
+        vec.set(quaternion.getX(), quaternion.getY(), quaternion.getZ());
     }
 
     public static class EulerAngles {

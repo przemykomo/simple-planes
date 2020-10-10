@@ -2,14 +2,13 @@ package xyz.przemyk.simpleplanes.upgrades.floating;// Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class LargeFloatingModel extends EntityModel<LargePlaneEntity> {
+public class LargeFloatingModel extends ModelBase {
     public static final LargeFloatingModel INSTANCE = new LargeFloatingModel();
 
     private final ModelRenderer Body;
@@ -22,39 +21,34 @@ public class LargeFloatingModel extends EntityModel<LargePlaneEntity> {
         textureHeight = 256;
 
         Body = new ModelRenderer(this);
-        Body.setRotationPoint(0.0F, 17.0F, 0.0F);
-        setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
+        Body.setRotationPoint(0, 17, 0);
+        setRotationAngle(Body, 0, 0, 0);
 
         balloon = new ModelRenderer(this);
-        balloon.setRotationPoint(0.0F, 0.0F, 0.0F);
+        balloon.setRotationPoint(0, 0, 0);
         Body.addChild(balloon);
-        balloon.setTextureOffset(0, 0).addBox(-8.0F, 0.0F, -17.0F, 16.0F, 1.0F, 54.0F, 0.0F, false);
-        balloon.setTextureOffset(0, 3).addBox(-9.0F, -1.0F, 37.0F, 18.0F, 2.0F, 1.0F, 0.0F, false);
-        balloon.setTextureOffset(0, 0).addBox(-9.0F, -1.0F, -18.0F, 18.0F, 2.0F, 1.0F, 0.0F, false);
-        balloon.setTextureOffset(56, 57).addBox(8.0F, -1.0F, -17.0F, 1.0F, 2.0F, 54.0F, 0.0F, false);
-        balloon.setTextureOffset(0, 55).addBox(-9.0F, -1.0F, -17.0F, 1.0F, 2.0F, 54.0F, 0.0F, false);
+        balloon.setTextureOffset(0, 0).addBox(-8, 0, -17, 16, 1, 54, 0);
+        balloon.setTextureOffset(0, 3).addBox(-9, -1, 37, 18, 2, 1, 0);
+        balloon.setTextureOffset(0, 0).addBox(-9, -1, -18, 18, 2, 1, 0);
+        balloon.setTextureOffset(56, 57).addBox(8, -1, -17, 1, 2, 54, 0);
+        balloon.setTextureOffset(0, 55).addBox(-9, -1, -17, 1, 2, 54, 0);
 
         wing_left = new ModelRenderer(this);
-        wing_left.setRotationPoint(0.0F, 0.0F, 0.0F);
+        wing_left.setRotationPoint(0, 0, 0);
         balloon.addChild(wing_left);
-        setRotationAngle(wing_left, 0.0F, 0.0F, -0.0873F);
-        wing_left.setTextureOffset(86, 10).addBox(9.0F, 0.0F, -15.0F, 30.0F, 1.0F, 9.0F, 0.0F, false);
+        setRotationAngle(wing_left, 0, 0, -0.0873F);
+        wing_left.setTextureOffset(86, 10).addBox(9, 0, -15, 30, 1, 9, 0);
 
         wing_left2 = new ModelRenderer(this);
-        wing_left2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        wing_left2.setRotationPoint(0, 0, 0);
         balloon.addChild(wing_left2);
-        setRotationAngle(wing_left2, 0.0F, 0.0F, 0.0873F);
-        wing_left2.setTextureOffset(86, 0).addBox(-39.0F, 0.0F, -15.0F, 30.0F, 1.0F, 9.0F, 0.0F, false);
+        setRotationAngle(wing_left2, 0, 0, 0.0873F);
+        wing_left2.setTextureOffset(86, 0).addBox(-39, 0, -15, 30, 1, 9, 0);
     }
 
     @Override
-    public void setRotationAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        //previously the render function, render code was moved to a method below
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        Body.render(matrixStack, buffer, packedLight, packedOverlay);
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        Body.render(scale);
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

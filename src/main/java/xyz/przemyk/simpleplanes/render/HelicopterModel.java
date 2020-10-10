@@ -2,13 +2,12 @@ package xyz.przemyk.simpleplanes.render;
 
 // Made with Blockbench 3.6.3
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class HelicopterModel extends EntityModel<PlaneEntity> {
+public class HelicopterModel extends ModelBase {
     private final ModelRenderer Body;
     private final ModelRenderer main;
     private final ModelRenderer tail;
@@ -26,87 +25,82 @@ public class HelicopterModel extends EntityModel<PlaneEntity> {
         textureHeight = 16;
 
         Body = new ModelRenderer(this);
-        Body.setRotationPoint(0.0F, 17.0F, 0.0F);
+        Body.setRotationPoint(0, 17, 0);
 
         main = new ModelRenderer(this);
-        main.setRotationPoint(0.0F, 0.0F, 18.0F);
+        main.setRotationPoint(0, 0, 18);
         Body.addChild(main);
 
         tail = new ModelRenderer(this);
-        tail.setRotationPoint(0.0F, -19.0F, 1.0F);
+        tail.setRotationPoint(0, -19, 1);
         main.addChild(tail);
 
         box = new ModelRenderer(this);
-        box.setRotationPoint(0.0F, 0.0F, 0.0F);
+        box.setRotationPoint(0, 0, 0);
         main.addChild(box);
-        box.setTextureOffset(0, 0).addBox(-8.0F, -13.0F, -34.0F, 1.0F, 13.0F, 37.0F, 0.0F, false);
-        box.setTextureOffset(0, 0).addBox(-8.0F, -26.0F, -16.0F, 1.0F, 13.0F, 1.0F, 0.0F, false);
-        box.setTextureOffset(0, 0).addBox(7.0F, -26.0F, -16.0F, 1.0F, 13.0F, 1.0F, 0.0F, false);
-        box.setTextureOffset(0, 0).addBox(-8.0F, -26.0F, -2.0F, 16.0F, 13.0F, 14.0F, 0.0F, false);
-        box.setTextureOffset(0, 10).addBox(-7.0F, -1.0F, -34.0F, 14.0F, 1.0F, 33.0F, 0.0F, false);
-        box.setTextureOffset(37, 58).addBox(7.0F, -13.0F, -34.0F, 1.0F, 13.0F, 37.0F, 0.0F, false);
-        box.setTextureOffset(0, 10).addBox(-8.0F, -13.0F, -35.0F, 16.0F, 13.0F, 1.0F, 0.0F, false);
-        box.setTextureOffset(35, 22).addBox(-5.0F, -12.0F, -38.0F, 11.0F, 10.0F, 3.0F, 0.0F, false);
-        box.setTextureOffset(0, 106).addBox(-7.0F, -13.0F, -34.0F, 14.0F, 1.0F, 6.0F, 0.0F, false);
-        box.setTextureOffset(0, 0).addBox(-7.0F, -13.0F, -2.0F, 14.0F, 13.0F, 5.0F, 0.01F, false);
+        box.setTextureOffset(0, 0).addBox(-8, -13, -34, 1, 13, 37, 0);
+        box.setTextureOffset(0, 0).addBox(-8, -26, -16, 1, 13, 1, 0);
+        box.setTextureOffset(0, 0).addBox(7, -26, -16, 1, 13, 1, 0);
+        box.setTextureOffset(0, 0).addBox(-8, -26, -2, 16, 13, 14, 0);
+        box.setTextureOffset(0, 10).addBox(-7, -1, -34, 14, 1, 33, 0);
+        box.setTextureOffset(37, 58).addBox(7, -13, -34, 1, 13, 37, 0);
+        box.setTextureOffset(0, 10).addBox(-8, -13, -35, 16, 13, 1, 0);
+        box.setTextureOffset(35, 22).addBox(-5, -12, -38, 11, 10, 3, 0);
+        box.setTextureOffset(0, 106).addBox(-7, -13, -34, 14, 1, 6, 0);
+        box.setTextureOffset(0, 0).addBox(-7, -13, -2, 14, 13, 5, 0.01F);
 
         bone3 = new ModelRenderer(this);
-        bone3.setRotationPoint(0.0F, 0.0F, -17.0F);
+        bone3.setRotationPoint(0, 0, -17);
         box.addChild(bone3);
-        setRotationAngle(bone3, -0.7854F, 0.0F, 0.0F);
+        setRotationAngle(bone3, -0.7854F, 0, 0);
 
         wheels = new ModelRenderer(this);
-        wheels.setRotationPoint(-2.0F, 1.0F, -7.0F);
+        wheels.setRotationPoint(-2, 1, -7);
         Body.addChild(wheels);
 
         bone = new ModelRenderer(this);
-        bone.setRotationPoint(-4.0F, 7.0F, 0.0F);
+        bone.setRotationPoint(-4, 7, 0);
         wheels.addChild(bone);
-        bone.setTextureOffset(12, 59).addBox(0.0F, -8.0F, 11.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
-        bone.setTextureOffset(12, 59).addBox(0.0F, -8.0F, 0.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
-        bone.setTextureOffset(37, 45).addBox(-1.0F, -4.0F, -7.0F, 1.0F, 2.0F, 25.0F, 0.0F, false);
+        bone.setTextureOffset(12, 59).addBox(0, -8, 11, 1, 5, 1, 0);
+        bone.setTextureOffset(12, 59).addBox(0, -8, 0, 1, 5, 1, 0);
+        bone.setTextureOffset(37, 45).addBox(-1, -4, -7, 1, 2, 25, 0);
 
         bone6 = new ModelRenderer(this);
-        bone6.setRotationPoint(7.0F, 7.0F, 0.0F);
+        bone6.setRotationPoint(7, 7, 0);
         wheels.addChild(bone6);
-        bone6.setTextureOffset(12, 59).addBox(0.0F, -8.0F, 11.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
-        bone6.setTextureOffset(12, 59).addBox(0.0F, -8.0F, 0.0F, 1.0F, 5.0F, 1.0F, 0.0F, false);
-        bone6.setTextureOffset(37, 45).addBox(1.0F, -4.0F, -7.0F, 1.0F, 2.0F, 25.0F, 0.0F, false);
+        bone6.setTextureOffset(12, 59).addBox(0, -8, 11, 1, 5, 1, 0);
+        bone6.setTextureOffset(12, 59).addBox(0, -8, 0, 1, 5, 1, 0);
+        bone6.setTextureOffset(37, 45).addBox(1, -4, -7, 1, 2, 25, 0);
 
         top = new ModelRenderer(this);
-        top.setRotationPoint(0.0F, -4.0F, 0.0F);
-        top.setTextureOffset(0, 0).addBox(-8.0F, -6.0F, -8.0F, 16.0F, 1.0F, 38.0F, 0.0F, false);
-        top.setTextureOffset(0, 0).addBox(-5.0F, -9.0F, 3.0F, 11.0F, 3.0F, 24.0F, 0.0F, false);
-        top.setTextureOffset(0, 0).addBox(-5.0F, -6.0F, 30.0F, 10.0F, 4.0F, 12.0F, 0.0F, false);
-        top.setTextureOffset(0, 0).addBox(-3.0F, -7.0F, 27.0F, 5.0F, 4.0F, 32.0F, 0.0F, false);
-        top.setTextureOffset(0, 0).addBox(-15.0F, -6.0F, 42.0F, 29.0F, 2.0F, 5.0F, 0.0F, false);
+        top.setRotationPoint(0, -4, 0);
+        top.setTextureOffset(0, 0).addBox(-8, -6, -8, 16, 1, 38, 0);
+        top.setTextureOffset(0, 0).addBox(-5, -9, 3, 11, 3, 24, 0);
+        top.setTextureOffset(0, 0).addBox(-5, -6, 30, 10, 4, 12, 0);
+        top.setTextureOffset(0, 0).addBox(-3, -7, 27, 5, 4, 32, 0);
+        top.setTextureOffset(0, 0).addBox(-15, -6, 42, 29, 2, 5, 0);
 
         bone4 = new ModelRenderer(this);
-        bone4.setRotationPoint(0.0F, 0.0F, -7.0F);
+        bone4.setRotationPoint(0, 0, -7);
         top.addChild(bone4);
-        setRotationAngle(bone4, 1.0472F, 0.0F, 0.0F);
-        bone4.setTextureOffset(0, 0).addBox(7.0F, -2.9873F, -14.4497F, 1.0F, 1.0F, 20.0F, -0.99F, false);
-        bone4.setTextureOffset(0, 0).addBox(-8.0F, -2.9873F, -14.4497F, 1.0F, 1.0F, 19.0F, -0.01F, false);
+        setRotationAngle(bone4, 1.0472F, 0, 0);
+        bone4.setTextureOffset(0, 0).addBox(7, -2.9873F, -14.4497F, 1, 1, 20, -0.99F);
+        bone4.setTextureOffset(0, 0).addBox(-8, -2.9873F, -14.4497F, 1, 1, 19, -0.01F);
 
         bone5 = new ModelRenderer(this);
-        bone5.setRotationPoint(0.0F, -4.0F, 17.0F);
+        bone5.setRotationPoint(0, -4, 17);
         top.addChild(bone5);
-        setRotationAngle(bone5, -0.7418F, 0.0F, 0.0F);
-        bone5.setTextureOffset(0, 0).addBox(-6.0F, -0.1044F, 10.126F, 12.0F, 19.0F, 6.0F, 0.0F, false);
-        bone5.setTextureOffset(0, 0).addBox(-4.0F, -13.008F, 11.1639F, 8.0F, 13.0F, 4.0F, 0.0F, false);
+        setRotationAngle(bone5, -0.7418F, 0, 0);
+        bone5.setTextureOffset(0, 0).addBox(-6, -0.1044F, 10.126F, 12, 19, 6, 0);
+        bone5.setTextureOffset(0, 0).addBox(-4, -13.008F, 11.1639F, 8, 13, 4, 0);
     }
+
 
     @Override
-    public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        //previously the render function, render code was moved to a method below
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        Body.render(scale);
+        top.render(scale);
     }
-
-    @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        Body.render(matrixStack, buffer, packedLight, packedOverlay);
-        top.render(matrixStack, buffer, packedLight, packedOverlay);
-    }
-
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
         modelRenderer.rotateAngleX = x;
         modelRenderer.rotateAngleY = y;

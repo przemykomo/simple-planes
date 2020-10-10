@@ -1,0 +1,55 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "simpleplanes:acacia_helicopter",
+            "simpleplanes:acacia_large_plane",
+            "simpleplanes:acacia_mega_plane",
+            "simpleplanes:acacia_plane",
+            "simpleplanes:birch_helicopter",
+            "simpleplanes:birch_large_plane",
+            "simpleplanes:birch_mega_plane",
+            "simpleplanes:birch_plane",
+            "simpleplanes:dark_oak_helicopter",
+            "simpleplanes:dark_oak_large_plane",
+            "simpleplanes:dark_oak_mega_plane",
+            "simpleplanes:dark_oak_plane",
+            "simpleplanes:jungle_helicopter",
+            "simpleplanes:jungle_large_plane",
+            "simpleplanes:jungle_mega_plane",
+            "simpleplanes:jungle_plane",
+            "simpleplanes:oak_helicopter",
+            "simpleplanes:oak_large_plane",
+            "simpleplanes:oak_mega_plane",
+            "simpleplanes:oak_plane",
+            "simpleplanes:spruce_helicopter",
+            "simpleplanes:spruce_large_plane",
+            "simpleplanes:spruce_mega_plane",
+            "simpleplanes:spruce_plane",
+
+            "simpleplanes:upgrades/booster",
+            "simpleplanes:upgrades/floaty_bedding",
+            "simpleplanes:upgrades/folding",
+            "simpleplanes:upgrades/furnace_engine",
+            "simpleplanes:upgrades/healing",
+            "simpleplanes:upgrades/healing_enchanted",
+            "simpleplanes:upgrades/mana",
+            "simpleplanes:upgrades/propeller",
+            "simpleplanes:upgrades/shooter",
+            "simpleplanes:upgrades/sprayer"
+        ]
+    },
+    "criteria": {
+        "in_fire": {
+            "trigger": "minecraft:enter_block",
+            "conditions": {
+                "block": "minecraft:fire"
+            }
+        }
+    },
+    "requirements": [
+        [
+            "in_fire"
+        ]
+    ]
+}

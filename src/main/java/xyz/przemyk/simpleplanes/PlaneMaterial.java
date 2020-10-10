@@ -1,10 +1,14 @@
 package xyz.przemyk.simpleplanes;
 
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
-public class PlaneMaterial extends ForgeRegistryEntry<PlaneMaterial> {
-    public final String name;
+import javax.annotation.Nullable;
+
+public class PlaneMaterial implements IForgeRegistryEntry<PlaneMaterial> {
+    public String name;
     public final boolean fireResistant;
+    private ResourceLocation registyName;
 
     public PlaneMaterial(String name, boolean fireResistant) {
         this.name = name;
@@ -18,5 +22,22 @@ public class PlaneMaterial extends ForgeRegistryEntry<PlaneMaterial> {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public PlaneMaterial setRegistryName(ResourceLocation name) {
+        registyName = name;
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public ResourceLocation getRegistryName() {
+        return registyName;
+    }
+
+    @Override
+    public Class<PlaneMaterial> getRegistryType() {
+        return PlaneMaterial.class;
     }
 }
