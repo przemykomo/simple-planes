@@ -8,12 +8,12 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.Quaternion;
+import xyz.przemyk.simpleplanes.math.MathUtil;
+import xyz.przemyk.simpleplanes.math.Quaternion;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesY;
+import static xyz.przemyk.simpleplanes.math.MathUtil.rotationDegreesY;
 
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Render<T> {

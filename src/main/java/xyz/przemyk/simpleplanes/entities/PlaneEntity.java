@@ -22,9 +22,11 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
-import org.lwjgl.util.vector.Vector3f;
 import xyz.przemyk.simpleplanes.*;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
+import xyz.przemyk.simpleplanes.math.MathUtil;
+import xyz.przemyk.simpleplanes.math.Quaternion;
+import xyz.przemyk.simpleplanes.math.Vector3f;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
@@ -39,7 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static net.minecraft.util.math.MathHelper.wrapDegrees;
-import static xyz.przemyk.simpleplanes.MathUtil.*;
+import static xyz.przemyk.simpleplanes.math.MathUtil.*;
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {

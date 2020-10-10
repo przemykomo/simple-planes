@@ -1,9 +1,7 @@
-package xyz.przemyk.simpleplanes;
+package xyz.przemyk.simpleplanes.math;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-
-import org.lwjgl.util.vector.Vector3f;
 
 public class MathUtil extends MathHelper {
     public static void hamiltonProduct(Quaternion this_, Quaternion other) {

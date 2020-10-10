@@ -4,28 +4,23 @@ package xyz.przemyk.simpleplanes.upgrades.banner;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBanner;
-import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.BannerTextures;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.tileentity.TileEntityBannerRenderer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.TileEntityBanner;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.util.vector.Vector3f;
-import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.math.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
-import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesX;
-import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesY;
+import static xyz.przemyk.simpleplanes.math.MathUtil.rotationDegreesX;
+import static xyz.przemyk.simpleplanes.math.MathUtil.rotationDegreesY;
 
 public class BannerModel {
     private static final TileEntityBanner BANNER_TE = new TileEntityBanner();

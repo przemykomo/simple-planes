@@ -6,8 +6,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.math.MathUtil;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class FoldingModel extends ModelBase {

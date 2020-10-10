@@ -2,11 +2,9 @@ package xyz.przemyk.simpleplanes.render;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
-import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;

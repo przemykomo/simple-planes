@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesX;
+import static xyz.przemyk.simpleplanes.math.MathUtil.rotationDegreesX;
 
 public class DragonModel {
 

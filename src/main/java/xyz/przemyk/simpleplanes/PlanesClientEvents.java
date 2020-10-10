@@ -1,7 +1,6 @@
 package xyz.przemyk.simpleplanes;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,14 +19,16 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
+import xyz.przemyk.simpleplanes.math.MathUtil;
+import xyz.przemyk.simpleplanes.math.Quaternion;
 import xyz.przemyk.simpleplanes.proxy.ClientProxy;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 //import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 
-import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesX;
-import static xyz.przemyk.simpleplanes.MathUtil.rotationDegreesY;
+import static xyz.przemyk.simpleplanes.math.MathUtil.rotationDegreesX;
+import static xyz.przemyk.simpleplanes.math.MathUtil.rotationDegreesY;
 
 @Mod.EventBusSubscriber(value = Side.CLIENT)
 public class PlanesClientEvents {
