@@ -15,6 +15,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
@@ -72,6 +74,11 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
+    public double getCameraDistanceMultiplayer() {
+        return super.getCameraDistanceMultiplayer();
+    }
+
+    @Override
     protected boolean isEasy() {
         return true;
     }
@@ -119,11 +126,11 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected void tickRotation(float moveStrafing, boolean passengerSprinting) {
+    protected void tickRotation(Vars vars) {
 
         int yawdiff = 2;
 
-        double turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
+        double turn = vars.moveStrafing > 0 ? yawdiff : vars.moveStrafing == 0 ? 0 : -yawdiff;
         rotationRoll = 0;
         rotationYaw -= turn;
     }
@@ -136,6 +143,21 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
+    }
+
+    @Override
+    public boolean canAddUpgrade(UpgradeType upgradeType) {
+        if (upgradeType.occupyBackSeat) {
+            if (getPassengers().size() > 1) {
+                return false;
+            }
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade.getType().occupyBackSeat) {
+                    return false;
+                }
+            }
+        }
+        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
     }
 
     @Override

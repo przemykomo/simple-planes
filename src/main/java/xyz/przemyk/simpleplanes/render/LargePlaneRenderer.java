@@ -17,11 +17,11 @@ public class LargePlaneRenderer extends AbstractPlaneRenderer<LargePlaneEntity> 
         shadowSize = 1.0f;
     }
 
-    @Override
-    protected void renderEngine(LargePlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        matrixStackIn.translate(0, 0, 1);
-        super.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-    }
+//    @Override
+//    protected void renderEngine(LargePlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+//        matrixStackIn.translate(0, 0, 1);
+//        super.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+//    }
 
     @Override
     protected EntityModel<LargePlaneEntity> getModel() {

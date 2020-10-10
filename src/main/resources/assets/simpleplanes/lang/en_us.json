@@ -8,6 +8,9 @@
     "item.simpleplanes.folding": "Folding",
     "item.simpleplanes.healing": "Plane Quick Fix Kit",
     "item.simpleplanes.mana_upgrade": "Pure daisy bundle",
+    "item.simpleplanes.cloud": "Cloud",
+    "block.simpleplanes.charger_block": "FE charging station",
+    "block.simpleplanes.fueling_block": "plane fueling station",
     "description.simpleplanes.sprayer": "Use water bottles or potions to make crops grow faster and give effect to entities",
     "description.simpleplanes.booster": "Use gunpowder to boost your plane. Can only be applied to small planes.",
     "description.simpleplanes.floaty_bedding": "Makes plane float on water.",
@@ -15,6 +18,7 @@
     "description.simpleplanes.folding": "Plane returns to players inventory upon departure.",
     "description.simpleplanes.healing": "Fix up your plane quicker",
     "description.simpleplanes.mana_upgrade": "Turns your plane into living wood plane",
+    "description.simpleplanes.cloud": "Right Click with a pickaxe above cloud level to get",
     "itemGroup.simpleplanes": "Simple Planes",
     "death.attack.plane_crash": "%1$s Died in a plane crash",
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",
@@ -26,137 +30,280 @@
     "item.simpleplanes.acacia_plane": "Acacia Plane",
     "item.simpleplanes.acacia_large_plane": "Large Acacia Plane",
     "item.simpleplanes.acacia_helicopter": "Acacia Helicopter",
+    "item.simpleplanes.acacia_mega_plane": "Acacia Cargo Plane",
+
+
     "item.simpleplanes.birch_plane": "Birch Plane",
     "item.simpleplanes.birch_large_plane": "Large Birch Plane",
     "item.simpleplanes.birch_helicopter": "Birch Helicopter",
-    "item.simpleplanes.crimson_plane": "Crimson Plane",
-    "item.simpleplanes.crimson_large_plane": "Large Crimson Plane",
-    "item.simpleplanes.crimson_helicopter": "Crimson Helicopter",
-    "item.simpleplanes.dark_oak_plane": "Dark Oak Plane",
-    "item.simpleplanes.dark_oak_large_plane": "Large Dark Oak Plane",
-    "item.simpleplanes.dark_oak_helicopter": "Dark Oak Helicopter",
-    "item.simpleplanes.oak_plane": "Oak Plane",
-    "item.simpleplanes.oak_large_plane": "Large Oak Plane",
-    "item.simpleplanes.oak_helicopter": "Oak Helicopter",
-    "item.simpleplanes.jungle_plane": "Jungle Plane",
-    "item.simpleplanes.jungle_large_plane": "Large Jungle Plane",
-    "item.simpleplanes.jungle_helicopter": "Jungle Helicopter",
-    "item.simpleplanes.spruce_plane": "Spruce Plane",
-    "item.simpleplanes.spruce_large_plane": "Large Spruce Plane",
-    "item.simpleplanes.spruce_helicopter": "Spruce Helicopter",
-    "item.simpleplanes.warped_plane": "Warped Plane",
-    "item.simpleplanes.warped_large_plane": "Large Warped Plane",
-    "item.simpleplanes.warped_helicopter": "Warped Helicopter",
+    "item.simpleplanes.birch_mega_plane": "Birch Cargo Plane",
 
-    "_planes_comment": "Everything below is for mod compatibility",
+
     "item.simpleplanes.bop_cherry_plane": "Cherry Plane",
     "item.simpleplanes.bop_cherry_large_plane": "Large Cherry Plane",
     "item.simpleplanes.bop_cherry_helicopter": "Cherry Helicopter",
+    "item.simpleplanes.bop_cherry_mega_plane": "Cherry Cargo Plane",
+
+
     "item.simpleplanes.bop_dead_plane": "Dead Plane",
     "item.simpleplanes.bop_dead_large_plane": "Large Dead Plane",
     "item.simpleplanes.bop_dead_helicopter": "Dead Helicopter",
+    "item.simpleplanes.bop_dead_mega_plane": "Dead Cargo Plane",
+
+
     "item.simpleplanes.bop_fir_plane": "Fir Plane",
     "item.simpleplanes.bop_fir_large_plane": "Large Fir Plane",
     "item.simpleplanes.bop_fir_helicopter": "Fir Helicopter",
+    "item.simpleplanes.bop_fir_mega_plane": "Fir Cargo Plane",
+
+
     "item.simpleplanes.bop_hellbark_plane": "Hellbark Plane",
     "item.simpleplanes.bop_hellbark_large_plane": "Large Hellbark Plane",
     "item.simpleplanes.bop_hellbark_helicopter": "Hellbark Helicopter",
+    "item.simpleplanes.bop_hellbark_mega_plane": "Hellbark Cargo Plane",
+
+
     "item.simpleplanes.bop_jacaranda_plane": "Jacaranda Plane",
     "item.simpleplanes.bop_jacaranda_large_plane": "Large Jacaranda Plane",
     "item.simpleplanes.bop_jacaranda_helicopter": "Jacaranda Helicopter",
+    "item.simpleplanes.bop_jacaranda_mega_plane": "Jacaranda Cargo Plane",
+
+
     "item.simpleplanes.bop_magic_plane": "Magic Plane",
     "item.simpleplanes.bop_magic_large_plane": "Large Magic Plane",
     "item.simpleplanes.bop_magic_helicopter": "Magic Helicopter",
+    "item.simpleplanes.bop_magic_mega_plane": "Magic Cargo Plane",
+
+
     "item.simpleplanes.bop_mahogany_plane": "Mahogany Plane",
     "item.simpleplanes.bop_mahogany_large_plane": "Large Mahogany Plane",
     "item.simpleplanes.bop_mahogany_helicopter": "Mahogany Helicopter",
+    "item.simpleplanes.bop_mahogany_mega_plane": "Mahogany Cargo Plane",
+
+
     "item.simpleplanes.bop_palm_plane": "Palm Plane",
     "item.simpleplanes.bop_palm_large_plane": "Large Palm Plane",
     "item.simpleplanes.bop_palm_helicopter": "Palm Helicopter",
+    "item.simpleplanes.bop_palm_mega_plane": "Palm Cargo Plane",
+
+
     "item.simpleplanes.bop_redwood_plane": "Redwood Plane",
     "item.simpleplanes.bop_redwood_large_plane": "Large Redwood Plane",
     "item.simpleplanes.bop_redwood_helicopter": "Redwood Helicopter",
+    "item.simpleplanes.bop_redwood_mega_plane": "Redwood Cargo Plane",
+
+
     "item.simpleplanes.bop_umbran_plane": "Umbran Plane",
     "item.simpleplanes.bop_umbran_large_plane": "Large Umbran Plane",
     "item.simpleplanes.bop_umbran_helicopter": "Umbran Helicopter",
+    "item.simpleplanes.bop_umbran_mega_plane": "Umbran Cargo Plane",
+
+
     "item.simpleplanes.bop_willow_plane": "Willow Plane",
     "item.simpleplanes.bop_willow_large_plane": "Large Willow Plane",
     "item.simpleplanes.bop_willow_helicopter": "Willow Helicopter",
+    "item.simpleplanes.bop_willow_mega_plane": "Willow Cargo Plane",
 
 
     "item.simpleplanes.byg_aspen_plane": "Aspen Plane",
     "item.simpleplanes.byg_aspen_large_plane": "Large Aspen Plane",
     "item.simpleplanes.byg_aspen_helicopter": "Aspen Helicopter",
+    "item.simpleplanes.byg_aspen_mega_plane": "Aspen Cargo Plane",
+
+
     "item.simpleplanes.byg_baobab_plane": "Baobab Plane",
     "item.simpleplanes.byg_baobab_large_plane": "Large Baobab Plane",
     "item.simpleplanes.byg_baobab_helicopter": "Baobab Helicopter",
+    "item.simpleplanes.byg_baobab_mega_plane": "Baobab Cargo Plane",
+
+
     "item.simpleplanes.byg_blue_enchanted_plane": "Blue Enchanted Plane",
     "item.simpleplanes.byg_blue_enchanted_large_plane": "Large Blue Enchanted Plane",
     "item.simpleplanes.byg_blue_enchanted_helicopter": "Blue Enchanted Helicopter",
+    "item.simpleplanes.byg_blue_enchanted_mega_plane": "Blue Enchanted Cargo Plane",
+
+
     "item.simpleplanes.byg_cherry_plane": "Cherry Plane",
     "item.simpleplanes.byg_cherry_large_plane": "Large Cherry Plane",
     "item.simpleplanes.byg_cherry_helicopter": "Cherry Helicopter",
+    "item.simpleplanes.byg_cherry_mega_plane": "Cherry Cargo Plane",
+
+
     "item.simpleplanes.byg_cika_plane": "Cika Plane",
     "item.simpleplanes.byg_cika_large_plane": "Large Cika Plane",
     "item.simpleplanes.byg_cika_helicopter": "Cika Helicopter",
+    "item.simpleplanes.byg_cika_mega_plane": "Cika Cargo Plane",
+
+
     "item.simpleplanes.byg_cypress_plane": "Cypress Plane",
     "item.simpleplanes.byg_cypress_large_plane": "Large Cypress Plane",
     "item.simpleplanes.byg_cypress_helicopter": "Cypress Helicopter",
+    "item.simpleplanes.byg_cypress_mega_plane": "Cypress Cargo Plane",
+
+
     "item.simpleplanes.byg_ebony_plane": "Ebony Plane",
     "item.simpleplanes.byg_ebony_large_plane": "Large Ebony Plane",
     "item.simpleplanes.byg_ebony_helicopter": "Ebony Helicopter",
+    "item.simpleplanes.byg_ebony_mega_plane": "Ebony Cargo Plane",
+
+
     "item.simpleplanes.byg_fir_plane": "Fir Plane",
     "item.simpleplanes.byg_fir_large_plane": "Large Fir Plane",
     "item.simpleplanes.byg_fir_helicopter": "Fir Helicopter",
+    "item.simpleplanes.byg_fir_mega_plane": "Fir Cargo Plane",
+
+
     "item.simpleplanes.byg_green_enchanted_plane": "Green Enchanted Plane",
     "item.simpleplanes.byg_green_enchanted_large_plane": "Large Green Enchanted Plane",
     "item.simpleplanes.byg_green_enchanted_helicopter": "Green Enchanted Helicopter",
+    "item.simpleplanes.byg_green_enchanted_mega_plane": "Green Enchanted Cargo Plane",
+
+
     "item.simpleplanes.byg_holly_plane": "Holly Plane",
     "item.simpleplanes.byg_holly_large_plane": "Large Holly Plane",
     "item.simpleplanes.byg_holly_helicopter": "Holly Helicopter",
+    "item.simpleplanes.byg_holly_mega_plane": "Holly Cargo Plane",
+
+
     "item.simpleplanes.byg_jacaranda_plane": "Jacaranda Plane",
     "item.simpleplanes.byg_jacaranda_large_plane": "Large Jacaranda Plane",
     "item.simpleplanes.byg_jacaranda_helicopter": "Jacaranda Helicopter",
+    "item.simpleplanes.byg_jacaranda_mega_plane": "Jacaranda Cargo Plane",
+
+
     "item.simpleplanes.byg_mahogany_plane": "Mahogany Plane",
     "item.simpleplanes.byg_mahogany_large_plane": "Large Mahogany Plane",
     "item.simpleplanes.byg_mahogany_helicopter": "Mahogany Helicopter",
+    "item.simpleplanes.byg_mahogany_mega_plane": "Mahogany Cargo Plane",
+
+
     "item.simpleplanes.byg_mangrove_plane": "Mangrove Plane",
     "item.simpleplanes.byg_mangrove_large_plane": "Large Mangrove Plane",
     "item.simpleplanes.byg_mangrove_helicopter": "Mangrove Helicopter",
+    "item.simpleplanes.byg_mangrove_mega_plane": "Mangrove Cargo Plane",
+
+
     "item.simpleplanes.byg_maple_plane": "Maple Plane",
     "item.simpleplanes.byg_maple_large_plane": "Large Maple Plane",
     "item.simpleplanes.byg_maple_helicopter": "Maple Helicopter",
+    "item.simpleplanes.byg_maple_mega_plane": "Maple Cargo Plane",
+
+
     "item.simpleplanes.byg_pine_plane": "Pine Plane",
     "item.simpleplanes.byg_pine_large_plane": "Large Pine Plane",
     "item.simpleplanes.byg_pine_helicopter": "Pine Helicopter",
+    "item.simpleplanes.byg_pine_mega_plane": "Pine Cargo Plane",
+
+
     "item.simpleplanes.byg_rainbow_eucalyptus_plane": "Rainbow Eucalyptus Plane",
     "item.simpleplanes.byg_rainbow_eucalyptus_large_plane": "Large Rainbow Eucalyptus Plane",
     "item.simpleplanes.byg_rainbow_eucalyptus_helicopter": "Rainbow Eucalyptus Helicopter",
+    "item.simpleplanes.byg_rainbow_eucalyptus_mega_plane": "Rainbow Eucalyptus Cargo Plane",
+
+
     "item.simpleplanes.byg_redwood_plane": "Redwood Plane",
     "item.simpleplanes.byg_redwood_large_plane": "Large Redwood Plane",
     "item.simpleplanes.byg_redwood_helicopter": "Redwood Helicopter",
+    "item.simpleplanes.byg_redwood_mega_plane": "Redwood Cargo Plane",
+
+
     "item.simpleplanes.byg_skyris_plane": "Skyris Plane",
     "item.simpleplanes.byg_skyris_large_plane": "Large Skyris Plane",
     "item.simpleplanes.byg_skyris_helicopter": "Skyris Helicopter",
+    "item.simpleplanes.byg_skyris_mega_plane": "Skyris Cargo Plane",
+
+
     "item.simpleplanes.byg_willow_plane": "Willow Plane",
     "item.simpleplanes.byg_willow_large_plane": "Large Willow Plane",
     "item.simpleplanes.byg_willow_helicopter": "Willow Helicopter",
+    "item.simpleplanes.byg_willow_mega_plane": "Willow Cargo Plane",
+
+
     "item.simpleplanes.byg_witch_hazel_plane": "Witch Hazel Plane",
     "item.simpleplanes.byg_witch_hazel_large_plane": "Large Witch Hazel Plane",
     "item.simpleplanes.byg_witch_hazel_helicopter": "Witch Hazel Helicopter",
+    "item.simpleplanes.byg_witch_hazel_mega_plane": "Witch Hazel Cargo Plane",
+
+
     "item.simpleplanes.byg_zelkova_plane": "Zelkova Plane",
     "item.simpleplanes.byg_zelkova_large_plane": "Large Zelkova Plane",
     "item.simpleplanes.byg_zelkova_helicopter": "Zelkova Helicopter",
+    "item.simpleplanes.byg_zelkova_mega_plane": "Zelkova Cargo Plane",
+
+
+    "item.simpleplanes.crimson_plane": "Crimson Plane",
+    "item.simpleplanes.crimson_large_plane": "Large Crimson Plane",
+    "item.simpleplanes.crimson_helicopter": "Crimson Helicopter",
+    "item.simpleplanes.crimson_mega_plane": "Crimson Cargo Plane",
+
+
+    "item.simpleplanes.dark_oak_plane": "Dark Oak Plane",
+    "item.simpleplanes.dark_oak_large_plane": "Large Dark Oak Plane",
+    "item.simpleplanes.dark_oak_helicopter": "Dark Oak Helicopter",
+    "item.simpleplanes.dark_oak_mega_plane": "Dark Oak Cargo Plane",
+
+
+    "item.simpleplanes.ft_cherry_plane": "Cherry Plane",
+    "item.simpleplanes.ft_cherry_large_plane": "Large Cherry Plane",
+    "item.simpleplanes.ft_cherry_helicopter": "Cherry Helicopter",
+    "item.simpleplanes.ft_cherry_mega_plane": "Cherry Cargo Plane",
 
 
     "item.simpleplanes.ft_citrus_plane": "Citrus Plane",
     "item.simpleplanes.ft_citrus_large_plane": "Large Citrus Plane",
     "item.simpleplanes.ft_citrus_helicopter": "Citrus Helicopter",
-    "item.simpleplanes.ft_cherry_plane": "Cherry Plane",
-    "item.simpleplanes.ft_cherry_large_plane": "Large Cherry Plane",
-    "item.simpleplanes.ft_cherry_helicopter": "Cherry Helicopter",
+    "item.simpleplanes.ft_citrus_mega_plane": "Citrus Cargo Plane",
+
+
+    "item.simpleplanes.jungle_plane": "Jungle Plane",
+    "item.simpleplanes.jungle_large_plane": "Large Jungle Plane",
+    "item.simpleplanes.jungle_helicopter": "Jungle Helicopter",
+    "item.simpleplanes.jungle_mega_plane": "Jungle Cargo Plane",
+
+    "item.simpleplanes.oak_plane": "Oak Plane",
+    "item.simpleplanes.oak_large_plane": "Large Oak Plane",
+    "item.simpleplanes.oak_helicopter": "Oak Helicopter",
+    "item.simpleplanes.oak_mega_plane": "Oak Cargo Plane",
+
+
+    "item.simpleplanes.spruce_plane": "Spruce Plane",
+    "item.simpleplanes.spruce_large_plane": "Large Spruce Plane",
+    "item.simpleplanes.spruce_helicopter": "Spruce Helicopter",
+    "item.simpleplanes.spruce_mega_plane": "Spruce Cargo Plane",
+
+
+    "item.simpleplanes.warped_plane": "Warped Plane",
+    "item.simpleplanes.warped_large_plane": "Large Warped Plane",
+    "item.simpleplanes.warped_helicopter": "Warped Helicopter",
+    "item.simpleplanes.warped_mega_plane": "Warped Cargo Plane",
 
     "item.simpleplanes.mana_plane": "Living Wood Plane",
     "item.simpleplanes.mana_large_plane": "Large Living Wood Plane",
-    "item.simpleplanes.mana_helicopter": "Living Wood Helicopter"
+    "item.simpleplanes.mana_helicopter": "Living Wood Helicopter",
+    "item.simpleplanes.mana_mega_plane": "Living Wood Cargo Plane",
+
+    "text.autoconfig.simpleplanes.title": "simple planes",
+    "text.autoconfig.simpleplanes.category.default": "misc",
+    "text.autoconfig.simpleplanes.category.coal": "coal",
+    "text.autoconfig.simpleplanes.category.mana": "mana",
+    "text.autoconfig.simpleplanes.category.energy": "energy",
+    "text.autoconfig.simpleplanes.category.lava": "lava",
+    "text.autoconfig.simpleplanes.option.TURN_THRESHOLD": "Turn Threshold",
+    "text.autoconfig.simpleplanes.option.TURN_THRESHOLD.@Tooltip": "For controllers, a threshold for the joystick movement of the plane",
+    "text.autoconfig.simpleplanes.option.EASY_FLIGHT": "easy flight",
+    "text.autoconfig.simpleplanes.option.EASY_FLIGHT.@Tooltip": "easier flight mode, disables the extreme movements",
+    "text.autoconfig.simpleplanes.option.PLANE_CRASH": "plane crash",
+    "text.autoconfig.simpleplanes.option.THIEF": "plane heist",
+    "text.autoconfig.simpleplanes.option.THIEF.@Tooltip": "can players steal planes",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_COAL": "FLY_TICKS_PER_COAL",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_COAL.@Tooltip": "Ticks of flying per one coal burn time",
+    "text.autoconfig.simpleplanes.option.COAL_MAX_FUEL": "coal max fuel",
+    "text.autoconfig.simpleplanes.option.COAL_MAX_FUEL.@Tooltip": "Max Fuel For Coal Plane",
+    "text.autoconfig.simpleplanes.option.MANA_COST": "mana cost",
+    "text.autoconfig.simpleplanes.option.MANA_COST.@Tooltip": "mana amount to use when out",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA": "fly ticks per mana",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "number of flight ticks per mana usage"
+
+
+
 }

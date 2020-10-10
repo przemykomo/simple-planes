@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -27,9 +28,14 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
         return type;
     }
 
-    public ItemStack getDrops() {
+    public NonNullList<ItemStack> getDrops() {
+        return NonNullList.from(ItemStack.EMPTY,getDrop());
+    }
+
+    public ItemStack getDrop() {
         return type.getDrops();
     }
+
 
     /**
      * Called when passenger right clicks with item.
@@ -51,6 +57,13 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     }
 
     /**
+     * is taking the engine place
+     */
+    public boolean isEngine() {
+        return false;
+    }
+
+    /**
      * Called to render upgrade model. Loading model outside of this method may crash server.
      *
      * @param matrixStack matrix stack. Don't modify it.
@@ -67,7 +80,20 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
     }
+    public CompoundNBT serializeNBTData() {
+        return new CompoundNBT();
+    }
+
+    public void deserializeNBTData(CompoundNBT nbt) {
+    }
 
     public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    }
+
+    public void onRemove() {
+    }
+
+    public int getSeats() {
+        return this.getType().occupyBackSeat ? 1 : 0;
     }
 }

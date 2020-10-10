@@ -87,9 +87,21 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
             .getBuffer(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, enchanted_plane);
         planeModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-
+        int seat = 0;
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
-            upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+            matrixStackIn.push();
+            if (upgrade.getType().occupyBackSeat) {
+                for (int i = 0; i < upgrade.getSeats(); i++) {
+                    matrixStackIn.push();
+                    BackSeatBlockModel.moveMatrix(planeEntity, matrixStackIn, seat);
+                    upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+                    seat++;
+                    matrixStackIn.pop();
+                }
+            } else {
+                upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+            }
+            matrixStackIn.pop();
         }
         String resourceName;
         if (planeEntity.getMaterial().fireResistant)
@@ -104,16 +116,20 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStackIn.push();
-        renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        renderAdditional(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
         matrixStackIn.pop();
         matrixStackIn.pop();
 
         super.render(planeEntity, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
-    protected void renderEngine(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        EngineModel.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY);
+    protected void renderAdditional(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+
     }
+
+//    protected void renderEngine(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+//        EngineModel.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn, Blocks.FURNACE);
+//    }
 
     protected abstract EntityModel<T> getModel();
 }

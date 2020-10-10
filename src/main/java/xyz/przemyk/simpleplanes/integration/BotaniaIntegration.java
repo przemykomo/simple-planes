@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -26,6 +27,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.energy.AbstractEngine;
 
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesItems.SIMPLE_PLANES_ITEM_GROUP;
 
@@ -74,7 +76,12 @@ public class BotaniaIntegration implements IModIntegration {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void registerUpgrade(RegistryEvent.Register<UpgradeType> event) {
 //        ResourceLocation daisy = new ResourceLocation("botania", "pure_daisy");
-        MANA_UPGRADE = new UpgradeType(MANA_UPGRADE_ITEM.get(), ManaUpgrade::new, planeEntity -> !planeEntity.isImmuneToFire());
+        MANA_UPGRADE = new UpgradeType(MANA_UPGRADE_ITEM.get(), ManaUpgrade::new) {
+            @Override
+            public boolean isPlaneApplicable(PlaneEntity planeEntity) {
+                return !planeEntity.isImmuneToFire();
+            }
+        };
         MANA_UPGRADE.setRegistryName("mana");
         event.getRegistry().register(MANA_UPGRADE);
     }
@@ -85,7 +92,7 @@ public class BotaniaIntegration implements IModIntegration {
         event.getRegistry().register(new PlaneMaterial(name, false).setRegistryName(SimplePlanesMod.MODID, name));
     }
 
-    public static class ManaUpgrade extends Upgrade {
+    public static class ManaUpgrade extends AbstractEngine {
 
         public ManaUpgrade(UpgradeType type, PlaneEntity planeEntity) {
             super(type, planeEntity);
@@ -96,8 +103,8 @@ public class BotaniaIntegration implements IModIntegration {
         }
 
         @Override
-        public ItemStack getDrops() {
-            return ItemStack.EMPTY;
+        public NonNullList<ItemStack> getDrops() {
+            return NonNullList.create();
         }
 
         @Override
@@ -110,7 +117,7 @@ public class BotaniaIntegration implements IModIntegration {
                 ItemStack itemStack = planeEntity.getItemStack();
                 boolean got_mana = ManaItemHandler.INSTANCE.getValue().requestManaExactForTool(itemStack, player, Config.MANA_COST.get(), true);
                 if (got_mana) {
-                    planeEntity.addFuel(Config.FLY_TICKS_PER_MANA.get());
+                    planeEntity.addFuelMaxed(Config.FLY_TICKS_PER_MANA.get());
                 }
             }
             return false;
@@ -118,6 +125,7 @@ public class BotaniaIntegration implements IModIntegration {
 
         @Override
         public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+            super.onApply(itemStack, playerEntity);
             planeEntity.setMaterial("mana");
         }
 

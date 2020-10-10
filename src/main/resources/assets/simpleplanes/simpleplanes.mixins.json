@@ -1,0 +1,17 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_8",
+    "package": "xyz.przemyk.simpleplanes.mixin",
+    "refmap": "simpleplanes.refmap.json",
+    "mixins": [
+        "MixinVillagerEntity"
+    ],
+    "client": [
+        "MixinActiveRenderInfo",
+        "MixinVillagerModel"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

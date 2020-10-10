@@ -1,9 +1,8 @@
 package xyz.przemyk.simpleplanes.upgrades.tnt;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -11,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.render.BackSeatBlockModel;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -38,7 +38,6 @@ public class TNTUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        IVertexBuilder iVertexBuilder = buffer.getBuffer(TNTModel.INSTANCE.getRenderType(TEXTURE));
-        TNTModel.INSTANCE.render(matrixStack, iVertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        BackSeatBlockModel.renderBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, Blocks.TNT.getDefaultState());
     }
 }

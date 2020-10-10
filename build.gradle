@@ -1,6 +1,3 @@
-import net.minecraftforge.gradle.common.util.ModConfig
-import net.minecraftforge.gradle.common.util.RunConfig
-
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -53,7 +50,7 @@ minecraft {
     mappings channel: 'snapshot', version: mappings_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -67,6 +64,31 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            mods {
+                simpleplanes {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+            properties 'forge.logging.console.level': 'debug'
+            properties 'fml.earlyprogresswindow': 'false'
+            properties 'mixin.env.disableRefMap': 'true'
+
+            jvmArgs '-Xmx5G'
+            jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5010'
+            jvmArgs '-XXaltjvm=dcevm'
+            jvmArgs '-XX:+UnlockExperimentalVMOptions'
+            jvmArgs '-javaagent:"D:\\modding\\[Tools]\\hotswap-agent-1.4.2-SNAPSHOT.jar"'
+            jvmArgs '-Dmixin.env.disableRefMap=true'
             mods {
                 simpleplanes {
                     source sourceSets.main
@@ -149,13 +171,13 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "simpleplanes",
-            "Specification-Vendor": "simpleplanessareus",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"simpleplanessareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title"     : "simpleplanes",
+                "Specification-Vendor"    : "simpleplanessareus",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "simpleplanessareus",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }

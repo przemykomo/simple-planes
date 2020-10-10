@@ -1,0 +1,90 @@
+{
+  "variants": {
+    "age=0": [
+      {
+        "model": "simpleplanes:block/cloud_0"
+      },
+      {
+        "model": "simpleplanes:block/cloud_0",
+        "y": 90
+      },
+      {
+        "model": "simpleplanes:block/cloud_0",
+        "y": 180
+      },
+      {
+        "model": "simpleplanes:block/cloud_0",
+        "y": 270
+      },
+      {
+        "model": "simpleplanes:block/cloud_0"
+      },
+      {
+        "model": "simpleplanes:block/cloud_0",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "simpleplanes:block/cloud_0",
+        "x": 180,
+        "y": 180
+      },
+      {
+        "model": "simpleplanes:block/cloud_0",
+        "x": 270,
+        "y": 270
+      }
+    ],
+    "age=1": [
+      {
+        "model": "simpleplanes:block/cloud_1"
+      },
+      {
+        "model": "simpleplanes:block/cloud_1",
+        "y": 90
+      },
+      {
+        "model": "simpleplanes:block/cloud_1",
+        "y": 180
+      },
+      {
+        "model": "simpleplanes:block/cloud_1",
+        "y": 270
+      }
+    ],
+    "age=2": [
+      {
+        "model": "simpleplanes:block/cloud_2"
+      },
+      {
+        "model": "simpleplanes:block/cloud_2",
+        "y": 90
+      },
+      {
+        "model": "simpleplanes:block/cloud_2",
+        "y": 180
+      },
+      {
+        "model": "simpleplanes:block/cloud_2",
+        "y": 270
+      }
+    ],
+    "age=3": [
+      {
+        "model": "simpleplanes:block/cloud_3"
+      },
+      {
+        "model": "simpleplanes:block/cloud_3",
+        "y": 90
+      },
+      {
+        "model": "simpleplanes:block/cloud_3",
+        "y": 180
+      },
+      {
+        "model": "simpleplanes:block/cloud_3",
+        "y": 270
+      }
+    ]
+  }
+}
