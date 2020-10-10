@@ -27,7 +27,7 @@ public final class CoalEngine extends AbstractEngine {
         ItemStack itemStack = event.getItemStack();
         if (!player.world.isRemote && planeEntity.getFuel() < Config.FLY_TICKS_PER_COAL.get() / 4) {
             //func_230235_a_ - contains
-            if (ItemTags.getCollection().getTagByID(COAL_TAG).contains(itemStack.getItem())) {
+            if (ItemTags.getCollection().getOrCreate(COAL_TAG).contains(itemStack.getItem())) {
                 planeEntity.addFuelMaxed();
                 if (!player.isCreative()) {
                     itemStack.shrink(1);

@@ -47,7 +47,7 @@ public class PlanesEvents {
                 return;
             }
             if (itemStack.getItem() instanceof PickaxeItem) {
-                if (!event.getWorld().isRemote() && planeEntity.getPosY() > 110 && planeEntity.getPosY() < 160 && event.getWorld().getDimensionType().hasSkyLight()) {
+                if (!event.getWorld().isRemote() && planeEntity.getPosY() > 110 && planeEntity.getPosY() < 160 && event.getWorld().getDimension().hasSkyLight()) {
                     itemStack.damageItem(1, player, (playerEntity) -> {
                         playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND);
                     });

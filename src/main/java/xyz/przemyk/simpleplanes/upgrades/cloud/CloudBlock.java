@@ -14,10 +14,10 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -61,8 +61,8 @@ public class CloudBlock extends Block {
     }
 
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
-        if(entityIn.getMotion().y<0) {
-            entityIn.setMotionMultiplier(state, new Vector3d(0.8, 0.3, 0.8));
+        if (entityIn.getMotion().y < 0) {
+            entityIn.setMotionMultiplier(state, new Vec3d(0.8, 0.3, 0.8));
         }
 
     }
@@ -79,14 +79,14 @@ public class CloudBlock extends Block {
             BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
 
             for (Direction direction : Direction.values()) {
-                blockpos$mutable.setAndMove(pos, direction);
+                blockpos$mutable.setPos(pos).move(direction);
                 BlockState blockstate = worldIn.getBlockState(blockpos$mutable);
-                if (blockstate.isIn(this)) {
+                if (blockstate.getBlock() instanceof CloudBlock) {
                     this.slightlyMelt(worldIn, blockpos$mutable);
                 }
             }
         }
-        worldIn.getPendingBlockTicks().scheduleTick(pos, this, getScheduledTime(rand,state.get(AGE)));
+        worldIn.getPendingBlockTicks().scheduleTick(pos, this, getScheduledTime(rand, state.get(AGE)));
     }
 
     private boolean slightlyMelt(World worldIn, BlockPos pos) {
@@ -106,8 +106,8 @@ public class CloudBlock extends Block {
         BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
 
         for (Direction direction : Direction.values()) {
-            blockpos$mutable.setAndMove(pos, direction);
-            if (worldIn.getBlockState(blockpos$mutable).isIn(this)) {
+            blockpos$mutable.setPos(pos).move(direction);
+            if (worldIn.getBlockState(blockpos$mutable).getBlock() instanceof CloudBlock) {
                 ++i;
                 if (i >= neighborsRequired) {
                     return false;
@@ -128,7 +128,7 @@ public class CloudBlock extends Block {
             return;
         }
 
-        BlockPos.Mutable pos = blockPos.toMutable();
+        BlockPos.Mutable pos = new BlockPos.Mutable(blockPos);
         pos.move(Direction.DOWN);
 
         int f = 2;
@@ -136,13 +136,13 @@ public class CloudBlock extends Block {
             if (world.rand.nextInt(2) == 0 &&
                 world.getBlockState(pos1).isAir(world, pos1)) {
                 world.setBlockState(pos1, SimplePlanesBlocks.CLOUD.get().getDefaultState());
-                world.getPendingBlockTicks().scheduleTick(pos1, SimplePlanesBlocks.CLOUD.get(), getScheduledTime(world.rand,0));
+                world.getPendingBlockTicks().scheduleTick(pos1, SimplePlanesBlocks.CLOUD.get(), getScheduledTime(world.rand, 0));
             }
         }
     }
 
-    private static int getScheduledTime(Random rand,int i) {
-        return MathHelper.nextInt(rand, 50, 100)*(5-i);
+    private static int getScheduledTime(Random rand, int i) {
+        return MathHelper.nextInt(rand, 50, 100) * (5 - i);
     }
 
     private void turnIntoAir(BlockState state, World world, BlockPos pos) {
@@ -168,12 +168,13 @@ public class CloudBlock extends Block {
             slightlyMelt(worldIn, pos);
         }
     }
+
     /**
      * Block's chance to react to a living entity falling on it.
      */
     public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
         entityIn.onLivingFall(fallDistance, 0.1F);
-        if(worldIn.rand.nextInt(4) == 0){
+        if (worldIn.rand.nextInt(4) == 0) {
             slightlyMelt(worldIn, pos);
         }
     }
@@ -186,7 +187,7 @@ public class CloudBlock extends Block {
     @Override
     public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         final VoxelShape shape = getShape(state, worldIn, pos, context);
-        if (context.func_216378_a(shape, pos, true) && !context.getPosY()) {
+        if (context.func_216378_a(shape, pos, true) && !context.func_225581_b_()) {
             return shape;
         } else {
             return VoxelShapes.empty();

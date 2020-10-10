@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -7,7 +8,6 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.PlaneMaterial;

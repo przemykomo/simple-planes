@@ -44,7 +44,7 @@ public class CloudUpgrade extends Upgrade {
         if (planeEntity.ticksExisted % 5 != 0 || planeEntity.world.isRemote) {
             return false;
         }
-        BlockPos.Mutable blockPos = planeEntity.getPosition().toMutable();
+        BlockPos.Mutable blockPos =new BlockPos.Mutable(planeEntity.getPosition());
         int planeHeight = blockPos.getY();
         if (planeHeight < height) {
             height = Math.max(planeHeight - 1, 1);

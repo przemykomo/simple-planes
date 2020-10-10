@@ -18,6 +18,7 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
@@ -565,8 +566,8 @@ public class PlaneEntity extends Entity {
     }
 
     private boolean isParked(Vars vars) {
-        Vector3d oldMotion = getMotion();
-        final boolean parked = (isAboveWater() || isOnGround()) &&
+        Vec3d oldMotion = getMotion();
+        final boolean parked = (isAboveWater() || getOnGround()) &&
             (oldMotion.length() < 0.1) &&
             (!vars.passengerSprinting) &&
             (vars.moveStrafing == 0) &&

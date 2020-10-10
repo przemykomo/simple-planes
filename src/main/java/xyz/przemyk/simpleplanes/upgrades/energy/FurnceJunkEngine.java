@@ -30,7 +30,7 @@ public class FurnceJunkEngine extends AbstractEngine {
             int burnTime = ForgeHooks.getBurnTime(itemStack);
             if (burnTime > 0) {
                 int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
-                if (!ItemTags.createOptional(NOT_COAL_TAG).contains(itemStack.getItem())) {
+                if (!ItemTags.getCollection().getOrCreate(NOT_COAL_TAG).contains(itemStack.getItem())) {
                     planeEntity.addFuelMaxed(fuel);
                     if (!player.isCreative()) {
                         itemStack.shrink(1);

@@ -64,10 +64,10 @@ public class ChargerTileEntity extends TileEntity implements ITickableTileEntity
 
     @SuppressWarnings("unchecked")
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
+    public void read(CompoundNBT compound) {
         CompoundNBT energyTag = compound.getCompound("energy");
         energy.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(energyTag));
-        super.read(state, compound);
+        super.read( compound);
     }
 
     @SuppressWarnings("unchecked")

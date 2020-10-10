@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.integration.liquid;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -48,13 +47,13 @@ public class LiquidFuelingTileEntity extends TileEntity implements ITickableTile
         final ItemStack heldItem = player.getHeldItem(player.getActiveHand());
         final LazyOptional<IFluidHandlerItem> capability = heldItem.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
         if (capability.isPresent()) {
-            final IFluidHandlerItem iFluidHandler = capability.resolve().get();
+            final IFluidHandlerItem iFluidHandler = capability.orElse(null);
             final FluidStack fluidInTank = iFluidHandler.getFluidInTank(0);
             final int fill = fill(fluidInTank, IFluidHandler.FluidAction.SIMULATE);
             final FluidStack drain = iFluidHandler.drain(fill, IFluidHandler.FluidAction.SIMULATE);
             final int fill_real = fill(drain, IFluidHandler.FluidAction.EXECUTE);
             iFluidHandler.drain(fill_real, IFluidHandler.FluidAction.EXECUTE);
-            player.setHeldItem(player.getActiveHand(),iFluidHandler.getContainer());
+            player.setHeldItem(player.getActiveHand(), iFluidHandler.getContainer());
             return true;
         }
         return false;
@@ -94,8 +93,8 @@ public class LiquidFuelingTileEntity extends TileEntity implements ITickableTile
 
     @SuppressWarnings("unchecked")
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
-        super.read(state, compound);
+    public void read(CompoundNBT compound) {
+        super.read(compound);
     }
 
     @SuppressWarnings("unchecked")
