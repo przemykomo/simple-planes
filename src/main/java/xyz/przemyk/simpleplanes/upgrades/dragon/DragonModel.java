@@ -12,7 +12,7 @@ public class DragonModel {
 
     public static void renderDragon(PlaneEntity planeEntity, float partialTicks) {
         GlStateManager.pushMatrix();
-        GlStateManager.rotate(rotationDegreesX(180));
+        GlStateManager.rotate(rotationDegreesX(180).convert());
         GlStateManager.translate(-0.5, -1, 0.5);
         GlStateManager.scale(0.99f, 0.99f, 0.99f);
         final float f2 = partialTicks + planeEntity.ticksExisted;

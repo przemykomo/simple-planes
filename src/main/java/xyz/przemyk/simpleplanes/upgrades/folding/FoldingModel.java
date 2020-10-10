@@ -25,7 +25,7 @@ public class FoldingModel extends ModelBase {
 
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        GlStateManager.rotate(MathUtil.rotationDegreesX(90));
+        GlStateManager.rotate(MathUtil.rotationDegreesX(90).convert());
         GlStateManager.translate(0,0.3,-0.2);
         rightWing.render(scale*0.5f);
         leftWing.render(scale*0.5f);

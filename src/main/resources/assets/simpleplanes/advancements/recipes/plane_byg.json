@@ -81,8 +81,8 @@
             "simpleplanes:byg_zelkova_helicopter",
             "simpleplanes:byg_zelkova_large_plane",
             "simpleplanes:byg_zelkova_mega_plane",
-            "simpleplanes:byg_zelkova_plane",
-
+            "simpleplanes:byg_zelkova_plane"
+        ]
     },
     "criteria": {
         "in_fire": {

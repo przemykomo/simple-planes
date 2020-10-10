@@ -23,6 +23,9 @@ public class TNTUpgrade extends Upgrade {
 
     @Override
     public boolean onItemRightClick(EntityPlayer player, World world, EnumHand hand, ItemStack itemStack) {
+        if (world.isRemote) {
+            return false;
+        }
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
             EntityTNTPrimed tntEntity = new EntityTNTPrimed(planeEntity.world, planeEntity.getPosX() - 1.0, planeEntity.getPosY(), planeEntity.getPosZ(),
                 player);

@@ -7,8 +7,9 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.util.vector.Quaternion;
+
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.Quaternion;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -33,7 +34,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Rende
 //        GlStateManager.translate(0.0D, 0.375D, 0.0D);
         GlStateManager.scale(-1.0F, -1.0F, 1.0F);
         GlStateManager.translate(0, -0.5, 0);
-        GlStateManager.rotate(rotationDegreesY(180));
+        GlStateManager.rotate(rotationDegreesY(180).convert());
         this.bindEntityTexture((planeEntity));
 
         double firstPersonYOffset = -0.7D;
@@ -44,7 +45,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Rende
             GlStateManager.translate(0.0D, firstPersonYOffset, 0.0D);
         }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-        GlStateManager.rotate(q);
+        GlStateManager.rotate(q.convert());
 
         float rockingAngle = planeEntity.getRockingAngle(partialTicks);
 //        if (!MathHelper.epsilonEquals(rockingAngle, 0.0F)) {
@@ -60,7 +61,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Rende
             float angle = MathUtil.clamp(f * f1 / 200.0F, -30, 30);
 //            float angle = 30;
             f = planeEntity.ticksExisted + partialTicks;
-            GlStateManager.rotate(MathUtil.rotationDegreesZ(MathHelper.sin(f) * angle));
+            GlStateManager.rotate(MathUtil.rotationDegreesZ(MathHelper.sin(f) * angle).convert());
         }
 
         GlStateManager.translate(0, -0.6, 0);

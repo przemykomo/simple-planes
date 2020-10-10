@@ -2,7 +2,7 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.util.vector.Quaternion;
+
 import org.lwjgl.util.vector.Vector3f;
 
 public class MathUtil extends MathHelper {

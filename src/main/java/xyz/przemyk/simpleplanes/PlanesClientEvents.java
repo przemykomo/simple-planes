@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import org.lwjgl.util.vector.Quaternion;
+
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.proxy.ClientProxy;
@@ -51,10 +51,10 @@ public class PlanesClientEvents {
             GlStateManager.translate(0, 0.7, 0);
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
             quaternion.set(quaternion.getX(), -quaternion.getY(), -quaternion.getZ(), quaternion.getW());
-            GlStateManager.rotate(quaternion);
+            GlStateManager.rotate(quaternion.convert());
             final float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
 
-            GlStateManager.rotate(rotationDegreesY(rotationYaw));
+            GlStateManager.rotate(rotationDegreesY(rotationYaw).convert());
             GlStateManager.translate(0, -0.7, 0);
             if (isPlayerRidingInFirstPersonView) {
                 GlStateManager.translate(0.0D, -firstPersonYOffset, 0.0D);

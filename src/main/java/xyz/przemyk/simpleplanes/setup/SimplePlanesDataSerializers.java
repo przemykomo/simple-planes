@@ -7,7 +7,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.DataSerializerEntry;
-import org.lwjgl.util.vector.Quaternion;
+import xyz.przemyk.simpleplanes.Quaternion;
+
 
 import static xyz.przemyk.simpleplanes.SimplePlanesMod.MODID;
 

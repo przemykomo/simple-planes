@@ -36,8 +36,8 @@ public class BannerModel {
         PlaneEntity planeEntity = bannerUpgrade.getPlaneEntity();
         if (!banner.isEmpty()) {
             GlStateManager.pushMatrix();
-            GlStateManager.rotate(rotationDegreesX(90));
-            GlStateManager.rotate(rotationDegreesY(90));
+            GlStateManager.rotate(rotationDegreesX(90).convert());
+            GlStateManager.rotate(rotationDegreesY(90).convert());
             GlStateManager.translate(0.7, 2.35, 0.05);
             if (planeEntity.isLarge()) {
                 GlStateManager.translate(0, 1.1, 0);
@@ -49,7 +49,7 @@ public class BannerModel {
             float r = (0.05F * MathHelper.cos(f2 / 5)) * (float) 180;
             r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.prevRotationYaw, planeEntity.rotationYaw);
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
-            GlStateManager.rotate(rotationDegreesX(r));
+            GlStateManager.rotate(rotationDegreesX(r).convert());
             render(BANNER_TE,0,0,0,partialTicks,0);
 
             GlStateManager.popMatrix();

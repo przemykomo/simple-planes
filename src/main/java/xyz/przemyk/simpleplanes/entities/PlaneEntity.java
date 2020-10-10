@@ -21,12 +21,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import org.lwjgl.util.vector.Quaternion;
+
 import org.lwjgl.util.vector.Vector3f;
-import xyz.przemyk.simpleplanes.Config;
-import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.PlaneMaterial;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.*;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
@@ -281,7 +278,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         for (Upgrade upgrade : upgradesToRemove) {
             this.upgrades.remove(upgrade.getType().getRegistryName());
         }
-        if(!upgradesToRemove.isEmpty()){
+        if (!upgradesToRemove.isEmpty()) {
             upgradeChanged();
         }
     }
@@ -590,7 +587,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         for (Upgrade upgrade : upgradesToRemove) {
             upgrades.remove(upgrade.getType().getRegistryName());
         }
-        if(!upgradesToRemove.isEmpty()){
+        if (!upgradesToRemove.isEmpty()) {
             upgradeChanged();
         }
     }
@@ -813,8 +810,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vec3d motion) {
         float yaw = getYaw(motion);
         float pitch = getPitch(motion);
-        if (degreesDifferenceAbs(yaw, rotationYaw) > 5 && (getOnGround() || isAboveWater())) {
-            setMotion(motion.scale(0.98));
+        if (degreesDifferenceAbs(yaw, rotationYaw) > 5) {
+            double factor = (getOnGround() || isAboveWater()) ? 0.98 : 0.99;
+            setMotion(motion.scale(factor));
         }
 
         float d = (float) degreesDifferenceAbs(pitch, rotationPitch);
@@ -951,11 +949,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         ArrayList<ResourceLocation> toRemove = new ArrayList<>();
         for (ResourceLocation key : upgrades.keySet()) {
-            if(!upgradesNBT.getKeySet().contains(key.toString())){
+            if (!upgradesNBT.getKeySet().contains(key.toString())) {
                 toRemove.add(key);
             }
         }
-        for (ResourceLocation key :toRemove){
+        for (ResourceLocation key : toRemove) {
             upgrades.remove(key);
         }
     }

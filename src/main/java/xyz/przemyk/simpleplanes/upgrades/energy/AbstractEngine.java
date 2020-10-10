@@ -22,6 +22,9 @@ public abstract class AbstractEngine extends Upgrade {
 
     @Override
     public void onApply(ItemStack itemStack, EntityPlayer playerEntity) {
+        if (playerEntity.world.isRemote) {
+            return;
+        }
         for (Map.Entry<ResourceLocation, Upgrade> entry : planeEntity.upgrades.entrySet()) {
             ResourceLocation resourceLocation = entry.getKey();
             Upgrade upgrade = entry.getValue();

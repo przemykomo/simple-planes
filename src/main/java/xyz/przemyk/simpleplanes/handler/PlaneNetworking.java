@@ -11,9 +11,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import org.lwjgl.util.vector.Quaternion;
+
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.MathUtil.EulerAngles;
+import xyz.przemyk.simpleplanes.Quaternion;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
