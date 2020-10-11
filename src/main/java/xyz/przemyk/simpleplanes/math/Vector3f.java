@@ -15,13 +15,13 @@ public class Vector3f {
     }
 
     public Vector3f(Vector3f v) {
-        x=v.x;
-        y=v.y;
-        z=v.z;
+        x = v.x;
+        y = v.y;
+        z = v.z;
     }
 
     public Vector3f() {
-
+        x = y = z = 0;
     }
 
 
@@ -38,9 +38,9 @@ public class Vector3f {
     }
 
     public void negate() {
-        x=-x;
-        y=-y;
-        z=-z;
+        x = -x;
+        y = -y;
+        z = -z;
     }
 
     public void set(float x, float y, float z) {
@@ -50,7 +50,7 @@ public class Vector3f {
     }
 
     @SideOnly(Side.CLIENT)
-    public org.lwjgl.util.vector.Vector3f convert(){
-        return new org.lwjgl.util.vector.Vector3f(x,y,z);
+    public org.lwjgl.util.vector.Vector3f convert() {
+        return new org.lwjgl.util.vector.Vector3f(x, y, z);
     }
 }

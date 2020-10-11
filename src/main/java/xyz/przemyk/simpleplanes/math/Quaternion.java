@@ -17,18 +17,18 @@ public class Quaternion {
     }
 
     public Quaternion(Quaternion q) {
-        x=q.x;
-        y=q.y;
-        z=q.z;
-        w=q.w;
+        x = q.x;
+        y = q.y;
+        z = q.z;
+        w = q.w;
     }
 
     public Quaternion() {
-
+        w = 1;
     }
 
     public static Quaternion mul(Quaternion left, Quaternion right,
-                                                       Quaternion dest) {
+                                 Quaternion dest) {
         if (dest == null)
             dest = new Quaternion();
         dest.set(left.x * right.w + left.w * right.x + left.y * right.z
@@ -57,9 +57,9 @@ public class Quaternion {
     }
 
     public void negate() {
-        x=-x;
-        y=-y;
-        z=-z;
+        x = -x;
+        y = -y;
+        z = -z;
     }
 
     public void set(float x, float y, float z, float w) {
@@ -68,8 +68,9 @@ public class Quaternion {
         this.z = z;
         this.w = w;
     }
+
     @SideOnly(Side.CLIENT)
-    public org.lwjgl.util.vector.Quaternion convert(){
-        return new org.lwjgl.util.vector.Quaternion(x,y,z,w);
+    public org.lwjgl.util.vector.Quaternion convert() {
+        return new org.lwjgl.util.vector.Quaternion(x, y, z, w);
     }
 }

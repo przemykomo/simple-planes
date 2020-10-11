@@ -50,12 +50,14 @@ public class PlanesClientEvents {
             }
 
             GlStateManager.translate(0, 0.7, 0);
+            GlStateManager.translate(event.getX(),event.getY(),event.getZ());
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
             quaternion.set(quaternion.getX(), -quaternion.getY(), -quaternion.getZ(), quaternion.getW());
             GlStateManager.rotate(quaternion.convert());
             final float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
 
             GlStateManager.rotate(rotationDegreesY(rotationYaw).convert());
+            GlStateManager.translate(-event.getX(),-event.getY(),-event.getZ());
             GlStateManager.translate(0, -0.7, 0);
             if (isPlayerRidingInFirstPersonView) {
                 GlStateManager.translate(0.0D, -firstPersonYOffset, 0.0D);
