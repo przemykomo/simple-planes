@@ -41,7 +41,7 @@ public class UpgradeType implements IForgeRegistryEntry<UpgradeType> {
     }
 
     public ItemStack getDrops() {
-        return upgradeItem != null ? upgradeItem.getDefaultInstance() : ItemStack.EMPTY;
+        return upgradeItem != null ?new ItemStack(upgradeItem) : ItemStack.EMPTY;
     }
 
     public boolean isPlaneApplicable(PlaneEntity planeEntity) {

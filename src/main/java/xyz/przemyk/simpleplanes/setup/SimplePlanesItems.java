@@ -49,7 +49,7 @@ public class SimplePlanesItems {
     public static CreativeTabs tab = new CreativeTabs("simple planes") {
         @Override
         public ItemStack createIcon() {
-            return PROPELLER.getDefaultInstance();
+            return new ItemStack(PROPELLER);
         }
     };
 

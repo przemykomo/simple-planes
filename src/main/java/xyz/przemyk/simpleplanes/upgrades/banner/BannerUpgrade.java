@@ -19,7 +19,7 @@ public class BannerUpgrade extends Upgrade {
 
     public BannerUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BANNER, planeEntity);
-        banner = ForgeRegistries.ITEMS.getValue(new ResourceLocation("banner")).getDefaultInstance();
+        banner =new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("banner")));
         prevRotation = planeEntity.prevRotationYaw;
         rotation = planeEntity.prevRotationYaw;
     }

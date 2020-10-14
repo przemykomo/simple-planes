@@ -21,8 +21,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-
-import xyz.przemyk.simpleplanes.*;
+import xyz.przemyk.simpleplanes.Config;
+import xyz.przemyk.simpleplanes.PlaneMaterial;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.math.MathUtil;
 import xyz.przemyk.simpleplanes.math.Quaternion;
@@ -355,10 +356,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @SuppressWarnings("rawtypes")
     protected void dropItem() {
-        ItemStack itemStack = getItem().getDefaultInstance();
+        ItemStack itemStack = new ItemStack(getItem());
         final NBTTagCompound value = new NBTTagCompound();
         value.setBoolean("Used", true);
         itemStack.setTagInfo("Used", value);
+        entityDropItem(itemStack);
         for (Upgrade upgrade : upgrades.values()) {
             final NonNullList<ItemStack> items = upgrade.getDrops();
             for (ItemStack item : items) {
@@ -1012,6 +1014,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return this.getEntityBoundingBox();
     }
 
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBox(Entity entityIn) {
+        return super.getCollisionBox(entityIn);
+    }
     //    @Nullable
     //    @Override
     //    public AxisAlignedBB getBoundingBox()
@@ -1089,11 +1096,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 30;
     }
 
-    public boolean onLivingFall(float distance, float damageMultiplier) {
+    @Override
+    public void fall(float distance, float damageMultiplier) {
         if (this.isBeingRidden()) {
             crash(distance * damageMultiplier);
         }
-        return false;
     }
 
     @SuppressWarnings("deprecation")
@@ -1178,7 +1185,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @SuppressWarnings("rawtypes")
     public ItemStack getItemStack() {
-        ItemStack itemStack = getItem().getDefaultInstance();
+        ItemStack itemStack = new ItemStack(getItem());
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
             final NBTTagCompound value = serializeNBT();
             value.setBoolean("Used", true);

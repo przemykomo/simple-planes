@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.shooter;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -37,7 +38,7 @@ public class ShooterUpgrade extends Upgrade {
     @Override
     public boolean onItemRightClick(EntityPlayer player, World world, EnumHand hand, ItemStack itemStack) {
         Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1 + planeEntity.getMotion().length())));
-        Vec3d motion = new Vec3d(motion1.x,motion1.y,motion1.z);
+        Vec3d motion = new Vec3d(motion1.x, motion1.y, motion1.z);
         Random random = world.rand;
 
         Vector3f pos = planeEntity.transformPos(new Vector3f(shootSide ? 0.8f : -0.8f, 0.8f, 0.8f));
@@ -51,7 +52,9 @@ public class ShooterUpgrade extends Upgrade {
 
         if (item == FIREWORKS) {
             EntityFireworkRocket fireworkrocketentity = new EntityFireworkRocket(world, x, y, z, itemStack);
-            fireworkrocketentity.setVelocity(-motion.x, -motion.y, -motion.z);
+
+            setMotion(fireworkrocketentity, motion.scale(-1));
+
             world.spawnEntity(fireworkrocketentity);
             if (!player.isCreative()) {
                 itemStack.shrink(1);
@@ -60,8 +63,10 @@ public class ShooterUpgrade extends Upgrade {
             double d3 = random.nextGaussian() * 0.05D + 2 * motion.x;
             double d4 = random.nextGaussian() * 0.05D;
             double d5 = random.nextGaussian() * 0.05D + 2 * motion.z;
-            world.spawnEntity(new EntitySmallFireball(world, x, y, z, d3, d4, d5));
-
+            EntitySmallFireball fireball = new EntitySmallFireball(world, x, y, z, d3, d4, d5);
+            fireball.shootingEntity = player;
+            world.spawnEntity(fireball);
+            setMotion(fireball,motion);
             if (!player.isCreative()) {
                 itemStack.shrink(1);
             }
@@ -70,7 +75,7 @@ public class ShooterUpgrade extends Upgrade {
             Vec3d m = motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length());
             arrowEntity.shootingEntity = planeEntity;
 
-            arrowEntity.setVelocity(m.x,m.y,m.z);
+            setMotion(arrowEntity, m);
             if (!player.isCreative()) {
                 itemStack.shrink(1);
                 arrowEntity.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
@@ -82,7 +87,7 @@ public class ShooterUpgrade extends Upgrade {
             arrowEntity.shootingEntity = planeEntity;
             arrowEntity.setPotionEffect(itemStack);
 
-            arrowEntity.setVelocity(m.x,m.y,m.z);
+            setMotion(arrowEntity, m);
             if (!player.isCreative()) {
                 itemStack.shrink(1);
                 arrowEntity.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
@@ -93,8 +98,7 @@ public class ShooterUpgrade extends Upgrade {
             EntitySpectralArrow arrowEntity = new EntitySpectralArrow(world, x, y, z);
             Vec3d m = motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length());
             arrowEntity.shootingEntity = planeEntity;
-
-            arrowEntity.setVelocity(m.x,m.y,m.z);
+            setMotion(arrowEntity, m);
             if (!player.isCreative()) {
                 itemStack.shrink(1);
                 arrowEntity.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
@@ -104,9 +108,15 @@ public class ShooterUpgrade extends Upgrade {
         return false;
     }
 
+    private void setMotion(Entity arrowEntity, Vec3d m) {
+        arrowEntity.motionX = m.x;
+        arrowEntity.motionY = m.y;
+        arrowEntity.motionZ = m.z;
+    }
+
     @Override
     public void render(float partialticks, float scale) {
-        ShooterModel.INSTANCE.render(planeEntity,1F, 1.0F, 1.0F, 1.0F, 1.0F,scale);
+        ShooterModel.INSTANCE.render(planeEntity, 1F, 1.0F, 1.0F, 1.0F, 1.0F, scale);
     }
 
     @Override
