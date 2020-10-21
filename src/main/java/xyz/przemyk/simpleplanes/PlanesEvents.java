@@ -2,15 +2,17 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-
-import java.util.HashSet;
 
 @Mod.EventBusSubscriber
 public class PlanesEvents {
@@ -27,7 +29,7 @@ public class PlanesEvents {
                 return;
             }
             PlaneEntity planeEntity = (PlaneEntity) entity;
-            planeEntity.rightClickUpgrades(player,event.getHand(),itemStack);
+            planeEntity.rightClickUpgrades(player, event.getHand(), itemStack);
 
             // some upgrade may shrink itemStack so we need to check if it's empty
             if (itemStack.isEmpty()) {
@@ -47,4 +49,48 @@ public class PlanesEvents {
             planeEntity.tryToAddUpgrade(player, itemStack);
         }
     }
+
+    @SubscribeEvent
+    public static void onImpact(ProjectileImpactEvent.Arrow event) {
+        RayTraceResult rayTraceResult = event.getRayTraceResult();
+        Entity entityHit = rayTraceResult.entityHit;
+        if (entityHit == null) {
+            return;
+        }
+        if (entityHit instanceof PlaneEntity || entityHit instanceof EntityPlayer && entityHit.getLowestRidingEntity() instanceof PlaneEntity) {
+            EntityArrow arrow = (EntityArrow) event.getEntity();
+            if (arrow.getEntityWorld().isRemote || ((arrow.shootingEntity != null) && entityHit.isRidingSameEntity(arrow.shootingEntity))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+    @SubscribeEvent
+    public static void onImpact(ProjectileImpactEvent.Fireball event) {
+        RayTraceResult rayTraceResult = event.getRayTraceResult();
+        Entity entityHit = rayTraceResult.entityHit;
+        if (entityHit == null) {
+            return;
+        }
+        if (entityHit instanceof PlaneEntity || entityHit instanceof EntityPlayer && entityHit.getLowestRidingEntity() instanceof PlaneEntity) {
+            EntityFireball arrow = (EntityFireball) event.getEntity();
+            if (arrow.getEntityWorld().isRemote || ((arrow.shootingEntity != null) && entityHit.isRidingSameEntity(arrow.shootingEntity))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+    @SubscribeEvent
+    public static void onImpact(ProjectileImpactEvent.Throwable event) {
+        RayTraceResult rayTraceResult = event.getRayTraceResult();
+        Entity entityHit = rayTraceResult.entityHit;
+        if (entityHit == null) {
+            return;
+        }
+        if (entityHit instanceof PlaneEntity || entityHit instanceof EntityPlayer && entityHit.getLowestRidingEntity() instanceof PlaneEntity) {
+            EntityThrowable arrow = (EntityThrowable) event.getEntity();
+            if (arrow.getEntityWorld().isRemote || ((arrow.getThrower() != null) && entityHit.isRidingSameEntity(arrow.getThrower()))) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
 }

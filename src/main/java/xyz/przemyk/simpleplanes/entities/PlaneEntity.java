@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -304,6 +305,17 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         upgrades.put(upgradeType.getRegistryName(), upgrade);
         upgradeChanged();
+    }
+
+    @Override
+    public void applyEntityCollision(Entity entityIn) {
+        if (entityIn instanceof EntityArrow) {
+            EntityArrow arrow = (EntityArrow) entityIn;
+            if (arrow.shootingEntity != null && isRidingSameEntity(arrow.shootingEntity)) {
+                return;
+            }
+        }
+        super.applyEntityCollision(entityIn);
     }
 
     @SuppressWarnings("deprecation")
