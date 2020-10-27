@@ -1,67 +1,310 @@
+  
 {
-    "item.simpleplanes.oak_furnace_plane":      "Дубовая печка самолета",
-    "item.simpleplanes.spruce_furnace_plane":   "Еловая печка самолета",
-    "item.simpleplanes.birch_furnace_plane":    "Березевая печка самолета",
-    "item.simpleplanes.jungle_furnace_plane":   "Джунглева печка самолета",
-    "item.simpleplanes.acacia_furnace_plane":   "Акацивая печка самолета",
-    "item.simpleplanes.dark_oak_furnace_plane": "Тено дубовая печка самолета",
-    "item.simpleplanes.crimson_furnace_plane":  "Багровая печка самолета",
-    "item.simpleplanes.warped_furnace_plane":   "Искаженая печка самолета",
-
-    "item.simpleplanes.oak_large_furnace_plane":      "Большой Дубовая печка самолета",
-    "item.simpleplanes.spruce_large_furnace_plane":   "Большой Еловая печка самолета",
-    "item.simpleplanes.birch_large_furnace_plane":    "Большой Березевая печка самолета",
-    "item.simpleplanes.jungle_large_furnace_plane":   "Большой Джунглева печка самолета",
-    "item.simpleplanes.acacia_large_furnace_plane":   "Большой Акацивая печка самолета",
-    "item.simpleplanes.dark_oak_large_furnace_plane": "Большой Тено дубовая печка самолета",
-    "item.simpleplanes.crimson_large_furnace_plane":  "Большой Багровая печка самолета",
-    "item.simpleplanes.warped_large_furnace_plane":   "Большой Искаженая печка самолета",
-
-    "item.simpleplanes.furnace_engine": "Печной двигатель",
-    "item.simpleplanes.propeller": "Пропеллер",
+    "item.simpleplanes.furnace_engine": "Печной Двигатель",
+    "item.simpleplanes.propeller": "Пропилер",
     "item.simpleplanes.sprayer": "Опрыскиватель",
-    "item.simpleplanes.booster": "Ракетный ускоритель",
-    "item.simpleplanes.floaty_bedding": "Плавучие постельные принадлежности",
-    "item.simpleplanes.shooter": "Стрелок",
-
-    "description.simpleplanes.sprayer": "Используйте бутылки с водой или зелья, чтобы посевы росли быстрее и создавали эффект сущностей.",
+    "item.simpleplanes.booster": "Ракетный Ускоритель",
+    "item.simpleplanes.floaty_bedding": "Плавучая Подстилка",
+    "item.simpleplanes.shooter": "Пушка",
+    "item.simpleplanes.folding": "Возвращаться в Инвентарь",
+    "item.simpleplanes.healing": "Ремонот Самолета",
+    "item.simpleplanes.mana_upgrade": "Чистая ромашка",
+    "item.simpleplanes.cloud": "Облако",
+    "block.simpleplanes.charger_block": "Зарядная станция FE",
+    "block.simpleplanes.fueling_block": "заправочная станция для самолетов",
+    "description.simpleplanes.sprayer": "Используйте бутылки с водой или зелья, чтобы посевы росли быстрее и создавали эффект сущностей",
     "description.simpleplanes.booster": "Используйте порох, чтобы ускорить свой самолет. Применяется только к маленьким самолетам.",
     "description.simpleplanes.floaty_bedding": "Заставляет самолет плыть по воде.",
     "description.simpleplanes.shooter": "Стреляет салютом, стреляет зарядами и стрелами.",
     "description.simpleplanes.folding": "Самолет возвращается в инвентарь игрока при вылете.",
+    "description.simpleplanes.healing": "Почини свой самолет быстрее",
+    "description.simpleplanes.mana_upgrade": "Превращает ваш самолет в живой деревянный самолет",
+    "description.simpleplanes.cloud": "Щелкните правой кнопкой мыши киркой над уровнем облаков, чтобы получить Облако",
+    "itemGroup.simpleplanes": "Simple Самолет",
+    "death.attack.plane_crash": "%1$s Погибать в крушении самолета",
+    "plane.onboard": "Нажать %2$s to Boost | Нажать %1$s to Демонтировать",
+    "helicopter.onboard": "Нажать %2$s to TakeOff | Нажать %1$s to Демонтировать",
+    "key.simpleplanes.category": "Простые Самолеты",
+    "key.plane_boost.desc": "Клавиша ускорения для Самолета",
 
-    "itemGroup.simpleplanes": "Простые самолеты",
+
+    "item.simpleplanes.acacia_plane": "Акациевый Самолет",
+    "item.simpleplanes.acacia_large_plane": "Большой Акациевый Самолет",
+    "item.simpleplanes.acacia_helicopter": "Акациевый Вертолет",
+    "item.simpleplanes.acacia_mega_plane": "Акациевый Грузовой Самолет",
 
 
-    "_planes_comment": "Все ниже предназначено для совместимости модов",
+    "item.simpleplanes.birch_plane": "Березовый Самолет",
+    "item.simpleplanes.birch_large_plane": "Большой Березовый Самолет",
+    "item.simpleplanes.birch_helicopter": "Березовый Вертолет",
+    "item.simpleplanes.birch_mega_plane": "Березовый Грузовой Самолет",
 
-    "item.simpleplanes.ft_cherry_plane": "Самолет вишневой печи",
-    "item.simpleplanes.ft_cherry_large_plane": "Самолет большой вишневой печи",
-    "item.simpleplanes.ft_citrus_plane": "Плоскость печи цитрусовых",
-    "item.simpleplanes.ft_citrus_large_plane": "Большая печь для цитрусовых",
 
-    "item.simpleplanes.bop_cherry_large_plane": "Самолет большой вишневой печи",
-    "item.simpleplanes.bop_cherry_plane": "Самолет вишневой печи",
-    "item.simpleplanes.bop_dead_large_plane": "Плоскость большой мертвой печи",
-    "item.simpleplanes.bop_dead_plane": "Плоскость мертвой печи",
-    "item.simpleplanes.bop_fir_large_plane": "Плоскость большой еловой печи",
-    "item.simpleplanes.bop_fir_plane": "Плоскость еловой печи",
-    "item.simpleplanes.bop_hellbark_large_plane": "Самолет большой печи адской коры",
-    "item.simpleplanes.bop_hellbark_plane": "Самолет печи адской коры",
-    "item.simpleplanes.bop_jacaranda_large_plane": "Плоскость большой печи Jacaranda",
-    "item.simpleplanes.bop_jacaranda_plane": "Плоскость печи Jacaranda",
-    "item.simpleplanes.bop_magic_large_plane": "Большой самолет волшебной печи",
-    "item.simpleplanes.bop_magic_plane": "Самолет волшебной печи",
-    "item.simpleplanes.bop_mahogany_large_plane": "Большая печь из красного дерева",
-    "item.simpleplanes.bop_mahogany_plane": "Плоскость печи из красного дерева",
-    "item.simpleplanes.bop_palm_large_plane": "Плоскость большой пальмовой печи",
-    "item.simpleplanes.bop_palm_plane": "Плоскость печи для пальм",
-    "item.simpleplanes.bop_redwood_large_plane": "Большая печь из красного дерева",
-    "item.simpleplanes.bop_redwood_plane": "Самолет печи Redwood",
-    "item.simpleplanes.bop_umbran_large_plane": "Плоскость большой умбранской печи",
-    "item.simpleplanes.bop_umbran_plane": "Плоскость печи Умбрана",
-    "item.simpleplanes.bop_willow_large_plane": "Плоскость большой ивовой печи",
-    "item.simpleplanes.bop_willow_plane": "Самолет печи ивы",
+    "item.simpleplanes.bop_cherry_plane": "Вишнёвый Самолет",
+    "item.simpleplanes.bop_cherry_large_plane": "Большой Вишнёвый Самолет",
+    "item.simpleplanes.bop_cherry_helicopter": "Вишнёвый Вертолет",
+    "item.simpleplanes.bop_cherry_mega_plane": "Вишнёвый Грузовой Самолет",
 
-    "death.attack.plane_crush": "Погиб в самолете"
+
+    "item.simpleplanes.bop_dead_plane": "Мёртвый Самолет",
+    "item.simpleplanes.bop_dead_large_plane": "Большой Мёртвый Самолет",
+    "item.simpleplanes.bop_dead_helicopter": "Мёртвый Вертолет",
+    "item.simpleplanes.bop_dead_mega_plane": "Мёртвый Грузовой Самолет",
+
+
+    "item.simpleplanes.bop_fir_plane": "Пихтовый Самолет",
+    "item.simpleplanes.bop_fir_large_plane": "Большой Пихтовый Самолет",
+    "item.simpleplanes.bop_fir_helicopter": "Пихтовый Вертолет",
+    "item.simpleplanes.bop_fir_mega_plane": "Пихтовый Грузовой Самолет",
+
+
+    "item.simpleplanes.bop_hellbark_plane": "Самолет из Адской коры",
+    "item.simpleplanes.bop_hellbark_large_plane": "Большой Самолет из Адской коры",
+    "item.simpleplanes.bop_hellbark_helicopter": "Вертолет из Адской коры",
+    "item.simpleplanes.bop_hellbark_mega_plane": "Грузовой Самолет из Адской коры",
+
+
+    "item.simpleplanes.bop_jacaranda_plane": "Жакарандовый Самолет",
+    "item.simpleplanes.bop_jacaranda_large_plane": "Большой Жакарандовый Самолет",
+    "item.simpleplanes.bop_jacaranda_helicopter": "Жакарандовый Вертолет",
+    "item.simpleplanes.bop_jacaranda_mega_plane": "Жакарандовый Грузовой Самолет",
+
+
+    "item.simpleplanes.bop_magic_plane": "Магический Самолет",
+    "item.simpleplanes.bop_magic_large_plane": "Большой Магический Самолет",
+    "item.simpleplanes.bop_magic_helicopter": "Магический Вертолет",
+    "item.simpleplanes.bop_magic_mega_plane": "Магический Грузовой Самолет",
+
+
+    "item.simpleplanes.bop_mahogany_plane": "Махоганиевый Самолет",
+    "item.simpleplanes.bop_mahogany_large_plane": "Большой Махоганиевый Самолет",
+    "item.simpleplanes.bop_mahogany_helicopter": "Махоганиевый Вертолет",
+    "item.simpleplanes.bop_mahogany_mega_plane": "Грузовой Махоганиевый Самолет",
+
+
+    "item.simpleplanes.bop_palm_plane": "Пальмовый Самолет",
+    "item.simpleplanes.bop_palm_large_plane": "Большой Пальмовый Самолет",
+    "item.simpleplanes.bop_palm_helicopter": "Пальмовый Вертолет",
+    "item.simpleplanes.bop_palm_mega_plane": "Пальмовый Грузовой Самолет",
+
+
+    "item.simpleplanes.bop_redwood_plane": "Самолет из Красного Дерева",
+    "item.simpleplanes.bop_redwood_large_plane": "Большой Самолет из Красного Дерева",
+    "item.simpleplanes.bop_redwood_helicopter": "Вертолет из Красного Дерева",
+    "item.simpleplanes.bop_redwood_mega_plane": "Грузовой Самолет из Красного Дерева",
+
+
+    "item.simpleplanes.bop_umbran_plane": "Умбрановый Самолет",
+    "item.simpleplanes.bop_umbran_large_plane": "Большой Умбрановый Самолет",
+    "item.simpleplanes.bop_umbran_helicopter": "Умбрановый Вертолет",
+    "item.simpleplanes.bop_umbran_mega_plane": "Умбрановый Грузовой Самолет",
+
+
+    "item.simpleplanes.bop_willow_plane": "Ивовый Самолет",
+    "item.simpleplanes.bop_willow_large_plane": "Большой Ивовый Самолет",
+    "item.simpleplanes.bop_willow_helicopter": "Ивовый Вертолет",
+    "item.simpleplanes.bop_willow_mega_plane": "Ивовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_aspen_plane": "Осиновый Самолет",
+    "item.simpleplanes.byg_aspen_large_plane": "Большой Осиновый Самолет",
+    "item.simpleplanes.byg_aspen_helicopter": "Осиновый Вертолет",
+    "item.simpleplanes.byg_aspen_mega_plane": "Осиновый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_baobab_plane": "Баобабовый Самолет",
+    "item.simpleplanes.byg_baobab_large_plane": "Большой Баобабовый Самолет",
+    "item.simpleplanes.byg_baobab_helicopter": "Баобабовый Вертолет",
+    "item.simpleplanes.byg_baobab_mega_plane": "Баобабовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_blue_enchanted_plane": "Синий Зачарованный Самолет",
+    "item.simpleplanes.byg_blue_enchanted_large_plane": "Большой Синий Зачарованный Самолет",
+    "item.simpleplanes.byg_blue_enchanted_helicopter": "Синий Зачарованный Вертолет",
+    "item.simpleplanes.byg_blue_enchanted_mega_plane": "Синий Зачарованный Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_cherry_plane": "Вишнёвый Самолет",
+    "item.simpleplanes.byg_cherry_large_plane": "Большой Вишнёвый Самолет",
+    "item.simpleplanes.byg_cherry_helicopter": "Вишнёвый Вертолет",
+    "item.simpleplanes.byg_cherry_mega_plane": "Вишнёвый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_cika_plane": "Цикововый Самолет",
+    "item.simpleplanes.byg_cika_large_plane": "Большой Цикововый Самолет",
+    "item.simpleplanes.byg_cika_helicopter": "Цикововый Вертолет",
+    "item.simpleplanes.byg_cika_mega_plane": "Цикововый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_cypress_plane": "Кипарисовый Самолет",
+    "item.simpleplanes.byg_cypress_large_plane": "Большой Кипарисовый Самолет",
+    "item.simpleplanes.byg_cypress_helicopter": "Кипарисовый Вертолет",
+    "item.simpleplanes.byg_cypress_mega_plane": "Кипарисовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_ebony_plane": "Самолет из Черного дерева",
+    "item.simpleplanes.byg_ebony_large_plane": "Большой Самолет из Черного дерева",
+    "item.simpleplanes.byg_ebony_helicopter": "Вертолет из Черного дерева",
+    "item.simpleplanes.byg_ebony_mega_plane": "Грузовой Самолет из Черного дерева",
+
+
+    "item.simpleplanes.byg_fir_plane": "Пихтовый Самолет",
+    "item.simpleplanes.byg_fir_large_plane": "Большой Пихтовый Самолет",
+    "item.simpleplanes.byg_fir_helicopter": "Пихтовый Вертолет",
+    "item.simpleplanes.byg_fir_mega_plane": "Пихтовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_green_enchanted_plane": "Зелёный Зачарованный Самолет",
+    "item.simpleplanes.byg_green_enchanted_large_plane": "Большой Зелёный Зачарованный Самолет",
+    "item.simpleplanes.byg_green_enchanted_helicopter": "Зелёный Зачарованный Вертолет",
+    "item.simpleplanes.byg_green_enchanted_mega_plane": "Зелёный Зачарованный Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_holly_plane": "Падубовый Самолет",
+    "item.simpleplanes.byg_holly_large_plane": "Большой Падубовый Самолет",
+    "item.simpleplanes.byg_holly_helicopter": "Падубовый Вертолет",
+    "item.simpleplanes.byg_holly_mega_plane": "Падубовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_jacaranda_plane": "Жакарандовый Самолет",
+    "item.simpleplanes.byg_jacaranda_large_plane": "Большой Жакарандовый Самолет",
+    "item.simpleplanes.byg_jacaranda_helicopter": "Жакарандовый Вертолет",
+    "item.simpleplanes.byg_jacaranda_mega_plane": "Жакарандовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_mahogany_plane": "Махоганиевый Самолет",
+    "item.simpleplanes.byg_mahogany_large_plane": "Большой Махоганиевый Самолет",
+    "item.simpleplanes.byg_mahogany_helicopter": "Махоганиевый Вертолет",
+    "item.simpleplanes.byg_mahogany_mega_plane": "Махоганиевый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_mangrove_plane": "Mangrove Самолет",
+    "item.simpleplanes.byg_mangrove_large_plane": "Большой Mangrove Самолет",
+    "item.simpleplanes.byg_mangrove_helicopter": "Mangrove Вертолет",
+    "item.simpleplanes.byg_mangrove_mega_plane": "Mangrove Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_maple_plane": "Кленовый Самолет",
+    "item.simpleplanes.byg_maple_large_plane": "Большой Кленовый Самолет",
+    "item.simpleplanes.byg_maple_helicopter": "Кленовый Вертолет",
+    "item.simpleplanes.byg_maple_mega_plane": "Кленовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_pine_plane": "Сосновый Самолет",
+    "item.simpleplanes.byg_pine_large_plane": "Большой Сосновый Самолет",
+    "item.simpleplanes.byg_pine_helicopter": "Сосновый Вертолет",
+    "item.simpleplanes.byg_pine_mega_plane": "Сосновый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_rainbow_eucalyptus_plane": "Самолет из Радужного Эвкалипта",
+    "item.simpleplanes.byg_rainbow_eucalyptus_large_plane": "Большой Самолет из Радужного Эвкалипта",
+    "item.simpleplanes.byg_rainbow_eucalyptus_helicopter": "Вертолет из Радужного Эвкалипта",
+    "item.simpleplanes.byg_rainbow_eucalyptus_mega_plane": "Грузовой Самолет из Радужного Эвкалипта",
+
+
+    "item.simpleplanes.byg_redwood_plane": "Самолет из Красного Дерева",
+    "item.simpleplanes.byg_redwood_large_plane": "Большой  Самолет из Красного Дерева",
+    "item.simpleplanes.byg_redwood_helicopter": "Вертолет из Красного Дерева",
+    "item.simpleplanes.byg_redwood_mega_plane": "Грузовой Самолет из Красного Дерева",
+
+
+    "item.simpleplanes.byg_skyris_plane": "Скайрисовый Самолет",
+    "item.simpleplanes.byg_skyris_large_plane": "Большой Скайрисовый Самолет",
+    "item.simpleplanes.byg_skyris_helicopter": "Скайрисовый Вертолет",
+    "item.simpleplanes.byg_skyris_mega_plane": "Скайрисовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_willow_plane": "Ивовый Самолет",
+    "item.simpleplanes.byg_willow_large_plane": "Большой Ивовый Самолет",
+    "item.simpleplanes.byg_willow_helicopter": "Ивовый Вертолет",
+    "item.simpleplanes.byg_willow_mega_plane": "Ивовый Грузовой Самолет",
+
+
+    "item.simpleplanes.byg_witch_hazel_plane": "Самолет из Ведьма Хейзел",
+    "item.simpleplanes.byg_witch_hazel_large_plane": "Большой Самолет из Ведьма Хейзел",
+    "item.simpleplanes.byg_witch_hazel_helicopter": "Вертолет из Ведьма Хейзел",
+    "item.simpleplanes.byg_witch_hazel_mega_plane": "Грузовой Самолет из Ведьма Хейзел",
+
+
+    "item.simpleplanes.byg_zelkova_plane": "Дзельквовый Самолет",
+    "item.simpleplanes.byg_zelkova_large_plane": "Большой Дзельквовый Самолет",
+    "item.simpleplanes.byg_zelkova_helicopter": "Дзельквовый Вертолет",
+    "item.simpleplanes.byg_zelkova_mega_plane": "Дзельквовый Грузовой Самолет",
+
+
+    "item.simpleplanes.crimson_plane": "Багровый Самолет",
+    "item.simpleplanes.crimson_large_plane": "Большой Багровый Самолет",
+    "item.simpleplanes.crimson_helicopter": "Багровый Вертолет",
+    "item.simpleplanes.crimson_mega_plane": "Багровый Грузовой Самолет",
+
+
+    "item.simpleplanes.dark_oak_plane": "Самолет из Темного Дуба",
+    "item.simpleplanes.dark_oak_large_plane": "Большой из Темного Дуба Самолет",
+    "item.simpleplanes.dark_oak_helicopter": "Вертолет из Темного Дуба",
+    "item.simpleplanes.dark_oak_mega_plane": "Грузовой Самолет из Темного Дуба",
+
+
+    "item.simpleplanes.ft_cherry_plane": "Вишнёвый Самолет",
+    "item.simpleplanes.ft_cherry_large_plane": "Большой Вишнёвый Самолет",
+    "item.simpleplanes.ft_cherry_helicopter": "Вишнёвый Вертолет",
+    "item.simpleplanes.ft_cherry_mega_plane": "Вишнёвый Грузовой Самолет",
+
+
+    "item.simpleplanes.ft_citrus_plane": "Цитрусовый Самолет",
+    "item.simpleplanes.ft_citrus_large_plane": "Большой Цитрусовый Самолет",
+    "item.simpleplanes.ft_citrus_helicopter": "Цитрусовый Вертолет",
+    "item.simpleplanes.ft_citrus_mega_plane": "Цитрусовый Грузовой Самолет",
+
+
+    "item.simpleplanes.jungle_plane": "Самолет из Тропического Дерева",
+    "item.simpleplanes.jungle_large_plane": "Большой Самолет из Тропического Дерева",
+    "item.simpleplanes.jungle_helicopter": "Вертолет из Тропического Дерева",
+    "item.simpleplanes.jungle_mega_plane": "Грузовой Самолет из Тропического Дерева",
+
+    "item.simpleplanes.oak_plane": "Дубовый Самолет",
+    "item.simpleplanes.oak_large_plane": "Большой Дубовый Самолет",
+    "item.simpleplanes.oak_helicopter": "Дубовый Вертолет",
+    "item.simpleplanes.oak_mega_plane": "Дубовый Грузовой Самолет",
+
+
+    "item.simpleplanes.spruce_plane": "Еловый Самолет",
+    "item.simpleplanes.spruce_large_plane": "Большой Еловый Самолет",
+    "item.simpleplanes.spruce_helicopter": "Еловый Вертолет",
+    "item.simpleplanes.spruce_mega_plane": "Еловый Грузовой Самолет",
+
+
+    "item.simpleplanes.warped_plane": "Самолет из Изкажёного Дерева",
+    "item.simpleplanes.warped_large_plane": "Большой  Самолет из Изкажёного Дерева",
+    "item.simpleplanes.warped_helicopter": "Вертолет из Изкажёного Дерева",
+    "item.simpleplanes.warped_mega_plane": "Грузовой Самолет из Изкажёного Дерева",
+
+    "item.simpleplanes.mana_plane": "Самолет из Живого Дерева",
+    "item.simpleplanes.mana_large_plane": "Большой Самолет из Живого Дерева",
+    "item.simpleplanes.mana_helicopter": "Вертолет из Живого Дерева",
+    "item.simpleplanes.mana_mega_plane": "Грузовой Самолет из Живого Дерева",
+
+    "text.autoconfig.simpleplanes.title": "простые самолёты",
+    "text.autoconfig.simpleplanes.category.default": "разное",
+    "text.autoconfig.simpleplanes.category.coal": "уголь",
+    "text.autoconfig.simpleplanes.category.mana": "манв",
+    "text.autoconfig.simpleplanes.category.energy": "энергия",
+    "text.autoconfig.simpleplanes.category.lava": "лава",
+    "text.autoconfig.simpleplanes.option.TURN_THRESHOLD": "Порог Поворота",
+    "text.autoconfig.simpleplanes.option.TURN_THRESHOLD.@Tooltip": "Для контроллеров предусмотрен порог для перемещения джойстика самолета",
+    "text.autoconfig.simpleplanes.option.EASY_FLIGHT": "лёгкий палёт",
+    "text.autoconfig.simpleplanes.option.EASY_FLIGHT.@Tooltip": "более легкий режим полета, отключает экстремальные движения",
+    "text.autoconfig.simpleplanes.option.PLANE_CRASH": "поломка самолёта",
+    "text.autoconfig.simpleplanes.option.THIEF": "выпадение самоёта в виде предмета",
+    "text.autoconfig.simpleplanes.option.THIEF.@Tooltip": "могут ли игроки украсть самолеты",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_COAL": "ТИКИ_ПАЛЁТА_НА_УГОЛЬ",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_COAL.@Tooltip": "Тики полета за одно время сжигания угля",
+    "text.autoconfig.simpleplanes.option.COAL_MAX_FUEL": "уголь максимум топлива",
+    "text.autoconfig.simpleplanes.option.COAL_MAX_FUEL.@Tooltip": "Максимальное количество топлива угля для Самолета",
+    "text.autoconfig.simpleplanes.option.MANA_COST": "стоимость маны",
+    "text.autoconfig.simpleplanes.option.MANA_COST.@Tooltip": "количество маны для использования в нерабочее время",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA": "тики палёза за ману",
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "количество тиков полета на использование маны"
+
+
+
 }
