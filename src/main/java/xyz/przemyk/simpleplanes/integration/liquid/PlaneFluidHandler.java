@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.integration.liquid;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import xyz.przemyk.simpleplanes.Config;
 
 import javax.annotation.Nonnull;
 
@@ -26,12 +27,12 @@ public class PlaneFluidHandler implements IFluidHandler {
 
     @Override
     public int getTankCapacity(int tank) {
-        return 0;
+        return 1000;
     }
 
     @Override
     public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-        return true;
+        return Config.FUEL_PER_BUCKET.containsKey(stack.getFluid().getRegistryName());
     }
 
     @Override
@@ -42,12 +43,12 @@ public class PlaneFluidHandler implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        return null;
+        return FluidStack.EMPTY;
     }
 
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        return null;
+        return FluidStack.EMPTY;
     }
 }

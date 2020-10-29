@@ -14,7 +14,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChargerTileEntity extends TileEntity implements ITickableTileEntity {
-    private LazyOptional<IEnergyStorage> energy = LazyOptional.of(() -> new NbtEnergyStorage(Config.ENERGY_COST.get()*10));
+    private LazyOptional<IEnergyStorage> energy = LazyOptional.of(() -> new NbtEnergyStorage(Config.ENERGY_COST.get() * 10));
 
     @Nonnull
     @Override
@@ -40,25 +39,33 @@ public class ChargerTileEntity extends TileEntity implements ITickableTileEntity
     @Override
     public void tick() {
         if (world != null && !world.isRemote) {
-            energy.ifPresent(energy -> {
-                AtomicInteger capacity = new AtomicInteger(energy.getEnergyStored());
-                final NbtEnergyStorage energyStorage = (NbtEnergyStorage) energy;
-                final Integer cost = Config.ENERGY_COST.get();
-                final List<PlaneEntity> planes = world.getEntitiesWithinAABB(PlaneEntity.class, new AxisAlignedBB(this.pos, this.pos).grow(5), playerEntity -> true);
-                for (PlaneEntity planeEntity : planes) {
-                    if (planeEntity.upgrades.containsKey(SimplePlanesUpgrades.POWER_CELL.getId())) {
-                        if (planeEntity.getFuel() < Config.FLY_TICKS_PER_COAL.get() * 10) {
+            BlockState oldBlockState = getBlockState();
+            if (energy.isPresent()) {
+                energy.ifPresent(energy -> {
+                    AtomicInteger capacity = new AtomicInteger(energy.getEnergyStored());
+                    final NbtEnergyStorage energyStorage = (NbtEnergyStorage) energy;
+                    final Integer cost = Config.ENERGY_COST.get();
+                    final List<PlaneEntity> planes = world.getEntitiesWithinAABB(PlaneEntity.class, new AxisAlignedBB(this.pos, this.pos).grow(5), playerEntity -> true);
+                    for (PlaneEntity planeEntity : planes) {
+                        if (planeEntity.getFuel() < Config.ENERGY_MAX_FUEL.get()) {
                             if (energyStorage.getEnergyStored() > cost) {
                                 planeEntity.addFuel(Config.ENERGY_FLY_TICKS.get());
                                 capacity.addAndGet(-cost);
-                                energyStorage.consumeEnergy(cost);
                             }
                         } else {
                             System.out.println("full");
                         }
                     }
-                }
-            });
+                    energyStorage.setEnergy(capacity.get());
+                    int value = (4 * energyStorage.getEnergyStored()) / energyStorage.getMaxEnergyStored();
+                    BlockState with = oldBlockState.with(ChargerBlock.CHARGES, value);
+                    world.setBlockState(pos,with);
+                });
+
+            } else {
+                BlockState state = oldBlockState.with(ChargerBlock.CHARGES, 0);
+
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
+import static xyz.przemyk.simpleplanes.render.AbstractPlaneRenderer.getPropellerRotation;
 import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
 
 public class PropellerModel extends EntityModel<PlaneEntity> {
@@ -35,9 +36,9 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
     public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         bone_propeller.showModel = !entity.upgrades.containsKey(SimplePlanesUpgrades.DRAGON.getId());
 
-        if (entity.isPowered()) {
+        if (entity.isPowered() && !entity.getParked()) {
             bone_propeller.rotateAngleZ =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
         } else {
             bone_propeller.rotateAngleZ = 1;
         }

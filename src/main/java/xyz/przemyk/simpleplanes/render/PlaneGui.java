@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -13,7 +12,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -56,16 +54,21 @@ public class PlaneGui extends AbstractGui {
                 mc.getTextureManager().bindTexture(bar);
                 float fuel = planeEntity.getFuel();
 //                fuel = (float) Math.log1p(fuel);
-                float max_fuel =planeEntity.getMaxFuel();
+                float max_fuel = planeEntity.getMaxFuel();
 //                max_fuel = (float) Math.log1p(max_fuel);
                 float part = fuel / max_fuel;
                 part = (float) Math.pow(part, 0.5);
-                part = MathHelper.clamp(part, 0, 1);
+                int i = (int) part;
+
+//                part = MathHelper.clamp(part, 0, 1);
+                part = part - i;
                 int currentWidth = (int) (bar_width * part);
 
-                blit(mStack, x, y, 0, 0, tex_width, tex_height);
-                int bar_image_pos = planeEntity.isSprinting() ? tex_height * 2 : tex_height;
-                blit(mStack, x, y, 0, bar_image_pos, currentWidth, tex_height);
+                blit(mStack, x, y, 0, tex_height * i, tex_width, tex_height);
+                blit(mStack, x, y, 0, tex_height * (i + 1), currentWidth, tex_height);
+                if (planeEntity.isSprinting()) {
+                    blit(mStack, x, y, 0, 30, i == 0 ? currentWidth : tex_width, tex_height);
+                }
             }
         }
     }
@@ -104,12 +107,13 @@ public class PlaneGui extends AbstractGui {
 
                     for (int i = 0; i < rowCount; ++i) {
                         int x = left_align - i * 16 - 16;
+                        int vOffset = 35;
                         if (i + heart + 10 < health)
-                            blit(mStack, x, top, GOLD, 15, 16, 9);
+                            blit(mStack, x, top, GOLD, vOffset, 16, 9);
                         else if (i + heart < health)
-                            blit(mStack, x, top, FULL, 15, 16, 9);
+                            blit(mStack, x, top, FULL, vOffset, 16, 9);
                         else
-                            blit(mStack, x, top, EMPTY, 15, 16, 9);
+                            blit(mStack, x, top, EMPTY, vOffset, 16, 9);
                     }
                     right_height += 10;
                 }

@@ -163,16 +163,6 @@ public class PlanesClientEvents {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void fovModifier(EntityViewRenderEvent.FOVModifier event) {
-        final Entity entity = event.getInfo().getRenderViewEntity();
-        if (entity instanceof ClientPlayerEntity && entity.getRidingEntity() instanceof PlaneEntity) {
-            if (event.getInfo().isThirdPerson()) {
-//                event.setFOV(100);
-            }
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void planeInventory(GuiOpenEvent event) {
         final ClientPlayerEntity player = Minecraft.getInstance().player;

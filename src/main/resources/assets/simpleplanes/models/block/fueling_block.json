@@ -1,0 +1,12 @@
+{
+  "parent": "simpleplanes:block/charger_block",
+  "textures": {
+    "0": "simpleplanes:block/fueling/iron_block",
+    "2": "simpleplanes:block/fueling/black_concrete_powder",
+    "3": "simpleplanes:block/fueling/black_shulker_box",
+    "5": "simpleplanes:block/fueling/red_concrete",
+    "6": "simpleplanes:block/fueling/stonecutter_bottom",
+    "7": "simpleplanes:block/fueling/black_concrete_powder",
+    "8": "simpleplanes:block/fueling/basic_charger"
+  }
+}

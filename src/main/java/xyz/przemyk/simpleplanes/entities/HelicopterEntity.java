@@ -56,7 +56,15 @@ public class HelicopterEntity extends LargePlaneEntity {
         if (vars.moveForward < 0 && isPowered() && !vars.passengerSprinting) {
             vars.push *= 0.2;
         }
+        if (vars.moveForward > 0 && isPowered() && !vars.passengerSprinting) {
+            vars.push *= 1.5;
+        }
         return transformPos(new Vector3f(0, vars.push, 0));
+    }
+
+    @Override
+    public int getFuelCost(Vars vars) {
+        return vars.passengerSprinting ? 2 : 1;
     }
 
     @Override
@@ -128,11 +136,16 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected void tickRotation(Vars vars) {
 
-        int yawdiff = 2;
-
-        double turn = vars.moveStrafing > 0 ? yawdiff : vars.moveStrafing == 0 ? 0 : -yawdiff;
-        rotationRoll = 0;
-        rotationYaw -= turn;
+        int yawDiff = 2;
+        if (!vars.passengerSprinting) {
+            double turn = vars.moveStrafing > 0 ? yawDiff : vars.moveStrafing == 0 ? 0 : -yawDiff;
+            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
+            rotationYaw -= turn;
+        } else {
+            int rollDiff = 15;
+            float turn = vars.moveStrafing > 0 ? rollDiff : vars.moveStrafing == 0 ? 0 : -rollDiff;
+            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, turn);
+        }
     }
 
     @Override

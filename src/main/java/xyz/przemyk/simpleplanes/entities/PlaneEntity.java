@@ -70,6 +70,7 @@ public class PlaneEntity extends Entity {
     public static final DataParameter<Integer> ROCKING_TICKS = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> TIME_SINCE_HIT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
+    private static final DataParameter<Boolean> PARKED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.BOOLEAN);
 
     public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
     protected int poweredTicks;
@@ -108,6 +109,9 @@ public class PlaneEntity extends Entity {
         super(entityTypeIn, worldIn);
         this.stepHeight = 0.9999f;
         this.setMaterial(material);
+        UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
+        Upgrade upgrade = coalEngine.instanceSupplier.apply(this);
+        this.upgrades.put(coalEngine.getRegistryName(), upgrade);
         setMaxSpeed(1f);
     }
 
@@ -129,22 +133,23 @@ public class PlaneEntity extends Entity {
         dataManager.register(ROCKING_TICKS, 0);
         dataManager.register(TIME_SINCE_HIT, 0);
         dataManager.register(DAMAGE_TAKEN, 0f);
+        dataManager.register(PARKED, true);
     }
 
-    public void addFuelMaxed() {
-        addFuelMaxed(Config.FLY_TICKS_PER_COAL.get());
-    }
+//    public void addFuelMaxed() {
+//        addFuelMaxed(Config.FLY_TICKS_PER_COAL.get());
+//    }
 
-    public void addFuelMaxed(Integer fuel) {
-        if (!world.isRemote) {
-            int old_fuel = getFuel();
-            int new_fuel = old_fuel + fuel;
-            if (new_fuel > fuel * 3) {
-                new_fuel = old_fuel + fuel / 3;
-            }
-            dataManager.set(FUEL, new_fuel);
-        }
-    }
+//    public void addFuelMaxed(Integer fuel) {
+//        if (!world.isRemote) {
+//            int old_fuel = getFuel();
+//            int new_fuel = old_fuel + fuel;
+//            if (new_fuel > fuel * 3) {
+//                new_fuel = old_fuel + fuel / 3;
+//            }
+//            dataManager.set(FUEL, new_fuel);
+//        }
+//    }
 
     public void addFuel(Integer fuel) {
         if (!world.isRemote) {
@@ -155,6 +160,8 @@ public class PlaneEntity extends Entity {
     }
 
     public void setFuel(Integer fuel) {
+        if (fuel < 0)
+            fuel = 0;
         dataManager.set(FUEL, fuel);
     }
 
@@ -220,6 +227,12 @@ public class PlaneEntity extends Entity {
 
     public int getMaxHealth() {
         return dataManager.get(MAX_HEALTH);
+    }
+    public void setParked(Boolean val) {
+        dataManager.set(PARKED, val);
+    }
+    public boolean getParked() {
+        return dataManager.get(PARKED);
     }
 
     @Override
@@ -380,14 +393,6 @@ public class PlaneEntity extends Entity {
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
         prevRotationRoll = rotationRoll;
-        if (isPowered()) {
-            if (poweredTicks % 50 == 0) {
-                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
-            }
-            ++poweredTicks;
-        } else {
-            poweredTicks = 0;
-        }
 
         if (world.isRemote && !canPassengerSteer()) {
 
@@ -395,8 +400,6 @@ public class PlaneEntity extends Entity {
             this.setMotion(Vector3d.ZERO);
             tickDeltaRotation(getQ_Client());
             tickUpgrades();
-
-            return;
         }
         this.markVelocityChanged();
 
@@ -436,9 +439,15 @@ public class PlaneEntity extends Entity {
 
         recalculateSize();
         int fuel = dataManager.get(FUEL);
-        if (fuel > 0 && !isParked(vars)) {
+        if (isPowered() && !isParked(vars)) {
             fuel -= getFuelCost(vars);
             setFuel(fuel);
+            if (poweredTicks % 50 == 0) {
+                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
+            }
+            ++poweredTicks;
+        } else {
+            poweredTicks = 0;
         }
 
         //motion and rotetion interpulation + lift.
@@ -571,9 +580,13 @@ public class PlaneEntity extends Entity {
             (oldMotion.length() < 0.1) &&
             (!vars.passengerSprinting) &&
             (vars.moveStrafing == 0) &&
+            (not_moving_time > 100) &&
+            (onGround || isAboveWater()) &&
             (vars.moveForward == 0);
+        this.setParked(parked);
         return parked;
     }
+
 
     protected Vars getMotionVars() {
         return new Vars();
@@ -690,7 +703,7 @@ public class PlaneEntity extends Entity {
         Vector3d pushVec = new Vector3d(getTickPush(vars));
         if (pushVec.length() != 0 && motion.length() > 0.1) {
             double dot = MathUtil.normalizedDotProduct(pushVec, motion);
-            pushVec = pushVec.scale(MathUtil.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 1));
+            pushVec = pushVec.scale(MathUtil.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 2));
         }
 
         motion = motion.add(pushVec);
@@ -722,9 +735,9 @@ public class PlaneEntity extends Entity {
         } else {
             this.not_moving_time = 0;
         }
-        if (this.not_moving_time > 100 && this.getHealth() < this.getMaxHealth() && getPlayer() != null) {
+        if (this.not_moving_time > 200 && this.getHealth() < this.getMaxHealth() && getPlayer() != null) {
             this.setHealth(this.getHealth() + 1);
-            this.not_moving_time = 0;
+            this.not_moving_time = 100;
         }
 
         boolean speeding_up = true;
@@ -1018,13 +1031,14 @@ public class PlaneEntity extends Entity {
 
         //        this.lastYd = this.getMotion().y;
     }
+
     protected int getLandingAngle() {
         return 30;
     }
 
     public boolean onLivingFall(float distance, float damageMultiplier) {
         if (this.isBeingRidden()) {
-            crash(distance*damageMultiplier);
+            crash(distance * damageMultiplier);
         }
         return false;
     }

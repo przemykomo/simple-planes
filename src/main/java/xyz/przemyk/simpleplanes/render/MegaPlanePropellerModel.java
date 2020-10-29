@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
+import static xyz.przemyk.simpleplanes.render.AbstractPlaneRenderer.getPropellerRotation;
 import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
 
 public class MegaPlanePropellerModel extends EntityModel<PlaneEntity> {
@@ -95,17 +96,17 @@ public class MegaPlanePropellerModel extends EntityModel<PlaneEntity> {
     @Override
     public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        if (entity.isPowered()) {
+        if (entity.isPowered()&& !entity.getParked()) {
             p_right.rotateAngleZ =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_left.rotateAngleZ =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_right2.rotateAngleZ =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_left2.rotateAngleZ =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_front.rotateAngleZ =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
         } else {
             p_right.rotateAngleZ = 20;
             p_left.rotateAngleZ = 15;

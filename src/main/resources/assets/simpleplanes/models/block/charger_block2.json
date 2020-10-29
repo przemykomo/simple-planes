@@ -1,0 +1,6 @@
+{
+	"parent": "simpleplanes:block/charger_block",
+	"textures": {
+		"8": "simpleplanes:block/charging/basic_charger2"
+	}
+}

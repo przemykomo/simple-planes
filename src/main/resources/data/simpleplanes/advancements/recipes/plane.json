@@ -190,7 +190,9 @@
             "simpleplanes:upgrades/mana",
             "simpleplanes:upgrades/propeller",
             "simpleplanes:upgrades/shooter",
-            "simpleplanes:upgrades/sprayer"
+            "simpleplanes:upgrades/sprayer",
+            "simpleplanes:upgrades/fueling_block",
+            "simpleplanes:upgrades/charger_block"
         ]
     },
     "criteria": {

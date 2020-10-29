@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.integration.liquid;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -12,10 +11,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import xyz.przemyk.simpleplanes.integration.ChargingBlockBase;
 
 import javax.annotation.Nullable;
 
-public class LiquidFuelingBlock extends Block {
+public class LiquidFuelingBlock extends ChargingBlockBase {
     public LiquidFuelingBlock() {
         super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(5F, 30F));
     }

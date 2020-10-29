@@ -6,12 +6,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.vector.Vector3d;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.energy.CoalEngine;
 
-import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
+import static xyz.przemyk.simpleplanes.render.AbstractPlaneRenderer.getPropellerRotation;
 
 public class HelicopterPropellerModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer p;
@@ -44,16 +41,17 @@ public class HelicopterPropellerModel extends EntityModel<PlaneEntity> {
     @Override
     public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        if (entity.isPowered()) {
+        if (entity.isPowered() && !entity.getParked()) {
             bone_propeller.rotateAngleY =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             bone_propeller2.rotateAngleX =
-                ((entity.ticksExisted + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
         } else {
             bone_propeller.rotateAngleY = 0;
             bone_propeller2.rotateAngleX = 0;
         }
     }
+
 
     @Override
     public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {

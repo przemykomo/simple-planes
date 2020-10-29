@@ -117,7 +117,7 @@ public class BotaniaIntegration implements IModIntegration {
                 ItemStack itemStack = planeEntity.getItemStack();
                 boolean got_mana = ManaItemHandler.INSTANCE.getValue().requestManaExactForTool(itemStack, player, Config.MANA_COST.get(), true);
                 if (got_mana) {
-                    planeEntity.addFuelMaxed(Config.FLY_TICKS_PER_MANA.get());
+                    planeEntity.addFuel(Config.FLY_TICKS_PER_MANA.get());
                 }
             }
             return false;
@@ -134,5 +134,9 @@ public class BotaniaIntegration implements IModIntegration {
 
         }
 
+        @Override
+        public boolean shouldDropOld() {
+            return false;
+        }
     }
 }

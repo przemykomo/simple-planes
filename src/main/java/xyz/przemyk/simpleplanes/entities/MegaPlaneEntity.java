@@ -34,7 +34,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         if (this.getControllingPassenger() instanceof PlayerEntity) {
             return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
         }
-            return super.getSize(poseIn);
+        return super.getSize(poseIn);
         //just hate my head in the nether ceiling
     }
 
@@ -52,7 +52,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
 
     @Override
     public int getFuelCost(Vars vars) {
-        return super.getFuelCost(vars) * 2;
+        return super.getFuelCost(vars) + 1;
     }
 
 
@@ -91,7 +91,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     @Override
     protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
-        motionVars.max_push_speed *= 0.8;
+        motionVars.max_push_speed *= 0.9;
         motionVars.yaw_multiplayer *= 0.3;
         motionVars.drag *= 4;
         motionVars.drag_mul *= 4;
@@ -107,7 +107,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         } else if (vars.moveForward < 0.0F) {
             pitch = vars.passengerSprinting ? -0.8f : -0.4f;
         }
-        if (getOnGround()||isAboveWater()) {
+        if (getOnGround() || isAboveWater()) {
             pitch *= 2;
         }
         this.rotationPitch += pitch;

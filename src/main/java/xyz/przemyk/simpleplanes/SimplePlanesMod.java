@@ -5,6 +5,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -30,15 +31,16 @@ public class SimplePlanesMod {
 
         SimplePlanesEntities.init();
         SimplePlanesBlocks.init();
-        SimplePlanesItems.init();
         SimplePlanesUpgrades.init();
         SimplePlanesSounds.init();
+        SimplePlanesItems.init();
         SimplePlanesDataSerializers.init();
         PlaneNetworking.init();
         SimplePlanesIntegrations.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().register(Config.class);
     }
 
     @OnlyIn(Dist.CLIENT)

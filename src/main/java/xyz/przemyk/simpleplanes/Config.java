@@ -2,10 +2,18 @@ package xyz.przemyk.simpleplanes;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+@Mod.EventBusSubscriber
 public class Config {
     public static final String CATEGORY_GENERAL = "general";
     public static final ForgeConfigSpec.BooleanValue THIEF;
@@ -16,7 +24,7 @@ public class Config {
     public static ForgeConfigSpec CONFIG;
 
     public static ForgeConfigSpec.IntValue VERSION;
-    public static final int NEW_VERSION = 4;
+    public static final int NEW_VERSION = 5;
 
     public static ForgeConfigSpec.IntValue FLY_TICKS_PER_COAL;
     public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
@@ -32,9 +40,12 @@ public class Config {
     public static ForgeConfigSpec.IntValue ENERGY_MAX_FUEL;
 
 
-    public static ForgeConfigSpec.IntValue LAVA_FLY_TICKS;
-    public static ForgeConfigSpec.IntValue LAVA_COST;
     public static ForgeConfigSpec.IntValue LAVA_MAX_FUEL;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> list;
+    public static HashMap<ResourceLocation, Integer> FUEL_PER_BUCKET;
+    public static ForgeConfigSpec.IntValue FUELING_COOLDOWN;
+
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> DISABLED_MODS;
 
     static {
         BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);
@@ -49,6 +60,9 @@ public class Config {
             .define("planeCrash", true);
         THIEF = BUILDER.comment("can players steal planes")
             .define("plane_heist", true);
+        DISABLED_MODS = BUILDER.comment("disabled_mods, examples: bop,ft,byg")
+            .defineList("disabled_mods", new ArrayList<>(), o -> true);
+
         BUILDER.pop();
 
         BUILDER.push("engines");
@@ -77,12 +91,21 @@ public class Config {
         BUILDER.pop();
         //**************
         BUILDER.push("lava");
-        LAVA_COST = BUILDER.comment("Liquid in milibuckets")
-            .defineInRange("lava_cost", 1000, 0, Integer.MAX_VALUE);
-        LAVA_FLY_TICKS = BUILDER.comment("number of flight ticks per lava fueling")
-            .defineInRange("lava_fly_ticks", 2000, 0, Integer.MAX_VALUE);
-        LAVA_MAX_FUEL = BUILDER.comment("max flight range for FE plane")
+        FUELING_COOLDOWN = BUILDER.comment("Cool down on the fueling station")
+            .defineInRange("charger_fe_cost", 200, 4, Integer.MAX_VALUE);
+        LAVA_MAX_FUEL = BUILDER.comment("max flight range the liquid fuel charges")
             .defineInRange("energy_max_fuel", 20000, 0, Integer.MAX_VALUE);
+        ArrayList<String> list1 = new ArrayList<>();
+        list1.add("lava#2000");
+        list1.add("car:bio_diesel#2000");
+        list = BUILDER.comment("max flight range for FE plane")
+            .defineList("liquid_fuels", list1, o -> {
+                if (o instanceof String) {
+                    String s = (String) (o);
+                    return s.indexOf('#') == s.lastIndexOf('#');
+                }
+                return false;
+            });
         BUILDER.pop();
         //**************
         BUILDER.pop();
@@ -107,5 +130,21 @@ public class Config {
             VERSION.set(NEW_VERSION);
             configData.save();
         }
+        reload();
+    }
+
+    @SubscribeEvent
+    public static void onReload(ModConfig.ModConfigEvent configEvent) {
+        reload();
+    }
+
+    public static void reload() {
+        List<? extends String> strings = list.get();
+        FUEL_PER_BUCKET = new HashMap<>();
+        strings.forEach(s -> {
+            String[] split = s.split("#");
+            int x = Integer.parseInt(split[1]);
+            FUEL_PER_BUCKET.put(new ResourceLocation(split[0]), x);
+        });
     }
 }
