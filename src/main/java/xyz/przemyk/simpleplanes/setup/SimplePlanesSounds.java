@@ -7,5 +7,12 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
 public class SimplePlanesSounds {
 
-    public static final SoundEvent PLANE_LOOP = Registry.register(Registry.SOUND_EVENT, "plane_loop",  new SoundEvent(new Identifier(SimplePlanesMod.MODID, "plane_loop")));
+    public static SoundEvent PLANE_LOOP;
+
+    public static void init(){
+        Identifier plane_Loop_id = new Identifier(SimplePlanesMod.MODID, "plane_loop");
+        SoundEvent plane_loop = new SoundEvent(plane_Loop_id);
+        PLANE_LOOP = Registry.register(Registry.SOUND_EVENT, plane_Loop_id, plane_loop);
+
+    }
 }

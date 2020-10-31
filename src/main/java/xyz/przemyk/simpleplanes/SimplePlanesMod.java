@@ -22,12 +22,12 @@ public class SimplePlanesMod implements ModInitializer {
 //        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SimplePlanesConfig.CONFIG);
 //        SimplePlanesConfig.loadConfig(SimplePlanesConfig.CONFIG, FMLPaths.CONFIGDIR.get().resolve("simpleplanes-common.toml"));
 
-//        SimplePlanesEntities.init();
+        SimplePlanesEntities.init();
         SimplePlanesBlocks.init();
         SimplePlanesItems.init();
         SimplePlanesMaterials.init();
 //        SimplePlanesUpgrades.init();
-//        SimplePlanesSounds.init();
+        SimplePlanesSounds.init();
         SimplePlanesDataSerializers.init();
         QuickDebug.init();
         PlaneNetworking.init();
