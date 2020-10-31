@@ -1,7 +1,84 @@
 {
   "variants": {
-    "": {
-      "model": "minecraft:block/gold_block"
+    "charges=0,facing=east": {
+      "model": "simpleplanes:block/charger_block0",
+      "y": 90
+    },
+    "charges=1,facing=east": {
+      "model": "simpleplanes:block/charger_block1",
+      "y": 90
+    },
+    "charges=2,facing=east": {
+      "model": "simpleplanes:block/charger_block2",
+      "y": 90
+    },
+    "charges=3,facing=east": {
+      "model": "simpleplanes:block/charger_block3",
+      "y": 90
+    },
+    "charges=4,facing=east": {
+      "model": "simpleplanes:block/charger_block",
+      "y": 90
+    },
+    "charges=0,facing=north": {
+      "model": "simpleplanes:block/charger_block0",
+      "y": 0
+    },
+    "charges=1,facing=north": {
+      "model": "simpleplanes:block/charger_block1",
+      "y": 0
+    },
+    "charges=2,facing=north": {
+      "model": "simpleplanes:block/charger_block2",
+      "y": 0
+    },
+    "charges=3,facing=north": {
+      "model": "simpleplanes:block/charger_block3",
+      "y": 0
+    },
+    "charges=4,facing=north": {
+      "model": "simpleplanes:block/charger_block",
+      "y": 0
+    },
+    "charges=0,facing=south": {
+      "model": "simpleplanes:block/charger_block0",
+      "y": 180
+    },
+    "charges=1,facing=south": {
+      "model": "simpleplanes:block/charger_block1",
+      "y": 180
+    },
+    "charges=2,facing=south": {
+      "model": "simpleplanes:block/charger_block2",
+      "y": 180
+    },
+    "charges=3,facing=south": {
+      "model": "simpleplanes:block/charger_block3",
+      "y": 180
+    },
+    "charges=4,facing=south": {
+      "model": "simpleplanes:block/charger_block",
+      "y": 180
+    },
+    "charges=0,facing=west": {
+      "model": "simpleplanes:block/charger_block0",
+      "y": 270
+    },
+    "charges=1,facing=west": {
+      "model": "simpleplanes:block/charger_block1",
+      "y": 270
+    },
+    "charges=2,facing=west": {
+      "model": "simpleplanes:block/charger_block2",
+      "y": 270
+    },
+    "charges=3,facing=west": {
+      "model": "simpleplanes:block/charger_block3",
+      "y": 270
+    },
+    "charges=4,facing=west": {
+      "model": "simpleplanes:block/charger_block",
+      "y": 270
     }
   }
 }

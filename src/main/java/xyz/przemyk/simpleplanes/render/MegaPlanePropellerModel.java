@@ -96,17 +96,17 @@ public class MegaPlanePropellerModel extends EntityModel<PlaneEntity> {
     @Override
     public void setAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        if (entity.isPowered()) {
+        if (entity.isPowered()&& !entity.getParked()) {
             p_right.roll =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_left.roll =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_right2.roll =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_left2.roll =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             p_front.roll =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
         } else {
             p_right.roll = 20;
             p_left.roll = 15;

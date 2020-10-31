@@ -60,7 +60,7 @@ public class RocketUpgrade extends Upgrade {
                     itemStack.decrement(1);
                 }
                 fuel = FUEL_PER_GUNPOWDER;
-                planeEntity.addFuelMaxed(FUEL_PER_GUNPOWDER * 2);
+                planeEntity.addFuel(FUEL_PER_GUNPOWDER * 2);
             }
         }
         push();

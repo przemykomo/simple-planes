@@ -65,13 +65,21 @@ public class PlaneGui extends DrawableHelper {
 //                max_fuel = (float) Math.log1p(max_fuel);
             float part = fuel / max_fuel;
             part = (float) Math.pow(part, 0.5);
-            part = MathHelper.clamp(part, 0, 1);
+                int i = (int) part;
+
+//                part = MathHelper.clamp(part, 0, 1);
+                part = part - i;
             int currentWidth = (int) (bar_width * part);
 
             drawTexture(matrixStack, x, y, 0, 0, tex_width, tex_height);
             int bar_image_pos = planeEntity.isSprinting() ? tex_height * 2 : tex_height;
             drawTexture(matrixStack, x, y, 0, bar_image_pos, currentWidth, tex_height);
             return ActionResult.CONSUME;
+//                blit(mStack, x, y, 0, tex_height * i, tex_width, tex_height);
+//                blit(mStack, x, y, 0, tex_height * (i + 1), currentWidth, tex_height);
+//                if (planeEntity.isSprinting()) {
+//                    blit(mStack, x, y, 0, 30, i == 0 ? currentWidth : tex_width, tex_height);
+//                }
         }
         return ActionResult.PASS;
     }
@@ -108,12 +116,13 @@ public class PlaneGui extends DrawableHelper {
 
                     for (int i = 0; i < rowCount; ++i) {
                         int x = left_align - i * 16 - 16;
+                        int vOffset = 35;
                         if (i + heart + 10 < health)
-                            drawTexture(mStack, x, top, GOLD, 15, 16, 9);
+                            drawTexture(mStack, x, top, GOLD, vOffset, 16, 9);
                         else if (i + heart < health)
-                            drawTexture(mStack, x, top, FULL, 15, 16, 9);
+                            drawTexture(mStack, x, top, FULL, vOffset, 16, 9);
                         else
-                            drawTexture(mStack, x, top, EMPTY, 15, 16, 9);
+                            drawTexture(mStack, x, top, EMPTY, vOffset, 16, 9);
                     }
                     right_height += 10;
 

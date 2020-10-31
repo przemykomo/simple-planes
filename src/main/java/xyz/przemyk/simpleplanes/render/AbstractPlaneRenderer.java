@@ -20,6 +20,8 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
+import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
+
 // I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected EntityModel<PlaneEntity> propellerModel;
@@ -29,6 +31,9 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     protected AbstractPlaneRenderer(EntityRenderDispatcher renderManager) {
         super(renderManager);
         propellerModel = new PropellerModel();
+    }
+    public static float getPropellerRotation(PlaneEntity entity, float partialTicks) {
+        return ((entity.ticksExisted + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
     }
 
     @Override

@@ -1,0 +1,6 @@
+{
+  "parent": "simpleplanes:block/fueling_block",
+  "textures": {
+    "5": "simpleplanes:block/fueling/texture0"
+  }
+}

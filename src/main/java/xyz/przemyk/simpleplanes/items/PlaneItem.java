@@ -68,10 +68,11 @@ public class PlaneItem extends Item {
                 PlaneEntity planeEntity = planeSupplier.apply(worldIn);
                 UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE;
                 Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
-                if (itemstack.getSubTag("Used") == null) {
-                    planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
-                    planeEntity.upgradeChanged();
-                }
+//                if (itemstack.getSubTag("Used") == null) {
+//                }
+                planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
+                planeEntity.upgradeChanged();
+
                 planeEntity.updatePosition(raytraceresult.getPos().getX(), raytraceresult.getPos().getY(), raytraceresult.getPos().getZ());
                 planeEntity.yaw = playerIn.yaw;
                 planeEntity.prevYaw = playerIn.prevYaw;

@@ -36,9 +36,9 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
     public void setAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         bone_propeller.visible = !entity.upgrades.containsKey(SimplePlanesUpgrades.DRAGON.getRegistryName());
 
-        if (entity.isPowered()) {
+        if (entity.isPowered() && !entity.getParked()) {
             bone_propeller.roll =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
         } else {
             bone_propeller.roll = 1;
         }

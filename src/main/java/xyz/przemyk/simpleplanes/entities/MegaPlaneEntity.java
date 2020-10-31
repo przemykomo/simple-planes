@@ -52,7 +52,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
 
     @Override
     public int getFuelCost(Vars vars) {
-        return super.getFuelCost(vars) * 2;
+        return super.getFuelCost(vars) + 1;
     }
 
 
@@ -89,9 +89,14 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     }
 
     @Override
+    public double getCameraDistanceMultiplayer() {
+        return 2;
+    }
+
+    @Override
     protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
-        motionVars.max_push_speed *= 0.8;
+        motionVars.max_push_speed *= 0.9;
         motionVars.yaw_multiplayer *= 0.3;
         motionVars.drag *= 4;
         motionVars.drag_mul *= 4;

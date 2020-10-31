@@ -78,10 +78,16 @@ public class SimplePlanesUpgrades {
     public static final UpgradeType PAINT = register("paint", new PaintUpgradeType());
     public static final UpgradeType CLOUD = register("cloud",  new UpgradeType(SimplePlanesItems.CLOUD, CloudUpgrade::new));
     //engines
-    public static final UpgradeType COAL_ENGINE = register("coal_engine",  new UpgradeType(SimplePlanesItems.FURNACE_ENGINE, CoalEngine::new));
-    public static final UpgradeType SMOKER_ENGINE = register("smoker_engine",  new UpgradeType(Items.SMOKER, FurnceJunkEngine::new));
-    public static final UpgradeType POWER_CELL = register("power_cell",  new UpgradeType(Items.REDSTONE_LAMP, PowerCell::new));
-    public static final UpgradeType LAVA_ENGINE = register("lava_engine",  new UpgradeType(Items.BLAST_FURNACE, LavaEngine::new));
+    public static final RegistryObject<UpgradeType> COAL_ENGINE = UPGRADE_TYPES.register("coal_engine", () -> new UpgradeType(SimplePlanesItems.FURNACE_ENGINE.get(), CoalEngine::new){
+        @Override
+        public boolean IsThisItem(ItemStack itemStack) {
+            return false;
+        }
+        @Override
+        public ItemStack getDrops() {
+            return ItemStack.EMPTY;
+        }
+    });
 
     //storage
     public static final UpgradeType CHEST = register("chest",  new UpgradeType(Items.CHEST, ChestUpgrade::new, true));

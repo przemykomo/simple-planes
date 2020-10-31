@@ -71,6 +71,7 @@ public class PlaneEntity extends Entity {
     public static final TrackedData<Integer> ROCKING_TICKS = DataTracker.registerData(PlaneEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> TIME_SINCE_HIT = DataTracker.registerData(PlaneEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Float> DAMAGE_TAKEN = DataTracker.registerData(PlaneEntity.class, TrackedDataHandlerRegistry.FLOAT);
+    private static final TrackedData<Boolean> PARKED = DataTracker.registerData(PlaneEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     public static final Box COLLISION_AABB = new Box(-1, 0, -1, 1, 0.5, 1);
     protected int poweredTicks;
@@ -109,6 +110,9 @@ public class PlaneEntity extends Entity {
         super(entityTypeIn, worldIn);
         this.stepHeight = 0.9999f;
         this.setMaterial(material);
+        UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
+        Upgrade upgrade = coalEngine.instanceSupplier.apply(this);
+        this.upgrades.put(coalEngine.getRegistryName(), upgrade);
         setMaxSpeed(1f);
     }
 
@@ -131,22 +135,23 @@ public class PlaneEntity extends Entity {
         dataTracker.startTracking(ROCKING_TICKS, 0);
         dataTracker.startTracking(TIME_SINCE_HIT, 0);
         dataTracker.startTracking(DAMAGE_TAKEN, 0f);
+        dataManager.startTracking(PARKED, true);
     }
 
-    public void addFuelMaxed() {
-        addFuelMaxed(SimplePlanesMod.CONFIG.getConfig().FLY_TICKS_PER_COAL);
-    }
-
-    public void addFuelMaxed(Integer fuel) {
-        if (!world.isClient) {
-            int old_fuel = getFuel();
-            int new_fuel = old_fuel + fuel;
-            if (new_fuel > fuel * 3) {
-                new_fuel = old_fuel + fuel / 3;
-            }
-            dataTracker.set(FUEL, new_fuel);
-        }
-    }
+//    public void addFuelMaxed() {
+//        addFuelMaxed(SimplePlanesMod.CONFIG.getConfig().FLY_TICKS_PER_COAL);
+//    }
+//
+//    public void addFuelMaxed(Integer fuel) {
+//        if (!world.isClient) {
+//            int old_fuel = getFuel();
+//            int new_fuel = old_fuel + fuel;
+//            if (new_fuel > fuel * 3) {
+//                new_fuel = old_fuel + fuel / 3;
+//            }
+//            dataTracker.set(FUEL, new_fuel);
+//        }
+//    }
 
     public void addFuel(Integer fuel) {
         if (!world.isClient) {
@@ -157,6 +162,8 @@ public class PlaneEntity extends Entity {
     }
 
     public void setFuel(Integer fuel) {
+        if (fuel < 0)
+            fuel = 0;
         dataTracker.set(FUEL, fuel);
     }
 
@@ -222,6 +229,12 @@ public class PlaneEntity extends Entity {
 
     public int getMaxHealth() {
         return dataTracker.get(MAX_HEALTH);
+    }
+    public void setParked(Boolean val) {
+        dataTracker.set(PARKED, val);
+    }
+    public boolean getParked() {
+        return dataTracker.get(PARKED);
     }
 
     public ItemStack getPickedResult(HitResult target) {
@@ -381,14 +394,6 @@ public class PlaneEntity extends Entity {
         prevYaw = this.yaw;
         prevPitch = pitch;
         prevRotationRoll = rotationRoll;
-        if (isPowered()) {
-            if (poweredTicks % 50 == 0) {
-                playSound(SimplePlanesSounds.PLANE_LOOP, 0.05F, 1.0F);
-            }
-            ++poweredTicks;
-        } else {
-            poweredTicks = 0;
-        }
 
         if (world.isClient && !isLogicalSideForUpdatingMovement()) {
 
@@ -437,9 +442,15 @@ public class PlaneEntity extends Entity {
 
         calculateDimensions();
         int fuel = dataTracker.get(FUEL);
-        if (fuel > 0 && !isParked(vars)) {
+        if (isPowered() && !isParked(vars)) {
             fuel -= getFuelCost(vars);
             setFuel(fuel);
+            if (poweredTicks % 50 == 0) {
+                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
+            }
+            ++poweredTicks;
+        } else {
+            poweredTicks = 0;
         }
 
         //motion and rotetion interpulation + lift.
@@ -573,7 +584,10 @@ public class PlaneEntity extends Entity {
             (oldMotion.length() < 0.1) &&
             (!vars.passengerSprinting) &&
             (vars.moveStrafing == 0) &&
+            (not_moving_time > 100) &&
+            (onGround || isAboveWater()) &&
             (vars.moveForward == 0);
+        this.setParked(parked);
         return parked;
     }
 
@@ -724,9 +738,9 @@ public class PlaneEntity extends Entity {
         } else {
             this.not_moving_time = 0;
         }
-        if (this.not_moving_time > 100 && this.getHealth() < this.getMaxHealth() && getPlayer() != null) {
+        if (this.not_moving_time > 200 && this.getHealth() < this.getMaxHealth() && getPlayer() != null) {
             this.setHealth(this.getHealth() + 1);
-            this.not_moving_time = 0;
+            this.not_moving_time = 100;
         }
 
         boolean speeding_up = true;

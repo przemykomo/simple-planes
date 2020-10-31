@@ -6,7 +6,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.energy.CoalEngine;
 
-import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
+import static xyz.przemyk.simpleplanes.render.AbstractPlaneRenderer.getPropellerRotation;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
@@ -44,16 +44,17 @@ public class HelicopterPropellerModel extends EntityModel<PlaneEntity> {
     @Override
     public void setAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        if (entity.isPowered()) {
+        if (entity.isPowered() && !entity.getParked()) {
             bone_propeller.yaw =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
             bone_propeller2.pitch =
-                ((entity.age + limbSwing) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+                getPropellerRotation(entity, limbSwing);
         } else {
             bone_propeller.yaw = 0;
             bone_propeller2.pitch = 0;
         }
     }
+
 
     @Override
     public void render(MatrixStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {

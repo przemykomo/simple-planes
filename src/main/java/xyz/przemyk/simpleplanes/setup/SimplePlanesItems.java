@@ -28,6 +28,14 @@ public class SimplePlanesItems {
     public static void init() {
         for (String name :
             SimplePlanesMaterials.MATERIALS) {
+            String s = name.split("_")[0];
+            Item.Properties group;
+            if (Config.DISABLED_MODS.get().contains(s)) {
+                group = new Item.Properties();
+            } else {
+                group = new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP);
+            }
+//todo:
             register(name + "_plane", new PlaneItem(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.PLANE, world, SimplePlanesMaterials.getMaterial(name))));
             register(name + "_large_plane", new PlaneItem(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE, world, SimplePlanesMaterials.getMaterial(name))));
             register(name + "_helicopter", new PlaneItem(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP), world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER, world, SimplePlanesMaterials.getMaterial(name))));
