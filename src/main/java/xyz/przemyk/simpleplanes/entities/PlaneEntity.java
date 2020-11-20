@@ -401,7 +401,6 @@ public class PlaneEntity extends Entity {
             this.setVelocity(Vec3d.ZERO);
             tickDeltaRotation(getQ_Client());
             tickUpgrades();
-
             return;
         }
         this.scheduleVelocityUpdate();
