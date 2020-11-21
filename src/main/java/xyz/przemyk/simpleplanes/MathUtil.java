@@ -1,16 +1,17 @@
 package xyz.przemyk.simpleplanes;
 
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 
-import static net.minecraft.util.math.MathHelper.wrapDegrees;
+import net.minecraft.util.math.MathHelper;
 
-public class MathUtil  {
+//import static net.minecraft.util.math.MathHelper.wrapDegrees;
 
-    public static double angelBetweenVec(Vec3d v1, Vec3d v2) {
-        return Math.toDegrees(Math.acos(normalizedDotProduct(v1, v2)));
-    }
+public class MathUtil {
+
+//    public static double angelBetweenVec(Vec3d v1, Vec3d v2) {
+//        return Math.toDegrees(Math.acos(normalizedDotProduct(v1, v2)));
+//    }
 
     public static double normalizedDotProduct(Vec3d v1, Vec3d v2) {
         return v1.dotProduct(v2) / (v1.length() * v2.length());
@@ -26,23 +27,23 @@ public class MathUtil  {
     }
 
     public static float lerpAngle(float perc, float start, float end) {
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static float lerpAngle180(float perc, float start, float end) {
         if (angleBetween(start, end) > 90)
             end += 180;
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static double lerpAngle180(double perc, double start, double end) {
         if (angleBetween(start, end) > 90)
             end += 180;
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static double lerpAngle(double perc, double start, double end) {
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static double angleBetween(double p_203301_0_, double p_203301_1_) {
@@ -50,7 +51,7 @@ public class MathUtil  {
     }
 
     public static double subtractAngles(double p_203302_0_, double p_203302_1_) {
-        return wrapDegrees(p_203302_1_ - p_203302_0_);
+        return MathHelper.wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
     public static Vec3d rotationToVector(double yaw, double pitch) {

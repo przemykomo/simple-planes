@@ -33,7 +33,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         propellerModel = new PropellerModel();
     }
     public static float getPropellerRotation(PlaneEntity entity, float partialTicks) {
-        return ((entity.ticksExisted + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+        return ((entity.age + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
     }
 
     @Override

@@ -21,6 +21,8 @@ public class SimplePlanesMod implements ModInitializer {
     public void onInitialize() {
 //        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SimplePlanesConfig.CONFIG);
 //        SimplePlanesConfig.loadConfig(SimplePlanesConfig.CONFIG, FMLPaths.CONFIGDIR.get().resolve("simpleplanes-common.toml"));
+        CONFIG = AutoConfig.register(SimplePlanesConfig.class, GsonConfigSerializer::new);
+        CONFIG.getConfig();
 
         SimplePlanesEntities.init();
         SimplePlanesBlocks.init();
@@ -31,8 +33,6 @@ public class SimplePlanesMod implements ModInitializer {
         SimplePlanesDataSerializers.init();
         QuickDebug.init();
         PlaneNetworking.init();
-        CONFIG = AutoConfig.register(SimplePlanesConfig.class, GsonConfigSerializer::new);
-        CONFIG.getConfig();
 //        SimplePlanesIntegrations.init();
 
 //        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);

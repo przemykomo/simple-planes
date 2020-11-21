@@ -11,11 +11,11 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import static net.minecraft.item.Items.WHITE_BANNER;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BannerBlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+
 
 public class BannerUpgrade extends Upgrade {
     public ItemStack banner;
@@ -23,7 +23,7 @@ public class BannerUpgrade extends Upgrade {
 
     public BannerUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BANNER, planeEntity);
-        banner = WHITE_BANNER.getDefaultStack();
+        banner = Items.WHITE_BANNER.getDefaultStack();
         prevRotation = planeEntity.prevYaw;
         rotation = planeEntity.prevYaw;
     }

@@ -302,7 +302,8 @@
     "text.autoconfig.simpleplanes.option.MANA_COST": "mana cost",
     "text.autoconfig.simpleplanes.option.MANA_COST.@Tooltip": "mana amount to use when out",
     "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA": "fly ticks per mana",
-    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "number of flight ticks per mana usage"
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "number of flight ticks per mana usage",
+    "text.autoconfig.simpleplanes.option.DISABLED_MODS": "hidden mod woods"
 
 
 

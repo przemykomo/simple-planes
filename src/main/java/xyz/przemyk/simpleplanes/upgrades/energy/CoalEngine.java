@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.energy;
 
+import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,6 +17,8 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.render.EngineModel;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
+import static xyz.przemyk.simpleplanes.PlanesEvents.NOT_COAL_TAG;
+
 public final class CoalEngine extends AbstractEngine {
     public static final Identifier COAL_TAG = new Identifier("minecraft", "coals");
 
@@ -25,12 +29,16 @@ public final class CoalEngine extends AbstractEngine {
 
     @Override
     public boolean onItemRightClick(PlayerEntity player, World world, Hand hand, ItemStack itemStack) {
-        if (!player.world.isClient && planeEntity.getFuel() < SimplePlanesMod.CONFIG.getConfig().FLY_TICKS_PER_COAL / 4) {
+        if (!player.world.isClient && planeEntity.getFuel() < SimplePlanesMod.CONFIG.getConfig().COAL_MAX_FUEL) {
             //func_230235_a_ - contains
-            if (ItemTags.getTagGroup().getTagOrEmpty(COAL_TAG).contains(itemStack.getItem())) {
-                planeEntity.addFuelMaxed();
-                if (!player.isCreative()) {
-                    itemStack.decrement(1);
+            Integer burnTime = FuelRegistry.INSTANCE.get(itemStack.getItem());
+            if (burnTime != null && burnTime > 0) {
+                int fuel = (int) ((burnTime / 1600f) * SimplePlanesMod.CONFIG.getConfig().FLY_TICKS_PER_COAL);
+                if (!TagRegistry.item(NOT_COAL_TAG).contains(itemStack.getItem())) {
+                    planeEntity.addFuel(fuel);
+                    if (!player.isCreative()) {
+                        itemStack.decrement(1);
+                    }
                 }
             }
         }

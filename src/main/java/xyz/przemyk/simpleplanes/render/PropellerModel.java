@@ -5,6 +5,7 @@ package xyz.przemyk.simpleplanes.render;// Made with Blockbench 3.6.3
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
+import static xyz.przemyk.simpleplanes.render.AbstractPlaneRenderer.getPropellerRotation;
 import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
 
 import net.minecraft.client.model.ModelPart;

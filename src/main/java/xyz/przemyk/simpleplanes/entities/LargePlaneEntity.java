@@ -103,11 +103,6 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     @Override
-    public double getCameraDistanceMultiplayer() {
-        return 1.2;
-    }
-
-    @Override
     protected void spawnSmokeParticles(int fuel) {
         spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -2), 0);
         if (fuel > 4 && fuel < 100) {

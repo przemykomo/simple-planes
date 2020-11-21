@@ -140,7 +140,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         if (!vars.passengerSprinting) {
             double turn = vars.moveStrafing > 0 ? yawDiff : vars.moveStrafing == 0 ? 0 : -yawDiff;
             rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
-            rotationYaw -= turn;
+            yaw -= turn;
         } else {
             int rollDiff = 15;
             float turn = vars.moveStrafing > 0 ? rollDiff : vars.moveStrafing == 0 ? 0 : -rollDiff;

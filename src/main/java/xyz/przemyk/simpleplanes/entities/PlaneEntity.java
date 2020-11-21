@@ -110,7 +110,7 @@ public class PlaneEntity extends Entity {
         super(entityTypeIn, worldIn);
         this.stepHeight = 0.9999f;
         this.setMaterial(material);
-        UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
+        UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE;
         Upgrade upgrade = coalEngine.instanceSupplier.apply(this);
         this.upgrades.put(coalEngine.getRegistryName(), upgrade);
         setMaxSpeed(1f);
@@ -135,7 +135,7 @@ public class PlaneEntity extends Entity {
         dataTracker.startTracking(ROCKING_TICKS, 0);
         dataTracker.startTracking(TIME_SINCE_HIT, 0);
         dataTracker.startTracking(DAMAGE_TAKEN, 0f);
-        dataManager.startTracking(PARKED, true);
+        dataTracker.startTracking(PARKED, true);
     }
 
 //    public void addFuelMaxed() {
@@ -445,7 +445,7 @@ public class PlaneEntity extends Entity {
             fuel -= getFuelCost(vars);
             setFuel(fuel);
             if (poweredTicks % 50 == 0) {
-                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
+                playSound(SimplePlanesSounds.PLANE_LOOP, 0.05F, 1.0F);
             }
             ++poweredTicks;
         } else {

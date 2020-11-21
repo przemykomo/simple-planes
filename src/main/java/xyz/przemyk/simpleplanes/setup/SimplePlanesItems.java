@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
@@ -29,17 +30,16 @@ public class SimplePlanesItems {
         for (String name :
             SimplePlanesMaterials.MATERIALS) {
             String s = name.split("_")[0];
-            Item.Properties group;
-            if (Config.DISABLED_MODS.get().contains(s)) {
-                group = new Item.Properties();
+            Item.Settings group;
+            if (SimplePlanesMod.CONFIG.getConfig().DISABLED_MODS.contains(s)) {
+                group = new Item.Settings();
             } else {
-                group = new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP);
+                group = new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP);
             }
-//todo:
-            register(name + "_plane", new PlaneItem(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.PLANE, world, SimplePlanesMaterials.getMaterial(name))));
-            register(name + "_large_plane", new PlaneItem(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE, world, SimplePlanesMaterials.getMaterial(name))));
-            register(name + "_helicopter", new PlaneItem(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP), world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER, world, SimplePlanesMaterials.getMaterial(name))));
-            register(name + "_mega_plane", new PlaneItem(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP), world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE, world, SimplePlanesMaterials.getMaterial(name))));
+            register(name + "_plane", new PlaneItem(group, world -> new PlaneEntity(SimplePlanesEntities.PLANE, world, SimplePlanesMaterials.getMaterial(name))));
+            register(name + "_large_plane", new PlaneItem(group, world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE, world, SimplePlanesMaterials.getMaterial(name))));
+            register(name + "_helicopter", new PlaneItem(group, world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER, world, SimplePlanesMaterials.getMaterial(name))));
+            register(name + "_mega_plane", new PlaneItem(group, world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE, world, SimplePlanesMaterials.getMaterial(name))));
         }
     }
 

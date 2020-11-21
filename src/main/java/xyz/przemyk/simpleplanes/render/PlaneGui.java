@@ -71,9 +71,11 @@ public class PlaneGui extends DrawableHelper {
                 part = part - i;
             int currentWidth = (int) (bar_width * part);
 
-            drawTexture(matrixStack, x, y, 0, 0, tex_width, tex_height);
-            int bar_image_pos = planeEntity.isSprinting() ? tex_height * 2 : tex_height;
-            drawTexture(matrixStack, x, y, 0, bar_image_pos, currentWidth, tex_height);
+            drawTexture(matrixStack, x, y, 0, tex_height * i, tex_width, tex_height);
+            drawTexture(matrixStack, x, y, 0, tex_height * (i + 1), currentWidth, tex_height);
+            if (planeEntity.isSprinting()) {
+                drawTexture(matrixStack, x, y, 0, 30, i == 0 ? currentWidth : tex_width, tex_height);
+            }
             return ActionResult.CONSUME;
 //                blit(mStack, x, y, 0, tex_height * i, tex_width, tex_height);
 //                blit(mStack, x, y, 0, tex_height * (i + 1), currentWidth, tex_height);
