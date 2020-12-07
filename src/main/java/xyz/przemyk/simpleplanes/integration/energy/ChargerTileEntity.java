@@ -52,8 +52,6 @@ public class ChargerTileEntity extends TileEntity implements ITickableTileEntity
                                 planeEntity.addFuel(Config.ENERGY_FLY_TICKS.get());
                                 capacity.addAndGet(-cost);
                             }
-                        } else {
-                            System.out.println("full");
                         }
                     }
                     energyStorage.setEnergy(capacity.get());
