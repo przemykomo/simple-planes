@@ -69,7 +69,7 @@ public class PlaneNetworking {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be threadsafe (most work)
             PlayerEntity player = ctx.get().getSender(); // the client that sent this packet
-            switch (ctx.get().getDirection()){
+            switch (ctx.get().getDirection()) {
 
                 case PLAY_TO_SERVER:
                     if (player != null && player.getRidingEntity() instanceof PlaneEntity) {

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tags.ItemTags;
@@ -49,10 +50,14 @@ public final class CoalEngine extends AbstractEngine {
             int burnTime = ForgeHooks.getBurnTime(itemStack);
             if (burnTime > 0) {
                 int fuel = (int) ((burnTime / 1600f) * Config.FLY_TICKS_PER_COAL.get());
-                if (!ItemTags.createOptional(NOT_COAL_TAG).contains(itemStack.getItem())) {
+                if (!ItemTags.createOptional(NOT_COAL_TAG).contains(itemStack.getItem())
+                    || !(itemStack.getItem() instanceof BucketItem)) {
                     planeEntity.addFuel(fuel);
                     if (!player.isCreative()) {
                         itemStack.shrink(1);
+                        if (itemStack.isEmpty() && itemStack.hasContainerItem()) {
+                            player.setHeldItem(event.getHand(), itemStack.getContainerItem());
+                        }
                     }
                 }
             }

@@ -7,8 +7,8 @@ import net.minecraft.entity.EntityType;
 
 public class AbstractPlaneEntityType<T extends PlaneEntity> extends EntityType<T> {
 
-    public AbstractPlaneEntityType(EntityType.IFactory<T> factory) {
-        super(factory, EntityClassification.MISC, true, true, false, true, ImmutableSet.of(), EntitySize.flexible(2.0f, 0.5f), 5, 3);
+    public AbstractPlaneEntityType(EntityType.IFactory<T> factory, EntitySize size) {
+        super(factory, EntityClassification.MISC, true, true, false, true, ImmutableSet.of(), size, 5, 3);
     }
 
 }

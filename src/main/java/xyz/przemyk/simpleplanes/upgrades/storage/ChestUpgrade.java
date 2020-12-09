@@ -26,6 +26,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
@@ -36,10 +37,13 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import javax.annotation.Nullable;
 
 public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, INamedContainerProvider {
-    ChestTileEntity tileEntity;
+    public static final MyChestTileEntity tileEntity = new MyChestTileEntity();
+
+    ;
 
     public IInventory inventory;
     public float lidAngle;
+    private float prevLidAngle = 0;
     private float partialticks = 0;
     private boolean open = false;
     private int size = 1;
@@ -63,18 +67,6 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
             public void closeInventory(PlayerEntity player) {
                 ChestUpgrade.this.closeInventory(player);
                 PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), false);
-            }
-        };
-        tileEntity = new ChestTileEntity() {
-            @Override
-            public float getLidAngle(float partialTicks) {
-                return ChestUpgrade.this.lidAngle;
-//                return super.getLidAngle(ChestUpgrade.this.partialticks);
-            }
-
-            @Override
-            public BlockState getBlockState() {
-                return Blocks.CHEST.getDefaultState();
             }
         };
 //        this.inventory = tileEntity;
@@ -110,9 +102,9 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
         if (open && this.lidAngle == 0.0F) {
             planeEntity.playSound(SoundEvents.BLOCK_CHEST_OPEN, 0.5F, planeEntity.world.rand.nextFloat() * 0.1F + 0.9F);
         }
+        prevLidAngle = this.lidAngle;
 
         if (!open && this.lidAngle > 0.0F || open && this.lidAngle < 1.0F) {
-            float prevLidAngle = this.lidAngle;
             if (open) {
                 this.lidAngle += 0.01F;
             } else {
@@ -208,6 +200,7 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         this.partialticks = partialticks;
         tileEntity.setWorldAndPos(null, BlockPos.ZERO);
+        tileEntity.setLidAngle(MathUtil.lerp(partialticks,prevLidAngle, lidAngle));
         BackSeatBlockModel.renderTileBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, tileEntity);
     }
 
@@ -276,5 +269,22 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
     @Override
     public int getSeats() {
         return size;
+    }
+
+    private static class MyChestTileEntity extends ChestTileEntity {
+
+        public void setLidAngle(float lidAngle) {
+            this.lidAngle = lidAngle;
+        }
+
+        @Override
+        public float getLidAngle(float partialTicks) {
+            return this.lidAngle;
+        }
+
+        @Override
+        public BlockState getBlockState() {
+            return Blocks.CHEST.getDefaultState();
+        }
     }
 }
