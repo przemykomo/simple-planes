@@ -24,6 +24,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -61,18 +62,6 @@ public class ChestUpgrade extends Upgrade implements InventoryChangedListener, N
             public void onClose(PlayerEntity player) {
                 ChestUpgrade.this.closeInventory(player);
 //                PlaneNetworking.send_OpenInventory(false);
-            }
-        };
-        tileEntity = new ChestBlockEntity() {
-            @Override
-            public float getAnimationProgress(float partialTicks) {
-                return ChestUpgrade.this.lidAngle;
-//                return super.getLidAngle(ChestUpgrade.this.partialticks);
-            }
-
-            @Override
-            public BlockState getCachedState() {
-                return Blocks.CHEST.getDefaultState();
             }
         };
 //        this.inventory = tileEntity;
@@ -207,7 +196,7 @@ public class ChestUpgrade extends Upgrade implements InventoryChangedListener, N
     public void render(MatrixStack matrixStack, VertexConsumerProvider buffer, int packedLight, float partialticks) {
         this.partialticks = partialticks;
         tileEntity.setLocation(null, BlockPos.ORIGIN);
-        tileEntity.setLidAngle(MathUtil.lerp(partialticks,prevLidAngle, lidAngle));
+        tileEntity.setLidAngle(MathHelper.lerp(partialticks, prevLidAngle, lidAngle));
         BackSeatBlockModel.renderTileBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, tileEntity);
     }
 
@@ -276,19 +265,19 @@ public class ChestUpgrade extends Upgrade implements InventoryChangedListener, N
         return size;
     }
 
-    private static class MyChestTileEntity extends ChestTileEntity {
+    private static class MyChestTileEntity extends ChestBlockEntity {
 
         public void setLidAngle(float lidAngle) {
-            this.lidAngle = lidAngle;
+            this.animationAngle = lidAngle;
         }
 
         @Override
-        public float getLidAngle(float partialTicks) {
-            return this.lidAngle;
+        public float getAnimationProgress(float tickDelta) {
+            return this.animationAngle;
         }
 
         @Override
-        public BlockState getBlockState() {
+        public BlockState getCachedState() {
             return Blocks.CHEST.getDefaultState();
         }
     }

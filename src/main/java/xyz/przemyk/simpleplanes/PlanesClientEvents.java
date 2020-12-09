@@ -20,14 +20,18 @@ import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 
 @Environment(EnvType.CLIENT)
 public class PlanesClientEvents {
-    private static boolean playerRotationNeedToPop = false;
+    private static int playerRotationNeedToPop = 0;
 
     public static ActionResult pre(Entity render_entity, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumers, int light) {
+        if(playerRotationNeedToPop>0){
+            playerRotationNeedToPop++;
+            return ActionResult.PASS;
+        };
         Entity entity = render_entity.getRootVehicle();
         if (entity instanceof PlaneEntity && render_entity != entity) {
             PlaneEntity planeEntity = (PlaneEntity) entity;
             matrixStack.push();
-            playerRotationNeedToPop = true;
+            playerRotationNeedToPop = 1;
             double firstPersonYOffset = 0.7D;
             boolean isPlayerRidingInFirstPersonView = MinecraftClient.getInstance().player != null && planeEntity.hasPassenger(MinecraftClient.getInstance().player)
                 && (MinecraftClient.getInstance()).options.getPerspective().isFirstPerson();
@@ -63,8 +67,8 @@ public class PlanesClientEvents {
 
     @SuppressWarnings("rawtypes")
     public static ActionResult post(Entity render_entity, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumers, int light) {
-        if (playerRotationNeedToPop) {
-            playerRotationNeedToPop = false;
+        if (playerRotationNeedToPop == 1) {
+            playerRotationNeedToPop = 0;
             matrixStack.pop();
             Entity entity = render_entity.getRootVehicle();
             PlaneEntity planeEntity = (PlaneEntity) entity;
@@ -77,6 +81,9 @@ public class PlanesClientEvents {
                     entity1.prevHeadYaw = planeEntity.prevYaw * 2 - entity1.prevHeadYaw;
                 }
             }
+        }
+        else {
+            playerRotationNeedToPop--;
         }
         return ActionResult.PASS;
     }

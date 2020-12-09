@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityDimensions;
 
 public class HelicopterEntityType extends AbstractPlaneEntityType<HelicopterEntity> {
 

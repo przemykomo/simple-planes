@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tag.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -40,8 +39,8 @@ public final class CoalEngine extends AbstractEngine {
                     planeEntity.addFuel(fuel);
                     if (!player.isCreative()) {
                         itemStack.decrement(1);
-                        if (itemStack.isEmpty() && itemStack.hasContainerItem()) {
-                            player.setHeldItem(event.getHand(), itemStack.getContainerItem());
+                        if (itemStack.isEmpty() && itemStack.getItem().hasRecipeRemainder()) {
+                            player.setStackInHand(hand, new ItemStack(itemStack.getItem().getRecipeRemainder()));
                         }
                     }
                 }
