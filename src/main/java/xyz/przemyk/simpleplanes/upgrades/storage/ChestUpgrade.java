@@ -33,10 +33,11 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 
 public class ChestUpgrade extends Upgrade implements InventoryChangedListener, NamedScreenHandlerFactory {
-    ChestBlockEntity tileEntity;
+    public static final MyChestTileEntity tileEntity = new MyChestTileEntity();
 
     public Inventory inventory;
     public float lidAngle;
+    private float prevLidAngle = 0;
     private float partialticks = 0;
     private boolean open = false;
     private int size = 1;
@@ -107,6 +108,7 @@ public class ChestUpgrade extends Upgrade implements InventoryChangedListener, N
         if (open && this.lidAngle == 0.0F) {
             planeEntity.playSound(SoundEvents.BLOCK_CHEST_OPEN, 0.5F, planeEntity.world.random.nextFloat() * 0.1F + 0.9F);
         }
+        prevLidAngle = this.lidAngle;
 
         if (!open && this.lidAngle > 0.0F || open && this.lidAngle < 1.0F) {
             float prevLidAngle = this.lidAngle;
@@ -205,6 +207,7 @@ public class ChestUpgrade extends Upgrade implements InventoryChangedListener, N
     public void render(MatrixStack matrixStack, VertexConsumerProvider buffer, int packedLight, float partialticks) {
         this.partialticks = partialticks;
         tileEntity.setLocation(null, BlockPos.ORIGIN);
+        tileEntity.setLidAngle(MathUtil.lerp(partialticks,prevLidAngle, lidAngle));
         BackSeatBlockModel.renderTileBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, tileEntity);
     }
 
@@ -271,5 +274,22 @@ public class ChestUpgrade extends Upgrade implements InventoryChangedListener, N
     @Override
     public int getSeats() {
         return size;
+    }
+
+    private static class MyChestTileEntity extends ChestTileEntity {
+
+        public void setLidAngle(float lidAngle) {
+            this.lidAngle = lidAngle;
+        }
+
+        @Override
+        public float getLidAngle(float partialTicks) {
+            return this.lidAngle;
+        }
+
+        @Override
+        public BlockState getBlockState() {
+            return Blocks.CHEST.getDefaultState();
+        }
     }
 }

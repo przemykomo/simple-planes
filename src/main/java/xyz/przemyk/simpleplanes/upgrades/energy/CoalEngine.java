@@ -6,6 +6,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tag.ItemTags;
@@ -34,10 +35,14 @@ public final class CoalEngine extends AbstractEngine {
             Integer burnTime = FuelRegistry.INSTANCE.get(itemStack.getItem());
             if (burnTime != null && burnTime > 0) {
                 int fuel = (int) ((burnTime / 1600f) * SimplePlanesMod.CONFIG.getConfig().FLY_TICKS_PER_COAL);
-                if (!TagRegistry.item(NOT_COAL_TAG).contains(itemStack.getItem())) {
+                if (!TagRegistry.item(NOT_COAL_TAG).contains(itemStack.getItem())
+                    || !(itemStack.getItem() instanceof BucketItem)) {
                     planeEntity.addFuel(fuel);
                     if (!player.isCreative()) {
                         itemStack.decrement(1);
+                        if (itemStack.isEmpty() && itemStack.hasContainerItem()) {
+                            player.setHeldItem(event.getHand(), itemStack.getContainerItem());
+                        }
                     }
                 }
             }

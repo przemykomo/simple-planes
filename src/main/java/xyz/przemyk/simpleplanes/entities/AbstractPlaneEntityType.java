@@ -8,9 +8,8 @@ import net.minecraft.entity.SpawnGroup;
 
 public class AbstractPlaneEntityType<T extends PlaneEntity> extends EntityType<T> {
 
-    public AbstractPlaneEntityType(EntityType.EntityFactory<T> factory) {
-        super(factory, SpawnGroup.MISC, true, true, false, true, ImmutableSet.of(), EntityDimensions.changing(2.0f, 0.5f), 5, 3);
+    public AbstractPlaneEntityType(EntityType.EntityFactory<T> factory, EntityDimensions.changing(2.0f, 0.5f)) {
+        super(factory, SpawnGroup.MISC, true, true, false, true, ImmutableSet.of(), size, 5, 3);
     }
-
 
 }
