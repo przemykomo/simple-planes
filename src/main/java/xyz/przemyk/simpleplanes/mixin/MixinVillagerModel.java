@@ -35,6 +35,7 @@ public abstract class MixinVillagerModel<T extends Entity> extends SegmentedMode
     public ModelRenderer villagerNose;
 
 
+    @SuppressWarnings("OverwriteAuthorRequired")
     @Overwrite
     public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         boolean flag = false;
