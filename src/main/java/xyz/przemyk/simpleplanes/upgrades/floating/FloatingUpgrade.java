@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -27,7 +28,7 @@ public class FloatingUpgrade extends Upgrade {
         if (planeEntity.isAboveWater()) {
             Vector3d motion = planeEntity.getMotion();
             double f = 1;
-            double y = MathUtil.lerp(1, motion.y, Math.max(motion.y, 0));
+            double y = MathHelper.lerp(1, motion.y, Math.max(motion.y, 0));
             planeEntity.setMotion(motion.x * f, y, motion.z * f);
             if (planeEntity.world.getBlockState(new BlockPos(planeEntity.getPositionVec().add(0, 0.5, 0))).getBlock() == Blocks.WATER) {
                 planeEntity.setMotion(planeEntity.getMotion().add(0, 0.04, 0));

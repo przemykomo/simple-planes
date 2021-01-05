@@ -22,6 +22,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -200,7 +201,7 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
         this.partialticks = partialticks;
         tileEntity.setWorldAndPos(null, BlockPos.ZERO);
-        tileEntity.setLidAngle(MathUtil.lerp(partialticks,prevLidAngle, lidAngle));
+        tileEntity.setLidAngle(MathHelper.lerp(partialticks,prevLidAngle, lidAngle));
         BackSeatBlockModel.renderTileBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, tileEntity);
     }
 

@@ -96,8 +96,8 @@ public class RocketUpgrade extends Upgrade {
 
         planeEntity.setMotion(m.add(motion));
         if (!planeEntity.world.isRemote()) {
-            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f), 5);
-            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f), 5);
+            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f));
+            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f));
 
         }
     }

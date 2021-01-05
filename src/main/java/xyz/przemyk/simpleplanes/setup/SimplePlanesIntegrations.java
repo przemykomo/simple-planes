@@ -1,7 +1,6 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
 import xyz.przemyk.simpleplanes.integration.DummyIntegration;
 import xyz.przemyk.simpleplanes.integration.IModIntegration;
 

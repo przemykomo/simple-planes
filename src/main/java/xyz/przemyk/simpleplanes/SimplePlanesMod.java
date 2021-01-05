@@ -51,6 +51,5 @@ public class SimplePlanesMod {
         MinecraftForge.EVENT_BUS.register(new PlaneGui());
         keyBind = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(keyBind);
-
     }
 }

@@ -68,8 +68,6 @@ public class PlaneItem extends Item {
                 PlaneEntity planeEntity = planeSupplier.apply(worldIn);
                 UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
                 Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
-//                if (itemstack.getChildTag("Used")==null){
-//                }
                 planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
                 planeEntity.upgradeChanged();
 

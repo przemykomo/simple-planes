@@ -48,5 +48,4 @@ public class SimplePlanesDataSerializers {
     public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS
         .register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
 
-
 }

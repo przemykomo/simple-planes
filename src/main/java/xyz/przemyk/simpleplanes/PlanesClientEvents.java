@@ -6,9 +6,9 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
@@ -35,9 +35,8 @@ import static xyz.przemyk.simpleplanes.SimplePlanesMod.keyBind;
 public class PlanesClientEvents {
     private static boolean playerRotationNeedToPop = false;
 
-    @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRenderPre(RenderLivingEvent.Pre event) {
+    public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
         Entity entity = event.getEntity().getLowestRidingEntity();
         if (entity instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) entity;
@@ -118,7 +117,6 @@ public class PlanesClientEvents {
                 }
 
                 boolean isSprinting = keyBind.isKeyDown();
-                final ClientPlayerEntity clientPlayerEntity = (ClientPlayerEntity) player;
                 if (isSprinting != old_sprint || Math.random() < 0.1) {
                     PlaneNetworking.INSTANCE.sendToServer(isSprinting);
                 }
@@ -144,14 +142,14 @@ public class PlanesClientEvents {
 
                 Quaternion q_prev = planeEntity.getQ_Prev();
                 int max = 105;
-                float diff = MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw, playerEntity.prevRotationYaw), -max, max);
+                float diff = (float) MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.prevRotationYaw, playerEntity.prevRotationYaw), -max, max);
                 float pitch = MathHelper.clamp(event.getPitch(), -45, 45);
                 q_prev.multiply(Vector3f.YP.rotationDegrees(diff));
                 q_prev.multiply(Vector3f.XP.rotationDegrees(pitch));
                 MathUtil.EulerAngles angles_prev = MathUtil.toEulerAngles(q_prev);
 
                 Quaternion q_client = planeEntity.getQ_Client();
-                diff = MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
+                diff = (float) MathHelper.clamp(MathUtil.wrapSubtractDegrees(planeEntity.rotationYaw, playerEntity.rotationYaw), -max, max);
                 q_client.multiply(Vector3f.YP.rotationDegrees(diff));
                 q_client.multiply(Vector3f.XP.rotationDegrees(pitch));
                 MathUtil.EulerAngles angles = MathUtil.toEulerAngles(q_client);

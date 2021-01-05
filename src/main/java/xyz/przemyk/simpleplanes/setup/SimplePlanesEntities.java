@@ -1,16 +1,15 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import com.electronwill.nightconfig.core.ConfigSpec;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.entities.HelicopterEntityType;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntityType;
-import xyz.przemyk.simpleplanes.entities.MegaPlaneEntityType;
-import xyz.przemyk.simpleplanes.entities.PlaneEntityType;
+import xyz.przemyk.simpleplanes.entities.*;
 
 @SuppressWarnings("unused")
 public class SimplePlanesEntities {
@@ -21,9 +20,12 @@ public class SimplePlanesEntities {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<PlaneEntityType> PLANE = ENTITIES.register("plane", PlaneEntityType::new);
-    public static final RegistryObject<LargePlaneEntityType> LARGE_PLANE = ENTITIES.register("large_plane", LargePlaneEntityType::new);
-    public static final RegistryObject<HelicopterEntityType> HELICOPTER = ENTITIES.register("helicopter", HelicopterEntityType::new);
-    public static final RegistryObject<MegaPlaneEntityType> MEGA_PLANE = ENTITIES.register("mega_plane", MegaPlaneEntityType::new);
+    public static final RegistryObject<EntityType<PlaneEntity>> PLANE = ENTITIES.register("plane", () -> createEntityType(PlaneEntity::new, EntitySize.flexible(2.0f, 0.5f)));
+    public static final RegistryObject<EntityType<LargePlaneEntity>> LARGE_PLANE = ENTITIES.register("large_plane", () -> createEntityType(LargePlaneEntity::new, LargePlaneEntity.FLYING_SIZE));
+    public static final RegistryObject<EntityType<HelicopterEntity>> HELICOPTER = ENTITIES.register("helicopter", () -> createEntityType(HelicopterEntity::new, HelicopterEntity.FLYING_SIZE));
+    public static final RegistryObject<EntityType<MegaPlaneEntity>> MEGA_PLANE = ENTITIES.register("mega_plane", () -> createEntityType(MegaPlaneEntity::new, MegaPlaneEntity.FLYING_SIZE));
 
+    private static   <T extends PlaneEntity> EntityType<T> createEntityType(EntityType.IFactory<T> factory, EntitySize size) {
+        return new EntityType<>(factory, EntityClassification.MISC, true, true, false, true, ImmutableSet.of(), size, 5, 3);
+    }
 }
