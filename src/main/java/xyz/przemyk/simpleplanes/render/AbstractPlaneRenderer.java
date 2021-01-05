@@ -22,7 +22,6 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
 
-// I'll change <T extends FurnacePlaneEntity> to some AbstractPlaneEntity when I'll add more planes
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected EntityModel<PlaneEntity> propellerModel;
 

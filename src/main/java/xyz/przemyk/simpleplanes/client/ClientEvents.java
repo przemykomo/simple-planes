@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes;
+package xyz.przemyk.simpleplanes.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -22,6 +22,7 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -32,7 +33,7 @@ import static xyz.przemyk.simpleplanes.SimplePlanesMod.keyBind;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class PlanesClientEvents {
+public class ClientEvents {
     private static boolean playerRotationNeedToPop = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -183,5 +184,4 @@ public class PlanesClientEvents {
             }
         }
     }
-
 }

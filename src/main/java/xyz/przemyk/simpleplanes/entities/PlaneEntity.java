@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -33,10 +34,10 @@ import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -416,8 +417,8 @@ public class PlaneEntity extends Entity {
         if (isPowered() && !isParked(vars)) {
             fuel -= getFuelCost(vars);
             setFuel(fuel);
-            if (poweredTicks % 50 == 0) {
-                playSound(SimplePlanesSounds.PLANE_LOOP.get(), 0.05F, 1.0F);
+            if (world.isRemote && !PlaneSound.isPlaying(getEntityId())) {
+                Minecraft.getInstance().getSoundHandler().play(new PlaneSound(this));
             }
             ++poweredTicks;
         } else {
