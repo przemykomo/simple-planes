@@ -14,7 +14,6 @@ import xyz.przemyk.simpleplanes.integration.liquid.LiquidFuelingBlock;
 import xyz.przemyk.simpleplanes.integration.liquid.LiquidFuelingTileEntity;
 import xyz.przemyk.simpleplanes.upgrades.cloud.CloudBlock;
 
-//@ObjectHolder(SimplePlanesMod.MODID)
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SimplePlanesBlocks {
@@ -22,13 +21,10 @@ public class SimplePlanesBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, SimplePlanesMod.MODID);
     private static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, SimplePlanesMod.MODID);
 
-
     public static void init() {
-
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
-
 
     public static final RegistryObject<Block> CHARGER_BLOCK = BLOCKS.register("charger_block", ChargerBlock::new);
     public static final RegistryObject<Block> FUELING_BLOCK = BLOCKS.register("fueling_block", LiquidFuelingBlock::new);
