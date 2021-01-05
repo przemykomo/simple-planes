@@ -82,7 +82,7 @@ public class Config {
         BUILDER.pop();
         //**************
         BUILDER.push("forge energy");
-        ENERGY_COST = BUILDER.comment("FE amount the chrager use per tick")
+        ENERGY_COST = BUILDER.comment("FE amount the charger use per tick")
             .defineInRange("charger_fe_cost", 600, 0, Integer.MAX_VALUE);
         ENERGY_FLY_TICKS = BUILDER.comment("number of flight ticks per charging tick")
             .defineInRange("fly_ticks_charge_tick", 5, 0, Integer.MAX_VALUE);

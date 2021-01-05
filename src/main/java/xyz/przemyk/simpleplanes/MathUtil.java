@@ -4,10 +4,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 
-public class MathUtil extends MathHelper {
-    public static double angelBetweenVec(Vector3d v1, Vector3d v2) {
-        return Math.toDegrees(Math.acos(normalizedDotProduct(v1, v2)));
-    }
+public class MathUtil {
 
     public static double normalizedDotProduct(Vector3d v1, Vector3d v2) {
         return v1.dotProduct(v2) / (v1.length() * v2.length());
@@ -23,23 +20,23 @@ public class MathUtil extends MathHelper {
     }
 
     public static float lerpAngle(float perc, float start, float end) {
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static float lerpAngle180(float perc, float start, float end) {
         if (degreesDifferenceAbs(start, end) > 90)
             end += 180;
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static double lerpAngle180(double perc, double start, double end) {
         if (degreesDifferenceAbs(start, end) > 90)
             end += 180;
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static double lerpAngle(double perc, double start, double end) {
-        return start + perc * wrapDegrees(end - start);
+        return start + perc * MathHelper.wrapDegrees(end - start);
     }
 
     public static double degreesDifferenceAbs(double p_203301_0_, double p_203301_1_) {
@@ -47,7 +44,7 @@ public class MathUtil extends MathHelper {
     }
 
     public static double wrapSubtractDegrees(double p_203302_0_, double p_203302_1_) {
-        return wrapDegrees(p_203302_1_ - p_203302_0_);
+        return MathHelper.wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
     public static Vector3d rotationToVector(double yaw, double pitch) {
@@ -194,16 +191,7 @@ public class MathUtil extends MathHelper {
     public static class EulerAngles {
         public double pitch, yaw, roll;
 
-        public EulerAngles() {
-        }
-
-        //TODO: remove unused constructor?
-        @SuppressWarnings("unused")
-        public EulerAngles(double pitch, double yaw, double roll) {
-            this.pitch = pitch;
-            this.yaw = yaw;
-            this.roll = roll;
-        }
+        public EulerAngles() {}
 
         public EulerAngles(EulerAngles a) {
             this.pitch = a.pitch;

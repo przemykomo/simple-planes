@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -22,7 +23,6 @@ public class PlaneNetworking {
     public static final int MSG_PLANE_QUAT = 0;
     public static final int MSG_PLANE_BOOST = 1;
     public static final int MSG_PLANE_INVENTORY = 2;
-
 
     public static void init() {
         INSTANCE.registerMessage(
@@ -69,20 +69,17 @@ public class PlaneNetworking {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be threadsafe (most work)
             PlayerEntity player = ctx.get().getSender(); // the client that sent this packet
-            switch (ctx.get().getDirection()) {
-
-                case PLAY_TO_SERVER:
-                    if (player != null && player.getRidingEntity() instanceof PlaneEntity) {
-                        final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
-                        Upgrade chest = plane.upgrades.getOrDefault(SimplePlanesUpgrades.CHEST.getId(), null);
-                        if (chest instanceof ChestUpgrade) {
-                            ChestUpgrade chest1 = (ChestUpgrade) chest;
-                            if (chest1.inventory != null) {
-                                player.openContainer(chest1);
-                            }
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+                if (player != null && player.getRidingEntity() instanceof PlaneEntity) {
+                    final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
+                    Upgrade chest = plane.upgrades.getOrDefault(SimplePlanesUpgrades.CHEST.getId(), null);
+                    if (chest instanceof ChestUpgrade) {
+                        ChestUpgrade chest1 = (ChestUpgrade) chest;
+                        if (chest1.inventory != null) {
+                            player.openContainer(chest1);
                         }
                     }
-                    break;
+                }
             }
         });
         ctx.get().setPacketHandled(true);

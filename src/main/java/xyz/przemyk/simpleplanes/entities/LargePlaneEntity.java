@@ -104,9 +104,9 @@ public class LargePlaneEntity extends PlaneEntity {
 
     @Override
     protected void spawnSmokeParticles(int fuel) {
-        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -2), 0);
+        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -2));
         if (fuel > 4 && fuel < 100) {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -2), 5);
+            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -2));
         }
     }
 

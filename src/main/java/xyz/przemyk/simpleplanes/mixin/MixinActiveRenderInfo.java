@@ -11,10 +11,12 @@ import xyz.przemyk.simpleplanes.MixinHelper;
 
 @Mixin(ActiveRenderInfo.class)
 public abstract class MixinActiveRenderInfo {
+
     @Shadow
-    abstract double calcCameraDistance(double startingDistance);
+    protected abstract double calcCameraDistance(double startingDistance);
+
     @Redirect(
-        method = "Lnet/minecraft/client/renderer/ActiveRenderInfo;update(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/entity/Entity;ZZF)V",
+        method = "update(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/entity/Entity;ZZF)V",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/ActiveRenderInfo;calcCameraDistance(D)D"

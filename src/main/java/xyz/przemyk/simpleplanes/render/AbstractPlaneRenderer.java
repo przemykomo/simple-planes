@@ -80,7 +80,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         }
 
         if (f > 0.0F) {
-            float angle = MathUtil.clamp(f * f1 / 200.0F, -30, 30);
+            float angle = MathHelper.clamp(f * f1 / 200.0F, -30, 30);
 //            float angle = 30;
             f = planeEntity.ticksExisted + partialTicks;
             matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));

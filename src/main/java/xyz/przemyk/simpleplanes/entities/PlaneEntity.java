@@ -15,12 +15,10 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.Explosion;
@@ -58,7 +56,6 @@ public class PlaneEntity extends Entity {
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
     public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(2F, 2F);
 
-    //negative values mean left
     public static final DataParameter<Integer> MAX_HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Integer> HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
@@ -72,7 +69,6 @@ public class PlaneEntity extends Entity {
     private static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
     private static final DataParameter<Boolean> PARKED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.BOOLEAN);
 
-    public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-1, 0, -1, 1, 0.5, 1);
     protected int poweredTicks;
 
     //count how many ticks since on ground
@@ -135,21 +131,6 @@ public class PlaneEntity extends Entity {
         dataManager.register(DAMAGE_TAKEN, 0f);
         dataManager.register(PARKED, true);
     }
-
-//    public void addFuelMaxed() {
-//        addFuelMaxed(Config.FLY_TICKS_PER_COAL.get());
-//    }
-
-//    public void addFuelMaxed(Integer fuel) {
-//        if (!world.isRemote) {
-//            int old_fuel = getFuel();
-//            int new_fuel = old_fuel + fuel;
-//            if (new_fuel > fuel * 3) {
-//                new_fuel = old_fuel + fuel / 3;
-//            }
-//            dataManager.set(FUEL, new_fuel);
-//        }
-//    }
 
     public void addFuel(Integer fuel) {
         if (!world.isRemote) {
@@ -221,16 +202,13 @@ public class PlaneEntity extends Entity {
         return dataManager.get(HEALTH);
     }
 
-    public void setMaxHealth(Integer maxHealth) {
-        dataManager.set(MAX_HEALTH, maxHealth);
-    }
-
     public int getMaxHealth() {
         return dataManager.get(MAX_HEALTH);
     }
     public void setParked(Boolean val) {
         dataManager.set(PARKED, val);
     }
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean getParked() {
         return dataManager.get(PARKED);
     }
@@ -347,7 +325,6 @@ public class PlaneEntity extends Entity {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     protected void dropItem() {
         ItemStack itemStack = getItem().getDefaultInstance();
         final CompoundNBT value = new CompoundNBT();
@@ -364,10 +341,6 @@ public class PlaneEntity extends Entity {
         }
     }
 
-    public Vector2f getHorizontalFrontPos() {
-        return new Vector2f(-MathHelper.sin(rotationYaw * ((float) Math.PI / 180F)), MathHelper.cos(rotationYaw * ((float) Math.PI / 180F)));
-    }
-
     @Override
     public EntitySize getSize(Pose poseIn) {
         if (this.getControllingPassenger() instanceof PlayerEntity) {
@@ -378,7 +351,7 @@ public class PlaneEntity extends Entity {
     }
 
     /**
-     * collision
+     * @return Does it collide like a boat/shulker?
      */
     public boolean func_241845_aY() {
         return true;
@@ -417,11 +390,11 @@ public class PlaneEntity extends Entity {
         LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
         vars.moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
         vars.turn_threshold = Config.TURN_THRESHOLD.get() / 100d;
-        if (abs(vars.moveForward) < vars.turn_threshold) {
+        if (Math.abs(vars.moveForward) < vars.turn_threshold) {
             vars.moveForward = 0;
         }
         vars.moveStrafing = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveStrafing : 0;
-        if (abs(vars.moveStrafing) < vars.turn_threshold) {
+        if (Math.abs(vars.moveStrafing) < vars.turn_threshold) {
             vars.moveStrafing = 0;
         }
         if (getPlayer() == null) {
@@ -599,7 +572,7 @@ public class PlaneEntity extends Entity {
         rotationYaw = (float) angels1.yaw;
         rotationRoll = (float) angels1.roll;
 
-        float d = MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
+        float d = (float) MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
         if (rotationRoll >= 90 && prevRotationRoll <= 90) {
             d = 0;
         }
@@ -609,7 +582,7 @@ public class PlaneEntity extends Entity {
         deltaRotationLeft *= 0.7;
         deltaRotationLeft += d;
         deltaRotationLeft = wrapDegrees(deltaRotationLeft);
-        deltaRotation = Math.min(abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
+        deltaRotation = Math.min(Math.abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
         deltaRotationLeft -= deltaRotation;
         if (!(deltaRotation > 0)) {
             deltaRotationTicks--;
@@ -645,9 +618,9 @@ public class PlaneEntity extends Entity {
                 if (moveStrafing == 0) {
                     rotationRoll = lerpAngle180(0.2f, rotationRoll, 0);
                 } else if (moveStrafing > 0) {
-                    rotationRoll = clamp(rotationRoll + f1, 0, r);
+                    rotationRoll = MathHelper.clamp(rotationRoll + f1, 0, r);
                 } else if (moveStrafing < 0) {
-                    rotationRoll = clamp(rotationRoll - f1, -r, 0);
+                    rotationRoll = MathHelper.clamp(rotationRoll - f1, -r, 0);
                 }
                 final double roll_old = toEulerAngles(getQ()).roll;
                 if (MathUtil.degreesDifferenceAbs(roll_old, 0) < 90) {
@@ -688,11 +661,10 @@ public class PlaneEntity extends Entity {
         }
         motion = this.getMotion();
         double speed = motion.length();
-        final double speed_x = getHorizontalLength(motion);
         speed -= speed * speed * vars.drag_quad + speed * vars.drag_mul + vars.drag;
         speed = Math.max(speed, 0);
         if (speed > vars.max_speed) {
-            speed = MathUtil.lerp(0.2, speed, vars.max_speed);
+            speed = MathHelper.lerp(0.2, speed, vars.max_speed);
         }
 
         if (speed == 0) {
@@ -704,7 +676,7 @@ public class PlaneEntity extends Entity {
         Vector3d pushVec = new Vector3d(getTickPush(vars));
         if (pushVec.length() != 0 && motion.length() > 0.1) {
             double dot = MathUtil.normalizedDotProduct(pushVec, motion);
-            pushVec = pushVec.scale(MathUtil.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 2));
+            pushVec = pushVec.scale(MathHelper.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 2));
         }
 
         motion = motion.add(pushVec);
@@ -787,7 +759,7 @@ public class PlaneEntity extends Entity {
             setMotion(motion.scale(0.98));
         }
 
-        float d = degreesDifferenceAbs(pitch, rotationPitch);
+        float d = (float) degreesDifferenceAbs(pitch, rotationPitch);
         if (d > 180) {
             d = d - 180;
         }
@@ -826,13 +798,13 @@ public class PlaneEntity extends Entity {
     }
 
     protected void spawnSmokeParticles(int fuel) {
-        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -1), 0);
+        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -1));
         if (((fuel > 4) && (fuel < (Config.FLY_TICKS_PER_COAL.get() / 3)))) {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -1), 5);
+            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -1));
         }
     }
 
-    public void spawnParticle(IParticleData particleData, Vector3f relPos, int particleCount) {
+    public void spawnParticle(IParticleData particleData, Vector3f relPos) {
         relPos = new Vector3f(relPos.getX(), relPos.getY() - 0.3f, relPos.getZ());
         relPos = transformPos(relPos);
         relPos = new Vector3f(relPos.getX(), relPos.getY() + 0.9f, relPos.getZ());
@@ -929,9 +901,8 @@ public class PlaneEntity extends Entity {
     /**
      * small data for client sync not for save.
      *
-     * @return
+     * @return upgrades nbt for synchronization
      */
-    @SuppressWarnings("ConstantConditions")
     private CompoundNBT getUpgradesNBTData() {
         CompoundNBT upgradesNBT = new CompoundNBT();
         for (Upgrade upgrade : upgrades.values()) {
@@ -954,20 +925,6 @@ public class PlaneEntity extends Entity {
     public boolean canBeCollidedWith() {
         return true;
     }
-
-    //    @Nullable
-    //    @Override
-    //    public AxisAlignedBB getBoundingBox()
-    //    {
-    //        return COLLISION_AABB.offset(getPositionVec());
-    //    }
-    //
-    //    @Nullable
-    //    @Override
-    //    public AxisAlignedBB getCollisionBox(Entity entityIn)
-    //    {
-    //        return COLLISION_AABB.offset(getPositionVec());
-    //    }
 
     @Override
     public IPacket<?> createSpawnPacket() {
@@ -1125,7 +1082,6 @@ public class PlaneEntity extends Entity {
         return super.func_230268_c_(livingEntity);
     }
 
-    @SuppressWarnings("rawtypes")
     public ItemStack getItemStack() {
         ItemStack itemStack = getItem().getDefaultInstance();
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
@@ -1133,7 +1089,6 @@ public class PlaneEntity extends Entity {
             value.putBoolean("Used", true);
             itemStack.setTagInfo("EntityTag", value);
         }
-
 
         return itemStack;
     }
@@ -1229,7 +1184,6 @@ public class PlaneEntity extends Entity {
 
 
     private boolean rocking;
-    private boolean field_203060_aN;
     private float rockingIntensity;
     private float rockingAngle;
     private float prevRockingAngle;
@@ -1253,7 +1207,7 @@ public class PlaneEntity extends Entity {
 
             this.rockingIntensity = MathHelper.clamp(this.rockingIntensity, 0.0F, 1.0F);
             this.prevRockingAngle = this.rockingAngle;
-            this.rockingAngle = 10.0F * (float) Math.sin((double) (0.5F * (float) this.world.getGameTime())) * this.rockingIntensity;
+            this.rockingAngle = 10.0F * (float) Math.sin(0.5F * (float) this.world.getGameTime()) * this.rockingIntensity;
         } else {
             if (!this.rocking) {
                 this.setRockingTicks(0);
@@ -1267,12 +1221,7 @@ public class PlaneEntity extends Entity {
                 if (j > 0 && k == 0) {
                     this.setRockingTicks(0);
                     Vector3d vector3d = this.getMotion();
-                    if (this.field_203060_aN) {
-                        this.setMotion(vector3d.add(0.0D, -0.7D, 0.0D));
-                        this.removePassengers();
-                    } else {
-                        this.setMotion(vector3d.x, this.isPassenger(PlayerEntity.class) ? 2.7D : 0.6D, vector3d.z);
-                    }
+                    this.setMotion(vector3d.x, this.isPassenger(PlayerEntity.class) ? 2.7D : 0.6D, vector3d.z);
                 }
 
                 this.rocking = false;
@@ -1313,10 +1262,6 @@ public class PlaneEntity extends Entity {
      */
     public float getDamageTaken() {
         return this.dataManager.get(DAMAGE_TAKEN);
-    }
-
-    public boolean hasChest() {
-        return this.upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
     }
 
     public double getCameraDistanceMultiplayer() {

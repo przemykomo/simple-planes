@@ -6,7 +6,6 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -14,9 +13,6 @@ import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.cloud.CloudUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.dragon.DragonUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.energy.CoalEngine;
-//import xyz.przemyk.simpleplanes.upgrades.energy.FurnceJunkEngine;
-//import xyz.przemyk.simpleplanes.upgrades.energy.LavaEngine;
-//import xyz.przemyk.simpleplanes.upgrades.energy.PowerCell;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.heal.HealUpgrade;
@@ -95,6 +91,4 @@ public class SimplePlanesUpgrades {
 
     //storage
     public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(Items.CHEST, ChestUpgrade::new, true));
-
-
 }
