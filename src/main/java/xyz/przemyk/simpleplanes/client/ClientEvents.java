@@ -89,7 +89,7 @@ public class ClientEvents {
         }
     }
 
-    static boolean old_sprint = false;
+    private static boolean old_sprint = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onClientPlayerTick(PlayerTickEvent event) {

@@ -41,10 +41,10 @@ public class PlaneSound extends TickableSound {
             synchronized (PLAYING_FOR) {
                 PLAYING_FOR.remove(plane.getEntityId());
             }
-        } else if (fadeOut >= 5) {
+        } else if (fadeOut >= 10) {
             finishPlaying();
         } else if (fadeOut >= 0) {
-            volume = 1.0F - fadeOut / 5F;
+            volume = 1.0F - fadeOut / 10F;
             fadeOut++;
         }
     }
