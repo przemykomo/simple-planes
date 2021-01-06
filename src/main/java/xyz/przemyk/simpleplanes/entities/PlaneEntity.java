@@ -35,7 +35,8 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
-import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.RotationPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -499,7 +500,7 @@ public class PlaneEntity extends Entity {
         if (world.isRemote && canPassengerSteer()) {
             setQ_Client(q);
 
-            PlaneNetworking.INSTANCE.sendToServer(getQ());
+            PlaneNetworking.INSTANCE.sendToServer(new RotationPacket(getQ()));
         } else {
             if (getPlayer() instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) getPlayer();
