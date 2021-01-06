@@ -24,7 +24,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.BoostPacket;
+import xyz.przemyk.simpleplanes.network.OpenInventoryPacket;
+import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
@@ -119,7 +121,7 @@ public class ClientEvents {
 
                 boolean isSprinting = keyBind.isKeyDown();
                 if (isSprinting != old_sprint || Math.random() < 0.1) {
-                    PlaneNetworking.INSTANCE.sendToServer(isSprinting);
+                    PlaneNetworking.INSTANCE.sendToServer(new BoostPacket(isSprinting));
                 }
                 old_sprint = isSprinting;
             } else {
@@ -175,7 +177,8 @@ public class ClientEvents {
                 IInventory inventory = chest1.inventory;
                 if (inventory != null) {
                     event.setCanceled(true);
-                    PlaneNetworking.OPEN_INVENTORY.sendToServer(true);
+//                    PlaneNetworking.OPEN_INVENTORY.sendToServer(true);
+                    PlaneNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
                 }
 //                StringTextComponent hi = new StringTextComponent("hi");
 //                ScreenManager.openScreen(ContainerType.GENERIC_9X3,event.getGui().getMinecraft(),0,hi);

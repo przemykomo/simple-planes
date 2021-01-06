@@ -27,10 +27,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
-import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.handler.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.render.BackSeatBlockModel;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -61,13 +60,15 @@ public class ChestUpgrade extends Upgrade implements IInventoryChangedListener, 
             @Override
             public void openInventory(PlayerEntity player) {
                 ChestUpgrade.this.openInventory(player);
-                PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), true);
+                //TODO: sending it to player doesn't seem to do anything because packet is only handled if sent to the server, so remove this call?
+//                PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), true);
             }
 
             @Override
             public void closeInventory(PlayerEntity player) {
                 ChestUpgrade.this.closeInventory(player);
-                PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), false);
+                //TODO: sending it to player doesn't seem to do anything because packet is only handled if sent to the server, so remove this call?
+//                PlaneNetworking.OPEN_INVENTORY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), false);
             }
         };
 //        this.inventory = tileEntity;
