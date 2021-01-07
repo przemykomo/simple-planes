@@ -92,10 +92,7 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         }
 
         EntityModel<T> planeModel = getModel();
-        //        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(planeEntity)));
-        boolean enchanted_plane = planeEntity.getHealth() > planeEntity.getMaxHealth();
-        IVertexBuilder ivertexbuilder = ItemRenderer
-            .getArmorVertexBuilder(bufferIn, planeModel.getRenderType(this.getEntityTexture(planeEntity)), false, enchanted_plane);
+        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeModel.getRenderType(this.getEntityTexture(planeEntity)));
         planeModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         int seat = 0;
