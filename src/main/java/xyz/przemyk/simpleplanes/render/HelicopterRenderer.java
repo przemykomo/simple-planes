@@ -29,12 +29,11 @@ public class HelicopterRenderer extends AbstractPlaneRenderer<PlaneEntity> {
         return planeModel;
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public ResourceLocation getEntityTexture(PlaneEntity entity) {
-        //        if (entity.isPowered()) {
-        //            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace_powered/"+entity.getMaterial().name+".png");
-        //        }
-        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
-    }
+//    @Override
+//    public ResourceLocation getEntityTexture(PlaneEntity entity) {
+//        //        if (entity.isPowered()) {
+//        //            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace_powered/"+entity.getMaterial().name+".png");
+//        //        }
+//        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
+//    }
 }

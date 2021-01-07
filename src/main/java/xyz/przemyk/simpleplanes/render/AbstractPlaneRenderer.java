@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -11,14 +12,19 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.settings.PointOfView;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+
+import java.util.Random;
 
 import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
 
@@ -112,11 +118,11 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
             matrixStackIn.pop();
         }
         String resourceName;
-        if (planeEntity.getMaterial().fireResistant)
-            resourceName = "textures/block/netherite_block.png";
-        else {
+//        if (planeEntity.getMaterial().fireResistant)
+//            resourceName = "textures/block/netherite_block.png";
+//        else {
             resourceName = "textures/block/iron_block.png";
-        }
+//        }
 
         ivertexbuilder = ItemRenderer.getArmorVertexBuilder(bufferIn, planeModel.getRenderType(new ResourceLocation(resourceName)), false, planeEntity.hasNoGravity());
 
@@ -139,4 +145,17 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
 //    }
 
     protected abstract EntityModel<T> getModel();
+
+    @Override
+    public ResourceLocation getEntityTexture(PlaneEntity entity) {
+        //TODO: cache texture location, use map from block id or something
+        Random random = new Random(42L);
+        ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ModelLoader.getInventoryVariant(entity.getMaterial().getRegistryName().toString())).getQuads(null, Direction.SOUTH, random, EmptyModelData.INSTANCE).get(0).getSprite().getName();
+        return new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
+
+//        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
+//        return Minecraft.getInstance().getItemRenderer().getItemModelMesher().getItemModel(Items.ACACIA_PLANKS).getQuads(null, null, random, EmptyModelData.INSTANCE).get(0).getSprite().getName();
+
+//        return new ResourceLocation("minecraft", "textures/block/acacia_planks.png");
+    }
 }

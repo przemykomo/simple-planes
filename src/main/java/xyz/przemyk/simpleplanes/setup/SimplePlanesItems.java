@@ -31,37 +31,24 @@ public class SimplePlanesItems {
 
 
     public static void init() {
-        for (String name :
-            SimplePlanesMaterials.MATERIALS) {
-            String s = name.split("_")[0];
-            Item.Properties group;
-            if (Config.DISABLED_MODS.get().contains(s)) {
-                group = new Item.Properties();
-            } else {
-                group = new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP);
-            }
-            ITEMS.register(name + "_plane", () -> new PlaneItem(group, world -> new PlaneEntity(SimplePlanesEntities.PLANE.get(), world, SimplePlanesMaterials.getMaterial(name))));
-            ITEMS.register(name + "_large_plane", () -> new PlaneItem(group, world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE.get(), world, SimplePlanesMaterials.getMaterial(name))));
-            ITEMS.register(name + "_helicopter", () -> new PlaneItem(group, world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER.get(), world, SimplePlanesMaterials.getMaterial(name))));
-            ITEMS.register(name + "_mega_plane", () -> new PlaneItem(group, world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE.get(), world, SimplePlanesMaterials.getMaterial(name))));
-
-        }
-
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final ItemGroup SIMPLE_PLANES_ITEM_GROUP = new ItemGroup("simpleplanes") {
+    public static final ItemGroup ITEM_GROUP = new ItemGroup("simpleplanes") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ITEMS.getEntries().iterator().next().get());
+            return new ItemStack(PLANE_ITEM.get());
         }
     };
-    @ObjectHolder(SimplePlanesMod.MODID + ":oak_plane")
-    public static final Item OAK_PLANE = null;
 
-    public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
+    public static final RegistryObject<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER.get(), world)));
+    public static final RegistryObject<PlaneItem> MEGA_PLANE_ITEM = ITEMS.register("mega_plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE.get(), world)));
+
+    public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
     public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS
-        .register("furnace_engine", () -> new Item(new Item.Properties().group(SIMPLE_PLANES_ITEM_GROUP)));
+        .register("furnace_engine", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
 
     public static final RegistryObject<Item> SPRAYER = ITEMS
         .register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
@@ -92,8 +79,8 @@ public class SimplePlanesItems {
             }
         });
     public static final RegistryObject<Item> CHARGER_BLOCK = ITEMS
-        .register("charger_block", () -> new BlockItem(SimplePlanesBlocks.CHARGER_BLOCK.get(), (new Item.Properties()).group(SIMPLE_PLANES_ITEM_GROUP)));
+        .register("charger_block", () -> new BlockItem(SimplePlanesBlocks.CHARGER_BLOCK.get(), (new Item.Properties()).group(ITEM_GROUP)));
     public static final RegistryObject<Item> FUELING_BLOCK = ITEMS
-        .register("fueling_block", () -> new BlockItem(SimplePlanesBlocks.FUELING_BLOCK.get(), (new Item.Properties()).group(SIMPLE_PLANES_ITEM_GROUP)));
+        .register("fueling_block", () -> new BlockItem(SimplePlanesBlocks.FUELING_BLOCK.get(), (new Item.Properties()).group(ITEM_GROUP)));
 
 }

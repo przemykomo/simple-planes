@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -10,7 +11,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -25,7 +25,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
+    public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, Block material, double x, double y, double z) {
         super(entityTypeIn, worldIn, material, x, y, z);
     }
 
@@ -38,7 +38,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         //just hate my head in the nether ceiling
     }
 
-    public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
+    public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, Block material) {
         super(entityTypeIn, worldIn, material);
     }
 
@@ -77,11 +77,10 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     public void updatePassengerTwo(Entity passenger) {
     }
 
-    @Override
-    protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_mega_plane"));
-
-    }
+//    @Override
+//    protected Item getItem() {
+//        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_mega_plane"));
+//    }
 
     @Override
     public double getCameraDistanceMultiplayer() {
@@ -116,6 +115,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         }
     }
 
+    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     private Vector3f getPassengerPos(Entity passenger) {
         final int i = this.getPassengers().indexOf(passenger);
         final float z = -(i / 2) * 1.5f;
@@ -141,7 +141,6 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     public boolean isFull() {
         int i = 0;
         for (Map.Entry<ResourceLocation, Upgrade> entry : upgrades.entrySet()) {
-            ResourceLocation resourceLocation = entry.getKey();
             Upgrade value = entry.getValue();
             if (value.getType().occupyBackSeat) {
                 i += value.getSeats();
