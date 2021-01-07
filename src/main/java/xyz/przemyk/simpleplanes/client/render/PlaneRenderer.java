@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.render;
+package xyz.przemyk.simpleplanes.client.render;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.EntityModel;

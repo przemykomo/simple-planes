@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.render;// Made with Blockbench 3.6.3
+package xyz.przemyk.simpleplanes.client.render;// Made with Blockbench 3.6.3
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
 
@@ -9,8 +9,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
-import static xyz.przemyk.simpleplanes.render.AbstractPlaneRenderer.getPropellerRotation;
-import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
+import static xyz.przemyk.simpleplanes.client.render.AbstractPlaneRenderer.getPropellerRotation;
 
 public class PropellerModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer Body;

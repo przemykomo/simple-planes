@@ -1,9 +1,8 @@
-package xyz.przemyk.simpleplanes.render;
+package xyz.przemyk.simpleplanes.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -29,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
+import static xyz.przemyk.simpleplanes.client.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
 
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected EntityModel<PlaneEntity> propellerModel;
@@ -157,5 +156,5 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
     }
 
     public static final Map<Block, ResourceLocation> cachedTextures = new HashMap<>();
-    public static final ResourceLocation FALLBACK_TEXTURE = new ResourceLocation("minecraft", "textures/oak_planks.png");
+    public static final ResourceLocation FALLBACK_TEXTURE = new ResourceLocation("minecraft", "textures/block/oak_planks.png");
 }

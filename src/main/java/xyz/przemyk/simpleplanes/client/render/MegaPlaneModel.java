@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.render;// Made with Blockbench 3.6.6
+package xyz.przemyk.simpleplanes.client.render;// Made with Blockbench 3.6.6
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
 

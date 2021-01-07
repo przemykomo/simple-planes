@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.render;
+package xyz.przemyk.simpleplanes.client.render;
 
 // Made with Blockbench 3.6.3
 
