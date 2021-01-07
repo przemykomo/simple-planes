@@ -79,8 +79,10 @@ public class SimplePlanesItems {
             }
         });
     public static final RegistryObject<Item> CHARGER_BLOCK = ITEMS
-        .register("charger_block", () -> new BlockItem(SimplePlanesBlocks.CHARGER_BLOCK.get(), (new Item.Properties()).group(ITEM_GROUP)));
+        .register("charger_block", () -> new BlockItem(SimplePlanesBlocks.CHARGER_BLOCK.get(), new Item.Properties().group(ITEM_GROUP)));
     public static final RegistryObject<Item> FUELING_BLOCK = ITEMS
-        .register("fueling_block", () -> new BlockItem(SimplePlanesBlocks.FUELING_BLOCK.get(), (new Item.Properties()).group(ITEM_GROUP)));
+        .register("fueling_block", () -> new BlockItem(SimplePlanesBlocks.FUELING_BLOCK.get(), new Item.Properties().group(ITEM_GROUP)));
 
+    public static final RegistryObject<BlockItem> PLANE_WORKBENCH = ITEMS
+            .register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), new Item.Properties().group(ITEM_GROUP)));
 }
