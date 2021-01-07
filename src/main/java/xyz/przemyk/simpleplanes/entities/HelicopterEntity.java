@@ -5,16 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -123,13 +119,6 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
-
-        //        float yaw = MathUtil.getYaw(motion);
-        //        double speed = getMotion().length();
-        //
-        //        setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
-        //                rotationPitch,
-        //                speed));
         return q;
     }
 

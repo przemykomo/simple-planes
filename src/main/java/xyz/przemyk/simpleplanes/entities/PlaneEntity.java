@@ -832,23 +832,37 @@ public class PlaneEntity extends Entity {
 
     @Override
     public void readAdditional(CompoundNBT compound) {
-        dataManager.set(FUEL, compound.getInt("Fuel"));
-        dataManager.set(MAX_SPEED, compound.getFloat("max_speed"));
-        int max_health = compound.getInt("max_health");
-        if (max_health <= 0)
-            max_health = 20;
-        dataManager.set(MAX_HEALTH, max_health);
-        int health = compound.getInt("health");
-        if (health <= 0)
-            health = 1;
-        dataManager.set(HEALTH, health);
-        String material = compound.getString("material");
-        if (material.isEmpty())
-            material = "minecraft:oak_planks";
-        setMaterial(material);
-        CompoundNBT upgradesNBT = compound.getCompound("upgrades");
-        dataManager.set(UPGRADES_NBT, upgradesNBT);
-        deserializeUpgrades(upgradesNBT);
+        if (compound.contains("Fuel")) {
+            dataManager.set(FUEL, compound.getInt("Fuel"));
+        }
+
+        if (compound.contains("max_speed")) {
+            dataManager.set(MAX_SPEED, compound.getFloat("max_speed"));
+        }
+
+        if (compound.contains("max_health")) {
+            int max_health = compound.getInt("max_health");
+            if (max_health <= 0)
+                max_health = 20;
+            dataManager.set(MAX_HEALTH, max_health);
+        }
+
+        if (compound.contains("health")) {
+            int health = compound.getInt("health");
+            if (health <= 0)
+                health = 1;
+            dataManager.set(HEALTH, health);
+        }
+
+        if (compound.contains("material")) {
+            setMaterial(compound.getString("material"));
+        }
+
+        if (compound.contains("upgrades")) {
+            CompoundNBT upgradesNBT = compound.getCompound("upgrades");
+            dataManager.set(UPGRADES_NBT, upgradesNBT);
+            deserializeUpgrades(upgradesNBT);
+        }
     }
 
     private void deserializeUpgrades(CompoundNBT upgradesNBT) {
@@ -1253,7 +1267,6 @@ public class PlaneEntity extends Entity {
      * Sets the damage taken from the last hit.
      */
     public void setDamageTaken(float damageTaken) {
-
         this.dataManager.set(DAMAGE_TAKEN, damageTaken);
     }
 
