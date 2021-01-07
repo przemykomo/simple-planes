@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -24,19 +25,21 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static xyz.przemyk.simpleplanes.render.FurnacePlaneModel.TICKS_PER_PROPELLER_ROTATION;
 
 public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected EntityModel<PlaneEntity> propellerModel;
-
-    //    protected final ArrayList<EntityModel<T>> addonModels = new ArrayList<>();
+    public static final ResourceLocation PROPELLER_TEXTURE = new ResourceLocation("textures/block/iron_block.png");
 
     protected AbstractPlaneRenderer(EntityRendererManager renderManager) {
         super(renderManager);
         propellerModel = new PropellerModel();
     }
+
     public static float getPropellerRotation(PlaneEntity entity, float partialTicks) {
         return ((entity.ticksExisted + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
     }
@@ -117,14 +120,8 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
             }
             matrixStackIn.pop();
         }
-        String resourceName;
-//        if (planeEntity.getMaterial().fireResistant)
-//            resourceName = "textures/block/netherite_block.png";
-//        else {
-            resourceName = "textures/block/iron_block.png";
-//        }
 
-        ivertexbuilder = ItemRenderer.getArmorVertexBuilder(bufferIn, planeModel.getRenderType(new ResourceLocation(resourceName)), false, planeEntity.hasNoGravity());
+        ivertexbuilder = ItemRenderer.getArmorVertexBuilder(bufferIn, planeModel.getRenderType(PROPELLER_TEXTURE), false, planeEntity.hasNoGravity());
 
         propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
@@ -136,26 +133,29 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         super.render(planeEntity, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
-    protected void renderAdditional(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-
-    }
-
-//    protected void renderEngine(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-//        EngineModel.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn, Blocks.FURNACE);
-//    }
+    protected void renderAdditional(T planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {}
 
     protected abstract EntityModel<T> getModel();
 
     @Override
     public ResourceLocation getEntityTexture(PlaneEntity entity) {
-        //TODO: cache texture location, use map from block id or something
-        Random random = new Random(42L);
-        ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ModelLoader.getInventoryVariant(entity.getMaterial().getRegistryName().toString())).getQuads(null, Direction.SOUTH, random, EmptyModelData.INSTANCE).get(0).getSprite().getName();
-        return new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
+        Block block = entity.getMaterial();
+        if (cachedTextures.containsKey(block)) {
+            return cachedTextures.get(block);
+        }
 
-//        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
-//        return Minecraft.getInstance().getItemRenderer().getItemModelMesher().getItemModel(Items.ACACIA_PLANKS).getQuads(null, null, random, EmptyModelData.INSTANCE).get(0).getSprite().getName();
-
-//        return new ResourceLocation("minecraft", "textures/block/acacia_planks.png");
+        ResourceLocation texture;
+        try {
+            Random random = new Random(42L);
+            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ModelLoader.getInventoryVariant(block.getRegistryName().toString())).getQuads(null, Direction.SOUTH, random, EmptyModelData.INSTANCE).get(0).getSprite().getName();
+            texture = new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
+        } catch (IndexOutOfBoundsException exception) {
+            texture = FALLBACK_TEXTURE;
+        }
+        cachedTextures.put(block, texture);
+        return texture;
     }
+
+    public static final Map<Block, ResourceLocation> cachedTextures = new HashMap<>();
+    public static final ResourceLocation FALLBACK_TEXTURE = new ResourceLocation("minecraft", "textures/oak_planks.png");
 }
