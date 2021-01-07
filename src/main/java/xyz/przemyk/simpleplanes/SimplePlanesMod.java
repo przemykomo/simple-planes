@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes;
 
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,8 +15,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.lwjgl.glfw.GLFW;
+import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchScreen;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
-import xyz.przemyk.simpleplanes.render.*;
+import xyz.przemyk.simpleplanes.client.render.*;
 import xyz.przemyk.simpleplanes.setup.*;
 
 @Mod(SimplePlanesMod.MODID)
@@ -51,5 +53,7 @@ public class SimplePlanesMod {
         MinecraftForge.EVENT_BUS.register(new PlaneGui());
         keyBind = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(keyBind);
+
+        ScreenManager.registerFactory(SimplePlanesBlocks.PLANE_WORKBENCH_CONTAINER.get(), PlaneWorkbenchScreen::new);
     }
 }
