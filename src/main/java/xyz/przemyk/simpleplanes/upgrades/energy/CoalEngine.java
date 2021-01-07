@@ -13,7 +13,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.render.EngineModel;
+import xyz.przemyk.simpleplanes.client.render.EngineModel;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 import static xyz.przemyk.simpleplanes.PlanesEvents.NOT_COAL_TAG;

@@ -3,6 +3,7 @@ package xyz.przemyk.simpleplanes.client;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
@@ -22,11 +23,14 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchScreen;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.BoostPacket;
 import xyz.przemyk.simpleplanes.network.OpenInventoryPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
@@ -36,6 +40,7 @@ import static xyz.przemyk.simpleplanes.SimplePlanesMod.keyBind;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEvents {
+
     private static boolean playerRotationNeedToPop = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
