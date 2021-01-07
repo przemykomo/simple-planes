@@ -15,7 +15,7 @@ public class InformationItem extends Item {
     private final ITextComponent information;
 
     public InformationItem(ITextComponent information) {
-        super(new Properties().group(SimplePlanesItems.SIMPLE_PLANES_ITEM_GROUP));
+        super(new Properties().group(SimplePlanesItems.ITEM_GROUP));
         this.information = information;
     }
 

@@ -1,33 +1,30 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.PlaneMaterial;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.List;
 
 public class LargePlaneEntity extends PlaneEntity {
+
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
     }
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, Block material) {
         super(entityTypeIn, worldIn, material);
     }
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, Block material, double x, double y, double z) {
         super(entityTypeIn, worldIn, material, x, y, z);
     }
 
@@ -92,10 +89,11 @@ public class LargePlaneEntity extends PlaneEntity {
         return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -1);
     }
 
-    @Override
-    protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_large_plane"));
-    }
+//    @Override
+//    protected Item getItem() {
+////        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_large_plane"));
+//        return SimplePlanesItems.
+//    }
 
     @Override
     public double getCameraDistanceMultiplayer() {

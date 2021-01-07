@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -32,12 +33,11 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesMaterials;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -86,7 +86,7 @@ public class PlaneEntity extends Entity {
     private int deltaRotationTicks;
 
     //the object itself
-    private PlaneMaterial material;
+    private Block planksMaterial;
     //for the on mount massage
     public boolean mountmassage;
     //so no spam damage
@@ -96,14 +96,11 @@ public class PlaneEntity extends Entity {
     //golden hearths decay
     public int health_timer = 0;
 
-
-    //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn) {
-        this(entityTypeIn, worldIn, SimplePlanesMaterials.OAK);
+        this(entityTypeIn, worldIn, Blocks.OAK_PLANKS);
     }
 
-    //EntityType<? extends PlaneEntity> is always AbstractPlaneEntityType but I cannot change it because minecraft
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
+    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, Block material) {
         super(entityTypeIn, worldIn);
         this.stepHeight = 0.9999f;
         this.setMaterial(material);
@@ -113,7 +110,7 @@ public class PlaneEntity extends Entity {
         setMaxSpeed(1f);
     }
 
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
+    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, Block material, double x, double y, double z) {
         this(entityTypeIn, worldIn, material);
         setPosition(x, y, z);
     }
@@ -192,8 +189,8 @@ public class PlaneEntity extends Entity {
         Q_Prev = q;
     }
 
-    public PlaneMaterial getMaterial() {
-        return material;
+    public Block getMaterial() {
+        return planksMaterial;
     }
 
     public void setHealth(Integer health) {
@@ -222,12 +219,13 @@ public class PlaneEntity extends Entity {
 
     public void setMaterial(String material) {
         dataManager.set(MATERIAL, material);
-        this.material = SimplePlanesMaterials.getMaterial((material));
+        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(material));
+        this.planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
     }
 
-    public void setMaterial(PlaneMaterial material) {
-        dataManager.set(MATERIAL, material.name);
-        this.material = material;
+    public void setMaterial(Block material) {
+        dataManager.set(MATERIAL, material.getRegistryName().toString());
+        this.planksMaterial = material;
     }
 
     public boolean isPowered() {
@@ -846,7 +844,7 @@ public class PlaneEntity extends Entity {
         dataManager.set(HEALTH, health);
         String material = compound.getString("material");
         if (material.isEmpty())
-            material = "oak";
+            material = "minecraft:oak_planks";
         setMaterial(material);
         CompoundNBT upgradesNBT = compound.getCompound("upgrades");
         dataManager.set(UPGRADES_NBT, upgradesNBT);
@@ -938,11 +936,10 @@ public class PlaneEntity extends Entity {
         super.notifyDataManagerChange(key);
         if (UPGRADES_NBT.equals(key) && world.isRemote()) {
             deserializeUpgradesData(dataManager.get(UPGRADES_NBT));
-        }
-        if (MATERIAL.equals(key) && world.isRemote()) {
-            this.material = SimplePlanesMaterials.getMaterial((dataManager.get(MATERIAL)));
-        }
-        if (Q.equals(key) && world.isRemote() && !canPassengerSteer()) {
+        } else if (MATERIAL.equals(key) && world.isRemote()) {
+            Block block = ForgeRegistries.BLOCKS.getValue((new ResourceLocation(dataManager.get(MATERIAL))));
+            this.planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
+        } else if (Q.equals(key) && world.isRemote() && !canPassengerSteer()) {
             if (firstUpdate) {
                 lerpStepsQ = 0;
                 setQ_Client(getQ());
@@ -963,9 +960,9 @@ public class PlaneEntity extends Entity {
         if (source.isExplosion()) {
             return false;
         }
-        if (source.isFireDamage() && material.fireResistant) {
-            return true;
-        }
+//        if (source.isFireDamage() && material.fireResistant) {
+//            return true;
+//        }
         if (source.getTrueSource() != null && source.getTrueSource().isRidingSameEntity(this)) {
             return true;
         }
@@ -974,7 +971,8 @@ public class PlaneEntity extends Entity {
 
     @Override
     public boolean isImmuneToFire() {
-        return this.material.fireResistant;
+//        return this.material.fireResistant;
+        return false; //TODO
     }
 
     @Override
@@ -1096,7 +1094,8 @@ public class PlaneEntity extends Entity {
     }
 
     protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_plane"));
+        return SimplePlanesItems.PLANE_ITEM.get(); //TODO
+//        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_plane"));
     }
 
     private int lerpSteps;
@@ -1180,10 +1179,9 @@ public class PlaneEntity extends Entity {
     }
 
     public void upgradeChanged() {
-
+        //TODO: use packets instead of sending upgrades nbt
         this.dataManager.set(UPGRADES_NBT, getUpgradesNBTData());
     }
-
 
     private boolean rocking;
     private float rockingIntensity;
@@ -1269,7 +1267,6 @@ public class PlaneEntity extends Entity {
     public double getCameraDistanceMultiplayer() {
         return 1;
     }
-
 
     protected class Vars {
         public float moveForward = 0;

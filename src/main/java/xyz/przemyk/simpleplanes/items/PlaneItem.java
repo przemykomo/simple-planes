@@ -35,8 +35,8 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public ITextComponent getName() {
-        return super.getName();
+    public ITextComponent getDisplayName(ItemStack stack) {
+        return super.getDisplayName(stack);
     }
 
     @Override
@@ -96,10 +96,4 @@ public class PlaneItem extends Item {
             }
         }
     }
-
-    @Override
-    public String getTranslationKey(ItemStack stack) {
-        return super.getTranslationKey(stack);
-    }
-
 }

@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -13,7 +14,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.PlaneMaterial;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -23,11 +23,11 @@ public class HelicopterEntity extends LargePlaneEntity {
         super(entityTypeIn, worldIn);
     }
 
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
+    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, Block material) {
         super(entityTypeIn, worldIn, material);
     }
 
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
+    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, Block material, double x, double y, double z) {
         super(entityTypeIn, worldIn, material, x, y, z);
     }
 
@@ -67,10 +67,10 @@ public class HelicopterEntity extends LargePlaneEntity {
         return vars.passengerSprinting ? 2 : 1;
     }
 
-    @Override
-    protected Item getItem() {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_helicopter"));
-    }
+//    @Override
+//    protected Item getItem() {
+//        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_helicopter"));
+//    }
 
     @Override
     protected void addPassenger(Entity passenger) {

@@ -45,12 +45,11 @@ public class MegaPlaneRenderer extends AbstractPlaneRenderer<MegaPlaneEntity> {
         return new MegaPlaneModel();
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public ResourceLocation getEntityTexture(MegaPlaneEntity entity) {
-        //        if (entity.isPowered()) {
-        //            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace_powered/"+entity.getMaterial().name+".png");
-        //        }
-        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
-    }
+//    @Override
+//    public ResourceLocation getEntityTexture(MegaPlaneEntity entity) {
+//        //        if (entity.isPowered()) {
+//        //            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/large_furnace_powered/"+entity.getMaterial().name+".png");
+//        //        }
+//        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
+//    }
 }
