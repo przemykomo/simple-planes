@@ -36,7 +36,6 @@ public class SimplePlanesMod {
         SimplePlanesItems.init();
         SimplePlanesDataSerializers.init();
         PlaneNetworking.init();
-        SimplePlanesIntegrations.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().register(Config.class);
