@@ -15,6 +15,5 @@ public class SimplePlanesSounds {
         SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<SoundEvent> PLANE_LOOP_SOUND_EVENT = SOUND_EVENTS
-        .register("plane_loop", () -> new SoundEvent(new ResourceLocation(SimplePlanesMod.MODID, "plane_loop")));
+    public static final RegistryObject<SoundEvent> PLANE_LOOP_SOUND_EVENT = SOUND_EVENTS.register("plane_loop", () -> new SoundEvent(new ResourceLocation(SimplePlanesMod.MODID, "plane_loop")));
 }

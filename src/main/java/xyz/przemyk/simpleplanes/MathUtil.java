@@ -62,10 +62,6 @@ public class MathUtil {
         return vec.scale(size / vec.length());
     }
 
-    public static double getHorizontalLength(Vector3d vector3d) {
-        return Math.sqrt(vector3d.x * vector3d.x + vector3d.z * vector3d.z);
-    }
-
     public static EulerAngles toEulerAngles(Quaternion q) {
         EulerAngles angles = new EulerAngles();
 
