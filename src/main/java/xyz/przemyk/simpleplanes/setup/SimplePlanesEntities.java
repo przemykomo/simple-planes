@@ -25,7 +25,7 @@ public class SimplePlanesEntities {
     public static final RegistryObject<EntityType<HelicopterEntity>> HELICOPTER = ENTITIES.register("helicopter", () -> createEntityType(HelicopterEntity::new, HelicopterEntity.FLYING_SIZE));
     public static final RegistryObject<EntityType<MegaPlaneEntity>> MEGA_PLANE = ENTITIES.register("mega_plane", () -> createEntityType(MegaPlaneEntity::new, MegaPlaneEntity.FLYING_SIZE));
 
-    private static   <T extends PlaneEntity> EntityType<T> createEntityType(EntityType.IFactory<T> factory, EntitySize size) {
+    private static <T extends PlaneEntity> EntityType<T> createEntityType(EntityType.IFactory<T> factory, EntitySize size) {
         return new EntityType<>(factory, EntityClassification.MISC, true, true, false, true, ImmutableSet.of(), size, 5, 3);
     }
 }

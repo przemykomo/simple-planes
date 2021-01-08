@@ -13,10 +13,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchBlock;
 import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchContainer;
-import xyz.przemyk.simpleplanes.integration.energy.ChargerBlock;
-import xyz.przemyk.simpleplanes.integration.energy.ChargerTileEntity;
-import xyz.przemyk.simpleplanes.integration.liquid.LiquidFuelingBlock;
-import xyz.przemyk.simpleplanes.integration.liquid.LiquidFuelingTileEntity;
 import xyz.przemyk.simpleplanes.upgrades.cloud.CloudBlock;
 
 @SuppressWarnings("unused")
@@ -33,12 +29,7 @@ public class SimplePlanesBlocks {
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<Block> CHARGER_BLOCK = BLOCKS.register("charger_block", ChargerBlock::new);
-    public static final RegistryObject<Block> FUELING_BLOCK = BLOCKS.register("fueling_block", LiquidFuelingBlock::new);
-    public static final RegistryObject<Block> CLOUD = BLOCKS.register("cloud", CloudBlock::new);
-    public static final RegistryObject<TileEntityType<ChargerTileEntity>> CHARGER_TILE = TILES.register("charger_block_tile", () -> TileEntityType.Builder.create(ChargerTileEntity::new, CHARGER_BLOCK.get()).build(null));
-    public static final RegistryObject<TileEntityType<LiquidFuelingTileEntity>> FUELING_TILE = TILES.register("fueling_block_tile", () -> TileEntityType.Builder.create(LiquidFuelingTileEntity::new, FUELING_BLOCK.get()).build(null));
-
+    public static final RegistryObject<CloudBlock> CLOUD = BLOCKS.register("cloud", CloudBlock::new);
     public static final RegistryObject<PlaneWorkbenchBlock> PLANE_WORKBENCH_BLOCK = BLOCKS.register("plane_workbench", () -> new PlaneWorkbenchBlock(AbstractBlock.Properties.from(Blocks.CRAFTING_TABLE)));
     public static final RegistryObject<ContainerType<PlaneWorkbenchContainer>> PLANE_WORKBENCH_CONTAINER = CONTAINERS.register("plane_workbench", () -> new ContainerType<>(PlaneWorkbenchContainer::new));
 }
