@@ -28,7 +28,6 @@ public class SimplePlanesItems {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, SimplePlanesMod.MODID);
 
-
     public static void init() {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -46,18 +45,15 @@ public class SimplePlanesItems {
     public static final RegistryObject<PlaneItem> MEGA_PLANE_ITEM = ITEMS.register("mega_plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE.get(), world)));
 
     public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
-    public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS
-        .register("furnace_engine", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
+    public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
 
-    public static final RegistryObject<UpgradeItem> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.FLOATING));
+    public static final RegistryObject<UpgradeItem> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.FLOATY_BEDDING));
     public static final RegistryObject<UpgradeItem> BOOSTER = ITEMS.register("booster", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.BOOSTER));
+    public static final RegistryObject<UpgradeItem> SHOOTER = ITEMS.register("shooter", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.SHOOTER));
+    public static final RegistryObject<UpgradeItem> HEALING = ITEMS.register("healing", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.HEALING));
 
-    //TODO: make all upgrades actually work
-    public static final RegistryObject<InformationItem> SPRAYER = ITEMS.register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
-//    public static final RegistryObject<InformationItem> BOOSTER = ITEMS.register("booster", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.booster")));
-    public static final RegistryObject<InformationItem> SHOOTER = ITEMS.register("shooter", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.shooter")));
-    public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
-    public static final RegistryObject<InformationItem> HEALING = ITEMS.register("healing", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.healing")));
+//    public static final RegistryObject<InformationItem> SPRAYER = ITEMS.register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
+//    public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
     public static final RegistryObject<InformationItem> CLOUD = ITEMS
         .register("cloud", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.cloud")) {
             @Override

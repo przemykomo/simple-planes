@@ -21,7 +21,7 @@ public class FloatingUpgrade extends Upgrade {
     public static final ResourceLocation LARGE_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/floating_large.png");
 
     public FloatingUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.FLOATING.get(), planeEntity);
+        super(SimplePlanesUpgrades.FLOATY_BEDDING.get(), planeEntity);
     }
 
     @Override

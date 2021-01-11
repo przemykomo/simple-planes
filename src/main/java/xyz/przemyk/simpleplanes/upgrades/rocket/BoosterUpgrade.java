@@ -23,7 +23,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import static net.minecraft.item.Items.GUNPOWDER;
 
-public class RocketUpgrade extends Upgrade {
+public class BoosterUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/rocket.png");
     public static int FUEL_PER_GUNPOWDER = 20;
 
@@ -51,7 +51,7 @@ public class RocketUpgrade extends Upgrade {
         fuel = buffer.readVarInt();
     }
 
-    public RocketUpgrade(PlaneEntity planeEntity) {
+    public BoosterUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BOOSTER.get(), planeEntity);
     }
 

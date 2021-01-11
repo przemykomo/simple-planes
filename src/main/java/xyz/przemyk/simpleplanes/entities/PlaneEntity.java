@@ -229,7 +229,7 @@ public class PlaneEntity extends Entity {
     }
 
     public boolean isPowered() {
-        return dataManager.get(FUEL) > 0 || isCreative();
+        return (dataManager.get(FUEL) > 0 || isCreative()) && isAlive();
     }
 
     @Override
@@ -910,7 +910,7 @@ public class PlaneEntity extends Entity {
 
     @Override
     public boolean canBeRiddenInWater(Entity rider) {
-        return upgrades.containsKey(SimplePlanesUpgrades.FLOATING.getId());
+        return upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId());
     }
 
     @Override
@@ -1052,29 +1052,28 @@ public class PlaneEntity extends Entity {
 
     //on dismount
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
-        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
-            if (livingEntity instanceof PlayerEntity) {
-                final PlayerEntity playerEntity = (PlayerEntity) livingEntity;
-
-                if (!playerEntity.isCreative() && this.getPassengers().size() == 0 && this.isAlive()) {
-                    ItemStack itemStack = getItemStack();
-
-                    playerEntity.addItemStackToInventory(itemStack);
-                    this.remove();
-                    return super.func_230268_c_(livingEntity);
-                }
-            }
-        }
+//        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+//            if (livingEntity instanceof PlayerEntity) {
+//                final PlayerEntity playerEntity = (PlayerEntity) livingEntity;
+//
+//                if (!playerEntity.isCreative() && this.getPassengers().size() == 0 && this.isAlive()) {
+//                    ItemStack itemStack = getItemStack();
+//
+//                    playerEntity.addItemStackToInventory(itemStack);
+//                    this.remove();
+//                }
+//            }
+//        }
         return super.func_230268_c_(livingEntity);
     }
 
     public ItemStack getItemStack() {
         ItemStack itemStack = getItem().getDefaultInstance();
-        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
-            final CompoundNBT value = serializeNBT();
-            value.putBoolean("Used", true);
-            itemStack.setTagInfo("EntityTag", value);
-        }
+//        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+//            final CompoundNBT value = serializeNBT();
+//            value.putBoolean("Used", true);
+//            itemStack.setTagInfo("EntityTag", value);
+//        }
 
         return itemStack;
     }

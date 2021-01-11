@@ -10,10 +10,10 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-public class HealUpgrade extends Upgrade {
+public class HealingUpgrade extends Upgrade {
 
-    public HealUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.HEAL.get(), planeEntity);
+    public HealingUpgrade(PlaneEntity planeEntity) {
+        super(SimplePlanesUpgrades.HEALING.get(), planeEntity);
     }
 
     private int cooldown = 10;
