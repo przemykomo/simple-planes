@@ -105,7 +105,7 @@ public class BoosterUpgrade extends Upgrade {
         Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
 
         planeEntity.setMotion(m.add(motion));
-        if (!planeEntity.world.isRemote) {
+        if (!planeEntity.world.isRemote) { //TODO: spawn particles on client, not on server
             planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f));
             planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f));
         }

@@ -17,7 +17,10 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -49,8 +52,8 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeSlot;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import static net.minecraft.util.math.MathHelper.wrapDegrees;
@@ -100,14 +103,17 @@ public class PlaneEntity extends Entity {
     //golden hearths decay
     public int health_timer = 0;
 
+    private final int networkUpdateInterval;
+
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn) {
         this(entityTypeIn, worldIn, Blocks.OAK_PLANKS);
     }
 
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, Block material) {
         super(entityTypeIn, worldIn);
+        this.networkUpdateInterval = entityTypeIn.getUpdateFrequency();
         this.stepHeight = 0.9999f;
-        this.setMaterial(material);
+        setMaterial(material);
         setMaxSpeed(1f);
     }
 
@@ -159,10 +165,6 @@ public class PlaneEntity extends Entity {
 
     public float getMaxFuel() {
         return dataManager.get(MAX_FUEL);
-    }
-
-    public void setMaxFuel(int max_fuel) {
-        dataManager.set(MAX_FUEL, max_fuel);
     }
 
     public Quaternion getQ() {
@@ -490,7 +492,7 @@ public class PlaneEntity extends Entity {
         q.multiply(new Quaternion(Vector3f.XN, ((float) (rotationPitch - angelsOld.pitch)), true));
         q.multiply(new Quaternion(Vector3f.YP, ((float) (rotationYaw - angelsOld.yaw)), true));
 
-        q = MathUtil.normalizeQuaternion(q);
+        q = normalizeQuaternion(q);
 
         setQ_prev(getQ_Client());
         setQ(q);
@@ -527,23 +529,14 @@ public class PlaneEntity extends Entity {
     }
 
     public void tickUpgrades() {
-        HashSet<Upgrade> upgradesToRemove = new HashSet<>();
-        HashSet<Upgrade> upgradesToUpdate = new HashSet<>();
-        for (Upgrade upgrade : upgrades.values()) {
+        Collection<Upgrade> upgradesVal = upgrades.values();
+        for (Upgrade upgrade : upgradesVal) {
             upgrade.tick();
             if (upgrade.removed) {
-                upgradesToRemove.add(upgrade);
-            } else if (upgrade.updateClient && !world.isRemote) {
-                upgradesToUpdate.add(upgrade);
+                upgradesVal.remove(upgrade);
+            } else if (upgrade.updateClient && !world.isRemote && ticksExisted % networkUpdateInterval == 0) {
+                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world));
             }
-        }
-
-        for (Upgrade upgrade : upgradesToRemove) {
-            upgrades.remove(upgrade.getType().getRegistryName());
-        }
-
-        for (Upgrade upgrade : upgradesToUpdate) {
-            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world));
         }
     }
 
@@ -578,7 +571,7 @@ public class PlaneEntity extends Entity {
         rotationYaw = (float) angels1.yaw;
         rotationRoll = (float) angels1.roll;
 
-        float d = (float) MathUtil.wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
+        float d = (float) wrapSubtractDegrees(prevRotationYaw, this.rotationYaw);
         if (rotationRoll >= 90 && prevRotationRoll <= 90) {
             d = 0;
         }
@@ -629,7 +622,7 @@ public class PlaneEntity extends Entity {
                     rotationRoll = MathHelper.clamp(rotationRoll - f1, -r, 0);
                 }
                 final double roll_old = toEulerAngles(getQ()).roll;
-                if (MathUtil.degreesDifferenceAbs(roll_old, 0) < 90) {
+                if (degreesDifferenceAbs(roll_old, 0) < 90) {
                     turn = MathHelper.clamp(roll_old * vars.yaw_multiplayer, -yawdiff, yawdiff);
                 } else {
                     turn = MathHelper.clamp((180 - roll_old) * vars.yaw_multiplayer, -yawdiff, yawdiff);
@@ -681,7 +674,7 @@ public class PlaneEntity extends Entity {
 
         Vector3d pushVec = new Vector3d(getTickPush(vars));
         if (pushVec.length() != 0 && motion.length() > 0.1) {
-            double dot = MathUtil.normalizedDotProduct(pushVec, motion);
+            double dot = normalizedDotProduct(pushVec, motion);
             pushVec = pushVec.scale(MathHelper.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 2));
         }
 
@@ -733,7 +726,7 @@ public class PlaneEntity extends Entity {
         }
         rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
 
-        if (MathUtil.degreesDifferenceAbs(rotationPitch, 0) > 1 && getMotion().length() < 0.1) {
+        if (degreesDifferenceAbs(rotationPitch, 0) > 1 && getMotion().length() < 0.1) {
             vars.push = 0;
         }
         if (getMotion().length() < vars.take_off_speed) {
@@ -781,12 +774,12 @@ public class PlaneEntity extends Entity {
         lift *= cos_roll;
         d *= cos_roll;
 
-        setMotion(MathUtil.rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
+        setMotion(rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
             lerpAngle180(vars.pitch_to_motion * d, pitch, rotationPitch) + lift,
             speed));
         if (!getOnGround() && !isAboveWater() && motion.length() > 0.1) {
 
-            if (MathUtil.degreesDifferenceAbs(pitch, rotationPitch) > 90) {
+            if (degreesDifferenceAbs(pitch, rotationPitch) > 90) {
                 pitch = wrapDegrees(pitch + 180);
             }
             if (Math.abs(rotationPitch) < 85) {
@@ -823,10 +816,10 @@ public class PlaneEntity extends Entity {
     }
 
     public Vector3f transformPos(Vector3f relPos) {
-        EulerAngles angels = MathUtil.toEulerAngles(getQ_Client());
+        EulerAngles angels = toEulerAngles(getQ_Client());
         angels.yaw = -angels.yaw;
         angels.roll = -angels.roll;
-        relPos.transform(MathUtil.toQuaternion(angels.yaw, angels.pitch, angels.roll));
+        relPos.transform(toQuaternion(angels.yaw, angels.pitch, angels.roll));
         return relPos;
     }
 
@@ -1038,7 +1031,7 @@ public class PlaneEntity extends Entity {
 
         entityToUpdate.setRenderYawOffset(this.rotationYaw);
 
-        float f = MathHelper.wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
+        float f = wrapDegrees(entityToUpdate.rotationYaw - this.rotationYaw);
         float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
 
         float perc = deltaRotationTicks > 0 ? 1f / deltaRotationTicks : 1f;
