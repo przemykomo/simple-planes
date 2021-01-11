@@ -5,13 +5,8 @@ import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
-
-import java.util.Map;
 
 public class MegaPlaneEntity extends LargePlaneEntity {
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(6F, 1.5F);
@@ -30,13 +25,13 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         //just hate my head in the nether ceiling
     }
 
-    @Override
-    public boolean canAddUpgrade(UpgradeType upgradeType) {
-        if (upgradeType.occupyBackSeat && isFull()) {
-            return false;
-        }
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
-    }
+//    @Override
+//    public boolean canAddUpgrade(UpgradeType upgradeType) {
+//        if (upgradeType.occupyBackSeat && isFull()) {
+//            return false;
+//        }
+//        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
+//    }
 
     @Override
     public int getFuelCost(Vars vars) {
@@ -125,16 +120,16 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         return !isFull() && passenger.getRidingEntity() != this && !(passenger instanceof PlaneEntity);
     }
 
-    @Override
-    public boolean isFull() {
-        int i = 0;
-        for (Map.Entry<ResourceLocation, Upgrade> entry : upgrades.entrySet()) {
-            Upgrade value = entry.getValue();
-            if (value.getType().occupyBackSeat) {
-                i += value.getSeats();
-            }
-        }
-        i = ((i + 1) / 4) + (i / 4);
-        return getPassengers().size() + i >= 6;
-    }
+//    @Override
+//    public boolean isFull() {
+//        int i = 0;
+//        for (Map.Entry<ResourceLocation, Upgrade> entry : upgrades.entrySet()) {
+//            Upgrade value = entry.getValue();
+//            if (value.getType().occupyBackSeat) {
+//                i += value.getSeats();
+//            }
+//        }
+//        i = ((i + 1) / 4) + (i / 4);
+//        return getPassengers().size() + i >= 6;
+//    }
 }

@@ -105,19 +105,19 @@ public abstract class AbstractPlaneRenderer<T extends PlaneEntity> extends Entit
         planeModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         int seat = 0;
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
-            matrixStackIn.push();
-            if (upgrade.getType().occupyBackSeat) {
-                for (int i = 0; i < upgrade.getSeats(); i++) {
-                    matrixStackIn.push();
-                    BackSeatBlockModel.moveMatrix(planeEntity, matrixStackIn, seat);
-                    upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
-                    seat++;
-                    matrixStackIn.pop();
-                }
-            } else {
+//            matrixStackIn.push();
+//            if (upgrade.getType().occupyBackSeat) {
+//                for (int i = 0; i < upgrade.getSeats(); i++) {
+//                    matrixStackIn.push();
+//                    BackSeatBlockModel.moveMatrix(planeEntity, matrixStackIn, seat);
+//                    upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+//                    seat++;
+//                    matrixStackIn.pop();
+//                }
+//            } else {
                 upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
-            }
-            matrixStackIn.pop();
+//            }
+//            matrixStackIn.pop();
         }
 
         ivertexbuilder = ItemRenderer.getArmorVertexBuilder(bufferIn, planeModel.getRenderType(PROPELLER_TEXTURE), false, planeEntity.hasNoGravity());

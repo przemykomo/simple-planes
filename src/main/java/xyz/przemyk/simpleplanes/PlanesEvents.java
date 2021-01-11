@@ -28,23 +28,16 @@ public class PlanesEvents {
             }
             PlaneEntity planeEntity = (PlaneEntity) entity;
 
-            HashSet<Upgrade> upgradesToRemove = new HashSet<>();
             for (Upgrade upgrade : planeEntity.upgrades.values()) {
-                if (upgrade.onItemRightClick(event)) {
-                    upgradesToRemove.add(upgrade);
-                }
-            }
-
-            for (Upgrade upgrade : upgradesToRemove) {
-                planeEntity.upgrades.remove(upgrade.getType().getRegistryName());
+                upgrade.onItemRightClick(event);
             }
 
             // some upgrade may shrink itemStack so we need to check if it's empty
-            if (itemStack.isEmpty()) {
-                return;
-            }
+//            if (itemStack.isEmpty()) {
+//                return;
+//            }
 
-            planeEntity.tryToAddUpgrade(player, itemStack);
+//            planeEntity.tryToAddUpgrade(itemStack);
         }
     }
 }

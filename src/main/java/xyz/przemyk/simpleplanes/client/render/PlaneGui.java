@@ -32,8 +32,8 @@ public class PlaneGui extends AbstractGui {
         if (mc.player.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) mc.player.getRidingEntity();
             if (event.getType() == ElementType.ALL) {
-                if (planeEntity.mountmassage) {
-                    planeEntity.mountmassage = false;
+                if (planeEntity.mountMessage) {
+                    planeEntity.mountMessage = false;
                     if (planeEntity instanceof HelicopterEntity) {
                         Minecraft.getInstance().ingameGUI
                             .setOverlayMessage(new TranslationTextComponent("helicopter.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),

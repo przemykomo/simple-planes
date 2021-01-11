@@ -9,8 +9,6 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.List;
 
@@ -56,13 +54,13 @@ public class LargePlaneEntity extends PlaneEntity {
             return false;
         }
 
-        if (getPassengers().size() == 1) {
-            for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade.getType().occupyBackSeat) {
-                    return false;
-                }
-            }
-        }
+//        if (getPassengers().size() == 1) {
+//            for (Upgrade upgrade : upgrades.values()) {
+//                if (upgrade.getType().occupyBackSeat) {
+//                    return false;
+//                }
+//            }
+//        }
 
         return true;
     }
@@ -108,23 +106,18 @@ public class LargePlaneEntity extends PlaneEntity {
         }
     }
 
-    @Override
-    public boolean canAddUpgrade(UpgradeType upgradeType) {
-        if (upgradeType.occupyBackSeat) {
-            if (getPassengers().size() > 1) {
-                return false;
-            }
-            for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade.getType().occupyBackSeat) {
-                    return false;
-                }
-            }
-        }
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
-    }
-
-    @Override
-    public boolean isLarge() {
-        return true;
-    }
+//    @Override
+//    public boolean canAddUpgrade(UpgradeType upgradeType) {
+//        if (upgradeType.occupyBackSeat) {
+//            if (getPassengers().size() > 1) {
+//                return false;
+//            }
+//            for (Upgrade upgrade : upgrades.values()) {
+//                if (upgrade.getType().occupyBackSeat) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
+//    }
 }

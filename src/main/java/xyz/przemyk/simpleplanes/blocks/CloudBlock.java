@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades.cloud;
+package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -36,7 +36,7 @@ public class CloudBlock extends Block {
 
     public CloudBlock() {
         super(Properties.create(Material.SNOW).sound(SoundType.SNOW).hardnessAndResistance(1F, 1F).tickRandomly().slipperiness(0.5f));
-        this.setDefaultState(this.stateContainer.getBaseState().with(AGE, Integer.valueOf(0)));
+        this.setDefaultState(this.stateContainer.getBaseState().with(AGE, 0));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
@@ -93,7 +93,7 @@ public class CloudBlock extends Block {
         BlockState state = worldIn.getBlockState(pos);
         int i = state.get(AGE);
         if (i < 3) {
-            worldIn.setBlockState(pos, state.with(AGE, Integer.valueOf(i + 1)), 2);
+            worldIn.setBlockState(pos, state.with(AGE, i + 1), 2);
             return false;
         } else {
             this.turnIntoAir(state, worldIn, pos);

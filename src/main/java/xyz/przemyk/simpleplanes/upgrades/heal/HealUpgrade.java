@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
+import net.minecraft.network.PacketBuffer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -32,24 +32,16 @@ public class HealUpgrade extends Upgrade {
     }
 
     @Override
-    public boolean tick() {
+    public void tick() {
         if (cooldown > 0) {
             --cooldown;
         } else {
-            return true;
+            remove();
         }
-        return false;
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-
-    }
-
-    @Override
-    public NonNullList<ItemStack> getDrops() {
-        return NonNullList.create();
-    }
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {}
 
     @Override
     public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
@@ -61,4 +53,10 @@ public class HealUpgrade extends Upgrade {
         }
         planeEntity.health_timer = 0;
     }
+
+    @Override
+    public void writePacket(PacketBuffer buffer) {}
+
+    @Override
+    public void readPacket(PacketBuffer buffer) {}
 }

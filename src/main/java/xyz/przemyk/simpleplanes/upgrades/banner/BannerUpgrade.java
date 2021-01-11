@@ -6,15 +6,14 @@ import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
-import net.minecraft.util.NonNullList;
+import net.minecraft.network.PacketBuffer;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-
-import static net.minecraft.item.Items.WHITE_BANNER;
 
 public class BannerUpgrade extends Upgrade {
     public ItemStack banner;
@@ -22,16 +21,15 @@ public class BannerUpgrade extends Upgrade {
 
     public BannerUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BANNER.get(), planeEntity);
-        banner = WHITE_BANNER.getDefaultInstance();
+        banner = Items.WHITE_BANNER.getDefaultInstance();
         prevRotation = planeEntity.prevRotationYaw;
         rotation = planeEntity.prevRotationYaw;
     }
 
     @Override
-    public boolean tick() {
+    public void tick() {
         prevRotation = rotation;
         rotation = MathUtil.lerpAngle(0.05f, rotation, planeEntity.prevRotationYaw);
-        return super.tick();
     }
 
     @Override
@@ -44,28 +42,14 @@ public class BannerUpgrade extends Upgrade {
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
         final INBT banner = nbt.get("banner");
-        if (banner instanceof CompoundNBT)
+        if (banner instanceof CompoundNBT) {
             this.banner = ItemStack.read((CompoundNBT) banner);
+        }
     }
 
     @Override
-    public CompoundNBT serializeNBTData() {
-        return serializeNBT();
-    }
-
-    @Override
-    public void deserializeNBTData(CompoundNBT nbt) {
-        deserializeNBT(nbt);
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        BannerModel.renderBanner(this, partialticks, matrixStack, buffer, banner, packedLight, BannerTileEntityRenderer.getModelRender());
-    }
-
-    @Override
-    public ItemStack getDrop() {
-        return banner;
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
+        BannerModel.renderBanner(this, partialTicks, matrixStack, buffer, banner, packedLight, BannerTileEntityRenderer.getModelRender());
     }
 
     @Override
@@ -73,7 +57,17 @@ public class BannerUpgrade extends Upgrade {
         if (itemStack.getItem() instanceof BannerItem) {
             banner = itemStack.copy();
             banner.setCount(1);
-            planeEntity.upgradeChanged();
+            updateClient();
         }
+    }
+
+    @Override
+    public void writePacket(PacketBuffer buffer) {
+        buffer.writeItemStack(banner);
+    }
+
+    @Override
+    public void readPacket(PacketBuffer buffer) {
+        banner = buffer.readItemStack();
     }
 }

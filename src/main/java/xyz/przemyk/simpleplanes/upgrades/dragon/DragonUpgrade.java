@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -17,13 +18,12 @@ public class DragonUpgrade extends Upgrade {
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        super.deserializeNBT(nbt);
         planeEntity.setMaxSpeed(2f);
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        DragonModel.renderDragon(planeEntity, partialticks, matrixStack, buffer, packedLight);
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
+        DragonModel.renderDragon(planeEntity, partialTicks, matrixStack, buffer, packedLight);
     }
 
     @Override
@@ -32,4 +32,10 @@ public class DragonUpgrade extends Upgrade {
             planeEntity.setMaxSpeed(2f);
         }
     }
+
+    @Override
+    public void writePacket(PacketBuffer buffer) {}
+
+    @Override
+    public void readPacket(PacketBuffer buffer) {}
 }
