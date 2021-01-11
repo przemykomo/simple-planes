@@ -9,6 +9,7 @@ import net.minecraft.entity.projectile.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.vector.Vector3d;
@@ -35,7 +36,7 @@ public class ShooterUpgrade extends Upgrade {
     }
 
     @Override
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+    public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         PlayerEntity player = event.getPlayer();
         ItemStack itemStack = player.getHeldItem(event.getHand());
         Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1 + planeEntity.getMotion().length())));
@@ -45,6 +46,7 @@ public class ShooterUpgrade extends Upgrade {
 
         Vector3f pos = planeEntity.transformPos(new Vector3f(shootSide ? 0.8f : -0.8f, 0.8f, 0.8f));
         shootSide = !shootSide;
+        updateClient();
 
         double x = pos.getX() + planeEntity.getPosX();
         double y = pos.getY() + planeEntity.getPosY();
@@ -100,12 +102,21 @@ public class ShooterUpgrade extends Upgrade {
             }
             world.addEntity(arrowEntity);
         }
-        return false;
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(ShooterModel.INSTANCE.getRenderType(TEXTURE));
         ShooterModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void writePacket(PacketBuffer buffer) {
+        buffer.writeBoolean(shootSide);
+    }
+
+    @Override
+    public void readPacket(PacketBuffer buffer) {
+        shootSide = buffer.readBoolean();
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -40,18 +41,27 @@ public class RocketUpgrade extends Upgrade {
         fuel = compoundNBT.getInt("fuel");
     }
 
+    @Override
+    public void writePacket(PacketBuffer buffer) {
+        buffer.writeVarInt(fuel);
+    }
+
+    @Override
+    public void readPacket(PacketBuffer buffer) {
+        fuel = buffer.readVarInt();
+    }
+
     public RocketUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BOOSTER.get(), planeEntity);
     }
 
     @Override
-    public boolean tick() {
+    public void tick() {
         push();
-        return super.tick();
     }
 
     @Override
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+    public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
         if (fuel <= 0) {
             if (itemStack.getItem().equals(GUNPOWDER)) {
@@ -63,7 +73,6 @@ public class RocketUpgrade extends Upgrade {
             }
         }
         push();
-        return false;
     }
 
     private void push() {
@@ -71,7 +80,8 @@ public class RocketUpgrade extends Upgrade {
             return;
         }
 
-        fuel -= 1;
+        --fuel;
+        updateClient();
 
         Vector3d m = planeEntity.getMotion();
         float pitch = 0;
@@ -95,15 +105,14 @@ public class RocketUpgrade extends Upgrade {
         Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
 
         planeEntity.setMotion(m.add(motion));
-        if (!planeEntity.world.isRemote()) {
+        if (!planeEntity.world.isRemote) {
             planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f));
             planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f));
-
         }
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(RocketModel.INSTANCE.getRenderType(TEXTURE));
         RocketModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }

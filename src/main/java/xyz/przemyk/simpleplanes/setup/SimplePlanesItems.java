@@ -19,7 +19,8 @@ import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.items.InformationItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
-import xyz.przemyk.simpleplanes.upgrades.cloud.CloudBlock;
+import xyz.przemyk.simpleplanes.blocks.CloudBlock;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -48,9 +49,12 @@ public class SimplePlanesItems {
     public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS
         .register("furnace_engine", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
 
+    public static final RegistryObject<UpgradeItem> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.FLOATING));
+    public static final RegistryObject<UpgradeItem> BOOSTER = ITEMS.register("booster", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.BOOSTER));
+
+    //TODO: make all upgrades actually work
     public static final RegistryObject<InformationItem> SPRAYER = ITEMS.register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
-    public static final RegistryObject<InformationItem> BOOSTER = ITEMS.register("booster", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.booster")));
-    public static final RegistryObject<InformationItem> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.floaty_bedding")));
+//    public static final RegistryObject<InformationItem> BOOSTER = ITEMS.register("booster", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.booster")));
     public static final RegistryObject<InformationItem> SHOOTER = ITEMS.register("shooter", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.shooter")));
     public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
     public static final RegistryObject<InformationItem> HEALING = ITEMS.register("healing", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.healing")));

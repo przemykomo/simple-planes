@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -22,7 +23,7 @@ public class TNTUpgrade extends Upgrade {
     }
 
     @Override
-    public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+    public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
             TNTEntity tntEntity = new TNTEntity(planeEntity.world, planeEntity.getPosX() - 1.0, planeEntity.getPosY(), planeEntity.getPosZ(),
@@ -30,14 +31,18 @@ public class TNTUpgrade extends Upgrade {
             tntEntity.setMotion(planeEntity.getMotion());
             planeEntity.world.addEntity(tntEntity);
             itemStack.damageItem(1, event.getPlayer(), playerEntity -> playerEntity.sendBreakAnimation(event.getHand()));
-            return true;
+            remove();
         }
-
-        return false;
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialticks) {
-        BackSeatBlockModel.renderBlock(planeEntity, partialticks, matrixStack, buffer, packedLight, Blocks.TNT.getDefaultState());
+    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
+        BackSeatBlockModel.renderBlock(planeEntity, partialTicks, matrixStack, buffer, packedLight, Blocks.TNT.getDefaultState());
     }
+
+    @Override
+    public void writePacket(PacketBuffer buffer) {}
+
+    @Override
+    public void readPacket(PacketBuffer buffer) {}
 }

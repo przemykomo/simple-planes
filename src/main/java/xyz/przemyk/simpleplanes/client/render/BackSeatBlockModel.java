@@ -8,11 +8,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.entity.EntityType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.vector.Vector3f;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 
 public class BackSeatBlockModel {
 
@@ -33,12 +35,13 @@ public class BackSeatBlockModel {
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
         matrixStackIn.translate(-0.4, -1, 0);
 
-        if (planeEntity instanceof HelicopterEntity) {
+        EntityType<?> entityType = planeEntity.getType();
+        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
             matrixStackIn.translate(0, 0, -1);
-        } else if (planeEntity instanceof MegaPlaneEntity) {
+        } else if (entityType == SimplePlanesEntities.MEGA_PLANE.get()) {
             int i = seat / 2;
             matrixStackIn.translate(0.5 - seat % 2, 0.2, -3.2 + i * 0.8f);
-        } else if (planeEntity.isLarge()) {
+        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             matrixStackIn.translate(0, 0, -1.2);
         }
 

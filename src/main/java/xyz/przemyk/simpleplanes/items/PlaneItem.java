@@ -66,10 +66,10 @@ public class PlaneItem extends Item {
 
             if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
                 PlaneEntity planeEntity = planeSupplier.apply(worldIn);
-                UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
-                Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
-                planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
-                planeEntity.upgradeChanged();
+//                UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
+//                Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
+//                planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
+//                planeEntity.upgradeChanged();
 
                 planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
                 planeEntity.rotationYaw = playerIn.rotationYaw;

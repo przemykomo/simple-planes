@@ -148,21 +148,6 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    public boolean canAddUpgrade(UpgradeType upgradeType) {
-        if (upgradeType.occupyBackSeat) {
-            if (getPassengers().size() > 1) {
-                return false;
-            }
-            for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade.getType().occupyBackSeat) {
-                    return false;
-                }
-            }
-        }
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
-    }
-
-    @Override
     protected Vector3f getPassengerTwoPos(Entity passenger) {
         return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -0.8f);
     }

@@ -18,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class BannerModel {
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90));
             matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
             matrixStackIn.translate(0.7, 2.35, 0.05);
-            if (planeEntity.isLarge()) {
+            if (planeEntity.getType() != SimplePlanesEntities.PLANE.get()) {
                 matrixStackIn.translate(0, 1.1, 0);
             }
             matrixStackIn.scale(0.5f, 0.5f, 0.5f);

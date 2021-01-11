@@ -14,22 +14,8 @@ public class HelicopterRenderer extends AbstractPlaneRenderer<PlaneEntity> {
         shadowSize = 0.6F;
     }
 
-//    @Override
-//    protected void renderEngine(PlaneEntity planeEntity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-//        matrixStackIn.translate(0, -0.8, 0.65);
-//        super.renderEngine(planeEntity, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-//    }
-
     @Override
     protected EntityModel<PlaneEntity> getModel() {
         return planeModel;
     }
-
-//    @Override
-//    public ResourceLocation getEntityTexture(PlaneEntity entity) {
-//        //        if (entity.isPowered()) {
-//        //            return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace_powered/"+entity.getMaterial().name+".png");
-//        //        }
-//        return new ResourceLocation(SimplePlanesMod.MODID, "textures/entity/plane/furnace/" + entity.getMaterial().name + ".png");
-//    }
 }

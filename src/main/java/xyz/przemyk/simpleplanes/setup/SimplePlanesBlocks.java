@@ -13,7 +13,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchBlock;
 import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchContainer;
-import xyz.przemyk.simpleplanes.upgrades.cloud.CloudBlock;
+import xyz.przemyk.simpleplanes.blocks.CloudBlock;
 
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

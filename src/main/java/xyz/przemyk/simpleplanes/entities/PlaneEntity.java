@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -30,6 +31,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.MathUtil;
@@ -37,10 +39,13 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
+import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeSlot;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import javax.annotation.Nullable;
@@ -65,7 +70,6 @@ public class PlaneEntity extends Entity {
     public static final DataParameter<String> MATERIAL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.STRING);
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
-    public static final DataParameter<CompoundNBT> UPGRADES_NBT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.COMPOUND_NBT);
     public static final DataParameter<Integer> ROCKING_TICKS = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> TIME_SINCE_HIT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
@@ -88,7 +92,7 @@ public class PlaneEntity extends Entity {
     //the object itself
     private Block planksMaterial;
     //for the on mount massage
-    public boolean mountmassage;
+    public boolean mountMessage;
     //so no spam damage
     private int hurtTime;
     //fixing the plane on the ground
@@ -104,9 +108,6 @@ public class PlaneEntity extends Entity {
         super(entityTypeIn, worldIn);
         this.stepHeight = 0.9999f;
         this.setMaterial(material);
-        UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
-        Upgrade upgrade = coalEngine.instanceSupplier.apply(this);
-        this.upgrades.put(coalEngine.getRegistryName(), upgrade);
         setMaxSpeed(1f);
     }
 
@@ -121,10 +122,9 @@ public class PlaneEntity extends Entity {
         dataManager.register(MAX_FUEL, Config.COAL_MAX_FUEL.get());
         dataManager.register(MAX_HEALTH, 10);
         dataManager.register(HEALTH, 10);
-        dataManager.register(UPGRADES_NBT, new CompoundNBT());
         dataManager.register(Q, Quaternion.ONE);
         dataManager.register(MAX_SPEED, 0.25f);
-        dataManager.register(MATERIAL, "oak");
+        dataManager.register(MATERIAL, Blocks.OAK_PLANKS.getRegistryName().toString());
         dataManager.register(ROCKING_TICKS, 0);
         dataManager.register(TIME_SINCE_HIT, 0);
         dataManager.register(DAMAGE_TAKEN, 0f);
@@ -257,24 +257,24 @@ public class PlaneEntity extends Entity {
         }
     }
 
-    public boolean tryToAddUpgrade(PlayerEntity player, ItemStack itemStack) {
-        for (UpgradeType upgradeType : SimplePlanesRegistries.UPGRADE_TYPES.getValues()) {
-            if (upgradeType.IsThisItem(itemStack) && canAddUpgrade(upgradeType)) {
-                upgrade(player, itemStack, upgradeType);
+    public boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
+        Item item = itemStack.getItem();
+        if (item instanceof UpgradeItem) {
+            UpgradeItem upgradeItem = (UpgradeItem) item;
+            if (canAddUpgrade(upgradeItem.upgradeType.get())) {
+                Upgrade upgrade = upgradeItem.upgradeType.get().instanceSupplier.apply(this);
+                upgrade.onApply(itemStack, playerEntity);
+                if (!playerEntity.isCreative()) {
+                    itemStack.shrink(1);
+                }
+                upgrades.put(upgradeItem.upgradeType.get().getRegistryName(), upgrade);
+                if (!world.isRemote) {
+                    PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world, true));
+                }
                 return true;
             }
         }
         return false;
-    }
-
-    public void upgrade(PlayerEntity player, ItemStack itemStack, UpgradeType upgradeType) {
-        Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
-        upgrade.onApply(itemStack, player);
-        if (!player.isCreative()) {
-            itemStack.shrink(1);
-        }
-        upgrades.put(upgradeType.getRegistryName(), upgrade);
-        upgradeChanged();
     }
 
     @SuppressWarnings("deprecation")
@@ -331,14 +331,14 @@ public class PlaneEntity extends Entity {
         value.putBoolean("Used", true);
         itemStack.setTagInfo("Used", value);
         entityDropItem(itemStack).setInvulnerable(true);
-        for (Upgrade upgrade : upgrades.values()) {
-            final NonNullList<ItemStack> items = upgrade.getDrops();
-            for (ItemStack item : items) {
-                if (item != null) {
-                    entityDropItem(item);
-                }
-            }
-        }
+//        for (Upgrade upgrade : upgrades.values()) {
+//            final NonNullList<ItemStack> items = upgrade.getDrops();
+//            for (ItemStack item : items) {
+//                if (item != null) {
+//                    entityDropItem(item);
+//                }
+//            }
+//        }
     }
 
     @Override
@@ -361,25 +361,25 @@ public class PlaneEntity extends Entity {
     public void tick() {
         super.tick();
 
-        if (Double.isNaN(getMotion().length()))
+        if (Double.isNaN(getMotion().length())) {
             setMotion(Vector3d.ZERO);
+        }
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
         prevRotationRoll = rotationRoll;
 
         if (world.isRemote && !canPassengerSteer()) {
-
             tickLerp();
-            this.setMotion(Vector3d.ZERO);
+            setMotion(Vector3d.ZERO);
             tickDeltaRotation(getQ_Client());
             tickUpgrades();
             return;
         }
-        this.markVelocityChanged();
+        markVelocityChanged();
 
         Vars vars = getMotionVars();
 
-        if (this.hasNoGravity()) {
+        if (hasNoGravity()) {
             vars.gravity = 0;
             vars.max_lift = 0;
             vars.push = 0.00f;
@@ -387,25 +387,26 @@ public class PlaneEntity extends Entity {
             vars.passive_engine_push = 0;
         }
 
-        LivingEntity controllingPassenger = (LivingEntity) getControllingPassenger();
-        vars.moveForward = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveForward : 0;
+        Entity controllingPassenger = getControllingPassenger();
+        vars.moveForward = controllingPassenger instanceof PlayerEntity ? ((PlayerEntity) controllingPassenger).moveForward : 0;
         vars.turn_threshold = Config.TURN_THRESHOLD.get() / 100d;
         if (Math.abs(vars.moveForward) < vars.turn_threshold) {
             vars.moveForward = 0;
         }
-        vars.moveStrafing = controllingPassenger instanceof PlayerEntity ? controllingPassenger.moveStrafing : 0;
+        vars.moveStrafing = controllingPassenger instanceof PlayerEntity ? ((PlayerEntity) controllingPassenger).moveStrafing : 0;
         if (Math.abs(vars.moveStrafing) < vars.turn_threshold) {
             vars.moveStrafing = 0;
         }
         if (getPlayer() == null) {
-            this.setSprinting(false);
+            setSprinting(false);
         }
         vars.passengerSprinting = this.isSprinting();
         Quaternion q;
         if (world.isRemote) {
             q = getQ_Client();
-        } else
+        } else {
             q = getQ();
+        }
 
         EulerAngles angelsOld = toEulerAngles(q).copy();
 
@@ -455,23 +456,23 @@ public class PlaneEntity extends Entity {
         //do not move when slow
         double l = 0.002;
         if (oldMotion.length() < l && getMotion().length() < l && groundTicks > -50) {
-            this.setMotion(Vector3d.ZERO);
+            setMotion(Vector3d.ZERO);
         }
-        this.updateRocking();
+        updateRocking();
         // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
         recalculateSize();
         recenterBoundingBox();
-        if (!this.onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) {
-            double speed_before = Math.sqrt(horizontalMag(this.getMotion()));
-            boolean onGroundOld = this.onGround;
+        if (!onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (ticksExisted + getEntityId()) % 4 == 0) {
+            double speed_before = Math.sqrt(horizontalMag(getMotion()));
+            boolean onGroundOld = onGround;
             Vector3d preMotion = getMotion();
             if (preMotion.length() > 0.5 || vars.moveForward != 0) {
                 onGround = true;
             }
-            this.move(MoverType.SELF, this.getMotion());
+            move(MoverType.SELF, getMotion());
             onGround = ((preMotion.getY()) == 0.0) ? onGroundOld : onGround;
-            if (this.collidedHorizontally && !this.world.isRemote && Config.PLANE_CRASH.get() && groundTicks <= 0) {
-                double speed_after = Math.sqrt(horizontalMag(this.getMotion()));
+            if (collidedHorizontally && !world.isRemote && Config.PLANE_CRASH.get() && groundTicks <= 0) {
+                double speed_after = Math.sqrt(horizontalMag(getMotion()));
                 double speed_diff = speed_before - speed_after;
                 float f2 = (float) (speed_diff * 10.0D - 5.0D);
                 if (f2 > 5.0F) {
@@ -505,38 +506,44 @@ public class PlaneEntity extends Entity {
                 player.connection.vehicleFloatingTickCount = 0;
             }
         }
-        if (this.hurtTime > 0) {
-            --this.hurtTime;
+        if (hurtTime > 0) {
+            --hurtTime;
         }
-        if (this.world.isRemote && this.getTimeSinceHit() > 0) {
-            this.setTimeSinceHit(this.getTimeSinceHit() - 1);
+        if (world.isRemote && getTimeSinceHit() > 0) {
+            setTimeSinceHit(getTimeSinceHit() - 1);
         }
-        if (this.getDamageTaken() > 0.0F) {
-            this.setDamageTaken(this.getDamageTaken() - 1.0F);
+        if (getDamageTaken() > 0.0F) {
+            setDamageTaken(getDamageTaken() - 1.0F);
         }
-        if (!this.world.isRemote && this.getHealth() > this.getMaxHealth() & this.health_timer > (getOnGround() ? 300 : 100)) {
-            this.setHealth(this.getHealth() - 1);
+        if (!world.isRemote && getHealth() > getMaxHealth() & health_timer > (getOnGround() ? 300 : 100)) {
+            setHealth(getHealth() - 1);
             health_timer = 0;
         }
         if (health_timer < 1000 && isPowered()) {
             health_timer++;
         }
 
-
-        this.tickLerp();
-
+        tickLerp();
     }
 
     public void tickUpgrades() {
         HashSet<Upgrade> upgradesToRemove = new HashSet<>();
+        HashSet<Upgrade> upgradesToUpdate = new HashSet<>();
         for (Upgrade upgrade : upgrades.values()) {
-            if (upgrade.tick()) {
+            upgrade.tick();
+            if (upgrade.removed) {
                 upgradesToRemove.add(upgrade);
+            } else if (upgrade.updateClient && !world.isRemote) {
+                upgradesToUpdate.add(upgrade);
             }
         }
 
         for (Upgrade upgrade : upgradesToRemove) {
             upgrades.remove(upgrade.getType().getRegistryName());
+        }
+
+        for (Upgrade upgrade : upgradesToUpdate) {
+            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world));
         }
     }
 
@@ -560,7 +567,6 @@ public class PlaneEntity extends Entity {
         this.setParked(parked);
         return parked;
     }
-
 
     protected Vars getMotionVars() {
         return new Vars();
@@ -860,7 +866,6 @@ public class PlaneEntity extends Entity {
 
         if (compound.contains("upgrades")) {
             CompoundNBT upgradesNBT = compound.getCompound("upgrades");
-            dataManager.set(UPGRADES_NBT, upgradesNBT);
             deserializeUpgrades(upgradesNBT);
         }
     }
@@ -873,21 +878,8 @@ public class PlaneEntity extends Entity {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                 upgrade.deserializeNBT(upgradesNBT.getCompound(key));
                 upgrades.put(resourceLocation, upgrade);
-            }
-        }
-    }
-
-    private void deserializeUpgradesData(CompoundNBT upgradesNBT) {
-        for (String key : upgradesNBT.keySet()) {
-            ResourceLocation resourceLocation = new ResourceLocation(key);
-            if (upgrades.containsKey(resourceLocation)) {
-                upgrades.get(resourceLocation).deserializeNBTData(upgradesNBT.getCompound(key));
-            } else {
-                UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
-                if (upgradeType != null) {
-                    Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
-                    upgrade.deserializeNBTData(upgradesNBT.getCompound(key));
-                    upgrades.put(resourceLocation, upgrade);
+                if (!world.isRemote) {
+                    PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(resourceLocation, getEntityId(), (ServerWorld) world, true));
                 }
             }
         }
@@ -903,24 +895,10 @@ public class PlaneEntity extends Entity {
         compound.put("upgrades", getUpgradesNBT());
     }
 
-    @SuppressWarnings("ConstantConditions")
     private CompoundNBT getUpgradesNBT() {
         CompoundNBT upgradesNBT = new CompoundNBT();
         for (Upgrade upgrade : upgrades.values()) {
             upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
-        }
-        return upgradesNBT;
-    }
-
-    /**
-     * small data for client sync not for save.
-     *
-     * @return upgrades nbt for synchronization
-     */
-    private CompoundNBT getUpgradesNBTData() {
-        CompoundNBT upgradesNBT = new CompoundNBT();
-        for (Upgrade upgrade : upgrades.values()) {
-            upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBTData());
         }
         return upgradesNBT;
     }
@@ -948,9 +926,7 @@ public class PlaneEntity extends Entity {
     @Override
     public void notifyDataManagerChange(DataParameter<?> key) {
         super.notifyDataManagerChange(key);
-        if (UPGRADES_NBT.equals(key) && world.isRemote()) {
-            deserializeUpgradesData(dataManager.get(UPGRADES_NBT));
-        } else if (MATERIAL.equals(key) && world.isRemote()) {
+        if (MATERIAL.equals(key) && world.isRemote()) {
             Block block = ForgeRegistries.BLOCKS.getValue((new ResourceLocation(dataManager.get(MATERIAL))));
             this.planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
         } else if (Q.equals(key) && world.isRemote() && !canPassengerSteer()) {
@@ -1039,11 +1015,8 @@ public class PlaneEntity extends Entity {
     }
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && !upgradeType.occupyBackSeat && upgradeType.isPlaneApplicable(this);
-    }
-
-    public boolean isLarge() {
-        return false;
+//        return !upgrades.containsKey(upgradeType.getRegistryName()) && !upgradeType.occupyBackSeat && upgradeType.isPlaneApplicable(this);
+        return upgradeType.upgradeSlot == UpgradeSlot.OTHER && !upgrades.containsKey(upgradeType.getRegistryName());
     }
 
     public void updatePassenger(Entity passenger) {
@@ -1053,7 +1026,6 @@ public class PlaneEntity extends Entity {
         if (this.isPassenger(passenger) && !b) {
             this.applyYawToEntity(passenger);
         }
-
     }
 
     /**
@@ -1176,7 +1148,7 @@ public class PlaneEntity extends Entity {
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
         if (this.canPassengerSteer()) {
-            this.mountmassage = true;
+            this.mountMessage = true;
 
             if (this.lerpSteps > 0) {
                 this.lerpSteps = 0;
@@ -1190,11 +1162,6 @@ public class PlaneEntity extends Entity {
             return (PlayerEntity) getControllingPassenger();
         }
         return null;
-    }
-
-    public void upgradeChanged() {
-        //TODO: use packets instead of sending upgrades nbt
-        this.dataManager.set(UPGRADES_NBT, getUpgradesNBTData());
     }
 
     private boolean rocking;
@@ -1279,6 +1246,20 @@ public class PlaneEntity extends Entity {
 
     public double getCameraDistanceMultiplayer() {
         return 1;
+    }
+
+    public void writeUpdateUpgradePacket(ResourceLocation upgradeID, PacketBuffer buffer) {
+        buffer.writeVarInt(getEntityId());
+        buffer.writeString(upgradeID.toString());
+        upgrades.get(upgradeID).writePacket(buffer);
+    }
+
+    public void readUpdateUpgradePacket(ResourceLocation upgradeID, PacketBuffer buffer, boolean newUpgrade) {
+        if (newUpgrade) {
+            upgrades.put(upgradeID, SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID).instanceSupplier.apply(this));
+        }
+
+        upgrades.get(upgradeID).readPacket(buffer);
     }
 
     protected class Vars {
