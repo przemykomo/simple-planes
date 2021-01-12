@@ -1,28 +1,14 @@
 package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
 public class MegaPlaneEntity extends LargePlaneEntity {
-    public static final EntitySize FLYING_SIZE = EntitySize.flexible(6F, 1.5F);
-    public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(6F, 2.5F);
 
     public MegaPlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
-    }
-
-    @Override
-    public EntitySize getSize(Pose poseIn) {
-        if (this.getControllingPassenger() instanceof PlayerEntity) {
-            return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
-        }
-        return super.getSize(poseIn);
-        //just hate my head in the nether ceiling
     }
 
 //    @Override
@@ -38,22 +24,21 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         return super.getFuelCost(vars) + 1;
     }
 
-
     @Override
     protected float getGroundPitch() {
-        return 4;
+        return -4;
     }
 
     @Override
     protected boolean isEasy() {
-        return true;
+        return false;
     }
 
     @Override
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
-        Vector3f pos = transformPos(getPassengerPos(passenger));
-        passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
+//        Vector3f pos = transformPos(getPassengerPos(passenger));
+//        passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
     }
 
     @Override
@@ -66,18 +51,13 @@ public class MegaPlaneEntity extends LargePlaneEntity {
 //    }
 
     @Override
-    public double getCameraDistanceMultiplayer() {
-        return 2;
-    }
-
-    @Override
     protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
         motionVars.max_push_speed *= 0.9;
         motionVars.yaw_multiplayer *= 0.3;
-        motionVars.drag *= 4;
-        motionVars.drag_mul *= 4;
-        motionVars.drag_quad *= 4;
+        motionVars.drag *= 2;
+        motionVars.drag_mul *= 2;
+        motionVars.drag_quad *= 2;
         return motionVars;
     }
 
@@ -107,7 +87,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
 
     @Override
     public double getMountedYOffset() {
-        return 0.4;
+        return 0.5;
     }
 
     @Override
