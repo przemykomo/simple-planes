@@ -64,7 +64,6 @@ public class PlaneEntity extends Entity {
     protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     protected static final DataParameter<Integer> MAX_FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
-    public static final EntitySize FLYING_SIZE_EASY = EntitySize.flexible(2F, 2F);
 
     public static final DataParameter<Integer> MAX_HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Integer> HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
@@ -341,15 +340,6 @@ public class PlaneEntity extends Entity {
 //                }
 //            }
 //        }
-    }
-
-    @Override
-    public EntitySize getSize(Pose poseIn) {
-        if (this.getControllingPassenger() instanceof PlayerEntity) {
-            return isEasy() ? FLYING_SIZE_EASY : FLYING_SIZE;
-        }
-        return super.getSize(poseIn);
-        //just hate my head in the nether ceiling
     }
 
     /**

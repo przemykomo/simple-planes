@@ -20,10 +20,10 @@ public class SimplePlanesEntities {
         ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<EntityType<PlaneEntity>> PLANE = ENTITIES.register("plane", () -> createEntityType(PlaneEntity::new, EntitySize.flexible(2.0f, 0.5f)));
-    public static final RegistryObject<EntityType<LargePlaneEntity>> LARGE_PLANE = ENTITIES.register("large_plane", () -> createEntityType(LargePlaneEntity::new, LargePlaneEntity.FLYING_SIZE));
-    public static final RegistryObject<EntityType<HelicopterEntity>> HELICOPTER = ENTITIES.register("helicopter", () -> createEntityType(HelicopterEntity::new, HelicopterEntity.FLYING_SIZE));
-    public static final RegistryObject<EntityType<MegaPlaneEntity>> MEGA_PLANE = ENTITIES.register("mega_plane", () -> createEntityType(MegaPlaneEntity::new, MegaPlaneEntity.FLYING_SIZE));
+    public static final RegistryObject<EntityType<PlaneEntity>> PLANE = ENTITIES.register("plane", () -> createEntityType(PlaneEntity::new, EntitySize.flexible(2F, 1.5F)));
+    public static final RegistryObject<EntityType<LargePlaneEntity>> LARGE_PLANE = ENTITIES.register("large_plane", () -> createEntityType(LargePlaneEntity::new, EntitySize.flexible(2F, 1.5F)));
+    public static final RegistryObject<EntityType<HelicopterEntity>> HELICOPTER = ENTITIES.register("helicopter", () -> createEntityType(HelicopterEntity::new, EntitySize.flexible(2F, 1.5F)));
+    public static final RegistryObject<EntityType<MegaPlaneEntity>> MEGA_PLANE = ENTITIES.register("mega_plane", () -> createEntityType(MegaPlaneEntity::new, EntitySize.flexible(3F, 2F)));
 
     private static <T extends PlaneEntity> EntityType<T> createEntityType(EntityType.IFactory<T> factory, EntitySize size) {
         return new EntityType<>(factory, EntityClassification.MISC, true, true, false, true, ImmutableSet.of(), size, 5, 3);

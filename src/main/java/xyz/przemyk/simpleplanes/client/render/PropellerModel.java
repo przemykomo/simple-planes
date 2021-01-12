@@ -36,8 +36,7 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
         bone_propeller.showModel = !entity.upgrades.containsKey(SimplePlanesUpgrades.DRAGON.getId());
 
         if (entity.isPowered() && !entity.getParked()) {
-            bone_propeller.rotateAngleZ =
-                getPropellerRotation(entity, limbSwing);
+            bone_propeller.rotateAngleZ = getPropellerRotation(entity, limbSwing);
         } else {
             bone_propeller.rotateAngleZ = 1;
         }
