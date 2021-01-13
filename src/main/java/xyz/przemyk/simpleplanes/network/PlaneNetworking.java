@@ -58,5 +58,14 @@ public class PlaneNetworking {
                 UpdateUpgradePacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
+
+        INSTANCE.registerMessage(
+                ++id,
+                OpenEngineInventoryPacket.class,
+                OpenEngineInventoryPacket::toBytes,
+                OpenEngineInventoryPacket::new,
+                OpenEngineInventoryPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
     }
 }

@@ -15,6 +15,7 @@ import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 public class PlaneWorkbenchContainer extends Container {
@@ -31,7 +32,7 @@ public class PlaneWorkbenchContainer extends Container {
     }
 
     public PlaneWorkbenchContainer(int id, PlayerInventory playerInventory, IWorldPosCallable worldPosCallable) {
-        super(SimplePlanesBlocks.PLANE_WORKBENCH_CONTAINER.get(), id);
+        super(SimplePlanesContainers.PLANE_WORKBENCH.get(), id);
         this.worldPosCallable = worldPosCallable;
         this.player = playerInventory.player;
 
