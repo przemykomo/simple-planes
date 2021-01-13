@@ -94,7 +94,7 @@ public class MathUtil {
         return number * (1.5F - f * number * number);
     }
 
-    public static Quaternion normalizeQuaternion(Quaternion q) {
+    public static Quaternion normalizeQuaternion(Quaternion q) { //TODO: make this a method inside the Quaternion class?
         float f = q.getX() * q.getX() + q.getY() * q.getY() + q.getZ() * q.getZ() + q.getW() * q.getW();
         float x = q.getX();
         float y = q.getY();

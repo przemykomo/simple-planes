@@ -14,7 +14,6 @@ import java.util.HashSet;
 
 @Mod.EventBusSubscriber
 public class PlanesEvents {
-    public static final ResourceLocation NOT_COAL_TAG = new ResourceLocation("simpleplanes", "not_fuel");
 
     @SubscribeEvent
     public static void interact(PlayerInteractEvent.RightClickItem event) {

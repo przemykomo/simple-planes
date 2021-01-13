@@ -20,14 +20,10 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class PlaneGui extends AbstractGui {
     private final ResourceLocation bar = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/hpbar.png");
-    private final int tex_width = 182, tex_height = 5, bar_width = 182, bar_height = 6;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void renderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
-        int scaledWidth = mc.getMainWindow().getScaledWidth();
-        int scaledHeight = mc.getMainWindow().getScaledHeight();
-        MatrixStack mStack = event.getMatrixStack();
 
         if (mc.player.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) mc.player.getRidingEntity();
@@ -46,36 +42,11 @@ public class PlaneGui extends AbstractGui {
 
                 }
             }
-            if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
-                event.setCanceled(true);
-                int x = scaledWidth / 2 - 91;
-                int y = scaledHeight - 32 + 3;
-
-                mc.getTextureManager().bindTexture(bar);
-                float fuel = planeEntity.getFuel();
-//                fuel = (float) Math.log1p(fuel);
-                float max_fuel = planeEntity.getMaxFuel();
-//                max_fuel = (float) Math.log1p(max_fuel);
-                float part = fuel / max_fuel;
-                part = (float) Math.pow(part, 0.5);
-                int i = (int) part;
-
-//                part = MathHelper.clamp(part, 0, 1);
-                part = part - i;
-                int currentWidth = (int) (bar_width * part);
-
-                blit(mStack, x, y, 0, tex_height * i, tex_width, tex_height);
-                blit(mStack, x, y, 0, tex_height * (i + 1), currentWidth, tex_height);
-                if (planeEntity.isSprinting()) {
-                    blit(mStack, x, y, 0, 30, i == 0 ? currentWidth : tex_width, tex_height);
-                }
-            }
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void renderGameOverlayPost(RenderGameOverlayEvent.Post event) {
-//        if(true)return;
         Minecraft mc = Minecraft.getInstance();
         int scaledWidth = mc.getMainWindow().getScaledWidth();
         int scaledHeight = mc.getMainWindow().getScaledHeight();
@@ -118,9 +89,6 @@ public class PlaneGui extends AbstractGui {
                     right_height += 10;
                 }
             }
-
         }
     }
-
 }
-
