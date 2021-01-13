@@ -817,6 +817,9 @@ public class PlaneEntity extends Entity {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                 upgrade.deserializeNBT(upgradesNBT.getCompound(key));
                 upgrades.put(resourceLocation, upgrade);
+                if (upgradeType.isEngine) {
+                    engineUpgrade = (EngineUpgrade) upgrade;
+                }
                 if (!world.isRemote) {
                     PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(resourceLocation, getEntityId(), (ServerWorld) world, true));
                 }
@@ -1191,7 +1194,12 @@ public class PlaneEntity extends Entity {
 
     public void readUpdateUpgradePacket(ResourceLocation upgradeID, PacketBuffer buffer, boolean newUpgrade) {
         if (newUpgrade) {
-            upgrades.put(upgradeID, SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID).instanceSupplier.apply(this));
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID);
+            Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
+            upgrades.put(upgradeID, upgrade);
+            if (upgradeType.isEngine) {
+                engineUpgrade = (EngineUpgrade) upgrade;
+            }
         }
 
         upgrades.get(upgradeID).readPacket(buffer);

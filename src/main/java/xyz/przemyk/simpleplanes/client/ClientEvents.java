@@ -20,13 +20,14 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.BoostPacket;
+import xyz.przemyk.simpleplanes.network.OpenEngineInventoryPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 
 import static xyz.przemyk.simpleplanes.SimplePlanesMod.keyBind;
 
-@OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEvents {
 
@@ -93,7 +94,8 @@ public class ClientEvents {
         if ((event.phase == Phase.END) && (player instanceof ClientPlayerEntity)) {
             if (player.getRidingEntity() instanceof PlaneEntity) {
                 PlaneEntity planeEntity = (PlaneEntity) player.getRidingEntity();
-                if ((Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON) {
+                Minecraft mc = Minecraft.getInstance();
+                if (mc.gameSettings.pointOfView == PointOfView.FIRST_PERSON) {
                     float yawDiff = planeEntity.rotationYaw - planeEntity.prevRotationYaw;
                     player.rotationYaw += yawDiff;
                     float relativePlayerYaw = MathHelper.wrapDegrees(player.rotationYaw - planeEntity.rotationYaw);
@@ -111,6 +113,10 @@ public class ClientEvents {
                     player.rotationPitch += perc;
                 } else {
                     planeEntity.applyYawToEntity(player);
+                }
+
+                if (planeEntity.engineUpgrade != null && mc.currentScreen == null && mc.loadingGui == null && SimplePlanesMod.openEngineInventoryKey.isPressed() && planeEntity.engineUpgrade.canOpenGui()) {
+                    PlaneNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
                 }
 
                 boolean isSprinting = keyBind.isKeyDown();
