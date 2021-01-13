@@ -69,7 +69,6 @@ public class BoosterUpgrade extends Upgrade {
                     itemStack.shrink(1);
                 }
                 fuel = FUEL_PER_GUNPOWDER;
-                planeEntity.addFuel(FUEL_PER_GUNPOWDER * 2);
             }
         }
         push();

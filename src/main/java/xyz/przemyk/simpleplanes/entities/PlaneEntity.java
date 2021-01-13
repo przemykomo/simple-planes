@@ -17,6 +17,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -46,10 +47,7 @@ import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeSlot;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.*;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -61,27 +59,22 @@ import static xyz.przemyk.simpleplanes.MathUtil.*;
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
 public class PlaneEntity extends Entity {
-    protected static final DataParameter<Integer> FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
-    protected static final DataParameter<Integer> MAX_FUEL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
-    public static final EntitySize FLYING_SIZE = EntitySize.flexible(2F, 1.5F);
-
     public static final DataParameter<Integer> MAX_HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Integer> HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Float> MAX_SPEED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
-    public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, QUATERNION_SERIALIZER);
     public static final DataParameter<String> MATERIAL = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.STRING);
+    public static final DataParameter<Integer> ROCKING_TICKS = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer> TIME_SINCE_HIT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
+    public static final DataParameter<Boolean> PARKED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Quaternion> Q = EntityDataManager.createKey(PlaneEntity.class, QUATERNION_SERIALIZER);
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
-    public static final DataParameter<Integer> ROCKING_TICKS = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> TIME_SINCE_HIT = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
-    private static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.FLOAT);
-    private static final DataParameter<Boolean> PARKED = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.BOOLEAN);
-
-    protected int poweredTicks;
 
     //count how many ticks since on ground
     private int groundTicks;
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
+    public EngineUpgrade engineUpgrade = null;
 
     //rotation data
     public float rotationRoll;
@@ -123,8 +116,6 @@ public class PlaneEntity extends Entity {
 
     @Override
     protected void registerData() {
-        dataManager.register(FUEL, 0);
-        dataManager.register(MAX_FUEL, Config.COAL_MAX_FUEL.get());
         dataManager.register(MAX_HEALTH, 10);
         dataManager.register(HEALTH, 10);
         dataManager.register(Q, Quaternion.ONE);
@@ -136,34 +127,12 @@ public class PlaneEntity extends Entity {
         dataManager.register(PARKED, true);
     }
 
-    public void addFuel(Integer fuel) {
-        if (!world.isRemote) {
-            int old_fuel = getFuel();
-            int new_fuel = old_fuel + fuel;
-            dataManager.set(FUEL, new_fuel);
-        }
-    }
-
-    public void setFuel(Integer fuel) {
-        if (fuel < 0)
-            fuel = 0;
-        dataManager.set(FUEL, fuel);
-    }
-
-    public int getFuel() {
-        return dataManager.get(FUEL);
-    }
-
     public float getMaxSpeed() {
         return dataManager.get(MAX_SPEED);
     }
 
     public void setMaxSpeed(float max_speed) {
         dataManager.set(MAX_SPEED, max_speed);
-    }
-
-    public float getMaxFuel() {
-        return dataManager.get(MAX_FUEL);
     }
 
     public Quaternion getQ() {
@@ -221,16 +190,16 @@ public class PlaneEntity extends Entity {
     public void setMaterial(String material) {
         dataManager.set(MATERIAL, material);
         Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(material));
-        this.planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
+        planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
     }
 
     public void setMaterial(Block material) {
         dataManager.set(MATERIAL, material.getRegistryName().toString());
-        this.planksMaterial = material;
+        planksMaterial = material;
     }
 
     public boolean isPowered() {
-        return (dataManager.get(FUEL) > 0 || isCreative()) && isAlive();
+        return isAlive() && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
     }
 
     @Override
@@ -269,6 +238,9 @@ public class PlaneEntity extends Entity {
                     itemStack.shrink(1);
                 }
                 upgrades.put(upgradeItem.upgradeType.get().getRegistryName(), upgrade);
+                if (upgradeItem.upgradeType.get().isEngine) {
+                    engineUpgrade = (EngineUpgrade) upgrade;
+                }
                 if (!world.isRemote) {
                     PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world, true));
                 }
@@ -380,19 +352,23 @@ public class PlaneEntity extends Entity {
         }
 
         Entity controllingPassenger = getControllingPassenger();
-        vars.moveForward = controllingPassenger instanceof PlayerEntity ? ((PlayerEntity) controllingPassenger).moveForward : 0;
+        if (controllingPassenger instanceof PlayerEntity) {
+            PlayerEntity playerEntity = (PlayerEntity) controllingPassenger;
+            vars.moveForward = playerEntity.moveForward;
+            vars.moveStrafing = playerEntity.moveStrafing;
+        } else {
+            vars.moveForward = 0;
+            vars.moveStrafing = 0;
+            setSprinting(false);
+        }
         vars.turn_threshold = Config.TURN_THRESHOLD.get() / 100d;
         if (Math.abs(vars.moveForward) < vars.turn_threshold) {
             vars.moveForward = 0;
         }
-        vars.moveStrafing = controllingPassenger instanceof PlayerEntity ? ((PlayerEntity) controllingPassenger).moveStrafing : 0;
         if (Math.abs(vars.moveStrafing) < vars.turn_threshold) {
             vars.moveStrafing = 0;
         }
-        if (getPlayer() == null) {
-            setSprinting(false);
-        }
-        vars.passengerSprinting = this.isSprinting();
+        vars.passengerSprinting = isSprinting();
         Quaternion q;
         if (world.isRemote) {
             q = getQ_Client();
@@ -404,17 +380,9 @@ public class PlaneEntity extends Entity {
 
         Vector3d oldMotion = getMotion();
 
-        recalculateSize();
-        int fuel = dataManager.get(FUEL);
-        if (isPowered() && !isParked(vars)) {
-            fuel -= getFuelCost(vars);
-            setFuel(fuel);
-            if (world.isRemote && !PlaneSound.isPlaying(getEntityId())) {
-                Minecraft.getInstance().getSoundHandler().play(new PlaneSound(this));
-            }
-            ++poweredTicks;
-        } else {
-            poweredTicks = 0;
+        recalculateSize(); //TODO: do I need this?
+        if (world.isRemote && isPowered() && !isParked(vars) && world.isRemote && !PlaneSound.isPlaying(getEntityId())) {
+            Minecraft.getInstance().getSoundHandler().play(new PlaneSound(this));
         }
 
         //motion and rotetion interpulation + lift.
@@ -425,7 +393,6 @@ public class PlaneEntity extends Entity {
         //pitch + movement speed
         if ((getOnGround() || isAboveWater())) {
             do_pitch = tickOnGround(vars);
-
         } else {
             groundTicks--;
             if (!vars.passengerSprinting) {
@@ -438,31 +405,28 @@ public class PlaneEntity extends Entity {
 
         tickMotion(vars);
 
-        //rotating (roll + yaw)
-        //########
+        //roll + yaw
         tickRotation(vars);
 
-        //upgrades
         tickUpgrades();
 
-        //do not move when slow
-        double l = 0.002;
-        if (oldMotion.length() < l && getMotion().length() < l && groundTicks > -50) {
+        //made so plane fully stops when moves slow, removing the slipperiness effect
+        if (groundTicks > -50 && oldMotion.length() < 0.002 && getMotion().length() < 0.002) {
             setMotion(Vector3d.ZERO);
         }
         updateRocking();
-        // ths code is for motion to work correctly, copied from ItemEntity, maybe there is some better solution but idk
-        recalculateSize();
+        recalculateSize(); //TODO: do I need this?
         recenterBoundingBox();
-        if (!onGround || horizontalMag(this.getMotion()) > (double) 1.0E-5F || (ticksExisted + getEntityId()) % 4 == 0) {
+
+        if (!onGround || horizontalMag(getMotion()) > (double) 1.0E-5F || (ticksExisted + getEntityId()) % 4 == 0) {
             double speed_before = Math.sqrt(horizontalMag(getMotion()));
             boolean onGroundOld = onGround;
-            Vector3d preMotion = getMotion();
-            if (preMotion.length() > 0.5 || vars.moveForward != 0) {
+            Vector3d motion = getMotion();
+            if (motion.length() > 0.5 || vars.moveForward != 0) {
                 onGround = true;
             }
-            move(MoverType.SELF, getMotion());
-            onGround = ((preMotion.getY()) == 0.0) ? onGroundOld : onGround;
+            move(MoverType.SELF, motion);
+            onGround = ((motion.getY()) == 0.0) ? onGroundOld : onGround;
             if (collidedHorizontally && !world.isRemote && Config.PLANE_CRASH.get() && groundTicks <= 0) {
                 double speed_after = Math.sqrt(horizontalMag(getMotion()));
                 double speed_diff = speed_before - speed_after;
@@ -471,10 +435,6 @@ public class PlaneEntity extends Entity {
                     crash(f2);
                 }
             }
-
-        }
-        if (isPowered() && rand.nextInt(vars.passengerSprinting ? 2 : 4) == 0 && !world.isRemote) {
-            spawnSmokeParticles(fuel);
         }
 
         //back to q
@@ -493,8 +453,8 @@ public class PlaneEntity extends Entity {
 
             PlaneNetworking.INSTANCE.sendToServer(new RotationPacket(getQ()));
         } else {
-            if (getPlayer() instanceof ServerPlayerEntity) {
-                ServerPlayerEntity player = (ServerPlayerEntity) getPlayer();
+            ServerPlayerEntity player = (ServerPlayerEntity) getPlayer();
+            if (player != null) {
                 player.connection.vehicleFloatingTickCount = 0;
             }
         }
@@ -821,10 +781,6 @@ public class PlaneEntity extends Entity {
 
     @Override
     public void readAdditional(CompoundNBT compound) {
-        if (compound.contains("Fuel")) {
-            dataManager.set(FUEL, compound.getInt("Fuel"));
-        }
-
         if (compound.contains("max_speed")) {
             dataManager.set(MAX_SPEED, compound.getFloat("max_speed"));
         }
@@ -870,7 +826,6 @@ public class PlaneEntity extends Entity {
 
     @Override
     public void writeAdditional(CompoundNBT compound) {
-        compound.putInt("Fuel", dataManager.get(FUEL));
         compound.putInt("health", dataManager.get(HEALTH));
         compound.putInt("max_health", dataManager.get(MAX_HEALTH));
         compound.putFloat("max_speed", dataManager.get(MAX_SPEED));
@@ -933,9 +888,9 @@ public class PlaneEntity extends Entity {
         if (source.isExplosion()) {
             return false;
         }
-//        if (source.isFireDamage() && material.fireResistant) {
-//            return true;
-//        }
+        if (source.isFireDamage() && BlockTags.NON_FLAMMABLE_WOOD.contains(planksMaterial)) {
+            return true;
+        }
         if (source.getTrueSource() != null && source.getTrueSource().isRidingSameEntity(this)) {
             return true;
         }
@@ -944,8 +899,7 @@ public class PlaneEntity extends Entity {
 
     @Override
     public boolean isImmuneToFire() {
-//        return this.material.fireResistant;
-        return false; //TODO
+        return BlockTags.NON_FLAMMABLE_WOOD.contains(planksMaterial);
     }
 
     @Override
@@ -1108,7 +1062,6 @@ public class PlaneEntity extends Entity {
         this.lerpY = y;
         this.lerpZ = z;
         this.lerpSteps = 10;
-
     }
 
     @Override
