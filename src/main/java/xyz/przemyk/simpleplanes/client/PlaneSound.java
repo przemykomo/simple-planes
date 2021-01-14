@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.client;
 
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
 
@@ -29,6 +30,11 @@ public class PlaneSound extends TickableSound {
 
         PlaneSound sound = PLAYING_FOR.get(entityId);
         return sound != null && !sound.isDonePlaying();
+    }
+
+    @Override
+    public float getPitch() {
+        return (float) MathHelper.clamp(1.0f + plane.getMotion().lengthSquared() / 4f, 1.0f, 1.3f);
     }
 
     @Override

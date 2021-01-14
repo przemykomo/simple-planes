@@ -74,7 +74,6 @@ public class HelicopterEntity extends LargePlaneEntity {
         if (world.isRemote() && Minecraft.getInstance().player == passenger) {
             (Minecraft.getInstance()).ingameGUI.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
         }
-
     }
 
     @Override
@@ -139,9 +138,9 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected boolean canFitPassenger(Entity passenger) {
-        return super.canFitPassenger(passenger) && passenger instanceof PlayerEntity;
+        return super.canFitPassenger(passenger); // && passenger instanceof PlayerEntity;
     }
-
+ 
     @Override
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);

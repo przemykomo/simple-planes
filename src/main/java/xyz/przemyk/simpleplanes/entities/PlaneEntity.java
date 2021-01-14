@@ -18,10 +18,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -34,6 +31,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -49,6 +48,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -253,14 +253,14 @@ public class PlaneEntity extends Entity {
     @SuppressWarnings("deprecation")
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-//        this.setRockingTicks(60);
-        this.setTimeSinceHit(20);
-        this.setDamageTaken(this.getDamageTaken() + 10 * amount);
+//        setRockingTicks(60);
+        setTimeSinceHit(20);
+        setDamageTaken(this.getDamageTaken() + 10 * amount);
 
-        if (this.isInvulnerableTo(source) || this.hurtTime > 0) {
+        if (isInvulnerableTo(source) || hurtTime > 0) {
             return false;
         }
-        if (this.world.isRemote || this.removed) {
+        if (world.isRemote || removed) {
             return false;
         }
         int health = getHealth();
@@ -272,11 +272,16 @@ public class PlaneEntity extends Entity {
         this.hurtTime = 10;
         boolean is_player = source.getTrueSource() instanceof PlayerEntity;
         boolean creative_player = is_player && ((PlayerEntity) source.getTrueSource()).abilities.isCreativeMode;
-        if (creative_player || (is_player && this.getDamageTaken() > 30.0F) || health <= 0) {
+        if (creative_player || (is_player && getDamageTaken() > 30.0F) || health <= 0) {
             if (!creative_player) {
-                explode();
+                if (source == SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH) {
+                    explode();
+                }
+                if (world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+                    dropItem();
+                }
             }
-            this.remove();
+            remove();
         }
         return true;
     }
@@ -293,9 +298,6 @@ public class PlaneEntity extends Entity {
             getPosZ(),
             10, 1, 1, 1, 1);
         world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 0, Explosion.Mode.NONE);
-        if (this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-            dropItem();
-        }
     }
 
     protected void dropItem() {
@@ -1203,6 +1205,18 @@ public class PlaneEntity extends Entity {
         }
 
         upgrades.get(upgradeID).readPacket(buffer);
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        for (Upgrade upgrade : upgrades.values()) {
+            LazyOptional<T> lazyOptional = upgrade.getCapability(cap, side);
+            if (lazyOptional.isPresent()) {
+                return lazyOptional;
+            }
+        }
+        return super.getCapability(cap, side);
     }
 
     protected class Vars {
