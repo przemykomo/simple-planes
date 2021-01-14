@@ -6,11 +6,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
+public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INBTSerializable<CompoundNBT> {
 
     private final UpgradeType type;
     protected final PlaneEntity planeEntity;
@@ -22,6 +23,7 @@ public abstract class Upgrade implements INBTSerializable<CompoundNBT> {
     }
 
     public Upgrade(UpgradeType type, PlaneEntity planeEntity) {
+        super(Upgrade.class);
         this.type = type;
         this.planeEntity = planeEntity;
     }
