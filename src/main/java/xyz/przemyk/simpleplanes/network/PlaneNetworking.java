@@ -67,5 +67,14 @@ public class PlaneNetworking {
                 OpenEngineInventoryPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
+
+        INSTANCE.registerMessage(
+                ++id,
+                CycleItemsPacket.class,
+                CycleItemsPacket::toBytes,
+                CycleItemsPacket::new,
+                CycleItemsPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
     }
 }

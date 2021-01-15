@@ -34,7 +34,7 @@ public class PlaneSound extends TickableSound {
 
     @Override
     public float getPitch() {
-        return (float) MathHelper.clamp(1.0f + plane.getMotion().lengthSquared() / 4f, 1.0f, 1.3f);
+        return (float) MathHelper.clamp(0.9f + plane.getMotion().length() / 3f, 0.9f, 1.3f);
     }
 
     @Override

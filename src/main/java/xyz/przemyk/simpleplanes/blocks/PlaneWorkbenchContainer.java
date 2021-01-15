@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.blocks;
 
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -7,6 +8,7 @@ import net.minecraft.inventory.CraftResultInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -14,6 +16,7 @@ import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
+import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -26,6 +29,10 @@ public class PlaneWorkbenchContainer extends Container {
 
     public static final int IRON_NEEDED = 4;
     public static final int PLANKS_NEEDED = 4;
+    public static final Item[] OUTPUT_ITEMS = new Item[] {SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.MEGA_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
+
+    private int selectedOutputItem = 0;
+    private final CompoundNBT outputItemTag = new CompoundNBT();
 
     public PlaneWorkbenchContainer(int id, PlayerInventory playerInventory) {
         this(id, playerInventory, IWorldPosCallable.DUMMY);
@@ -36,41 +43,75 @@ public class PlaneWorkbenchContainer extends Container {
         this.worldPosCallable = worldPosCallable;
         this.player = playerInventory.player;
 
-        addSlot(new PlaneCraftingResultSlot(player, this, craftResult, 0, 118, 35));
+        addSlot(new PlaneCraftingResultSlot(player, this, craftResult, 0, 122, 104));
 
-        addSlot(new PlaneWorkbenchInputSlot(craftMatrix, this, 0, 38, 35));
-        addSlot(new PlaneWorkbenchInputSlot(craftMatrix, this, 1, 56, 35));
+        addSlot(new PlaneWorkbenchInputSlot(craftMatrix, this, 0, 33, 104));
+        addSlot(new PlaneWorkbenchInputSlot(craftMatrix, this, 1, 51, 104));
 
         for(int k = 0; k < 3; ++k) {
             for(int i1 = 0; i1 < 9; ++i1) {
-                addSlot(new Slot(playerInventory, i1 + k * 9 + 9, 8 + i1 * 18, 84 + k * 18));
+                addSlot(new Slot(playerInventory, i1 + k * 9 + 9, 8 + i1 * 18, 128 + k * 18));
             }
         }
 
         for(int l = 0; l < 9; ++l) {
-            addSlot(new Slot(playerInventory, l, 8 + l * 18, 142));
+            addSlot(new Slot(playerInventory, l, 8 + l * 18, 186));
         }
     }
 
     public void onInputChanged() {
-        worldPosCallable.consume(((world, blockPos) -> updateCraftingResult(windowId, world, player, craftMatrix, craftResult)));
+        worldPosCallable.consume(((world, blockPos) -> updateCraftingResult(world, player)));
     }
 
-    protected static void updateCraftingResult(int id, World world, PlayerEntity player, ItemStackHandler craftMatrix, CraftResultInventory inventoryResult) {
+    public void cycleItems(CycleItemsPacket.TYPE type) {
+        switch (type) {
+            case CRAFTING_LEFT:
+                if (selectedOutputItem == 0) {
+                    selectedOutputItem = OUTPUT_ITEMS.length - 1;
+                } else {
+                    --selectedOutputItem;
+                }
+                break;
+            case CRAFTING_RIGHT:
+                if (selectedOutputItem == OUTPUT_ITEMS.length - 1) {
+                    selectedOutputItem = 0;
+                } else {
+                    ++selectedOutputItem;
+                }
+        }
+
+        updateResultSlot();
+    }
+
+    private void updateResultSlot() {
+        if (!player.world.isRemote && !craftResult.getStackInSlot(0).isEmpty()) {
+            ItemStack result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
+            result.setTagInfo("EntityTag", outputItemTag);
+            craftResult.setInventorySlotContents(0, result);
+            ((ServerPlayerEntity) player).connection.sendPacket(new SSetSlotPacket(windowId, 0, result));
+        }
+    }
+
+    public void onCrafting() {
+        craftMatrix.extractItem(0, IRON_NEEDED, false);
+        craftMatrix.extractItem(1, PLANKS_NEEDED, false);
+        onInputChanged();
+    }
+
+    protected void updateCraftingResult(World world, PlayerEntity player) {
         if (!world.isRemote) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
             ItemStack result = ItemStack.EMPTY;
             ItemStack input = craftMatrix.getStackInSlot(0);
             ItemStack secondInput = craftMatrix.getStackInSlot(1);
             if (input.getItem() == Items.IRON_INGOT && input.getCount() >= IRON_NEEDED && secondInput.getItem() instanceof BlockItem && secondInput.getCount() >= PLANKS_NEEDED) {
-                result = new ItemStack(SimplePlanesItems.PLANE_ITEM.get());
-                CompoundNBT entityTag = new CompoundNBT();
-                entityTag.putString("material", ((BlockItem) secondInput.getItem()).getBlock().getRegistryName().toString());
-                result.setTagInfo("EntityTag", entityTag);
+                result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
+                outputItemTag.putString("material", ((BlockItem) secondInput.getItem()).getBlock().getRegistryName().toString());
+                result.setTagInfo("EntityTag", outputItemTag);
             }
 
-            inventoryResult.setInventorySlotContents(0, result);
-            serverPlayerEntity.connection.sendPacket(new SSetSlotPacket(id, 0, result));
+            craftResult.setInventorySlotContents(0, result);
+            serverPlayerEntity.connection.sendPacket(new SSetSlotPacket(windowId, 0, result));
         }
     }
 
@@ -142,10 +183,5 @@ public class PlaneWorkbenchContainer extends Container {
         }
 
         return itemstack;
-    }
-
-    public void onCrafting() {
-        craftMatrix.extractItem(0, IRON_NEEDED, false);
-        craftMatrix.extractItem(1, PLANKS_NEEDED, false);
     }
 }

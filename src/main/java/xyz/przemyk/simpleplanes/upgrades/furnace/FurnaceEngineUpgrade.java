@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
@@ -27,6 +28,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
 
@@ -88,8 +90,8 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     }
 
     @Override
-    protected void remove() {
-        super.remove();
+    protected void invalidateCaps() {
+        super.invalidateCaps();
         itemHandlerLazyOptional.invalidate();
     }
 
@@ -166,5 +168,11 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
             return itemHandlerLazyOptional.cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    @Nullable
+    @Override
+    protected Item getItem() {
+        return SimplePlanesItems.FURNACE_ENGINE.get();
     }
 }
