@@ -20,6 +20,7 @@
     "description.simpleplanes.mana_upgrade": "Turns your plane into living wood plane",
     "description.simpleplanes.cloud": "Right Click with a pickaxe above cloud level to get",
     "itemGroup.simpleplanes": "Simple Planes",
+    "simpleplanes.container.plane_workbench": "Plane Workbench",
     "death.attack.plane_crash": "%1$s Died in a plane crash",
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",
     "helicopter.onboard": "Press %2$s to TakeOff | Press %1$s to Dismount",

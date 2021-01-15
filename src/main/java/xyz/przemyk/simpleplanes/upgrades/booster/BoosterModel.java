@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades.rocket;
+package xyz.przemyk.simpleplanes.upgrades.booster;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 
@@ -8,12 +8,12 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class RocketModel extends EntityModel<PlaneEntity> {
-    public static final RocketModel INSTANCE = new RocketModel();
+public class BoosterModel extends EntityModel<PlaneEntity> {
+    public static final BoosterModel INSTANCE = new BoosterModel();
 
     private final ModelRenderer Body;
 
-    public RocketModel() {
+    public BoosterModel() {
         textureWidth = 32;
         textureHeight = 32;
 

@@ -33,7 +33,6 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
 
     @Override
     public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        bone_propeller.showModel = !entity.upgrades.containsKey(SimplePlanesUpgrades.DRAGON.getId());
 
         if (entity.isPowered() && !entity.getParked()) {
             bone_propeller.rotateAngleZ = getPropellerRotation(entity, limbSwing);
