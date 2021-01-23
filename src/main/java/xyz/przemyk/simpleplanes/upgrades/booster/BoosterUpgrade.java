@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -19,11 +18,8 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-
-import javax.annotation.Nullable;
 
 import static net.minecraft.item.Items.GUNPOWDER;
 
@@ -118,11 +114,5 @@ public class BoosterUpgrade extends Upgrade {
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(BoosterModel.INSTANCE.getRenderType(TEXTURE));
         BoosterModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    @Nullable
-    @Override
-    protected Item getItem() {
-        return SimplePlanesItems.BOOSTER.get();
     }
 }

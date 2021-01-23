@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
@@ -20,15 +20,16 @@ import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
 
@@ -85,7 +86,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = Blocks.FURNACE.getDefaultState().with(AbstractFurnaceBlock.LIT, isPowered());
-        Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
+        Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         matrixStack.pop();
     }
 
@@ -131,8 +132,8 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     }
 
     @Override
-    public void openGui(PlayerEntity playerEntity) {
-        playerEntity.openContainer(this);
+    public void openGui(ServerPlayerEntity playerEntity) {
+        NetworkHooks.openGui(playerEntity, this);
     }
 
     @Override
@@ -168,11 +169,5 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
             return itemHandlerLazyOptional.cast();
         }
         return super.getCapability(cap, side);
-    }
-
-    @Nullable
-    @Override
-    protected Item getItem() {
-        return SimplePlanesItems.FURNACE_ENGINE.get();
     }
 }

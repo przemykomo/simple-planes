@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -38,6 +40,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.Config;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
@@ -204,10 +207,8 @@ public class PlaneEntity extends Entity {
 
     @Override
     public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
-        if (tryToAddUpgrade(player, player.getHeldItem(hand))) {
-            return ActionResultType.SUCCESS;
-        }
-        if (player.isSneaking() && player.getHeldItem(hand).isEmpty()) {
+        ItemStack itemStack = player.getHeldItem(hand);
+        if (player.isSneaking() && itemStack.isEmpty()) {
             boolean hasplayer = false;
             for (Entity passenger : getPassengers()) {
                 if ((passenger instanceof PlayerEntity)) {
@@ -220,7 +221,20 @@ public class PlaneEntity extends Entity {
             }
             return ActionResultType.SUCCESS;
         }
-        if (!this.world.isRemote) {
+
+        if (itemStack.getItem() == SimplePlanesItems.WRENCH.get()) {
+            if (!world.isRemote) {
+                NetworkHooks.openGui((ServerPlayerEntity) player, new SimpleNamedContainerProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getEntityId()), StringTextComponent.EMPTY), buf -> buf.writeVarInt(getEntityId()));
+                return ActionResultType.CONSUME;
+            }
+            return ActionResultType.SUCCESS;
+        }
+
+        if (tryToAddUpgrade(player, itemStack)) {
+            return ActionResultType.SUCCESS;
+        }
+
+        if (!world.isRemote) {
             return player.startRiding(this) ? ActionResultType.CONSUME : ActionResultType.FAIL;
         } else {
             return player.getLowestRidingEntity() == this.getLowestRidingEntity() ? ActionResultType.FAIL : ActionResultType.SUCCESS;

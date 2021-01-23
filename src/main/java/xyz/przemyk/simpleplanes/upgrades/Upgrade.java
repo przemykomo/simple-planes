@@ -3,7 +3,6 @@ package xyz.przemyk.simpleplanes.upgrades;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -11,8 +10,6 @@ import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-
-import javax.annotation.Nullable;
 
 public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INBTSerializable<CompoundNBT> {
 
@@ -92,24 +89,4 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
      */
     public abstract void readPacket(PacketBuffer buffer);
 
-    public ItemStack toItemStack() {
-        Item item = getItem();
-        if (item == null) {
-            return ItemStack.EMPTY;
-        }
-
-        ItemStack itemStack = item.getDefaultInstance();
-        itemStack.setTagInfo("upgradeTag", serializeNBT());
-        return itemStack;
-    }
-
-    public void fromItemStack(ItemStack itemStack) {
-        CompoundNBT compound = itemStack.getChildTag("upgradeTag");
-        if (compound != null) {
-            deserializeNBT(compound);
-        }
-    }
-
-    @Nullable
-    protected Item getItem() { return null; }
 }

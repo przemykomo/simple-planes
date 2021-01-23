@@ -61,5 +61,6 @@ public class SimplePlanesMod {
 
         ScreenManager.registerFactory(SimplePlanesContainers.PLANE_WORKBENCH.get(), PlaneWorkbenchScreen::new);
         ScreenManager.registerFactory(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
+        ScreenManager.registerFactory(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
     }
 }

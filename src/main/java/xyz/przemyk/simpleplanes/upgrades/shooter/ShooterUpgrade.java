@@ -121,10 +121,4 @@ public class ShooterUpgrade extends Upgrade {
     public void readPacket(PacketBuffer buffer) {
         shootSide = buffer.readBoolean();
     }
-
-    @Nullable
-    @Override
-    protected Item getItem() {
-        return SimplePlanesItems.SHOOTER.get();
-    }
 }
