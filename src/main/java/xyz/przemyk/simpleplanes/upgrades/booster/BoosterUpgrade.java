@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -104,10 +105,25 @@ public class BoosterUpgrade extends Upgrade {
         Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
 
         planeEntity.setMotion(m.add(motion));
-        if (!planeEntity.world.isRemote) { //TODO: spawn particles on client, not on server
-            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f));
-            planeEntity.spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f));
+        if (planeEntity.world.isRemote) {
+            spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f));
+            spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f));
         }
+    }
+
+    public void spawnParticle(IParticleData particleData, Vector3f relPos) {
+        relPos = new Vector3f(relPos.getX(), relPos.getY() - 0.3f, relPos.getZ());
+        relPos = planeEntity.transformPos(relPos);
+        relPos = new Vector3f(relPos.getX(), relPos.getY() + 0.9f, relPos.getZ());
+        Vector3d motion = planeEntity.getMotion();
+        double speed = motion.length() / 4;
+        planeEntity.world.addParticle(particleData,
+                planeEntity.getPosX() + relPos.getX(),
+                planeEntity.getPosY() + relPos.getY(),
+                planeEntity.getPosZ() + relPos.getZ(),
+                motion.x * speed,
+                (motion.y + 1) * speed,
+                motion.z * speed);
     }
 
     @Override

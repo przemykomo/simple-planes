@@ -25,9 +25,10 @@ import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineUpgrade;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class PlaneGui extends AbstractGui {
-    private final ResourceLocation bar = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/hpbar.png");
+    private final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/hpbar.png");
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SuppressWarnings("deprecation")
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void renderGameOverlayPost(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         int scaledWidth = mc.getMainWindow().getScaledWidth();
@@ -37,7 +38,7 @@ public class PlaneGui extends AbstractGui {
         if (mc.player.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) mc.player.getRidingEntity();
             if (event.getType() == ElementType.ALL) {
-                mc.getTextureManager().bindTexture(bar);
+                mc.getTextureManager().bindTexture(TEXTURE);
                 int left_align = scaledWidth / 2 + 91;
 
                 int health = (int) Math.ceil(planeEntity.getHealth());
@@ -108,10 +109,10 @@ public class PlaneGui extends AbstractGui {
                         int i2 = scaledHeight - 16 - 3;
                         if (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) {
                             // render on left side
-                            renderHotbarItem(i - 91 - 26, i2, event.getPartialTicks(), mc.player, fuelStack, mc.getItemRenderer(), mc);
+                            renderHotbarItem(matrixStack, i - 91 - 26, i2, event.getPartialTicks(), mc.player, fuelStack, mc.getItemRenderer(), mc);
                         } else {
                             // render on right side
-                            renderHotbarItem(i + 91 + 3, i2, event.getPartialTicks(), mc.player, fuelStack, mc.getItemRenderer(), mc);
+                            renderHotbarItem(matrixStack, i + 91 + 3, i2, event.getPartialTicks(), mc.player, fuelStack, mc.getItemRenderer(), mc);
                         }
                     }
                 }
@@ -131,20 +132,20 @@ public class PlaneGui extends AbstractGui {
         }
     }
 
-    private void renderHotbarItem(int x, int y, float partialTicks, PlayerEntity player, ItemStack stack, ItemRenderer itemRenderer, Minecraft mc) {
+    private void renderHotbarItem(MatrixStack matrixStack, int x, int y, float partialTicks, PlayerEntity player, ItemStack stack, ItemRenderer itemRenderer, Minecraft mc) {
         if (!stack.isEmpty()) {
             float f = (float)stack.getAnimationsToGo() - partialTicks;
             if (f > 0.0F) {
-                RenderSystem.pushMatrix();
+                matrixStack.push();
                 float f1 = 1.0F + f / 5.0F;
-                RenderSystem.translatef((float)(x + 8), (float)(y + 12), 0.0F);
-                RenderSystem.scalef(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
-                RenderSystem.translatef((float)(-(x + 8)), (float)(-(y + 12)), 0.0F);
+                matrixStack.translate((float)(x + 8), (float)(y + 12), 0.0F);
+                matrixStack.scale(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
+                matrixStack.translate((float)(-(x + 8)), (float)(-(y + 12)), 0.0F);
             }
 
             itemRenderer.renderItemAndEffectIntoGUI(player, stack, x, y);
             if (f > 0.0F) {
-                RenderSystem.popMatrix();
+                matrixStack.pop();
             }
 
             itemRenderer.renderItemOverlays(mc.fontRenderer, stack, x, y);

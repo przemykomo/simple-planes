@@ -31,10 +31,10 @@ public class UpdateUpgradePacket {
     private PacketBuffer packetBuffer;
 
     public UpdateUpgradePacket(PacketBuffer buffer) {
-        this.newUpgrade = buffer.readBoolean();
-        this.planeEntityID = buffer.readVarInt();
-        this.upgradeID = new ResourceLocation(buffer.readString());
-        this.packetBuffer = buffer; //TODO: test if I should copy the buffer instead
+        newUpgrade = buffer.readBoolean();
+        planeEntityID = buffer.readVarInt();
+        upgradeID = new ResourceLocation(buffer.readString());
+        packetBuffer = buffer; // it seems like I don't need to copy the buffer
     }
 
     public void toBytes(PacketBuffer buffer) {
