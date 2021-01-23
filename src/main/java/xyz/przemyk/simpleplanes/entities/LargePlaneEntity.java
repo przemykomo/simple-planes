@@ -5,10 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.item.Item;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 import java.util.List;
 
@@ -98,15 +99,7 @@ public class LargePlaneEntity extends PlaneEntity {
         return 1.2;
     }
 
-    @Override
-    protected void spawnSmokeParticles(int fuel) {
-        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -2));
-        if (fuel > 4 && fuel < 100) {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -2));
-        }
-    }
-
-//    @Override
+    //    @Override
 //    public boolean canAddUpgrade(UpgradeType upgradeType) {
 //        if (upgradeType.occupyBackSeat) {
 //            if (getPassengers().size() > 1) {
@@ -120,4 +113,10 @@ public class LargePlaneEntity extends PlaneEntity {
 //        }
 //        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
 //    }
+
+
+    @Override
+    protected Item getItem() {
+        return SimplePlanesItems.LARGE_PLANE_ITEM.get();
+    }
 }

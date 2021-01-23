@@ -2,8 +2,10 @@ package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 public class MegaPlaneEntity extends LargePlaneEntity {
 
@@ -44,11 +46,6 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     @Override
     public void updatePassengerTwo(Entity passenger) {
     }
-
-//    @Override
-//    protected Item getItem() {
-//        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_mega_plane"));
-//    }
 
     @Override
     protected Vars getMotionVars() {
@@ -112,4 +109,9 @@ public class MegaPlaneEntity extends LargePlaneEntity {
 //        i = ((i + 1) / 4) + (i / 4);
 //        return getPassengers().size() + i >= 6;
 //    }
+
+    @Override
+    protected Item getItem() {
+        return SimplePlanesItems.MEGA_PLANE_ITEM.get();
+    }
 }

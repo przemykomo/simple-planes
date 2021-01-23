@@ -36,7 +36,7 @@ public abstract class MixinVillagerModel<T extends Entity> extends SegmentedMode
 
 
     @SuppressWarnings("OverwriteAuthorRequired")
-    @Overwrite
+    @Overwrite //TODO: try to use events instead of mixins
     public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         boolean flag = false;
         if (entityIn instanceof AbstractVillagerEntity) {

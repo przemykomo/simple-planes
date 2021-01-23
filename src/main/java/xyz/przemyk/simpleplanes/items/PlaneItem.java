@@ -16,9 +16,6 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.List;
 import java.util.function.Function;
@@ -32,16 +29,6 @@ public class PlaneItem extends Item {
     public PlaneItem(Properties properties, Function<World, PlaneEntity> planeSupplier) {
         super(properties.maxStackSize(1));
         this.planeSupplier = planeSupplier;
-    }
-
-    @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
-        return super.getDisplayName(stack);
-    }
-
-    @Override
-    public boolean hasEffect(ItemStack stack) {
-        return super.hasEffect(stack) || stack.getChildTag("EntityTag") != null;
     }
 
     @Override
@@ -66,10 +53,6 @@ public class PlaneItem extends Item {
 
             if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
                 PlaneEntity planeEntity = planeSupplier.apply(worldIn);
-//                UpgradeType coalEngine = SimplePlanesUpgrades.COAL_ENGINE.get();
-//                Upgrade upgrade = coalEngine.instanceSupplier.apply(planeEntity);
-//                planeEntity.upgrades.put(coalEngine.getRegistryName(), upgrade);
-//                planeEntity.upgradeChanged();
 
                 planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
                 planeEntity.rotationYaw = playerIn.rotationYaw;

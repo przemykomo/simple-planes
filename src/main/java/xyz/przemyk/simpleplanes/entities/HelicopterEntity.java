@@ -5,16 +5,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
+
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
     }
@@ -149,5 +152,10 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected Vector3f getPassengerTwoPos(Entity passenger) {
         return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -0.8f);
+    }
+
+    @Override
+    protected Item getItem() {
+        return SimplePlanesItems.HELICOPTER_ITEM.get();
     }
 }
