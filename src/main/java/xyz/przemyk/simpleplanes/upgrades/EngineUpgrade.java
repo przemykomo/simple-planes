@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public abstract class EngineUpgrade extends Upgrade {
@@ -18,7 +18,7 @@ public abstract class EngineUpgrade extends Upgrade {
     /**
      * Opens gui (used on server side)
      */
-    public void openGui(PlayerEntity playerEntity) {}
+    public void openGui(ServerPlayerEntity playerEntity) {}
     public boolean canOpenGui() { return false; }
     public abstract boolean isPowered();
 }
