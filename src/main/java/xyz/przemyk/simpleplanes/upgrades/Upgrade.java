@@ -39,7 +39,7 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     /**
      * Call it to remove this upgrade from the plane.
      */
-    protected void remove() {
+    public void remove() {
         removed = true;
         invalidateCaps();
     }
@@ -89,4 +89,8 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
      */
     public abstract void readPacket(PacketBuffer buffer);
 
+    /**
+     * Called when upgrade is removed using wrench.
+     */
+    public abstract void dropItems();
 }

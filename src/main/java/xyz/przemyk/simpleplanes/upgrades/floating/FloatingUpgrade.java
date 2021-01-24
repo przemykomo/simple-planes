@@ -13,6 +13,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -54,4 +55,9 @@ public class FloatingUpgrade extends Upgrade {
 
     @Override
     public void readPacket(PacketBuffer buffer) {}
+
+    @Override
+    public void dropItems() {
+        planeEntity.entityDropItem(SimplePlanesItems.FLOATY_BEDDING.get());
+    }
 }

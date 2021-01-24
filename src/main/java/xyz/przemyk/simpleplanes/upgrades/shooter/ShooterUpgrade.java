@@ -121,4 +121,9 @@ public class ShooterUpgrade extends Upgrade {
     public void readPacket(PacketBuffer buffer) {
         shootSide = buffer.readBoolean();
     }
+
+    @Override
+    public void dropItems() {
+        planeEntity.entityDropItem(SimplePlanesItems.SHOOTER.get());
+    }
 }

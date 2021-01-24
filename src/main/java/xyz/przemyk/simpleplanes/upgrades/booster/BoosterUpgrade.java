@@ -19,12 +19,14 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import static net.minecraft.item.Items.GUNPOWDER;
 
 public class BoosterUpgrade extends Upgrade {
+    
     public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/rocket.png");
     public static int FUEL_PER_GUNPOWDER = 20;
 
@@ -130,5 +132,10 @@ public class BoosterUpgrade extends Upgrade {
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         IVertexBuilder ivertexbuilder = buffer.getBuffer(BoosterModel.INSTANCE.getRenderType(TEXTURE));
         BoosterModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void dropItems() {
+        planeEntity.entityDropItem(SimplePlanesItems.BOOSTER.get());
     }
 }

@@ -9,6 +9,7 @@
     "item.simpleplanes.healing": "Plane Quick Fix Kit",
     "item.simpleplanes.mana_upgrade": "Pure daisy bundle",
     "item.simpleplanes.cloud": "Cloud",
+    "item.simpleplanes.wrench": "Wrench",
     "block.simpleplanes.charger_block": "FE charging station",
     "block.simpleplanes.fueling_block": "plane fueling station",
     "description.simpleplanes.sprayer": "Use water bottles or potions to make crops grow faster and give effect to entities",
@@ -52,5 +53,10 @@
     "text.autoconfig.simpleplanes.option.MANA_COST": "mana cost",
     "text.autoconfig.simpleplanes.option.MANA_COST.@Tooltip": "mana amount to use when out",
     "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA": "fly ticks per mana",
-    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "number of flight ticks per mana usage"
+    "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "number of flight ticks per mana usage",
+
+    "simpleplanes:booster": "Booster",
+    "simpleplanes:floaty_bedding": "Floaty bedding",
+    "simpleplanes:shooter": "Shooter",
+    "simpleplanes:furnace_engine": "Furnace Engine"
 }

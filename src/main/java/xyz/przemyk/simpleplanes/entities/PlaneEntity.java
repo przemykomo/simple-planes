@@ -48,6 +48,7 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
+import xyz.przemyk.simpleplanes.network.SUpgradeRemovedPacket;
 import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
@@ -1169,7 +1170,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public void writeUpdateUpgradePacket(ResourceLocation upgradeID, PacketBuffer buffer) {
         buffer.writeVarInt(getEntityId());
-        buffer.writeString(upgradeID.toString());
+        buffer.writeResourceLocation(upgradeID);
         upgrades.get(upgradeID).writePacket(buffer);
     }
 
@@ -1204,7 +1205,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         buffer.writeVarInt(upgrades.size());
         for (Upgrade upgrade : upgrades) {
             ResourceLocation upgradeID = upgrade.getType().getRegistryName();
-            buffer.writeString(upgradeID.toString());
+            buffer.writeResourceLocation(upgradeID);
             upgrade.writePacket(buffer);
         }
     }
@@ -1213,7 +1214,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public void readSpawnData(PacketBuffer additionalData) {
         int upgradesSize = additionalData.readVarInt();
         for (int i = 0; i < upgradesSize; i++) {
-            ResourceLocation upgradeID = new ResourceLocation(additionalData.readString());
+            ResourceLocation upgradeID = additionalData.readResourceLocation();
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
@@ -1221,6 +1222,18 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 engineUpgrade = (EngineUpgrade) upgrade;
             }
             upgrade.readPacket(additionalData);
+        }
+    }
+
+    public void removeUpgrade(ResourceLocation upgradeID) {
+        Upgrade upgrade = upgrades.remove(upgradeID);
+        if (upgrade != null) {
+            upgrade.dropItems();
+            upgrade.remove();
+
+            if (!world.isRemote) {
+                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new SUpgradeRemovedPacket(upgradeID, getEntityId()));
+            }
         }
     }
 

@@ -30,6 +30,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
 
@@ -169,5 +170,11 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
             return itemHandlerLazyOptional.cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void dropItems() {
+        planeEntity.entityDropItem(SimplePlanesItems.FURNACE_ENGINE.get());
+        planeEntity.entityDropItem(itemStackHandler.getStackInSlot(0));
     }
 }

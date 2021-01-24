@@ -16,7 +16,7 @@ public class BoostPacket {
     }
 
     public BoostPacket(PacketBuffer buffer) {
-        this.boost = buffer.readBoolean();
+        boost = buffer.readBoolean();
     }
 
     public void toBytes(PacketBuffer buffer) {
