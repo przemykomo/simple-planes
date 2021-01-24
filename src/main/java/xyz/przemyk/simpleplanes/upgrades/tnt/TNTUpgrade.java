@@ -45,4 +45,9 @@ public class TNTUpgrade extends Upgrade {
 
     @Override
     public void readPacket(PacketBuffer buffer) {}
+
+    @Override
+    public void dropItems() {
+        planeEntity.entityDropItem(Items.TNT);
+    }
 }

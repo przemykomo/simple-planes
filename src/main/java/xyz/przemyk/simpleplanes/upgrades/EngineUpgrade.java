@@ -10,7 +10,7 @@ public abstract class EngineUpgrade extends Upgrade {
     }
 
     @Override
-    protected void remove() {
+    public void remove() {
         super.remove();
         planeEntity.engineUpgrade = null;
     }

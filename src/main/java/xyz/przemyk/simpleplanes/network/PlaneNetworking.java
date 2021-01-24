@@ -76,5 +76,23 @@ public class PlaneNetworking {
                 CycleItemsPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
+
+        INSTANCE.registerMessage(
+                ++id,
+                CRemoveUpgradePacket.class,
+                CRemoveUpgradePacket::toBytes,
+                CRemoveUpgradePacket::new,
+                CRemoveUpgradePacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                SUpgradeRemovedPacket.class,
+                SUpgradeRemovedPacket::toBytes,
+                SUpgradeRemovedPacket::new,
+                SUpgradeRemovedPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
     }
 }

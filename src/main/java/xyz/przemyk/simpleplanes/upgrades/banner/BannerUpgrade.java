@@ -16,6 +16,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class BannerUpgrade extends Upgrade {
+
     public ItemStack banner;
     public float rotation, prevRotation;
 
@@ -69,5 +70,10 @@ public class BannerUpgrade extends Upgrade {
     @Override
     public void readPacket(PacketBuffer buffer) {
         banner = buffer.readItemStack();
+    }
+
+    @Override
+    public void dropItems() {
+        planeEntity.entityDropItem(banner);
     }
 }

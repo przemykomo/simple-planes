@@ -37,8 +37,6 @@ public class CycleItemsPacket {
 
     public enum TYPE {
         CRAFTING_LEFT,
-        CRAFTING_RIGHT,
-        UPGRADES_LEFT,
-        UPGRADES_RIGHT
+        CRAFTING_RIGHT
     }
 }

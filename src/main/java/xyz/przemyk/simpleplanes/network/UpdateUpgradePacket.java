@@ -33,7 +33,7 @@ public class UpdateUpgradePacket {
     public UpdateUpgradePacket(PacketBuffer buffer) {
         newUpgrade = buffer.readBoolean();
         planeEntityID = buffer.readVarInt();
-        upgradeID = new ResourceLocation(buffer.readString());
+        upgradeID = buffer.readResourceLocation();
         packetBuffer = buffer; // it seems like I don't need to copy the buffer
     }
 

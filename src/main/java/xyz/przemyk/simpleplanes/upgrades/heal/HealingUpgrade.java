@@ -59,4 +59,7 @@ public class HealingUpgrade extends Upgrade {
 
     @Override
     public void readPacket(PacketBuffer buffer) {}
+
+    @Override
+    public void dropItems() {}
 }

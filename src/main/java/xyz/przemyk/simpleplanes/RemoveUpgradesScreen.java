@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class RemoveUpgradesScreen extends ContainerScreen<RemoveUpgradesContainer> {
@@ -20,7 +21,7 @@ public class RemoveUpgradesScreen extends ContainerScreen<RemoveUpgradesContaine
         super.init();
         Entity entity = minecraft.world.getEntityByID(container.planeID);
         if (entity instanceof PlaneEntity) {
-            buttonsList = new UpgradeButtonsList(minecraft, 160, height, 32, height - 61, 20, (PlaneEntity) entity);
+            buttonsList = new UpgradeButtonsList(minecraft, 120, height, 32, height - 61, 20, (PlaneEntity) entity);
             children.add(buttonsList);
         } else {
             closeScreen();
