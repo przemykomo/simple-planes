@@ -1,12 +1,9 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -17,9 +14,7 @@ import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.items.InformationItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
-import xyz.przemyk.simpleplanes.blocks.CloudBlock;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 
 @SuppressWarnings("unused")
@@ -32,7 +27,7 @@ public class SimplePlanesItems {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final ItemGroup ITEM_GROUP = new ItemGroup("simpleplanes") {
+    public static final ItemGroup ITEM_GROUP = new ItemGroup(SimplePlanesMod.MODID) {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(PLANE_ITEM.get());
@@ -54,22 +49,22 @@ public class SimplePlanesItems {
 
 //    public static final RegistryObject<InformationItem> SPRAYER = ITEMS.register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
 //    public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
-    public static final RegistryObject<InformationItem> CLOUD = ITEMS
-        .register("cloud", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.cloud")) {
-            @Override
-            public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-                ItemStack itemstack = playerIn.getHeldItem(handIn);
-                playerIn.setActiveHand(handIn);
-                CloudBlock.placeCloud(playerIn.getPosition(), worldIn);
-                return ActionResult.resultConsume(itemstack);
-            }
-
-            @Override
-            public ActionResultType onItemUse(ItemUseContext context) {
-                CloudBlock.placeCloud(context.getPos(), context.getWorld());
-                return ActionResultType.CONSUME;
-            }
-        });
+//    public static final RegistryObject<InformationItem> CLOUD = ITEMS
+//        .register("cloud", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.cloud")) {
+//            @Override
+//            public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+//                ItemStack itemstack = playerIn.getHeldItem(handIn);
+//                playerIn.setActiveHand(handIn);
+//                CloudBlock.placeCloud(playerIn.getPosition(), worldIn);
+//                return ActionResult.resultConsume(itemstack);
+//            }
+//
+//            @Override
+//            public ActionResultType onItemUse(ItemUseContext context) {
+//                CloudBlock.placeCloud(context.getPos(), context.getWorld());
+//                return ActionResultType.CONSUME;
+//            }
+//        });
 
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
     public static final RegistryObject<BlockItem> PLANE_WORKBENCH = ITEMS.register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), new Item.Properties().group(ITEM_GROUP)));

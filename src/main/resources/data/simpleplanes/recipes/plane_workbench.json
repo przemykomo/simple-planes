@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "iii",
+        "iCi"
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "C": {
+            "item": "minecraft:crafting_table"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:plane_workbench"
+    }
+}
