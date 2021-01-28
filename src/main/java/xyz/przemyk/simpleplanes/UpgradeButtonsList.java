@@ -14,6 +14,8 @@ import xyz.przemyk.simpleplanes.network.CRemoveUpgradePacket;
 
 public class UpgradeButtonsList extends AbstractList<UpgradeButtonsList.ButtonEntry> {
 
+    public static final ITextComponent TITLE = new TranslationTextComponent(SimplePlanesMod.MODID + ".remove_upgrades");
+
     public UpgradeButtonsList(Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int itemHeightIn, PlaneEntity planeEntity) {
         super(mcIn, widthIn, heightIn, topIn, bottomIn, itemHeightIn);
 
@@ -24,7 +26,7 @@ public class UpgradeButtonsList extends AbstractList<UpgradeButtonsList.ButtonEn
 
     @Override
     protected void renderDecorations(MatrixStack matrixStack, int mouseX, int mouseY) {
-        minecraft.fontRenderer.func_243248_b(matrixStack, new StringTextComponent("Remove upgrade"), 4, 4, 0xFFFFFF);
+        minecraft.fontRenderer.func_243248_b(matrixStack, TITLE, 4, 4, 0xFFFFFF);
     }
 
     public static class ButtonEntry extends AbstractList.AbstractListEntry<ButtonEntry> {
