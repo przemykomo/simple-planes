@@ -80,11 +80,6 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    public double getCameraDistanceMultiplayer() {
-        return super.getCameraDistanceMultiplayer();
-    }
-
-    @Override
     protected boolean isEasy() {
         return true;
     }
@@ -151,7 +146,7 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Vector3f getPassengerTwoPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -0.8f);
+        return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -0.8f);
     }
 
     @Override

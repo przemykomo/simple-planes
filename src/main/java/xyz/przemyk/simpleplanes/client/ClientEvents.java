@@ -3,6 +3,7 @@ package xyz.przemyk.simpleplanes.client;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -11,7 +12,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -35,7 +35,8 @@ public class ClientEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
-        Entity entity = event.getEntity().getLowestRidingEntity();
+        LivingEntity livingEntity = event.getEntity();
+        Entity entity = livingEntity.getLowestRidingEntity();
         if (entity instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) entity;
             MatrixStack matrixStack = event.getMatrixStack();
@@ -52,7 +53,7 @@ public class ClientEvents {
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
             quaternion.set(quaternion.getX(), -quaternion.getY(), -quaternion.getZ(), quaternion.getW());
             matrixStack.rotate(quaternion);
-            final float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
+            float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.prevRotationYaw, entity.rotationYaw);
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(rotationYaw));
             matrixStack.translate(0, -0.7, 0);
@@ -60,10 +61,10 @@ public class ClientEvents {
                 matrixStack.translate(0.0D, -firstPersonYOffset, 0.0D);
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
-                event.getEntity().rotationYawHead = planeEntity.rotationYaw * 2 - event.getEntity().rotationYawHead;
+                livingEntity.rotationYawHead = planeEntity.rotationYaw * 2 - livingEntity.rotationYawHead;
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
-                event.getEntity().prevRotationYawHead = planeEntity.prevRotationYaw * 2 - event.getEntity().prevRotationYawHead;
+                livingEntity.prevRotationYawHead = planeEntity.prevRotationYaw * 2 - livingEntity.prevRotationYawHead;
             }
         }
     }

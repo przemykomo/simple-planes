@@ -39,8 +39,6 @@ public class MegaPlaneEntity extends LargePlaneEntity {
     @Override
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
-//        Vector3f pos = transformPos(getPassengerPos(passenger));
-//        passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
     }
 
     @Override
@@ -73,13 +71,6 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         if (this.rotationPitch > 20) {
             this.rotationPitch = 20;
         }
-    }
-
-    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-    private Vector3f getPassengerPos(Entity passenger) {
-        final int i = this.getPassengers().indexOf(passenger);
-        final float z = -(i / 2) * 1.5f;
-        return new Vector3f(-0.5f + i % 2, (float) (getMountedYOffset() + passenger.getYOffset()), z + 1);
     }
 
     @Override

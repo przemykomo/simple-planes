@@ -55,8 +55,9 @@
     "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA": "fly ticks per mana",
     "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "number of flight ticks per mana usage",
 
+    "simpleplanes.remove_upgrades": "Remove upgrades:",
     "simpleplanes:booster": "Booster",
-    "simpleplanes:floaty_bedding": "Floaty bedding",
+    "simpleplanes:floaty_bedding": "Floaty Bedding",
     "simpleplanes:shooter": "Shooter",
     "simpleplanes:furnace_engine": "Furnace Engine"
 }
