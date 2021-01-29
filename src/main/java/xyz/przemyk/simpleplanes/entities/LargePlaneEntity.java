@@ -70,26 +70,24 @@ public class LargePlaneEntity extends PlaneEntity {
     @Override
     public void updatePassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        if (passengers.size() > 1) {
-            super.updatePassenger(passenger);
-            if (passengers.indexOf(passenger) != 0) {
-                updatePassengerTwo(passenger);
-            }
+        super.updatePassenger(passenger);
+        if (passengers.indexOf(passenger) == 0) {
+            passenger.setPosition(passenger.getPosX(), getPosY() + getMountedYOffset() + getEntityYOffset(passenger), passenger.getPosZ());
         } else {
-            super.updatePassenger(passenger);
+            updatePassengerTwo(passenger);
         }
     }
 
     public void updatePassengerTwo(Entity passenger) {
         Vector3f pos = transformPos(getPassengerTwoPos(passenger));
-        passenger.setPosition(this.getPosX() + pos.getX(), this.getPosY() + pos.getY(), this.getPosZ() + pos.getZ());
+        passenger.setPosition(getPosX() + pos.getX(), getPosY() + pos.getY(), getPosZ() + pos.getZ());
     }
 
     protected Vector3f getPassengerTwoPos(Entity passenger) {
         return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -1);
     }
 
-    public static double getEntityYOffset(Entity passenger) {
+    public double getEntityYOffset(Entity passenger) {
         if (passenger instanceof VillagerEntity) {
             return ((VillagerEntity) passenger).isChild() ? -0.1 : -0.3D;
         }

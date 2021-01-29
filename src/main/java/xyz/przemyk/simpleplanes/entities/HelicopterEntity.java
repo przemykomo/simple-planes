@@ -1,10 +1,9 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
@@ -13,26 +12,11 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
 
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
-    }
-
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, Block material) {
-        super(entityTypeIn, worldIn, material);
-    }
-
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn, Block material, double x, double y, double z) {
-        super(entityTypeIn, worldIn, material, x, y, z);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
     }
 
     @Override
@@ -65,11 +49,6 @@ public class HelicopterEntity extends LargePlaneEntity {
     public int getFuelCost(Vars vars) {
         return vars.passengerSprinting ? 2 : 1;
     }
-
-//    @Override
-//    protected Item getItem() {
-//        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_helicopter"));
-//    }
 
     @Override
     protected void addPassenger(Entity passenger) {
@@ -135,18 +114,16 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) {
-        return super.canFitPassenger(passenger); // && passenger instanceof PlayerEntity;
-    }
- 
-    @Override
-    public void updatePassenger(Entity passenger) {
-        super.updatePassenger(passenger);
+    protected Vector3f getPassengerTwoPos(Entity passenger) {
+        return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -0.8f);
     }
 
     @Override
-    protected Vector3f getPassengerTwoPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -0.8f);
+    public double getEntityYOffset(Entity passenger) {
+        if (passenger instanceof VillagerEntity) {
+            return ((VillagerEntity) passenger).isChild() ? -0.1 : -0.35D;
+        }
+        return passenger.getYOffset();
     }
 
     @Override
