@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.EntityPredicates;
@@ -85,14 +86,15 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     protected Vector3f getPassengerTwoPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedYOffset() + passenger.getYOffset()), -1);
+        return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -1);
     }
 
-//    @Override
-//    protected Item getItem() {
-////        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SimplePlanesMod.MODID, getMaterial().name + "_large_plane"));
-//        return SimplePlanesItems.
-//    }
+    public static double getEntityYOffset(Entity passenger) {
+        if (passenger instanceof VillagerEntity) {
+            return ((VillagerEntity) passenger).isChild() ? -0.1 : -0.3D;
+        }
+        return passenger.getYOffset();
+    }
 
     @Override
     public double getCameraDistanceMultiplayer() {

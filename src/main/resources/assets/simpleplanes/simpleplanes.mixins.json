@@ -4,11 +4,8 @@
     "compatibilityLevel": "JAVA_8",
     "package": "xyz.przemyk.simpleplanes.mixin",
     "refmap": "simpleplanes.refmap.json",
-    "mixins": [
-        "MixinVillagerEntity"
-    ],
+    "mixins": [],
     "client": [
-        "MixinActiveRenderInfo",
         "MixinVillagerModel"
     ],
     "injectors": {
