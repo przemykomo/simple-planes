@@ -14,7 +14,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -24,12 +23,14 @@ import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineUpgrade;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class PlaneGui extends AbstractGui {
-    private final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/hpbar.png");
+public class PlaneHud {
 
-    @SuppressWarnings("deprecation")
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void renderGameOverlayPost(RenderGameOverlayEvent.Post event) {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
+
+    private int blitOffset;
+
+    @SubscribeEvent()
+    public void renderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
         int scaledWidth = mc.getMainWindow().getScaledWidth();
         int scaledHeight = mc.getMainWindow().getScaledHeight();
@@ -77,8 +78,8 @@ public class PlaneGui extends AbstractGui {
                     ItemStack offhandStack = mc.player.getHeldItemOffhand();
                     HandSide primaryHand = mc.player.getPrimaryHand();
                     int i = scaledWidth / 2;
-                    int j = getBlitOffset();
-                    setBlitOffset(-90);
+                    int lastBlitOffset = blitOffset;
+                    blitOffset = -90;
                     if (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) {
                         // render on left side
                         blit(matrixStack, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
@@ -99,10 +100,7 @@ public class PlaneGui extends AbstractGui {
                         }
                     }
 
-                    setBlitOffset(j);
-                    RenderSystem.enableRescaleNormal();
-                    RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
+                    blitOffset = lastBlitOffset;
 
                     ItemStack fuelStack = furnaceEngineUpgrade.itemStackHandler.getStackInSlot(0);
                     if (!fuelStack.isEmpty()) {
@@ -121,13 +119,15 @@ public class PlaneGui extends AbstractGui {
                     planeEntity.mountMessage = false;
                     if (planeEntity instanceof HelicopterEntity) {
                         mc.ingameGUI.setOverlayMessage(new TranslationTextComponent("helicopter.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                        SimplePlanesMod.keyBind.func_238171_j_()), false);
+                                SimplePlanesMod.keyBind.func_238171_j_()), false);
                     } else {
                         mc.ingameGUI.setOverlayMessage(new TranslationTextComponent("plane.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                        SimplePlanesMod.keyBind.func_238171_j_()), false);
+                                SimplePlanesMod.keyBind.func_238171_j_()), false);
                     }
 
                 }
+            } else if (event.getType() == ElementType.FOOD) {
+                event.setCanceled(true);
             }
         }
     }
@@ -150,5 +150,9 @@ public class PlaneGui extends AbstractGui {
 
             itemRenderer.renderItemOverlays(mc.fontRenderer, stack, x, y);
         }
+    }
+
+    private void blit(MatrixStack matrixStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
+        AbstractGui.blit(matrixStack, x, y, blitOffset, (float)uOffset, (float)vOffset, uWidth, vHeight, 256, 256);
     }
 }
