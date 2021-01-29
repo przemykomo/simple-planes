@@ -130,17 +130,17 @@ public class ClientEvents {
         }
     }
 
-    /**
-     * fixes first person view
-     */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
-        final Entity entity = event.getInfo().getRenderViewEntity();
+        ActiveRenderInfo renderInfo = event.getInfo();
+        Entity entity = renderInfo.getRenderViewEntity();
         if (entity instanceof ClientPlayerEntity && entity.getRidingEntity() instanceof PlaneEntity) {
             PlaneEntity planeEntity = (PlaneEntity) entity.getRidingEntity();
             ClientPlayerEntity playerEntity = (ClientPlayerEntity) entity;
 
-            if (!event.getInfo().isThirdPerson()) {
+            if (renderInfo.isThirdPerson()) {
+                renderInfo.movePosition(-renderInfo.calcCameraDistance(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
+            } else {
                 double partialTicks = event.getRenderPartialTicks();
 
                 Quaternion q_prev = planeEntity.getQ_Prev();
