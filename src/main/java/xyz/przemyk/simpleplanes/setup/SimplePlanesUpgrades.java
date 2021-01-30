@@ -15,7 +15,6 @@ import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 @SuppressWarnings("unused")
 public class SimplePlanesUpgrades {
-
     public static final DeferredRegister<UpgradeType> UPGRADE_TYPES = DeferredRegister.create(UpgradeType.class, SimplePlanesMod.MODID);
 
     public static void init() {

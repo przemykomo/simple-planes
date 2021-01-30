@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.blocks;
+package xyz.przemyk.simpleplanes.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 
@@ -16,18 +17,17 @@ public class PlaneWorkbenchScreen extends ContainerScreen<PlaneWorkbenchContaine
 
     public PlaneWorkbenchScreen(PlaneWorkbenchContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-        ySize = 210;
     }
 
     @Override
     protected void init() {
         super.init();
         // left recipe output
-        addButton(new ImageButton(guiLeft + 106, guiTop + 104, 10, 15, 176, 0, 15, GUI_TEXTURE,
+        addButton(new ImageButton(guiLeft + 122, guiTop + 47, 10, 15, 176, 0, 15, GUI_TEXTURE,
                 button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_LEFT))));
 
         // right recipe output
-        addButton(new ImageButton(guiLeft + 144, guiTop + 104, 10, 15, 186, 0, 15, GUI_TEXTURE,
+        addButton(new ImageButton(guiLeft + 152, guiTop + 47, 10, 15, 186, 0, 15, GUI_TEXTURE,
                 button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_RIGHT))));
     }
 
@@ -46,10 +46,5 @@ public class PlaneWorkbenchScreen extends ContainerScreen<PlaneWorkbenchContaine
         int i = this.guiLeft;
         int j = (this.height - this.ySize) / 2;
         this.blit(matrixStack, i, j, 0, 0, this.xSize, this.ySize);
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        font.func_243248_b(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
     }
 }

@@ -6,9 +6,9 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.RemoveUpgradesContainer;
+import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchContainer;
+import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineContainer;
 
 public class SimplePlanesContainers {

@@ -15,6 +15,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 
 public class PlaneWorkbenchBlock extends Block {
 

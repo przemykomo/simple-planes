@@ -1,1 +1,1 @@
-MixinConnector: xyz.przemyk.simpleplanes.MixinConnector
+MixinConnector: xyz.przemyk.simpleplanes.mixin.MixinConnector
