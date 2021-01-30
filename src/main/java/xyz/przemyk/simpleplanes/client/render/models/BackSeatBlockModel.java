@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.client.render;
+package xyz.przemyk.simpleplanes.client.render.models;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 

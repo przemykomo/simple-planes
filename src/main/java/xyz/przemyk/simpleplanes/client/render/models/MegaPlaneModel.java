@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.client.render;
+package xyz.przemyk.simpleplanes.client.render.models;
 // Made with Blockbench 3.6.6
 
 import com.mojang.blaze3d.matrix.MatrixStack;

@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.client.render;
+package xyz.przemyk.simpleplanes.client.render.models;
 // Made with Blockbench 3.6.3
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import static xyz.przemyk.simpleplanes.client.render.AbstractPlaneRenderer.getPropellerRotation;
+import static xyz.przemyk.simpleplanes.client.render.PlaneRenderer.getPropellerRotation;
 
 public class MegaPlanePropellerModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer Body;

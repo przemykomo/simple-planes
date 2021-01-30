@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.client.render;
+package xyz.przemyk.simpleplanes.client.render.models;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -9,7 +9,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 @SuppressWarnings("FieldCanBeLocal")
-public class FurnacePlaneModel extends EntityModel<PlaneEntity> {
+public class PlaneModel extends EntityModel<PlaneEntity> {
     public static final int TICKS_PER_PROPELLER_ROTATION = 5;
 
     private final ModelRenderer Body;
@@ -26,7 +26,7 @@ public class FurnacePlaneModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer left;
     private final ModelRenderer bone7;
 
-    public FurnacePlaneModel() {
+    public PlaneModel() {
         textureWidth = 16;
         textureHeight = 16;
 
