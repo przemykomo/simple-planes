@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.blocks;
+package xyz.przemyk.simpleplanes.container;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;

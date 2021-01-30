@@ -1,11 +1,12 @@
-package xyz.przemyk.simpleplanes;
+package xyz.przemyk.simpleplanes.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import xyz.przemyk.simpleplanes.UpgradeButtonsList;
+import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class RemoveUpgradesScreen extends ContainerScreen<RemoveUpgradesContainer> {

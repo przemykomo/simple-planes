@@ -41,9 +41,9 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.Config;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.RemoveUpgradesContainer;
+import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
@@ -223,7 +223,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                     break;
                 }
             }
-            if ((!hasPlayer) || Config.THIEF.get()) {
+            if ((!hasPlayer) || SimplePlanesConfig.THIEF.get()) {
                 removePassengers();
             }
             return ActionResultType.SUCCESS;
@@ -373,7 +373,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             vars.moveStrafing = 0;
             setSprinting(false);
         }
-        vars.turn_threshold = Config.TURN_THRESHOLD.get() / 100d;
+        vars.turn_threshold = SimplePlanesConfig.TURN_THRESHOLD.get() / 100d;
         if (Math.abs(vars.moveForward) < vars.turn_threshold) {
             vars.moveForward = 0;
         }
@@ -437,7 +437,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             }
             move(MoverType.SELF, motion);
             onGround = ((motion.getY()) == 0.0) ? onGroundOld : onGround;
-            if (collidedHorizontally && !world.isRemote && Config.PLANE_CRASH.get() && groundTicks <= 0) {
+            if (collidedHorizontally && !world.isRemote && SimplePlanesConfig.PLANE_CRASH.get() && groundTicks <= 0) {
                 double speed_after = Math.sqrt(horizontalMag(getMotion()));
                 double speed_diff = speed_before - speed_after;
                 float f2 = (float) (speed_diff * 10.0D - 5.0D);
@@ -609,8 +609,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         rotationYaw -= turn;
     }
 
-    protected boolean isEasy() {
-        return Config.EASY_FLIGHT.get();
+    protected boolean isEasy() { //TODO: remove easy flight mode
+        return SimplePlanesConfig.EASY_FLIGHT.get();
     }
 
     protected void tickMotion(Vars vars) {
@@ -895,7 +895,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
-        if ((onGroundIn || isAboveWater()) && Config.PLANE_CRASH.get()) {
+        if ((onGroundIn || isAboveWater()) && SimplePlanesConfig.PLANE_CRASH.get()) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).getY();
             if (y1 < Math.cos(Math.toRadians(getLandingAngle()))) {
                 state.getBlock().onFallenUpon(world, pos, this, (float) (getMotion().length() * 5));

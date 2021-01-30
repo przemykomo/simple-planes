@@ -13,7 +13,6 @@ import xyz.przemyk.simpleplanes.entities.*;
 
 @SuppressWarnings("unused")
 public class SimplePlanesEntities {
-
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, SimplePlanesMod.MODID);
 
     public static void init() {

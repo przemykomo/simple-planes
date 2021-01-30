@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes;
+package xyz.przemyk.simpleplanes.container;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,6 +10,7 @@ public class RemoveUpgradesContainer extends Container {
 
     public final int planeID;
 
+    @SuppressWarnings("unused")
     public RemoveUpgradesContainer(int id, PlayerInventory playerInventory, PacketBuffer data) {
         this(id, data.readVarInt());
     }

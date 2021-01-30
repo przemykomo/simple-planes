@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes;
+package xyz.przemyk.simpleplanes.mixin;
 
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.connect.IMixinConnector;

@@ -3,7 +3,7 @@ package xyz.przemyk.simpleplanes.network;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchContainer;
+import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 
 import java.util.function.Supplier;
 
