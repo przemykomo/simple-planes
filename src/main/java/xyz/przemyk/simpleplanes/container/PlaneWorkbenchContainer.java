@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftResultInventory;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BlockItem;
@@ -15,6 +16,7 @@ import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
@@ -44,8 +46,8 @@ public class PlaneWorkbenchContainer extends Container {
 
         addSlot(new PlaneCraftingResultSlot(player, this, craftResult, 0, 134, 47));
 
-        addSlot(new PlaneWorkbenchInputSlot(craftMatrix, this, 0, 28, 47));
-        addSlot(new PlaneWorkbenchInputSlot(craftMatrix, this, 1, 75, 47));
+        addSlot(new SlotItemHandler(craftMatrix, 0, 28, 47));
+        addSlot(new SlotItemHandler(craftMatrix, 1, 75, 47));
 
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
@@ -182,5 +184,12 @@ public class PlaneWorkbenchContainer extends Container {
         }
 
         return itemstack;
+    }
+
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        ItemStack itemStack = super.slotClick(slotId, dragType, clickTypeIn, player);
+        onInputChanged();
+        return itemStack;
     }
 }
