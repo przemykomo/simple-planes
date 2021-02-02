@@ -27,7 +27,7 @@ public class FloatingUpgrade extends Upgrade {
 
     @Override
     public void tick() {
-        if (planeEntity.isAboveWater()) {
+        if (planeEntity.isOnWater()) {
             Vector3d motion = planeEntity.getMotion();
             double f = 1;
             double y = MathHelper.lerp(1, motion.y, Math.max(motion.y, 0));

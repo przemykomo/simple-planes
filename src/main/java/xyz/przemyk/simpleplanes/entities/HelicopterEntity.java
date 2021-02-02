@@ -100,7 +100,6 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected void tickRotation(Vars vars) {
-
         int yawDiff = 2;
         if (!vars.passengerSprinting) {
             double turn = vars.moveStrafing > 0 ? yawDiff : vars.moveStrafing == 0 ? 0 : -yawDiff;

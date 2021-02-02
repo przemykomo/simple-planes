@@ -3,7 +3,6 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
@@ -64,7 +63,7 @@ public class MegaPlaneEntity extends LargePlaneEntity {
         } else if (vars.moveForward < 0.0F) {
             pitch = vars.passengerSprinting ? -0.8f : -0.4f;
         }
-        if (getOnGround() || isAboveWater()) {
+        if (getOnGround() || isOnWater()) {
             pitch *= 2;
         }
         this.rotationPitch += pitch;

@@ -353,7 +353,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         markVelocityChanged();
 
-        Vars vars = getMotionVars();
+        Vars vars = getMotionVars(); //TODO: don't create a new object each tick
 
         if (hasNoGravity()) {
             vars.gravity = 0;
@@ -402,7 +402,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         boolean do_pitch = true;
         //pitch + movement speed
-        if ((getOnGround() || isAboveWater())) {
+        if (getOnGround() || isOnWater()) {
             do_pitch = tickOnGround(vars);
         } else {
             groundTicks--;
@@ -432,7 +432,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             double speed_before = Math.sqrt(horizontalMag(getMotion()));
             boolean onGroundOld = onGround;
             Vector3d motion = getMotion();
-            if (motion.length() > 0.5 || vars.moveForward != 0) {
+            if (motion.lengthSquared() > 0.25 || vars.moveForward != 0) {
                 onGround = true;
             }
             move(MoverType.SELF, motion);
@@ -510,12 +510,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     private boolean isParked(Vars vars) {
         Vector3d oldMotion = getMotion();
-        final boolean parked = (isAboveWater() || isOnGround()) &&
+        final boolean parked = (isOnWater() || isOnGround()) &&
             (oldMotion.length() < 0.1) &&
             (!vars.passengerSprinting) &&
             (vars.moveStrafing == 0) &&
             (not_moving_time > 100) &&
-            (onGround || isAboveWater()) &&
+            (onGround || isOnWater()) &&
             (vars.moveForward == 0);
         setParked(parked);
         return parked;
@@ -554,8 +554,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         float moveStrafing = vars.moveStrafing;
         boolean passengerSprinting = vars.passengerSprinting;
 
-        if (getOnGround() || isAboveWater() || !passengerSprinting || isEasy()) {
-            int yawdiff = 2;
+//        if (getOnGround() || isOnWater() || !passengerSprinting || isEasy()) {
+            int yawdiff = 3;
             float roll = rotationRoll;
             if (degreesDifferenceAbs(rotationPitch, 0) < 45) {
                 for (int i = 0; i < 360; i += 180) {
@@ -567,7 +567,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             }
             int r = 15;
 
-            if (getOnGround() || isAboveWater()) {
+            if (getOnGround() || isOnWater()) {
                 turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
                 rotationRoll = roll;
             } else if (degreesDifferenceAbs(rotationRoll, 0) > 30) {
@@ -592,19 +592,19 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
             }
 
-        } else if (moveStrafing == 0) {
-            for (int i = 0; i < 360; i += 180) {
-                if (MathHelper.degreesDifferenceAbs(rotationRoll, i) < 80) {
-                    rotationRoll = lerpAngle(0.01f * f1, rotationRoll, i);
-                    break;
-                }
-            }
-
-        } else if (moveStrafing > 0) {
-            rotationRoll += f1;
-        } else if (moveStrafing < 0) {
-            rotationRoll -= f1;
-        }
+//        } else if (moveStrafing == 0) {
+//            for (int i = 0; i < 360; i += 180) {
+//                if (MathHelper.degreesDifferenceAbs(rotationRoll, i) < 80) {
+//                    rotationRoll = lerpAngle(0.01f * f1, rotationRoll, i);
+//                    break;
+//                }
+//            }
+//
+//        } else if (moveStrafing > 0) {
+//            rotationRoll += f1;
+//        } else if (moveStrafing < 0) {
+//            rotationRoll -= f1;
+//        }
 
         rotationYaw -= turn;
     }
@@ -652,17 +652,19 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     protected void tickPitch(Vars vars) {
         float pitch = 0f;
         if (vars.moveForward > 0.0F) {
-            pitch = vars.passengerSprinting ? 2 : 1f;
+//            pitch = vars.passengerSprinting ? 2 : 1f;
+            pitch = 1.3f;
         } else {
             if (vars.moveForward < 0.0F) {
-                pitch = vars.passengerSprinting ? -2 : -1;
+//                pitch = vars.passengerSprinting ? -2 : -1;
+                pitch = -1.3f;
             }
         }
         rotationPitch += pitch;
     }
 
     protected boolean tickOnGround(Vars vars) {
-        if (getMotion().length() < 0.1 && getOnGround()) {
+        if (getMotion().lengthSquared() < 0.01 && getOnGround()) {
             not_moving_time += 1;
         } else {
             not_moving_time = 0;
@@ -679,7 +681,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             groundTicks--;
         }
         float pitch = getGroundPitch();
-        if ((isPowered() && vars.moveForward > 0.0F) || isAboveWater()) {
+        if ((isPowered() && vars.moveForward > 0.0F) || isOnWater()) {
             pitch = 0;
         } else if (getMotion().length() > vars.take_off_speed) {
             pitch /= 2;
@@ -687,7 +689,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
 
         if (degreesDifferenceAbs(rotationPitch, 0) > 1 && getMotion().length() < 0.1) {
-            vars.push = 0;
+            vars.push /= 2; //runs while the plane is taking off
         }
         if (getMotion().length() < vars.take_off_speed) {
             //                rotationPitch = lerpAngle(0.2f, rotationPitch, pitch);
@@ -714,7 +716,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
         float yaw = MathUtil.getYaw(motion);
         float pitch = MathUtil.getPitch(motion);
-        if (degreesDifferenceAbs(yaw, rotationYaw) > 5 && (getOnGround() || isAboveWater())) {
+        if (degreesDifferenceAbs(yaw, rotationYaw) > 5 && (getOnGround() || isOnWater())) {
             setMotion(motion.scale(0.98));
         }
 
@@ -737,7 +739,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         setMotion(rotationToVector(lerpAngle180(0.1f, yaw, rotationYaw),
             lerpAngle180(vars.pitch_to_motion * d, pitch, rotationPitch) + lift,
             speed));
-        if (!getOnGround() && !isAboveWater() && motion.length() > 0.1) {
+        if (!getOnGround() && !isOnWater() && motion.length() > 0.1) {
 
             if (degreesDifferenceAbs(pitch, rotationPitch) > 90) {
                 pitch = wrapDegrees(pitch + 180);
@@ -895,7 +897,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
-        if ((onGroundIn || isAboveWater()) && SimplePlanesConfig.PLANE_CRASH.get()) {
+        if ((onGroundIn || isOnWater()) && SimplePlanesConfig.PLANE_CRASH.get()) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).getY();
             if (y1 < Math.cos(Math.toRadians(getLandingAngle()))) {
                 state.getBlock().onFallenUpon(world, pos, this, (float) (getMotion().length() * 5));
@@ -934,7 +936,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return onGround || groundTicks > 1;
     }
 
-    public boolean isAboveWater() {
+    public boolean isOnWater() {
         return world.getBlockState(new BlockPos(getPositionVec().add(0, 0.4, 0))).getBlock() == Blocks.WATER;
     }
 
@@ -1273,7 +1275,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             passive_engine_push = 0.025f;
             motion_to_rotation = 0.05f;
             pitch_to_motion = 0.2f;
-            yaw_multiplayer = 0.2f;
+            yaw_multiplayer = 0.5f;
         }
     }
 }
