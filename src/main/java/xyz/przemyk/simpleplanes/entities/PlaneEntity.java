@@ -550,11 +550,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected void tickRotation(Vars vars) {
         float f1 = 1f;
-        double turn = 0;
+        double turn;
         float moveStrafing = vars.moveStrafing;
-        boolean passengerSprinting = vars.passengerSprinting;
 
-//        if (getOnGround() || isOnWater() || !passengerSprinting || isEasy()) {
             int yawdiff = 3;
             float roll = rotationRoll;
             if (degreesDifferenceAbs(rotationPitch, 0) < 45) {
@@ -565,7 +563,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                     }
                 }
             }
-            int r = 15;
 
             if (getOnGround() || isOnWater()) {
                 turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
@@ -577,9 +574,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 if (moveStrafing == 0) {
                     rotationRoll = lerpAngle180(0.2f, rotationRoll, 0);
                 } else if (moveStrafing > 0) {
-                    rotationRoll = MathHelper.clamp(rotationRoll + f1, 0, r);
+                    rotationRoll = MathHelper.clamp(rotationRoll + f1, -7, 15);
                 } else if (moveStrafing < 0) {
-                    rotationRoll = MathHelper.clamp(rotationRoll - f1, -r, 0);
+                    rotationRoll = MathHelper.clamp(rotationRoll - f1, -15, 7);
                 }
                 final double roll_old = toEulerAngles(getQ()).roll;
                 if (degreesDifferenceAbs(roll_old, 0) < 90) {
@@ -587,30 +584,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 } else {
                     turn = MathHelper.clamp((180 - roll_old) * vars.yaw_multiplayer, -yawdiff, yawdiff);
                 }
-                if (moveStrafing == 0)
+                if (moveStrafing == 0) {
                     turn = 0;
-
+                }
             }
 
-//        } else if (moveStrafing == 0) {
-//            for (int i = 0; i < 360; i += 180) {
-//                if (MathHelper.degreesDifferenceAbs(rotationRoll, i) < 80) {
-//                    rotationRoll = lerpAngle(0.01f * f1, rotationRoll, i);
-//                    break;
-//                }
-//            }
-//
-//        } else if (moveStrafing > 0) {
-//            rotationRoll += f1;
-//        } else if (moveStrafing < 0) {
-//            rotationRoll -= f1;
-//        }
-
         rotationYaw -= turn;
-    }
-
-    protected boolean isEasy() { //TODO: remove easy flight mode
-        return SimplePlanesConfig.EASY_FLIGHT.get();
     }
 
     protected void tickMotion(Vars vars) {
@@ -689,7 +668,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         rotationPitch = lerpAngle(0.1f, rotationPitch, pitch);
 
         if (degreesDifferenceAbs(rotationPitch, 0) > 1 && getMotion().length() < 0.1) {
-            vars.push /= 2; //runs while the plane is taking off
+            vars.push /= 5; //runs while the plane is taking off
         }
         if (getMotion().length() < vars.take_off_speed) {
             //                rotationPitch = lerpAngle(0.2f, rotationPitch, pitch);

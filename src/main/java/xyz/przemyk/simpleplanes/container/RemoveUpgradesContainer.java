@@ -20,7 +20,6 @@ public class RemoveUpgradesContainer extends Container {
         this.planeID = planeID;
     }
 
-
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
         return true;

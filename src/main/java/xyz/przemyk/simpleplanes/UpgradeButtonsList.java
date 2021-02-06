@@ -6,11 +6,10 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.network.CRemoveUpgradePacket;
+import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 
 public class UpgradeButtonsList extends AbstractList<UpgradeButtonsList.ButtonEntry> {
 

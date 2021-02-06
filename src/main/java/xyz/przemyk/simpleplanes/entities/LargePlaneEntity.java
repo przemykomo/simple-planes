@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -18,14 +17,6 @@ public class LargePlaneEntity extends PlaneEntity {
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
-    }
-
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, Block material) {
-        super(entityTypeIn, worldIn, material);
-    }
-
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, Block material, double x, double y, double z) {
-        super(entityTypeIn, worldIn, material, x, y, z);
     }
 
     @Override
@@ -113,7 +104,6 @@ public class LargePlaneEntity extends PlaneEntity {
 //        }
 //        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
 //    }
-
 
     @Override
     protected Item getItem() {

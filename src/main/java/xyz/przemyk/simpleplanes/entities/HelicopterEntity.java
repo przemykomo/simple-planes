@@ -58,11 +58,6 @@ public class HelicopterEntity extends LargePlaneEntity {
         }
     }
 
-    @Override
-    protected boolean isEasy() {
-        return true;
-    }
-
     protected void tickPitch(Vars vars) {
         if (vars.moveForward > 0.0F) {
             rotationPitch = Math.max(rotationPitch - 1, -20);

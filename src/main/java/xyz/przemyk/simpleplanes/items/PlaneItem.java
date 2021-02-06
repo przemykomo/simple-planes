@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.items;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,17 +18,17 @@ import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class PlaneItem extends Item {
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
-    private final Function<World, PlaneEntity> planeSupplier;
+    private final Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType;
 
-    public PlaneItem(Properties properties, Function<World, PlaneEntity> planeSupplier) {
+    public PlaneItem(Properties properties, Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType) {
         super(properties.maxStackSize(1));
-        this.planeSupplier = planeSupplier;
+        this.planeEntityType = planeEntityType;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class PlaneItem extends Item {
             }
 
             if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
-                PlaneEntity planeEntity = planeSupplier.apply(worldIn);
+                PlaneEntity planeEntity = planeEntityType.get().create(worldIn);
 
                 planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
                 planeEntity.rotationYaw = playerIn.rotationYaw;
