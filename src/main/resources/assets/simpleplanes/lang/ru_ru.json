@@ -1,4 +1,3 @@
-  
 {
     "item.simpleplanes.furnace_engine": "Печной Двигатель",
     "item.simpleplanes.propeller": "Пропилер",
@@ -30,7 +29,6 @@
     "item.simpleplanes.plane": "Самолет",
     "item.simpleplanes.large_plane": "Большой Самолет",
     "item.simpleplanes.helicopter": "Вертолет",
-    "item.simpleplanes.mega_plane": "Грузовой Самолет",
 
     "text.autoconfig.simpleplanes.title": "простые самолёты",
     "text.autoconfig.simpleplanes.category.default": "разное",

@@ -36,9 +36,6 @@ public class BackSeatBlockModel {
         EntityType<?> entityType = planeEntity.getType();
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
             matrixStackIn.translate(0, 0, -1);
-        } else if (entityType == SimplePlanesEntities.MEGA_PLANE.get()) {
-            int i = seat / 2;
-            matrixStackIn.translate(0.5 - seat % 2, 0.2, -3.2 + i * 0.8f);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             matrixStackIn.translate(0, 0, -1.2);
         }

@@ -20,7 +20,7 @@ import xyz.przemyk.simpleplanes.client.render.*;
 import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.*;
-import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineScreen;
+import xyz.przemyk.simpleplanes.client.gui.FurnaceEngineScreen;
 
 @Mod(SimplePlanesMod.MODID)
 public class SimplePlanesMod {

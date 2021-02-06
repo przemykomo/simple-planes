@@ -28,6 +28,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -51,7 +52,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     @Override
     public void tick() {
         if (burnTime > 0) {
-            --burnTime;
+            burnTime -= planeEntity.getFuelCost();
             updateClient();
         } else {
             int itemBurnTime = ForgeHooks.getBurnTime(itemStackHandler.getStackInSlot(0));
@@ -76,9 +77,6 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
 
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
             matrixStack.translate(0, -0.8, 0.65);
-        } else if (entityType == SimplePlanesEntities.MEGA_PLANE.get()) {
-            matrixStack.rotate(Vector3f.XN.rotationDegrees(10));
-            matrixStack.translate(0, 0, 2.68);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             matrixStack.translate(0, 0, 1.1);
         }
