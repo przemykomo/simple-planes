@@ -53,7 +53,7 @@ public class SimplePlanesMod {
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.PLANE.get(), manager -> new PlaneRenderer<>(manager, new PlaneModel(), new PropellerModel(), 0.6F));
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.LARGE_PLANE.get(), manager -> new PlaneRenderer<>(manager, new LargePlaneModel(), new PropellerModel(), 1.0F));
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.HELICOPTER.get(), manager -> new PlaneRenderer<>(manager, new HelicopterModel(), new HelicopterPropellerModel(), 0.6F));
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.MEGA_PLANE.get(), manager -> new PlaneRenderer<>(manager, new MegaPlaneModel(), new MegaPlanePropellerModel(), 1.0F));
+
         keyBind = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         openEngineInventoryKey = new KeyBinding("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(keyBind);

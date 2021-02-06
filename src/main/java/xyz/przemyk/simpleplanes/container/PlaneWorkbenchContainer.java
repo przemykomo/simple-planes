@@ -30,7 +30,7 @@ public class PlaneWorkbenchContainer extends Container {
 
     public static final int IRON_NEEDED = 4;
     public static final int PLANKS_NEEDED = 4;
-    public static final Item[] OUTPUT_ITEMS = new Item[] {SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.MEGA_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
+    public static final Item[] OUTPUT_ITEMS = new Item[] {SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
 
     private int selectedOutputItem = 0;
     private final CompoundNBT outputItemTag = new CompoundNBT();

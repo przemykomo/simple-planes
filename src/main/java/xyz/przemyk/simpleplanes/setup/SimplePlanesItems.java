@@ -10,10 +10,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
-import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
-import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 
@@ -33,10 +29,9 @@ public class SimplePlanesItems {
         }
     };
 
-    public static final RegistryObject<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new PlaneEntity(SimplePlanesEntities.PLANE.get(), world)));
-    public static final RegistryObject<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE.get(), world)));
-    public static final RegistryObject<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER.get(), world)));
-    public static final RegistryObject<PlaneItem> MEGA_PLANE_ITEM = ITEMS.register("mega_plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE.get(), world)));
+    public static final RegistryObject<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesEntities.PLANE));
+    public static final RegistryObject<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
+    public static final RegistryObject<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesEntities.HELICOPTER));
 
     public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
 
