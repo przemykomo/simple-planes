@@ -46,11 +46,6 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    public int getFuelCost(Vars vars) {
-        return vars.passengerSprinting ? 2 : 1;
-    }
-
-    @Override
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
         if (world.isRemote() && Minecraft.getInstance().player == passenger) {
@@ -108,7 +103,7 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected Vector3f getPassengerTwoPos(Entity passenger) {
+    protected Vector3f getSecondPassengerPos(Entity passenger) {
         return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -0.8f);
     }
 

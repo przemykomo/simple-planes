@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades.furnace;
+package xyz.przemyk.simpleplanes.container;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

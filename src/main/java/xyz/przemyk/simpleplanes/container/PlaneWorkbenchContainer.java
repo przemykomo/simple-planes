@@ -13,24 +13,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 public class PlaneWorkbenchContainer extends Container {
+
+    public static final ResourceLocation PLANE_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "plane_materials");
+    public static final int IRON_NEEDED = 4;
+    public static final int PLANKS_NEEDED = 4;
+    public static final Item[] OUTPUT_ITEMS = new Item[] {SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
+
     private final ItemStackHandler craftMatrix = new ItemStackHandler(2);
     private final CraftResultInventory craftResult = new CraftResultInventory();
     private final IWorldPosCallable worldPosCallable;
     private final PlayerEntity player;
-
-    public static final int IRON_NEEDED = 4;
-    public static final int PLANKS_NEEDED = 4;
-    public static final Item[] OUTPUT_ITEMS = new Item[] {SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
 
     private int selectedOutputItem = 0;
     private final CompoundNBT outputItemTag = new CompoundNBT();
@@ -105,9 +110,14 @@ public class PlaneWorkbenchContainer extends Container {
             ItemStack result = ItemStack.EMPTY;
             ItemStack input = craftMatrix.getStackInSlot(0);
             ItemStack secondInput = craftMatrix.getStackInSlot(1);
-            if (input.getItem() == Items.IRON_INGOT && input.getCount() >= IRON_NEEDED && secondInput.getItem() instanceof BlockItem && secondInput.getCount() >= PLANKS_NEEDED) {
+            Item secondItem = secondInput.getItem();
+
+            if (input.getItem() == Items.IRON_INGOT && input.getCount() >= IRON_NEEDED  &&
+                    secondInput.getCount() >= PLANKS_NEEDED && secondItem instanceof BlockItem &&
+                    BlockTags.getCollection().getTagByID(PLANE_MATERIALS).contains(((BlockItem) secondItem).getBlock())) {
+
                 result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
-                outputItemTag.putString("material", ((BlockItem) secondInput.getItem()).getBlock().getRegistryName().toString());
+                outputItemTag.putString("material", ((BlockItem) secondItem).getBlock().getRegistryName().toString());
                 result.setTagInfo("EntityTag", outputItemTag);
             }
 

@@ -500,12 +500,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    public boolean isFull() {
-        return getPassengers().size() > 0;
-    }
-
-    public int getFuelCost(Vars vars) {
-        return vars.passengerSprinting ? 4 : 1;
+    public int getFuelCost() {
+        return 1;
     }
 
     private boolean isParked(Vars vars) {
@@ -574,9 +570,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 if (moveStrafing == 0) {
                     rotationRoll = lerpAngle180(0.2f, rotationRoll, 0);
                 } else if (moveStrafing > 0) {
-                    rotationRoll = MathHelper.clamp(rotationRoll + f1, -7, 15);
+                    rotationRoll = Math.min(rotationRoll + f1, 15);
                 } else if (moveStrafing < 0) {
-                    rotationRoll = MathHelper.clamp(rotationRoll - f1, -15, 7);
+                    rotationRoll = Math.max(rotationRoll - f1, -15);
                 }
                 final double roll_old = toEulerAngles(getQ()).roll;
                 if (degreesDifferenceAbs(roll_old, 0) < 90) {
@@ -855,12 +851,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 0.375;
     }
 
+    public static final ResourceLocation FIREPROOF_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "fireproof_materials");
+
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
         if (source.isExplosion()) {
             return false;
         }
-        if (source.isFireDamage() && BlockTags.NON_FLAMMABLE_WOOD.contains(planksMaterial)) {
+        if (source.isFireDamage() && BlockTags.getCollection().getTagByID(FIREPROOF_MATERIALS).contains(planksMaterial)) {
             return true;
         }
         if (source.getTrueSource() != null && source.getTrueSource().isRidingSameEntity(this)) {

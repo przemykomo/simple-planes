@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades.furnace;
+package xyz.przemyk.simpleplanes.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
 
 public class FurnaceEngineScreen extends ContainerScreen<FurnaceEngineContainer> {
 
