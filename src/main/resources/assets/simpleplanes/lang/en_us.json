@@ -7,7 +7,7 @@
     "item.simpleplanes.floaty_bedding": "Floaty Bedding",
     "item.simpleplanes.shooter": "Shooter",
     "item.simpleplanes.folding": "Folding",
-    "item.simpleplanes.healing": "Plane Quick Fix Kit",
+    "item.simpleplanes.healing": "Quick Fix Kit",
     "item.simpleplanes.mana_upgrade": "Pure daisy bundle",
     "item.simpleplanes.cloud": "Cloud",
     "item.simpleplanes.wrench": "Wrench",
@@ -28,7 +28,7 @@
     "helicopter.onboard": "Press %2$s to TakeOff | Press %1$s to Dismount",
     "key.simpleplanes.category": "Simple Planes",
     "key.plane_boost.desc": "Plane Boost Key",
-    "key.plane_engine_open.desc": "Open Plane Engine",
+    "key.plane_engine_open.desc": "Open Plane Engine Screen",
 
     "item.simpleplanes.plane": "Plane",
     "item.simpleplanes.large_plane": "Large Plane",
@@ -61,5 +61,9 @@
     "simpleplanes:booster": "Booster",
     "simpleplanes:floaty_bedding": "Floaty Bedding",
     "simpleplanes:shooter": "Shooter",
-    "simpleplanes:furnace_engine": "Furnace Engine"
+    "simpleplanes:furnace_engine": "Furnace Engine",
+
+    "entity.simpleplanes.plane": "Plane",
+    "entity.simpleplanes.large_plane": "Large Plane",
+    "entity.simpleplanes.helicopter": "Helicopter"
 }

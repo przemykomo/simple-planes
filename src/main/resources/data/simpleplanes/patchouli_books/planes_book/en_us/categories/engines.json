@@ -1,0 +1,6 @@
+{
+    "name": "Engines",
+    "description": "Here you can find information about engines to power your aircraft.",
+    "icon": "simpleplanes:furnace_engine",
+    "sortnum": 1
+}

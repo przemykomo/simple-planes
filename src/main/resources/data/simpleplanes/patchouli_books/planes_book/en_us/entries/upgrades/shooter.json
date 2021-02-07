@@ -1,0 +1,15 @@
+{
+    "name": "Shooter",
+    "icon": "simpleplanes:shooter",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Right click with fireworks, fire charges or arrows while sitting in the aircraft to shoot them."
+        },
+        {
+            "type": "crafting",
+            "recipe": "simpleplanes:shooter"
+        }
+    ]
+}
