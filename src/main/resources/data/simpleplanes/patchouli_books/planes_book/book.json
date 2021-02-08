@@ -1,6 +1,7 @@
 {
     "name": "The Guide to Planes",
-    "landing_text": "LANDING TEXT",
+    "landing_text": "Simple Planes lets you create planes and helicopters with possible upgrades. Here you can find information about this mod.",
     "version": 1,
-    "creative_tab": "simpleplanes"
+    "creative_tab": "simpleplanes",
+    "model": "simpleplanes:plane_book"
 }
