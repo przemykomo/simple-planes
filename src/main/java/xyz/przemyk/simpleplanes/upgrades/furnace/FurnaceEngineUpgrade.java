@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
@@ -55,11 +56,16 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
             burnTime -= planeEntity.getFuelCost();
             updateClient();
         } else {
-            int itemBurnTime = ForgeHooks.getBurnTime(itemStackHandler.getStackInSlot(0));
+            ItemStack itemStack = itemStackHandler.getStackInSlot(0);
+            int itemBurnTime = ForgeHooks.getBurnTime(itemStack);
             if (itemBurnTime > 0) {
                 burnTimeTotal = itemBurnTime;
                 burnTime = itemBurnTime;
-                itemStackHandler.extractItem(0, 1, false);
+                if (itemStack.hasContainerItem()) {
+                    itemStackHandler.setStackInSlot(0, itemStack.getContainerItem());
+                } else {
+                    itemStackHandler.extractItem(0, 1, false);
+                }
                 updateClient();
             }
         }
