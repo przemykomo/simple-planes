@@ -10,8 +10,10 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -56,6 +58,8 @@ import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -253,21 +257,32 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             UpgradeItem upgradeItem = (UpgradeItem) item;
             if (canAddUpgrade(upgradeItem.upgradeType.get())) {
                 Upgrade upgrade = upgradeItem.upgradeType.get().instanceSupplier.apply(this);
-                upgrade.onApply(itemStack, playerEntity);
-                if (!playerEntity.isCreative()) {
-                    itemStack.shrink(1);
-                }
-                upgrades.put(upgradeItem.upgradeType.get().getRegistryName(), upgrade);
-                if (upgradeItem.upgradeType.get().isEngine) {
-                    engineUpgrade = (EngineUpgrade) upgrade;
-                }
-                if (!world.isRemote) {
-                    PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world, true));
-                }
+                addUpgrade(playerEntity, itemStack, upgrade);
                 return true;
             }
+//        } else if (item == Items.TNT && canAddUpgrade(SimplePlanesUpgrades.TNT.get())) {
+//            addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
+//            return true;
+        } else if (item instanceof BannerItem && canAddUpgrade(SimplePlanesUpgrades.BANNER.get())) {
+            addUpgrade(playerEntity, itemStack, new BannerUpgrade(this));
+            return true;
         }
         return false;
+    }
+
+    private void addUpgrade(PlayerEntity playerEntity, ItemStack itemStack, Upgrade upgrade) {
+        upgrade.onApply(itemStack, playerEntity);
+        if (!playerEntity.isCreative()) {
+            itemStack.shrink(1);
+        }
+        UpgradeType upgradeType = upgrade.getType();
+        upgrades.put(upgradeType.getRegistryName(), upgrade);
+        if (upgradeType.isEngine) {
+            engineUpgrade = (EngineUpgrade) upgrade;
+        }
+        if (!world.isRemote) {
+            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world, true));
+        }
     }
 
     @SuppressWarnings("deprecation")
