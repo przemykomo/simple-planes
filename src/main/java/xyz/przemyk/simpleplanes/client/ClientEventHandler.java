@@ -4,8 +4,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -18,6 +20,7 @@ import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -25,20 +28,48 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.gui.FurnaceEngineScreen;
+import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
+import xyz.przemyk.simpleplanes.client.gui.RemoveUpgradesScreen;
+import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
+import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.BoostPacket;
 import xyz.przemyk.simpleplanes.network.OpenEngineInventoryPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineUpgrade;
-
-import static xyz.przemyk.simpleplanes.SimplePlanesMod.keyBind;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
+
+    @OnlyIn(Dist.CLIENT)
+    public static KeyBinding keyBind;
+    @OnlyIn(Dist.CLIENT)
+    public static KeyBinding openEngineInventoryKey;
+
+    public static void clientSetup() {
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.PLANE.get(), manager -> new PlaneRenderer<>(manager, new PlaneModel(), new PropellerModel(), 0.6F));
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.LARGE_PLANE.get(), manager -> new PlaneRenderer<>(manager, new LargePlaneModel(), new PropellerModel(), 1.0F));
+        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.HELICOPTER.get(), manager -> new PlaneRenderer<>(manager, new HelicopterModel(), new HelicopterPropellerModel(), 0.6F));
+
+        keyBind = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
+        openEngineInventoryKey = new KeyBinding("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
+        ClientRegistry.registerKeyBinding(keyBind);
+        ClientRegistry.registerKeyBinding(openEngineInventoryKey);
+
+        ScreenManager.registerFactory(SimplePlanesContainers.PLANE_WORKBENCH.get(), PlaneWorkbenchScreen::new);
+        ScreenManager.registerFactory(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
+        ScreenManager.registerFactory(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
+    }
 
     private static boolean playerRotationNeedToPop = false;
 
@@ -125,7 +156,7 @@ public class ClientEventHandler {
                     planeEntity.applyYawToEntity(player);
                 }
 
-                if (planeEntity.engineUpgrade != null && mc.currentScreen == null && mc.loadingGui == null && SimplePlanesMod.openEngineInventoryKey.isPressed() && planeEntity.engineUpgrade.canOpenGui()) {
+                if (planeEntity.engineUpgrade != null && mc.currentScreen == null && mc.loadingGui == null && openEngineInventoryKey.isPressed() && planeEntity.engineUpgrade.canOpenGui()) {
                     PlaneNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
                 }
 
@@ -268,10 +299,10 @@ public class ClientEventHandler {
                     planeEntity.mountMessage = false;
                     if (planeEntity instanceof HelicopterEntity) {
                         mc.ingameGUI.setOverlayMessage(new TranslationTextComponent("helicopter.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                SimplePlanesMod.keyBind.func_238171_j_()), false);
+                                keyBind.func_238171_j_()), false);
                     } else {
                         mc.ingameGUI.setOverlayMessage(new TranslationTextComponent("plane.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                SimplePlanesMod.keyBind.func_238171_j_()), false);
+                                keyBind.func_238171_j_()), false);
                     }
 
                 }

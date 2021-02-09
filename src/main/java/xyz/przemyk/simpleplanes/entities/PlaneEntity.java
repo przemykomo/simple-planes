@@ -3,7 +3,6 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -41,15 +40,15 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
+import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
 import xyz.przemyk.simpleplanes.network.SUpgradeRemovedPacket;
 import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -392,8 +391,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         Vector3d oldMotion = getMotion();
 
-        if (world.isRemote && isPowered() && !isParked(vars) && world.isRemote && !PlaneSound.isPlaying(getEntityId())) {
-            Minecraft.getInstance().getSoundHandler().play(new PlaneSound(this));
+        if (world.isRemote && isPowered() && !isParked(vars)) {
+            PlaneSound.tryToPlay(this);
         }
 
         //motion and rotation interpolation + lift.
@@ -1110,7 +1109,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     }
 
-    @OnlyIn(Dist.CLIENT)
     public float getRockingAngle(float partialTicks) {
         return MathHelper.lerp(partialTicks, prevRockingAngle, rockingAngle);
     }
