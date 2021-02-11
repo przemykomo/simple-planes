@@ -61,6 +61,7 @@ import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -498,14 +499,22 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public void tickUpgrades() {
-        Collection<Upgrade> upgradesVal = upgrades.values();
-        for (Upgrade upgrade : upgradesVal) {
+        List<ResourceLocation> upgradesToRemove = new ArrayList<>();
+        List<ResourceLocation> upgradesToUpdate = new ArrayList<>();
+        upgrades.forEach((rl,upgrade) -> {
             upgrade.tick();
             if (upgrade.removed) {
-                upgradesVal.remove(upgrade);
-            } else if (upgrade.updateClient && !world.isRemote && ticksExisted % networkUpdateInterval == 0) {
-                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getEntityId(), (ServerWorld) world));
+                upgradesToRemove.add(rl);
+            } else if (upgrade.updateClient && !world.isRemote) {
+                upgradesToUpdate.add(rl);
             }
+        });
+
+        for (ResourceLocation name : upgradesToRemove) {
+            upgrades.remove(name);
+        }
+        for (ResourceLocation name : upgradesToUpdate) {
+            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getEntityId(), (ServerWorld) world));
         }
     }
 
