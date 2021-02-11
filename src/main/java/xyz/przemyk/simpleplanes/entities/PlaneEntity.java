@@ -13,7 +13,6 @@ import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -59,7 +58,6 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
-import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -251,7 +249,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    public boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
+    protected boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
         Item item = itemStack.getItem();
         if (item instanceof UpgradeItem) {
             UpgradeItem upgradeItem = (UpgradeItem) item;
@@ -260,9 +258,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 addUpgrade(playerEntity, itemStack, upgrade);
                 return true;
             }
-//        } else if (item == Items.TNT && canAddUpgrade(SimplePlanesUpgrades.TNT.get())) {
-//            addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
-//            return true;
         } else if (item instanceof BannerItem && canAddUpgrade(SimplePlanesUpgrades.BANNER.get())) {
             addUpgrade(playerEntity, itemStack, new BannerUpgrade(this));
             return true;
@@ -270,7 +265,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return false;
     }
 
-    private void addUpgrade(PlayerEntity playerEntity, ItemStack itemStack, Upgrade upgrade) {
+    protected void addUpgrade(PlayerEntity playerEntity, ItemStack itemStack, Upgrade upgrade) {
         upgrade.onApply(itemStack, playerEntity);
         if (!playerEntity.isCreative()) {
             itemStack.shrink(1);

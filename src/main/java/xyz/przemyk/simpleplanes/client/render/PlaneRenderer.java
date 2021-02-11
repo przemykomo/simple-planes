@@ -70,7 +70,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
 
         double firstPersonYOffset = -0.7D;
-        //        boolean fpv = Minecraft.getInstance().player != null && Minecraft.getInstance().player == planeEntity.getControllingPassenger() && (Minecraft.getInstance()).gameSettings.thirdPersonView == 0;
         boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
             && (Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON;
         if (isPlayerRidingInFirstPersonView) {
@@ -91,7 +90,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         if (f > 0.0F) {
             float angle = MathHelper.clamp(f * f1 / 200.0F, -30, 30);
-//            float angle = 30;
             f = planeEntity.ticksExisted + partialTicks;
             matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));
         }
@@ -105,21 +103,8 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeEntityModel.getRenderType(this.getEntityTexture(planeEntity)));
         planeEntityModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
         planeEntityModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-//        int seat = 0;
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
-//            matrixStackIn.push();
-//            if (upgrade.getType().occupyBackSeat) {
-//                for (int i = 0; i < upgrade.getSeats(); i++) {
-//                    matrixStackIn.push();
-//                    BackSeatBlockModel.moveMatrix(planeEntity, matrixStackIn, seat);
-//                    upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
-//                    seat++;
-//                    matrixStackIn.pop();
-//                }
-//            } else {
                 upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
-//            }
-//            matrixStackIn.pop();
         }
 
         ivertexbuilder = ItemRenderer.getArmorVertexBuilder(bufferIn, planeEntityModel.getRenderType(PROPELLER_TEXTURE), false, planeEntity.hasNoGravity());

@@ -6,14 +6,20 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 import java.util.List;
 
 public class LargePlaneEntity extends PlaneEntity {
+
+    public boolean hasTNT = false;
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
@@ -34,6 +40,16 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     @Override
+    public boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
+        Item item = itemStack.getItem();
+        if (item == Items.TNT && canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
+            addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
+            return true;
+        }
+        return super.tryToAddUpgrade(playerEntity, itemStack);
+    }
+
+    @Override
     protected float getGroundPitch() {
         return 10;
     }
@@ -45,7 +61,8 @@ public class LargePlaneEntity extends PlaneEntity {
 
     @Override
     protected boolean canFitPassenger(Entity passenger) {
-        if (getPassengers().size() > 1 || passenger.getRidingEntity() == this) {
+        List<Entity> passengers = getPassengers();
+        if (passengers.size() > 1 || (passengers.size() == 1 && hasTNT) || passenger.getRidingEntity() == this) {
             return false;
         }
         return !(passenger instanceof PlaneEntity);

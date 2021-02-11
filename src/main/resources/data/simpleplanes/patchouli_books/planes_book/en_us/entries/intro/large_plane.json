@@ -5,7 +5,7 @@
     "pages": [
         {
             "type": "text",
-            "text": "It can fit two passengers (or a large upgrade instead of second passenger), but needs more fuel than the smaller version. You need an engine to power it."
+            "text": "It can fit two passengers, but needs more fuel than the smaller version. You need an engine to power it."
         },
         {
             "type": "entity",
