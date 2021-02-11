@@ -57,7 +57,7 @@ public class TNTUpgrade extends Upgrade {
         EntityType<?> entityType = planeEntity.getType();
 
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.8, 0.65);
+            matrixStack.translate(0, 0, -0.15);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             matrixStack.translate(0, 0, 0.1);
         }

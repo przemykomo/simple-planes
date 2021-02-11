@@ -3,9 +3,11 @@ package xyz.przemyk.simpleplanes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -19,13 +21,16 @@ public class CommonEventHandler {
         if (entity instanceof PlaneEntity) {
             ItemStack itemStack = player.getHeldItem(event.getHand());
 
-            if (itemStack.isEmpty()) {
-                return;
-            }
-            PlaneEntity planeEntity = (PlaneEntity) entity;
+            if (!itemStack.isEmpty()) {
+                if (itemStack.getItem() == Items.TNT && entity instanceof LargePlaneEntity &&
+                        ((LargePlaneEntity) entity).tryToAddTNT(player, itemStack)) {
+                    return;
+                }
+                PlaneEntity planeEntity = (PlaneEntity) entity;
 
-            for (Upgrade upgrade : planeEntity.upgrades.values()) {
-                upgrade.onItemRightClick(event);
+                for (Upgrade upgrade : planeEntity.upgrades.values()) {
+                    upgrade.onItemRightClick(event);
+                }
             }
         }
     }

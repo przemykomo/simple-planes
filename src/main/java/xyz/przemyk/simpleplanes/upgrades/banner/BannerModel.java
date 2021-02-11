@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
@@ -27,17 +28,24 @@ public class BannerModel {
 
     public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, ItemStack banner,
                                     int packedLight, ModelRenderer modelRenderer) {
-        //		if(true)return;
         PlaneEntity planeEntity = bannerUpgrade.getPlaneEntity();
         if (!banner.isEmpty()) {
             matrixStackIn.push();
-            matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90));
-            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
-            matrixStackIn.translate(0.7, 2.35, 0.05);
-            if (planeEntity.getType() != SimplePlanesEntities.PLANE.get()) {
-                matrixStackIn.translate(0, 1.1, 0);
+
+            EntityType<?> entityType = planeEntity.getType();
+            if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
+                matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
+                matrixStackIn.translate(-3, -0.5, 0);
+            } else {
+                matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90));
+                matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
+                matrixStackIn.translate(0.7, 2.35, 0.05);
+                if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
+                    matrixStackIn.translate(0, 1.1, 0);
+                }
             }
-            matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+
+            matrixStackIn.scale(0.6f, 0.6f, 0.6f);
             final BannerItem item = (BannerItem) banner.getItem();
             BANNER_TE.loadFromItemStack(banner, item.getColor());
             final float f2 = partialTicks + planeEntity.ticksExisted;
@@ -46,12 +54,9 @@ public class BannerModel {
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(r));
             List<Pair<BannerPattern, DyeColor>> list = BANNER_TE.getPatternList();
-            BannerTileEntityRenderer
-                .func_230180_a_(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, modelRenderer, ModelBakery.LOCATION_BANNER_BASE, true,
-                    list);
+            BannerTileEntityRenderer.func_230180_a_(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, modelRenderer, ModelBakery.LOCATION_BANNER_BASE, true, list);
 
             matrixStackIn.pop();
-
         }
     }
 }

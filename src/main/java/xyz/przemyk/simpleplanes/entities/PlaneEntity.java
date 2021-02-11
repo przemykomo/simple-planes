@@ -513,8 +513,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         for (ResourceLocation name : upgradesToRemove) {
             upgrades.remove(name);
         }
-        for (ResourceLocation name : upgradesToUpdate) {
-            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getEntityId(), (ServerWorld) world));
+        if (ticksExisted % networkUpdateInterval == 0) {
+            for (ResourceLocation name : upgradesToUpdate) {
+                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getEntityId(), (ServerWorld) world));
+            }
         }
     }
 
