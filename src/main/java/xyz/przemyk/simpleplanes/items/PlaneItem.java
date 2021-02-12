@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.items;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,16 +12,25 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
 
 public class PlaneItem extends Item {
 
@@ -29,6 +40,39 @@ public class PlaneItem extends Item {
     public PlaneItem(Properties properties, Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType) {
         super(properties.maxStackSize(1));
         this.planeEntityType = planeEntityType;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+        CompoundNBT entityTag = stack.getChildTag("EntityTag");
+
+        if (entityTag != null) {
+            if (entityTag.contains("material")) {
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
+                if (block != null) {
+                    tooltip.add(block.getTranslatedName());
+
+                }
+            }
+
+            if (entityTag.contains("upgrades")) {
+                CompoundNBT upgradesNBT = entityTag.getCompound("upgrades");
+                for (String key : upgradesNBT.keySet()) {
+                    CompoundNBT upgradeNbt = upgradesNBT.getCompound(key);
+                    ResourceLocation resourceLocation = new ResourceLocation(key);
+                    if (upgradeNbt.contains("desc")) {
+                        tooltip.add(new StringTextComponent(upgradeNbt.getString("desc")));
+                    } else {
+                        tooltip.add(new TranslationTextComponent("name." + resourceLocation.toString().replace(":", ".")));
+                    }
+                    UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
+                    if (upgradeType != null) {
+                    }
+                }
+            }
+        }
+
     }
 
     @Override

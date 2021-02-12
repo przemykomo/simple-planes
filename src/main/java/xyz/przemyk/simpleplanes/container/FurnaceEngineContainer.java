@@ -7,6 +7,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntArray;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
@@ -25,13 +26,13 @@ public class FurnaceEngineContainer extends Container {
 
         addSlot(new FuelSlot(itemHandler, 0, 80, 62));
 
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 9; ++j) {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 9; ++j) {
                 this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for(int k = 0; k < 9; ++k) {
+        for (int k = 0; k < 9; ++k) {
             this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
         }
 
@@ -45,6 +46,29 @@ public class FurnaceEngineContainer extends Container {
 
     @Override
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
-        return ItemStack.EMPTY;
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+            if (index != 0) {
+                if (ForgeHooks.getBurnTime(itemstack1) > 0) {
+                    if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else //noinspection ConstantConditions
+                    if (index >= 1 && index < 28) {
+                        if (!this.mergeItemStack(itemstack1, 28, 37, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    } else //noinspection ConstantConditions
+                        if (index >= 28 && index < 37 && !this.mergeItemStack(itemstack1, 3, 30, false)) {
+                            return ItemStack.EMPTY;
+                        }
+            } else if (!this.mergeItemStack(itemstack1, 1, 37, false)) {
+                return ItemStack.EMPTY;
+            }
+        }
+        return itemstack;
     }
 }

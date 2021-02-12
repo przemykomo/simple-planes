@@ -186,9 +186,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public int getMaxHealth() {
         return dataManager.get(MAX_HEALTH);
     }
+
     public void setParked(Boolean val) {
         dataManager.set(PARKED, val);
     }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean getParked() {
         return dataManager.get(PARKED);
@@ -363,16 +365,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         markVelocityChanged();
 
-        Vars vars = getMotionVars(); //TODO: don't create a new object each tick
-
+        Vars vars = getMotionVars();
         if (hasNoGravity()) {
             vars.gravity = 0;
             vars.max_lift = 0;
             vars.push = 0.00f;
-
             vars.passive_engine_push = 0;
         }
-
         Entity controllingPassenger = getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
             PlayerEntity playerEntity = (PlayerEntity) controllingPassenger;
@@ -501,7 +500,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public void tickUpgrades() {
         List<ResourceLocation> upgradesToRemove = new ArrayList<>();
         List<ResourceLocation> upgradesToUpdate = new ArrayList<>();
-        upgrades.forEach((rl,upgrade) -> {
+        upgrades.forEach((rl, upgrade) -> {
             upgrade.tick();
             if (upgrade.removed) {
                 upgradesToRemove.add(rl);
@@ -536,7 +535,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     protected Vars getMotionVars() {
-        return new Vars();
+        VARS.reset();
+        Vars vars = VARS;
+        vars.max_push_speed = getMaxSpeed() * 10;
+        return VARS;
     }
 
     protected void tickDeltaRotation(Quaternion q) {
@@ -971,6 +973,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     //on dismount
+    @Override
     public Vector3d func_230268_c_(LivingEntity livingEntity) {
         // TODO: folding upgrade
 //        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
@@ -1233,10 +1236,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    protected class Vars {
-        public float moveForward = 0;
-        public double turn_threshold = 0;
-        public float moveStrafing = 0;
+    private static final Vars VARS = new Vars();
+
+    protected static class Vars {
+        public float moveForward;
+        public double turn_threshold;
+        public float moveStrafing;
         public boolean passengerSprinting;
         double max_speed;
         double max_push_speed;
@@ -1255,8 +1260,15 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         float yaw_multiplayer;
 
         public Vars() {
+            reset();
+        }
+
+        public void reset() {
+            moveForward = 0;
+            turn_threshold = 0;
+            moveStrafing = 0;
+            passengerSprinting = false;
             max_speed = 3;
-            max_push_speed = getMaxSpeed() * 10;
             take_off_speed = 0.3;
             max_lift = 2;
             lift_factor = 10;
@@ -1270,6 +1282,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             motion_to_rotation = 0.05f;
             pitch_to_motion = 0.2f;
             yaw_multiplayer = 0.5f;
+
         }
     }
 }
