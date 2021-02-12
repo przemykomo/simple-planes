@@ -8,6 +8,7 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
@@ -23,10 +24,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -34,6 +32,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -50,6 +49,7 @@ import xyz.przemyk.simpleplanes.network.OpenInventoryPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineUpgrade;
@@ -62,7 +62,9 @@ public class ClientEventHandler {
     public static KeyBinding keyBind;
     @OnlyIn(Dist.CLIENT)
     public static KeyBinding openEngineInventoryKey;
-
+    static {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::planeColor);
+    }
     public static void clientSetup() {
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.PLANE.get(), manager -> new PlaneRenderer<>(manager, new PlaneModel(), new PropellerModel(), 0.6F));
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.LARGE_PLANE.get(), manager -> new PlaneRenderer<>(manager, new LargePlaneModel(), new PropellerModel(), 1.0F));
@@ -79,6 +81,22 @@ public class ClientEventHandler {
     }
 
     private static boolean playerRotationNeedToPop = false;
+    @SubscribeEvent()
+    public static void planeColor(ColorHandlerEvent.Item event){
+        ItemColors itemColors = event.getItemColors();
+        SimplePlanesItems.getPlaneItems().forEach(item -> {
+//            IColoredMaterialItem coloredMaterialItem = (IColoredMaterialItem) item;
+            itemColors.register(xyz.przemyk.simpleplanes.client.render.ItemColors::getColor, item);
+        });
+    }
+//    TODO: reload colors
+//    @SubscribeEvent()
+//    public static void reloadTextures(AddReloadListenerEvent event) {
+//        event.addListener((stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor) -> {
+//            return
+//        });
+//    }
+
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
@@ -306,10 +324,10 @@ public class ClientEventHandler {
                     planeEntity.mountMessage = false;
                     if (planeEntity instanceof HelicopterEntity) {
                         mc.ingameGUI.setOverlayMessage(new TranslationTextComponent("helicopter.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                keyBind.func_238171_j_()), false);
+                            keyBind.func_238171_j_()), false);
                     } else {
                         mc.ingameGUI.setOverlayMessage(new TranslationTextComponent("plane.onboard", mc.gameSettings.keyBindSneak.func_238171_j_(),
-                                keyBind.func_238171_j_()), false);
+                            keyBind.func_238171_j_()), false);
                     }
 
                 }
@@ -321,13 +339,13 @@ public class ClientEventHandler {
 
     private static void renderHotbarItem(MatrixStack matrixStack, int x, int y, float partialTicks, PlayerEntity player, ItemStack stack, ItemRenderer itemRenderer, Minecraft mc) {
         if (!stack.isEmpty()) {
-            float f = (float)stack.getAnimationsToGo() - partialTicks;
+            float f = (float) stack.getAnimationsToGo() - partialTicks;
             if (f > 0.0F) {
                 matrixStack.push();
                 float f1 = 1.0F + f / 5.0F;
-                matrixStack.translate((float)(x + 8), (float)(y + 12), 0.0F);
+                matrixStack.translate((float) (x + 8), (float) (y + 12), 0.0F);
                 matrixStack.scale(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
-                matrixStack.translate((float)(-(x + 8)), (float)(-(y + 12)), 0.0F);
+                matrixStack.translate((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
             }
 
             itemRenderer.renderItemAndEffectIntoGUI(player, stack, x, y);
@@ -340,7 +358,7 @@ public class ClientEventHandler {
     }
 
     private static void blit(MatrixStack matrixStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
-        AbstractGui.blit(matrixStack, x, y, blitOffset, (float)uOffset, (float)vOffset, uWidth, vHeight, 256, 256);
+        AbstractGui.blit(matrixStack, x, y, blitOffset, (float) uOffset, (float) vOffset, uWidth, vHeight, 256, 256);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -365,5 +383,7 @@ public class ClientEventHandler {
 //                event.setGui(gui);
             }
         }
+
     }
+
 }

@@ -13,6 +13,9 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SimplePlanesItems {
@@ -28,6 +31,14 @@ public class SimplePlanesItems {
             return new ItemStack(PLANE_ITEM.get());
         }
     };
+
+    public static List<PlaneItem> getPlaneItems(){
+        ArrayList<PlaneItem> planeItems = new ArrayList<>();
+        planeItems.add(PLANE_ITEM.get());
+        planeItems.add(LARGE_PLANE_ITEM.get());
+        planeItems.add(HELICOPTER_ITEM.get());
+        return planeItems;
+    }
 
     public static final RegistryObject<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesEntities.PLANE));
     public static final RegistryObject<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
