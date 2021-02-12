@@ -42,11 +42,18 @@ public class LargePlaneEntity extends PlaneEntity {
     @Override
     public boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
         Item item = itemStack.getItem();
-        if (item == Items.TNT && canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
-            addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
+        if (item == Items.TNT && tryToAddTNT(playerEntity, itemStack)) {
             return true;
         }
         return super.tryToAddUpgrade(playerEntity, itemStack);
+    }
+
+    public boolean tryToAddTNT(PlayerEntity playerEntity, ItemStack itemStack) {
+        if (canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
+            addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
+            return true;
+        }
+        return false;
     }
 
     @Override
