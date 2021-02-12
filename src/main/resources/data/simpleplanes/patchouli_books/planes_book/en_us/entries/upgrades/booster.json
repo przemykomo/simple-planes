@@ -5,7 +5,7 @@
     "pages": [
         {
             "type": "text",
-            "text": "Right click with a gunpowder while sitting in the aircraft to boost it."
+            "text": "Right click with a gunpowder while sitting in the aircraft to boost it. $(br)$(o)might be dangerous$(c)"
         },
         {
             "type": "crafting",

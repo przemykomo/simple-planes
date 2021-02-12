@@ -79,6 +79,7 @@
     "simpleplanes:furnace_engine": "Furnace Engine",
     "simpleplanes:tnt": "TNT",
     "simpleplanes:banner": "Banner",
+    "simpleplanes:chest": "plane chest",
 
     "entity.simpleplanes.plane": "Plane",
     "entity.simpleplanes.large_plane": "Large Plane",

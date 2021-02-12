@@ -11,6 +11,7 @@ import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.heal.HealingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
 @SuppressWarnings("unused")
@@ -31,6 +32,7 @@ public class SimplePlanesUpgrades {
     // upgrades without a custom item
     public static final RegistryObject<UpgradeType> TNT = UPGRADE_TYPES.register("tnt", () -> new UpgradeType(TNTUpgrade::new));
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", () -> new UpgradeType(BannerUpgrade::new));
+    public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(ChestUpgrade::new));
 
 //    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(FoldingUpgrade::new));
 

@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.settings.KeyBinding;
@@ -12,6 +13,7 @@ import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
@@ -22,6 +24,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -43,10 +46,14 @@ import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.BoostPacket;
 import xyz.przemyk.simpleplanes.network.OpenEngineInventoryPacket;
+import xyz.przemyk.simpleplanes.network.OpenInventoryPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
@@ -336,27 +343,27 @@ public class ClientEventHandler {
         AbstractGui.blit(matrixStack, x, y, blitOffset, (float)uOffset, (float)vOffset, uWidth, vHeight, 256, 256);
     }
 
-//    @SubscribeEvent(priority = EventPriority.HIGH)
-//    public static void planeInventory(GuiOpenEvent event) {
-//        final ClientPlayerEntity player = Minecraft.getInstance().player;
-//        if (event.getGui() instanceof InventoryScreen && player.getRidingEntity() instanceof PlaneEntity) {
-////            event.setCanceled(true);
-//            final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
-//            Upgrade chest = plane.upgrades.getOrDefault(SimplePlanesUpgrades.CHEST.getId(), null);
-//            if (chest instanceof ChestUpgrade) {
-//
-//                ChestUpgrade chest1 = (ChestUpgrade) chest;
-//                IInventory inventory = chest1.inventory;
-//                if (inventory != null) {
-//                    event.setCanceled(true);
-////                    PlaneNetworking.OPEN_INVENTORY.sendToServer(true);
-//                    PlaneNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
-//                }
-////                StringTextComponent hi = new StringTextComponent("hi");
-////                ScreenManager.openScreen(ContainerType.GENERIC_9X3,event.getGui().getMinecraft(),0,hi);
-////                ChestScreen gui = new ChestScreen(ChestContainer.createGeneric9X3(1, player.inventory, inventory), player.inventory, hi);
-////                event.setGui(gui);
-//            }
-//        }
-//    }
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void planeInventory(GuiOpenEvent event) {
+        final ClientPlayerEntity player = Minecraft.getInstance().player;
+        if (event.getGui() instanceof InventoryScreen && player.getRidingEntity() instanceof PlaneEntity) {
+//            event.setCanceled(true);
+            final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
+            Upgrade chest = plane.upgrades.getOrDefault(SimplePlanesUpgrades.CHEST.getId(), null);
+            if (chest instanceof ChestUpgrade) {
+
+                ChestUpgrade chest1 = (ChestUpgrade) chest;
+                IInventory inventory = chest1.inventory;
+                if (inventory != null) {
+                    event.setCanceled(true);
+//                    PlaneNetworking.OPEN_INVENTORY.sendToServer(true);
+                    PlaneNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
+                }
+//                StringTextComponent hi = new StringTextComponent("hi");
+//                ScreenManager.openScreen(ContainerType.GENERIC_9X3,event.getGui().getMinecraft(),0,hi);
+//                ChestScreen gui = new ChestScreen(ChestContainer.createGeneric9X3(1, player.inventory, inventory), player.inventory, hi);
+//                event.setGui(gui);
+            }
+        }
+    }
 }
