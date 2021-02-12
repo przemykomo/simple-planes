@@ -48,13 +48,13 @@ public class PlaneItem extends Item {
         CompoundNBT entityTag = stack.getChildTag("EntityTag");
 
         if (entityTag != null) {
-            if (entityTag.contains("material")) {
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
-                if (block != null) {
-                    tooltip.add(block.getTranslatedName());
-
-                }
-            }
+//            if (entityTag.contains("material")) {
+//                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
+//                if (block != null) {
+//                    tooltip.add(block.getTranslatedName());
+//
+//                }
+//            }
 
             if (entityTag.contains("upgrades")) {
                 CompoundNBT upgradesNBT = entityTag.getCompound("upgrades");

@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.container;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -19,6 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
@@ -30,7 +32,7 @@ public class PlaneWorkbenchContainer extends Container {
     public static final ResourceLocation PLANE_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "plane_materials");
     public static final int IRON_NEEDED = 4;
     public static final int PLANKS_NEEDED = 4;
-    public static final Item[] OUTPUT_ITEMS = new Item[] {SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
+    public static final Item[] OUTPUT_ITEMS = new Item[]{SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
 
     private final ItemStackHandler craftMatrix = new ItemStackHandler(2);
     private final CraftResultInventory craftResult = new CraftResultInventory();
@@ -54,13 +56,13 @@ public class PlaneWorkbenchContainer extends Container {
         addSlot(new SlotItemHandler(craftMatrix, 0, 28, 47));
         addSlot(new SlotItemHandler(craftMatrix, 1, 75, 47));
 
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 9; ++j) {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 9; ++j) {
                 this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for(int k = 0; k < 9; ++k) {
+        for (int k = 0; k < 9; ++k) {
             this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
         }
     }
@@ -93,6 +95,10 @@ public class PlaneWorkbenchContainer extends Container {
         if (!player.world.isRemote && !craftResult.getStackInSlot(0).isEmpty()) {
             ItemStack result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
             result.setTagInfo("EntityTag", outputItemTag);
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(outputItemTag.getString("material")));
+            if (block != null) {
+                result.setDisplayName(block.getTranslatedName().appendString(" ").append(result.getDisplayName()));
+            }
             craftResult.setInventorySlotContents(0, result);
             ((ServerPlayerEntity) player).connection.sendPacket(new SSetSlotPacket(windowId, 0, result));
         }
@@ -112,13 +118,17 @@ public class PlaneWorkbenchContainer extends Container {
             ItemStack secondInput = craftMatrix.getStackInSlot(1);
             Item secondItem = secondInput.getItem();
 
-            if (input.getItem() == Items.IRON_INGOT && input.getCount() >= IRON_NEEDED  &&
-                    secondInput.getCount() >= PLANKS_NEEDED && secondItem instanceof BlockItem &&
-                    BlockTags.getCollection().getTagByID(PLANE_MATERIALS).contains(((BlockItem) secondItem).getBlock())) {
+            if (input.getItem() == Items.IRON_INGOT && input.getCount() >= IRON_NEEDED &&
+                secondInput.getCount() >= PLANKS_NEEDED && secondItem instanceof BlockItem &&
+                BlockTags.getCollection().getTagByID(PLANE_MATERIALS).contains(((BlockItem) secondItem).getBlock())) {
 
                 result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
-                outputItemTag.putString("material", ((BlockItem) secondItem).getBlock().getRegistryName().toString());
+                Block block = ((BlockItem) secondItem).getBlock();
+                //noinspection ConstantConditions
+                outputItemTag.putString("material", block.getRegistryName().toString());
                 result.setTagInfo("EntityTag", outputItemTag);
+                result.setDisplayName(block.getTranslatedName().appendString(" ").append(result.getDisplayName()));
+
             }
 
             craftResult.setInventorySlotContents(0, result);
@@ -130,7 +140,7 @@ public class PlaneWorkbenchContainer extends Container {
     public void onContainerClosed(PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
         worldPosCallable.consume((world, blockPos) -> {
-            if (!playerIn.isAlive() || playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity)playerIn).hasDisconnected()) {
+            if (!playerIn.isAlive() || playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected()) {
                 for (int i = 0; i < craftMatrix.getSlots(); ++i) {
                     playerIn.dropItem(craftMatrix.getStackInSlot(i), false);
                     craftMatrix.setStackInSlot(i, ItemStack.EMPTY);
