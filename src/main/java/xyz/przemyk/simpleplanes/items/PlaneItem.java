@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.items;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -21,16 +20,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
 
 public class PlaneItem extends Item {
 
@@ -66,13 +61,9 @@ public class PlaneItem extends Item {
                     } else {
                         tooltip.add(new TranslationTextComponent("name." + resourceLocation.toString().replace(":", ".")));
                     }
-                    UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
-                    if (upgradeType != null) {
-                    }
                 }
             }
         }
-
     }
 
     @Override

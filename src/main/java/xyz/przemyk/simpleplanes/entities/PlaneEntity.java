@@ -538,8 +538,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected Vars getMotionVars() {
         VARS.reset();
-        Vars vars = VARS;
-        vars.max_push_speed = getMaxSpeed() * 10;
+        VARS.max_push_speed = getMaxSpeed() * 10;
         return VARS;
     }
 
