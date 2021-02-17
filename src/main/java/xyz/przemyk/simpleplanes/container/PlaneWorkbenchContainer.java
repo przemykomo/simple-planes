@@ -124,7 +124,6 @@ public class PlaneWorkbenchContainer extends Container {
 
                 result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
                 Block block = ((BlockItem) secondItem).getBlock();
-                //noinspection ConstantConditions
                 outputItemTag.putString("material", block.getRegistryName().toString());
                 result.setTagInfo("EntityTag", outputItemTag);
                 result.setDisplayName(block.getTranslatedName().appendString(" ").append(result.getDisplayName()));
@@ -168,7 +167,7 @@ public class PlaneWorkbenchContainer extends Container {
             itemstack = itemstack1.copy();
             if (index == 0) {
                 this.worldPosCallable.consume((p_217067_2_, p_217067_3_) -> itemstack1.getItem().onCreated(itemstack1, p_217067_2_, playerIn));
-                if (!this.mergeItemStack(itemstack1, 10, 46, true)) {
+                if (!this.mergeItemStack(itemstack1, 10, 39, true)) {
                     return ItemStack.EMPTY;
                 }
 
