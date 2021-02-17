@@ -26,7 +26,7 @@ public class TNTUpgrade extends Upgrade {
     public TNTUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.TNT.get(), planeEntity);
         if (planeEntity instanceof LargePlaneEntity) {
-            ((LargePlaneEntity) planeEntity).hasTNT = true;
+            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = true;
         }
     }
 
@@ -44,11 +44,16 @@ public class TNTUpgrade extends Upgrade {
             tntEntity.setMotion(planeEntity.getMotion());
             planeEntity.world.addEntity(tntEntity);
             itemStack.damageItem(1, event.getPlayer(), playerEntity -> playerEntity.sendBreakAnimation(event.getHand()));
-            if (planeEntity instanceof LargePlaneEntity) {
-                ((LargePlaneEntity) planeEntity).hasTNT = false;
-            }
             remove();
         }
+    }
+
+    @Override
+    public void remove() {
+        if (planeEntity instanceof LargePlaneEntity) {
+            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = false;
+        }
+        super.remove();
     }
 
     @Override

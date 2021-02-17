@@ -1,8 +1,10 @@
 package xyz.przemyk.simpleplanes.network;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -24,10 +26,7 @@ public class OpenInventoryPacket {
                 final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
                 Upgrade chest = plane.upgrades.get(SimplePlanesUpgrades.CHEST.getId());
                 if (chest instanceof ChestUpgrade) {
-                    ChestUpgrade chest1 = (ChestUpgrade) chest;
-                    if (chest1.inventory != null) {
-                        player.openContainer(chest1);
-                    }
+                    NetworkHooks.openGui(player, (INamedContainerProvider) chest);
                 }
             }
         });

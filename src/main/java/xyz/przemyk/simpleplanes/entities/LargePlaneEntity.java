@@ -20,7 +20,7 @@ import java.util.List;
 
 public class LargePlaneEntity extends PlaneEntity {
 
-    public boolean hasTNT = false;
+    public boolean hasBlockUpgrade = false;
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
         super(entityTypeIn, worldIn);
@@ -53,7 +53,7 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     public boolean tryToAddTNT(PlayerEntity playerEntity, ItemStack itemStack) {
-        if (canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
+        if (!hasBlockUpgrade && canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
             addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
             return true;
         }
@@ -61,7 +61,7 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     public boolean tryToAddChest(PlayerEntity playerEntity, ItemStack itemStack) {
-        if (canAddUpgrade(SimplePlanesUpgrades.CHEST.get()) && getPassengers().size() < 2) {
+        if (!hasBlockUpgrade && canAddUpgrade(SimplePlanesUpgrades.CHEST.get()) && getPassengers().size() < 2) {
             addUpgrade(playerEntity, itemStack, new ChestUpgrade(this));
             return true;
         }
@@ -81,7 +81,7 @@ public class LargePlaneEntity extends PlaneEntity {
     @Override
     protected boolean canFitPassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        if (passengers.size() > 1 || (passengers.size() == 1 && hasTNT) || passenger.getRidingEntity() == this) {
+        if (passengers.size() > 1 || (passengers.size() == 1 && hasBlockUpgrade) || passenger.getRidingEntity() == this) {
             return false;
         }
         return !(passenger instanceof PlaneEntity);
