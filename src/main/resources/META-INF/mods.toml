@@ -5,7 +5,7 @@ license="GNU General Public License"
 modId="simpleplanes"
 version="1.16.4-4.0.5"
 displayName="Simple Planes"
-authors="adoxentor,przemyk" #optional
+authors="adoxentor, przemyk" #optional
 description='''
 Adds upgradeable planes and helicopters.
 '''
