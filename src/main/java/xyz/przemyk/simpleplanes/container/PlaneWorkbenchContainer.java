@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.CraftResultInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
@@ -20,7 +19,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
@@ -34,8 +32,7 @@ public class PlaneWorkbenchContainer extends Container {
     public static final int PLANKS_NEEDED = 4;
     public static final Item[] OUTPUT_ITEMS = new Item[]{SimplePlanesItems.PLANE_ITEM.get(), SimplePlanesItems.LARGE_PLANE_ITEM.get(), SimplePlanesItems.HELICOPTER_ITEM.get()};
 
-    private final ItemStackHandler craftMatrix = new ItemStackHandler(2);
-    private final CraftResultInventory craftResult = new CraftResultInventory();
+    private final ItemStackHandler itemHandler = new ItemStackHandler(3);
     private final IWorldPosCallable worldPosCallable;
     private final PlayerEntity player;
 
@@ -51,19 +48,18 @@ public class PlaneWorkbenchContainer extends Container {
         this.worldPosCallable = worldPosCallable;
         this.player = playerInventory.player;
 
-        addSlot(new PlaneCraftingResultSlot(player, this, craftResult, 0, 134, 47));
-
-        addSlot(new SlotItemHandler(craftMatrix, 0, 28, 47));
-        addSlot(new SlotItemHandler(craftMatrix, 1, 75, 47));
+        addSlot(new SlotItemHandler(itemHandler, 0, 28, 47));
+        addSlot(new SlotItemHandler(itemHandler, 1, 75, 47));
+        addSlot(new PlaneCraftingResultSlot(player, this, itemHandler, 2, 134, 47));
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
         for (int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
+            addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
         }
     }
 
@@ -92,17 +88,17 @@ public class PlaneWorkbenchContainer extends Container {
     }
 
     private void updateResultSlot() {
-        if (!player.world.isRemote && !craftResult.getStackInSlot(0).isEmpty()) {
+        if (!player.world.isRemote && !itemHandler.getStackInSlot(2).isEmpty()) {
             ItemStack result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
             result.setTagInfo("EntityTag", outputItemTag);
-            craftResult.setInventorySlotContents(0, result);
-            ((ServerPlayerEntity) player).connection.sendPacket(new SSetSlotPacket(windowId, 0, result));
+            itemHandler.setStackInSlot(2, result);
+            ((ServerPlayerEntity) player).connection.sendPacket(new SSetSlotPacket(windowId, 2, result));
         }
     }
 
     public void onCrafting() {
-        craftMatrix.extractItem(0, IRON_NEEDED, false);
-        craftMatrix.extractItem(1, PLANKS_NEEDED, false);
+        itemHandler.extractItem(0, IRON_NEEDED, false);
+        itemHandler.extractItem(1, PLANKS_NEEDED, false);
         onInputChanged();
     }
 
@@ -110,8 +106,8 @@ public class PlaneWorkbenchContainer extends Container {
         if (!world.isRemote) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
             ItemStack result = ItemStack.EMPTY;
-            ItemStack input = craftMatrix.getStackInSlot(0);
-            ItemStack secondInput = craftMatrix.getStackInSlot(1);
+            ItemStack input = itemHandler.getStackInSlot(0);
+            ItemStack secondInput = itemHandler.getStackInSlot(1);
             Item secondItem = secondInput.getItem();
 
             if (input.getItem() == Items.IRON_INGOT && input.getCount() >= IRON_NEEDED &&
@@ -124,8 +120,8 @@ public class PlaneWorkbenchContainer extends Container {
                 result.setTagInfo("EntityTag", outputItemTag);
             }
 
-            craftResult.setInventorySlotContents(0, result);
-            serverPlayerEntity.connection.sendPacket(new SSetSlotPacket(windowId, 0, result));
+            itemHandler.setStackInSlot(2, result);
+            serverPlayerEntity.connection.sendPacket(new SSetSlotPacket(windowId, 2, result));
         }
     }
 
@@ -134,14 +130,14 @@ public class PlaneWorkbenchContainer extends Container {
         super.onContainerClosed(playerIn);
         worldPosCallable.consume((world, blockPos) -> {
             if (!playerIn.isAlive() || playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected()) {
-                for (int i = 0; i < craftMatrix.getSlots(); ++i) {
-                    playerIn.dropItem(craftMatrix.getStackInSlot(i), false);
-                    craftMatrix.setStackInSlot(i, ItemStack.EMPTY);
+                for (int i = 0; i < itemHandler.getSlots() - 1; ++i) {
+                    playerIn.dropItem(itemHandler.getStackInSlot(i), false);
+                    itemHandler.setStackInSlot(i, ItemStack.EMPTY);
                 }
             } else {
-                for (int i = 0; i < craftMatrix.getSlots(); ++i) {
-                    playerIn.inventory.placeItemBackInInventory(world, craftMatrix.getStackInSlot(i));
-                    craftMatrix.setStackInSlot(i, ItemStack.EMPTY);
+                for (int i = 0; i < itemHandler.getSlots() - 1; ++i) {
+                    playerIn.inventory.placeItemBackInInventory(world, itemHandler.getStackInSlot(i));
+                    itemHandler.setStackInSlot(i, ItemStack.EMPTY);
                 }
             }
         });
@@ -150,6 +146,13 @@ public class PlaneWorkbenchContainer extends Container {
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
         return isWithinUsableDistance(worldPosCallable, playerIn, SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get());
+    }
+
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        ItemStack itemStack = super.slotClick(slotId, dragType, clickTypeIn, player);
+        onInputChanged();
+        return itemStack;
     }
 
     @Override
@@ -197,12 +200,5 @@ public class PlaneWorkbenchContainer extends Container {
         }
 
         return itemstack;
-    }
-
-    @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        ItemStack itemStack = super.slotClick(slotId, dragType, clickTypeIn, player);
-        onInputChanged();
-        return itemStack;
     }
 }
