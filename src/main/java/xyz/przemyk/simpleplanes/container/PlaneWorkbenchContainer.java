@@ -95,10 +95,6 @@ public class PlaneWorkbenchContainer extends Container {
         if (!player.world.isRemote && !craftResult.getStackInSlot(0).isEmpty()) {
             ItemStack result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
             result.setTagInfo("EntityTag", outputItemTag);
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(outputItemTag.getString("material")));
-            if (block != null) {
-                result.setDisplayName(block.getTranslatedName().appendString(" ").append(result.getDisplayName()));
-            }
             craftResult.setInventorySlotContents(0, result);
             ((ServerPlayerEntity) player).connection.sendPacket(new SSetSlotPacket(windowId, 0, result));
         }
@@ -126,8 +122,6 @@ public class PlaneWorkbenchContainer extends Container {
                 Block block = ((BlockItem) secondItem).getBlock();
                 outputItemTag.putString("material", block.getRegistryName().toString());
                 result.setTagInfo("EntityTag", outputItemTag);
-                result.setDisplayName(block.getTranslatedName().appendString(" ").append(result.getDisplayName()));
-
             }
 
             craftResult.setInventorySlotContents(0, result);
