@@ -3,11 +3,11 @@ loaderVersion="[35,)"
 license="GNU General Public License"
 [[mods]]
 modId="simpleplanes"
-version="1.16.4-4.0.4"
+version="1.16.4-4.0.5"
 displayName="Simple Planes"
 authors="adoxentor,przemyk" #optional
 description='''
-Adds flying planes.
+Adds upgradeable planes and helicopters.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.simpleplanes]] #optional
