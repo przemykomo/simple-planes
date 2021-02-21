@@ -22,6 +22,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import javax.annotation.Nullable;
@@ -40,23 +41,17 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
-        CompoundNBT entityTag = stack.getChildTag("EntityTag");
-        if (entityTag != null && entityTag.contains("material")) {
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
-            if (block != null) {
-                return new TranslationTextComponent(getTranslationKey(stack)).appendString(" - ").append(block.getTranslatedName());
-            }
-        }
-        return super.getDisplayName(stack);
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         CompoundNBT entityTag = stack.getChildTag("EntityTag");
 
         if (entityTag != null) {
+            if (entityTag.contains("material")) {
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
+                if (block != null) {
+                    tooltip.add(new TranslationTextComponent(SimplePlanesMod.MODID + ".material").append(block.getTranslatedName()));
+                }
+            }
             if (entityTag.contains("upgrades")) {
                 CompoundNBT upgradesNBT = entityTag.getCompound("upgrades");
                 for (String key : upgradesNBT.keySet()) {

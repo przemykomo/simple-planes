@@ -71,6 +71,8 @@
     "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA": "fly ticks per mana",
     "text.autoconfig.simpleplanes.option.FLY_TICKS_PER_MANA.@Tooltip": "number of flight ticks per mana usage",
 
+    "simpleplanes.material": "Material - ",
+
     "simpleplanes.furnace_engine_container": "Furnace Engine",
     "simpleplanes.remove_upgrades": "Remove upgrades:",
     "simpleplanes:booster": "Booster",
