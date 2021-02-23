@@ -3,7 +3,7 @@ loaderVersion="[35,)"
 license="GNU General Public License"
 [[mods]]
 modId="simpleplanes"
-version="1.16.4-4.0.6"
+version="1.16.4-4.0.7"
 displayName="Simple Planes"
 authors="adoxentor, przemyk" #optional
 description='''

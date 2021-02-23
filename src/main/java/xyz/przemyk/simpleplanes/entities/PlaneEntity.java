@@ -1174,6 +1174,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         upgrades.get(upgradeID).writePacket(buffer);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void readUpdateUpgradePacket(ResourceLocation upgradeID, PacketBuffer buffer, boolean newUpgrade) {
         if (newUpgrade) {
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID);
@@ -1190,15 +1191,18 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        for (Upgrade upgrade : upgrades.values()) {
-            LazyOptional<T> lazyOptional = upgrade.getCapability(cap, side);
-            if (lazyOptional.isPresent()) {
-                return lazyOptional;
+        if (upgrades != null) {
+            for (Upgrade upgrade : upgrades.values()) {
+                LazyOptional<T> lazyOptional = upgrade.getCapability(cap, side);
+                if (lazyOptional.isPresent()) {
+                    return lazyOptional;
+                }
             }
         }
         return super.getCapability(cap, side);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void writeSpawnData(PacketBuffer buffer) {
         Collection<Upgrade> upgrades = this.upgrades.values();
