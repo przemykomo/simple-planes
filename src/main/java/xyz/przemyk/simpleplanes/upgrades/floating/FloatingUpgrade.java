@@ -20,6 +20,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 public class FloatingUpgrade extends Upgrade {
     public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/floating.png");
     public static final ResourceLocation LARGE_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/floating_large.png");
+    public static final ResourceLocation HELICOPTER_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/floating_helicopter.png");
 
     public FloatingUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.FLOATY_BEDDING.get(), planeEntity);
@@ -42,7 +43,7 @@ public class FloatingUpgrade extends Upgrade {
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         EntityType<?> entityType = planeEntity.getType();
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            HelicopterFloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            HelicopterFloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(HELICOPTER_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             LargeFloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else {

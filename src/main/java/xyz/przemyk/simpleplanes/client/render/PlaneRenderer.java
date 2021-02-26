@@ -26,11 +26,12 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
-import static xyz.przemyk.simpleplanes.client.render.models.PlaneModel.TICKS_PER_PROPELLER_ROTATION;
-
 public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
+    public static final int TICKS_PER_PROPELLER_ROTATION = 5;
+
     protected final EntityModel<PlaneEntity> propellerModel;
     protected final EntityModel<T> planeEntityModel;
     public static final ResourceLocation PROPELLER_TEXTURE = new ResourceLocation("textures/block/iron_block.png");
@@ -127,9 +128,9 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         ResourceLocation texture;
         try {
-            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ModelLoader.getInventoryVariant(block.getRegistryName().toString())).getQuads(null, Direction.SOUTH, new Random(42L), EmptyModelData.INSTANCE).get(0).getSprite().getName();
+            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ModelLoader.getInventoryVariant(Objects.requireNonNull(block.getRegistryName()).toString())).getQuads(null, Direction.SOUTH, new Random(42L), EmptyModelData.INSTANCE).get(0).getSprite().getName();
             texture = new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
-        } catch (IndexOutOfBoundsException exception) {
+        } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;
         }
         cachedTextures.put(block, texture);
