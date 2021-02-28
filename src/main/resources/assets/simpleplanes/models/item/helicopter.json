@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpleplanes:item/oak_helicopter",
-        "layer1": "simpleplanes:item/oak_helicopter_overlay"
+        "layer0": "simpleplanes:item/helicopter",
+        "layer1": "simpleplanes:item/helicopter_overlay"
     }
 }

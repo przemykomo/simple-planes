@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "simpleplanes:item/oak_large_plane",
-        "layer1": "simpleplanes:item/oak_large_plane_overlay"
+        "layer0": "simpleplanes:item/large_plane",
+        "layer1": "simpleplanes:item/large_plane_overlay"
     }
 }

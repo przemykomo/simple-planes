@@ -18,11 +18,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 import static net.minecraft.item.Items.FIREWORK_ROCKET;
@@ -124,6 +122,6 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(SimplePlanesItems.SHOOTER.get());
+        planeEntity.entityDropItem(Items.DISPENSER);
     }
 }

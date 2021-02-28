@@ -32,7 +32,7 @@ public class SimplePlanesItems {
     };
 
     public static List<PlaneItem> getPlaneItems(){
-        ArrayList<PlaneItem> planeItems = new ArrayList<>();
+        ArrayList<PlaneItem> planeItems = new ArrayList<>(3);
         planeItems.add(PLANE_ITEM.get());
         planeItems.add(LARGE_PLANE_ITEM.get());
         planeItems.add(HELICOPTER_ITEM.get());
@@ -47,28 +47,8 @@ public class SimplePlanesItems {
 
     public static final RegistryObject<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
     public static final RegistryObject<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
-    public static final RegistryObject<Item> SHOOTER = ITEMS.register("shooter", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
     public static final RegistryObject<Item> HEALING = ITEMS.register("healing", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
-    public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
-
-//    public static final RegistryObject<InformationItem> SPRAYER = ITEMS.register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
 //    public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
-//    public static final RegistryObject<InformationItem> CLOUD = ITEMS
-//        .register("cloud", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.cloud")) {
-//            @Override
-//            public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-//                ItemStack itemstack = playerIn.getHeldItem(handIn);
-//                playerIn.setActiveHand(handIn);
-//                CloudBlock.placeCloud(playerIn.getPosition(), worldIn);
-//                return ActionResult.resultConsume(itemstack);
-//            }
-//
-//            @Override
-//            public ActionResultType onItemUse(ItemUseContext context) {
-//                CloudBlock.placeCloud(context.getPos(), context.getWorld());
-//                return ActionResultType.CONSUME;
-//            }
-//        });
 
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
     public static final RegistryObject<BlockItem> PLANE_WORKBENCH = ITEMS.register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), new Item.Properties().group(ITEM_GROUP)));

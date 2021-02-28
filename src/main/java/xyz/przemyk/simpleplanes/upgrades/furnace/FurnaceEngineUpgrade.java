@@ -14,6 +14,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
@@ -178,7 +179,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(SimplePlanesItems.FURNACE_ENGINE.get());
+        planeEntity.entityDropItem(Items.FURNACE);
         planeEntity.entityDropItem(itemStackHandler.getStackInSlot(0));
     }
 }

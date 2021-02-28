@@ -11,7 +11,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchBlock;
-import xyz.przemyk.simpleplanes.blocks.CloudBlock;
 
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -24,6 +23,5 @@ public class SimplePlanesBlocks {
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<CloudBlock> CLOUD = BLOCKS.register("cloud", CloudBlock::new);
     public static final RegistryObject<PlaneWorkbenchBlock> PLANE_WORKBENCH_BLOCK = BLOCKS.register("plane_workbench", () -> new PlaneWorkbenchBlock(AbstractBlock.Properties.from(Blocks.CRAFTING_TABLE)));
 }

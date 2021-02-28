@@ -1,6 +1,6 @@
 {
     "name": "Health",
-    "icon": "simpleplanes:textures/book/health_red.png",
+    "icon": "simpleplanes:healing",
     "category": "simpleplanes:intro",
     "pages": [
         {
