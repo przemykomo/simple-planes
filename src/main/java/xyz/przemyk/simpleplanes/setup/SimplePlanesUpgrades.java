@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -14,13 +15,41 @@ import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
 
-@SuppressWarnings("unused")
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public class SimplePlanesUpgrades {
-    public static final DeferredRegister<UpgradeType> UPGRADE_TYPES = DeferredRegister.create(UpgradeType.class, SimplePlanesMod.MODID);
+    private static final DeferredRegister<UpgradeType> UPGRADE_TYPES = DeferredRegister.create(UpgradeType.class, SimplePlanesMod.MODID);
+    private static final Map<Item, UpgradeType> ITEM_UPGRADE_MAP = new HashMap<>();
+    private static final Map<Item, UpgradeType> LARGE_ITEM_UPGRADE_MAP = new HashMap<>();
 
     public static void init() {
         UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
+
+    public static void registerUpgradeItem(Item item, UpgradeType upgradeType) {
+        ITEM_UPGRADE_MAP.put(item, upgradeType);
+    }
+
+    public static void registerLargeUpgradeItem(Item item, UpgradeType upgradeType) {
+        LARGE_ITEM_UPGRADE_MAP.put(item, upgradeType);
+    }
+
+    public static Optional<UpgradeType> getUpgradeFromItem(Item item) {
+        if (ITEM_UPGRADE_MAP.containsKey(item)) {
+            return Optional.of(ITEM_UPGRADE_MAP.get(item));
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<UpgradeType> getLargeUpgradeFromItem(Item item) {
+        if (LARGE_ITEM_UPGRADE_MAP.containsKey(item)) {
+            return Optional.of(LARGE_ITEM_UPGRADE_MAP.get(item));
+        }
+        return Optional.empty();
+    }
+
 
     // upgrades with a custom item
     public static final RegistryObject<UpgradeType> FLOATY_BEDDING = UPGRADE_TYPES.register("floaty_bedding", () -> new UpgradeType(FloatingUpgrade::new));
@@ -30,12 +59,9 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> FURNACE_ENGINE = UPGRADE_TYPES.register("furnace_engine", () -> new UpgradeType(FurnaceEngineUpgrade::new, true));
 
     // upgrades without a custom item
-    public static final RegistryObject<UpgradeType> TNT = UPGRADE_TYPES.register("tnt", () -> new UpgradeType(TNTUpgrade::new));
     public static final RegistryObject<UpgradeType> BANNER = UPGRADE_TYPES.register("banner", () -> new UpgradeType(BannerUpgrade::new));
+    public static final RegistryObject<UpgradeType> TNT = UPGRADE_TYPES.register("tnt", () -> new UpgradeType(TNTUpgrade::new));
     public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(ChestUpgrade::new));
 
 //    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(FoldingUpgrade::new));
-
-    //storage
-//    public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(Items.CHEST, ChestUpgrade::new, true));
 }

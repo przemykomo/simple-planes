@@ -30,29 +30,19 @@ import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ChestUpgrade extends Upgrade implements INamedContainerProvider {
+public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvider {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(27);
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
 
     public ChestUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.CHEST.get(), planeEntity);
-        if (planeEntity instanceof LargePlaneEntity) {
-            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = true;
-        }
-    }
-
-    @Override
-    public void remove() {
-        if (planeEntity instanceof LargePlaneEntity) {
-            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = false;
-        }
-        super.remove();
     }
 
     @Override

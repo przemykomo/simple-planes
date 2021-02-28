@@ -19,15 +19,13 @@ import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-public class TNTUpgrade extends Upgrade {
+public class TNTUpgrade extends LargeUpgrade {
 
     public TNTUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.TNT.get(), planeEntity);
-        if (planeEntity instanceof LargePlaneEntity) {
-            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = true;
-        }
     }
 
     @Override
@@ -46,14 +44,6 @@ public class TNTUpgrade extends Upgrade {
             itemStack.damageItem(1, event.getPlayer(), playerEntity -> playerEntity.sendBreakAnimation(event.getHand()));
             remove();
         }
-    }
-
-    @Override
-    public void remove() {
-        if (planeEntity instanceof LargePlaneEntity) {
-            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = false;
-        }
-        super.remove();
     }
 
     @Override

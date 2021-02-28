@@ -11,7 +11,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +45,11 @@ public class SimplePlanesItems {
 
     public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
 
-    public static final RegistryObject<UpgradeItem> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.FLOATY_BEDDING));
-    public static final RegistryObject<UpgradeItem> BOOSTER = ITEMS.register("booster", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.BOOSTER));
-    public static final RegistryObject<UpgradeItem> SHOOTER = ITEMS.register("shooter", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.SHOOTER));
-    public static final RegistryObject<UpgradeItem> HEALING = ITEMS.register("healing", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.HEALING));
-    public static final RegistryObject<UpgradeItem> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new UpgradeItem(new Item.Properties().group(ITEM_GROUP), SimplePlanesUpgrades.FURNACE_ENGINE));
+    public static final RegistryObject<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
+    public static final RegistryObject<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
+    public static final RegistryObject<Item> SHOOTER = ITEMS.register("shooter", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
+    public static final RegistryObject<Item> HEALING = ITEMS.register("healing", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
+    public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new Item(new Item.Properties().group(ITEM_GROUP)));
 
 //    public static final RegistryObject<InformationItem> SPRAYER = ITEMS.register("sprayer", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.sprayer")));
 //    public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));

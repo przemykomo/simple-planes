@@ -10,7 +10,6 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -55,21 +54,17 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeItem;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
-import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static net.minecraft.util.math.MathHelper.wrapDegrees;
 import static xyz.przemyk.simpleplanes.MathUtil.*;
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
+@SuppressWarnings("ConstantConditions")
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final DataParameter<Integer> MAX_HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Integer> HEALTH = EntityDataManager.createKey(PlaneEntity.class, DataSerializers.VARINT);
@@ -126,6 +121,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         setPosition(x, y, z);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void registerData() {
         dataManager.register(MAX_HEALTH, 10);
@@ -207,6 +203,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void setMaterial(Block material) {
         dataManager.set(MATERIAL, material.getRegistryName().toString());
         planksMaterial = material;
@@ -253,19 +250,15 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     protected boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
-        Item item = itemStack.getItem();
-        if (item instanceof UpgradeItem) {
-            UpgradeItem upgradeItem = (UpgradeItem) item;
-            if (canAddUpgrade(upgradeItem.upgradeType.get())) {
-                Upgrade upgrade = upgradeItem.upgradeType.get().instanceSupplier.apply(this);
+        Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getUpgradeFromItem(itemStack.getItem());
+        return upgradeTypeOptional.map(upgradeType -> {
+            if (canAddUpgrade(upgradeType)) {
+                Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                 addUpgrade(playerEntity, itemStack, upgrade);
                 return true;
             }
-        } else if (item instanceof BannerItem && canAddUpgrade(SimplePlanesUpgrades.BANNER.get())) {
-            addUpgrade(playerEntity, itemStack, new BannerUpgrade(this));
-            return true;
-        }
-        return false;
+            return false;
+        }).orElse(false);
     }
 
     protected void addUpgrade(PlayerEntity playerEntity, ItemStack itemStack, Upgrade upgrade) {
