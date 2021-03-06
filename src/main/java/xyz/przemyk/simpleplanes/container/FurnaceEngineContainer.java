@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.container;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -10,7 +11,9 @@ import net.minecraft.util.IntArray;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 public class FurnaceEngineContainer extends Container {
 
@@ -41,7 +44,12 @@ public class FurnaceEngineContainer extends Container {
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return true;
+        Entity entity = playerIn.getRidingEntity();
+        if (entity instanceof PlaneEntity && entity.isAlive()) {
+            return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
+        }
+
+        return false;
     }
 
     @Override

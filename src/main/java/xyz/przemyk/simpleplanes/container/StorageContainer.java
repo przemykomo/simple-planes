@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.container;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -8,7 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 public class StorageContainer extends Container {
 
@@ -25,24 +28,29 @@ public class StorageContainer extends Container {
 
         for(int j = 0; j < numRows; ++j) {
             for(int k = 0; k < 9; ++k) {
-                this.addSlot(new SlotItemHandler(itemHandler, k + j * 9, 8 + k * 18, 18 + j * 18));
+                addSlot(new SlotItemHandler(itemHandler, k + j * 9, 8 + k * 18, 18 + j * 18));
             }
         }
 
         for(int l = 0; l < 3; ++l) {
             for(int j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(playerInventory, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + i));
+                addSlot(new Slot(playerInventory, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + i));
             }
         }
 
         for(int i1 = 0; i1 < 9; ++i1) {
-            this.addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 161 + i));
+            addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 161 + i));
         }
     }
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return true;
+        Entity entity = playerIn.getRidingEntity();
+        if (entity instanceof PlaneEntity && entity.isAlive()) {
+            return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
+        }
+
+        return false;
     }
 
     @Override
