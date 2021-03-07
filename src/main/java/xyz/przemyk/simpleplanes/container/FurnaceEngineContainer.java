@@ -46,7 +46,7 @@ public class FurnaceEngineContainer extends Container {
     public boolean canInteractWith(PlayerEntity playerIn) {
         Entity entity = playerIn.getRidingEntity();
         if (entity instanceof PlaneEntity && entity.isAlive()) {
-            return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
+            return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.FURNACE_ENGINE.getId());
         }
 
         return false;
