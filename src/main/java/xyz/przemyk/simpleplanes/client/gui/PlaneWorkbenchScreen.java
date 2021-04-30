@@ -23,11 +23,11 @@ public class PlaneWorkbenchScreen extends ContainerScreen<PlaneWorkbenchContaine
     protected void init() {
         super.init();
         // left recipe output
-        addButton(new ImageButton(guiLeft + 122, guiTop + 47, 10, 15, 176, 0, 15, GUI_TEXTURE,
+        addButton(new ImageButton(leftPos + 122, topPos + 47, 10, 15, 176, 0, 15, GUI_TEXTURE,
                 button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_LEFT))));
 
         // right recipe output
-        addButton(new ImageButton(guiLeft + 152, guiTop + 47, 10, 15, 186, 0, 15, GUI_TEXTURE,
+        addButton(new ImageButton(leftPos + 152, topPos + 47, 10, 15, 186, 0, 15, GUI_TEXTURE,
                 button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_RIGHT))));
     }
 
@@ -35,16 +35,16 @@ public class PlaneWorkbenchScreen extends ContainerScreen<PlaneWorkbenchContaine
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
-        int i = this.guiLeft;
-        int j = (this.height - this.ySize) / 2;
-        this.blit(matrixStack, i, j, 0, 0, this.xSize, this.ySize);
+        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        int i = this.leftPos;
+        int j = (this.height - this.imageHeight) / 2;
+        this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
     }
 }

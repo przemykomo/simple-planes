@@ -22,10 +22,10 @@ public class SimplePlanesDataSerializers {
 
         @Override
         public void write(PacketBuffer buf, Quaternion q) {
-            buf.writeFloat(q.getX());
-            buf.writeFloat(q.getY());
-            buf.writeFloat(q.getZ());
-            buf.writeFloat(q.getW());
+            buf.writeFloat(q.i());
+            buf.writeFloat(q.j());
+            buf.writeFloat(q.k());
+            buf.writeFloat(q.r());
         }
 
         @Override
@@ -39,7 +39,7 @@ public class SimplePlanesDataSerializers {
         }
 
         @Override
-        public Quaternion copyValue(Quaternion q) {
+        public Quaternion copy(Quaternion q) {
             return new Quaternion(q);
         }
     };

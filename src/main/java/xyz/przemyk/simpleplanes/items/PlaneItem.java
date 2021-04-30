@@ -32,29 +32,29 @@ import java.util.function.Supplier;
 
 public class PlaneItem extends Item {
 
-    private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NOT_SPECTATING.and(Entity::canBeCollidedWith);
+    private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NO_SPECTATORS.and(Entity::isPickable);
     private final Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType;
 
     public PlaneItem(Properties properties, Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType) {
-        super(properties.maxStackSize(1));
+        super(properties.stacksTo(1));
         this.planeEntityType = planeEntityType;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
-        CompoundNBT entityTag = stack.getChildTag("EntityTag");
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        CompoundNBT entityTag = stack.getTagElement("EntityTag");
 
         if (entityTag != null) {
             if (entityTag.contains("material")) {
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
                 if (block != null) {
-                    tooltip.add(new TranslationTextComponent(SimplePlanesMod.MODID + ".material").append(block.getTranslatedName()));
+                    tooltip.add(new TranslationTextComponent(SimplePlanesMod.MODID + ".material").append(block.getName()));
                 }
             }
             if (entityTag.contains("upgrades")) {
                 CompoundNBT upgradesNBT = entityTag.getCompound("upgrades");
-                for (String key : upgradesNBT.keySet()) {
+                for (String key : upgradesNBT.getAllKeys()) {
                     CompoundNBT upgradeNbt = upgradesNBT.getCompound(key);
                     ResourceLocation resourceLocation = new ResourceLocation(key);
                     if (upgradeNbt.contains("desc")) {
@@ -68,21 +68,21 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack itemstack = playerIn.getHeldItem(handIn);
-        RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.ANY);
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
+        RayTraceResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn, RayTraceContext.FluidMode.ANY);
         if (raytraceresult.getType() == RayTraceResult.Type.MISS) {
-            return ActionResult.resultPass(itemstack);
+            return ActionResult.pass(itemstack);
         } else {
-            Vector3d vec3d = playerIn.getLook(1.0F);
-            List<Entity> list = worldIn.getEntitiesInAABBexcluding(playerIn, playerIn.getBoundingBox().expand(vec3d.scale(5.0D)).grow(1.0D), ENTITY_PREDICATE);
+            Vector3d vec3d = playerIn.getViewVector(1.0F);
+            List<Entity> list = worldIn.getEntities(playerIn, playerIn.getBoundingBox().expandTowards(vec3d.scale(5.0D)).inflate(1.0D), ENTITY_PREDICATE);
             if (!list.isEmpty()) {
                 Vector3d vec3d1 = playerIn.getEyePosition(1.0F);
 
                 for (Entity entity : list) {
-                    AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(entity.getCollisionBorderSize());
+                    AxisAlignedBB axisalignedbb = entity.getBoundingBox().inflate(entity.getPickRadius());
                     if (axisalignedbb.contains(vec3d1)) {
-                        return ActionResult.resultPass(itemstack);
+                        return ActionResult.pass(itemstack);
                     }
                 }
             }
@@ -90,28 +90,28 @@ public class PlaneItem extends Item {
             if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
                 PlaneEntity planeEntity = planeEntityType.get().create(worldIn);
 
-                planeEntity.setPosition(raytraceresult.getHitVec().getX(), raytraceresult.getHitVec().getY(), raytraceresult.getHitVec().getZ());
-                planeEntity.rotationYaw = playerIn.rotationYaw;
-                planeEntity.prevRotationYaw = playerIn.prevRotationYaw;
-                planeEntity.setCustomName(itemstack.getDisplayName());
-                CompoundNBT entityTag = itemstack.getChildTag("EntityTag");
+                planeEntity.setPos(raytraceresult.getLocation().x(), raytraceresult.getLocation().y(), raytraceresult.getLocation().z());
+                planeEntity.yRot = playerIn.yRot;
+                planeEntity.yRotO = playerIn.yRotO;
+                planeEntity.setCustomName(itemstack.getHoverName());
+                CompoundNBT entityTag = itemstack.getTagElement("EntityTag");
                 if (entityTag != null) {
-                    planeEntity.readAdditional(entityTag);
+                    planeEntity.readAdditionalSaveData(entityTag);
                 }
-                if (!worldIn.hasNoCollisions(planeEntity, planeEntity.getBoundingBox().grow(-0.1D))) {
-                    return ActionResult.resultFail(itemstack);
+                if (!worldIn.noCollision(planeEntity, planeEntity.getBoundingBox().inflate(-0.1D))) {
+                    return ActionResult.fail(itemstack);
                 } else {
-                    if (!worldIn.isRemote) {
-                        worldIn.addEntity(planeEntity);
-                        if (!playerIn.abilities.isCreativeMode) {
+                    if (!worldIn.isClientSide) {
+                        worldIn.addFreshEntity(planeEntity);
+                        if (!playerIn.abilities.instabuild) {
                             itemstack.shrink(1);
                         }
                     }
-                    playerIn.addStat(Stats.ITEM_USED.get(this));
-                    return ActionResult.resultSuccess(itemstack);
+                    playerIn.awardStat(Stats.ITEM_USED.get(this));
+                    return ActionResult.success(itemstack);
                 }
             } else {
-                return ActionResult.resultPass(itemstack);
+                return ActionResult.pass(itemstack);
             }
         }
     }

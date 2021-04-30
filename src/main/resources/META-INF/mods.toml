@@ -3,7 +3,7 @@ loaderVersion="[35,)"
 license="GNU General Public License"
 [[mods]]
 modId="simpleplanes"
-version="1.16.4-4.1.2"
+version="1.16.5-4.1.2"
 displayName="Simple Planes"
 authors="adoxentor, przemyk" #optional
 description='''
@@ -25,6 +25,6 @@ Adds upgradeable planes and helicopters.
 [[dependencies.simpleplanes]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4,1.17)"
+    versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"

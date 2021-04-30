@@ -65,7 +65,7 @@ public class BoosterUpgrade extends Upgrade {
 
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
+        ItemStack itemStack = event.getPlayer().getItemInHand(event.getHand());
         if (fuel <= 0) {
             if (itemStack.getItem().equals(GUNPOWDER)) {
                 if (!event.getPlayer().isCreative()) {
@@ -85,44 +85,44 @@ public class BoosterUpgrade extends Upgrade {
         --fuel;
         updateClient();
 
-        Vector3d m = planeEntity.getMotion();
+        Vector3d m = planeEntity.getDeltaMovement();
         float pitch = 0;
         PlayerEntity player = planeEntity.getPlayer();
         if (player != null) {
-            if (player.moveForward > 0.0F) {
+            if (player.zza > 0.0F) {
                 if (planeEntity.isSprinting()) {
                     pitch += 2;
                 }
-            } else if (player.moveForward < 0.0F) {
+            } else if (player.zza < 0.0F) {
                 pitch -= 2;
             }
         }
-        if (planeEntity.world.rand.nextInt(50) == 0) {
-            planeEntity.attackEntityFrom(DamageSource.ON_FIRE, 1);
+        if (planeEntity.level.random.nextInt(50) == 0) {
+            planeEntity.hurt(DamageSource.ON_FIRE, 1);
         }
         if (planeEntity instanceof HelicopterEntity) {
             pitch = 0;
         }
-        planeEntity.rotationPitch += pitch;
-        Vector3d motion = MathUtil.rotationToVector(planeEntity.rotationYaw, planeEntity.rotationPitch, 0.05);
+        planeEntity.xRot += pitch;
+        Vector3d motion = MathUtil.rotationToVector(planeEntity.yRot, planeEntity.xRot, 0.05);
 
-        planeEntity.setMotion(m.add(motion));
-        if (planeEntity.world.isRemote) {
+        planeEntity.setDeltaMovement(m.add(motion));
+        if (planeEntity.level.isClientSide) {
             spawnParticle(ParticleTypes.FLAME, new Vector3f(-0.6f, 0f, -1.3f));
             spawnParticle(ParticleTypes.FLAME, new Vector3f(0.6f, 0f, -1.3f));
         }
     }
 
     public void spawnParticle(IParticleData particleData, Vector3f relPos) {
-        relPos = new Vector3f(relPos.getX(), relPos.getY() - 0.3f, relPos.getZ());
+        relPos = new Vector3f(relPos.x(), relPos.y() - 0.3f, relPos.z());
         relPos = planeEntity.transformPos(relPos);
-        relPos = new Vector3f(relPos.getX(), relPos.getY() + 0.9f, relPos.getZ());
-        Vector3d motion = planeEntity.getMotion();
+        relPos = new Vector3f(relPos.x(), relPos.y() + 0.9f, relPos.z());
+        Vector3d motion = planeEntity.getDeltaMovement();
         double speed = motion.length() / 4;
-        planeEntity.world.addParticle(particleData,
-                planeEntity.getPosX() + relPos.getX(),
-                planeEntity.getPosY() + relPos.getY(),
-                planeEntity.getPosZ() + relPos.getZ(),
+        planeEntity.level.addParticle(particleData,
+                planeEntity.getX() + relPos.x(),
+                planeEntity.getY() + relPos.y(),
+                planeEntity.getZ() + relPos.z(),
                 motion.x * speed,
                 (motion.y + 1) * speed,
                 motion.z * speed);
@@ -130,12 +130,12 @@ public class BoosterUpgrade extends Upgrade {
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(BoosterModel.INSTANCE.getRenderType(TEXTURE));
-        BoosterModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(BoosterModel.INSTANCE.renderType(TEXTURE));
+        BoosterModel.INSTANCE.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(SimplePlanesItems.BOOSTER.get());
+        planeEntity.spawnAtLocation(SimplePlanesItems.BOOSTER.get());
     }
 }

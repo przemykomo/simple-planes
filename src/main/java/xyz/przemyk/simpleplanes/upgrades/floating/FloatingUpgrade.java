@@ -29,12 +29,12 @@ public class FloatingUpgrade extends Upgrade {
     @Override
     public void tick() {
         if (planeEntity.isOnWater()) {
-            Vector3d motion = planeEntity.getMotion();
+            Vector3d motion = planeEntity.getDeltaMovement();
             double f = 1;
             double y = MathHelper.lerp(1, motion.y, Math.max(motion.y, 0));
-            planeEntity.setMotion(motion.x * f, y, motion.z * f);
-            if (planeEntity.world.getBlockState(new BlockPos(planeEntity.getPositionVec().add(0, 0.5, 0))).getBlock() == Blocks.WATER) {
-                planeEntity.setMotion(planeEntity.getMotion().add(0, 0.04, 0));
+            planeEntity.setDeltaMovement(motion.x * f, y, motion.z * f);
+            if (planeEntity.level.getBlockState(new BlockPos(planeEntity.position().add(0, 0.5, 0))).getBlock() == Blocks.WATER) {
+                planeEntity.setDeltaMovement(planeEntity.getDeltaMovement().add(0, 0.04, 0));
             }
         }
     }
@@ -43,11 +43,11 @@ public class FloatingUpgrade extends Upgrade {
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
         EntityType<?> entityType = planeEntity.getType();
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            HelicopterFloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(HELICOPTER_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            HelicopterFloatingModel.INSTANCE.renderToBuffer(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.renderType(HELICOPTER_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            LargeFloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.getRenderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            LargeFloatingModel.INSTANCE.renderToBuffer(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.renderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else {
-            FloatingModel.INSTANCE.render(matrixStack, buffer.getBuffer(FloatingModel.INSTANCE.getRenderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            FloatingModel.INSTANCE.renderToBuffer(matrixStack, buffer.getBuffer(FloatingModel.INSTANCE.renderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 
@@ -59,6 +59,6 @@ public class FloatingUpgrade extends Upgrade {
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(SimplePlanesItems.FLOATY_BEDDING.get());
+        planeEntity.spawnAtLocation(SimplePlanesItems.FLOATY_BEDDING.get());
     }
 }

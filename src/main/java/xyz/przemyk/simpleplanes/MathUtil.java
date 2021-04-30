@@ -7,7 +7,7 @@ import net.minecraft.util.math.vector.Vector3d;
 public class MathUtil {
 
     public static double normalizedDotProduct(Vector3d v1, Vector3d v2) {
-        return v1.dotProduct(v2) / (v1.length() * v2.length());
+        return v1.dot(v2) / (v1.length() * v2.length());
     }
 
     public static float getPitch(Vector3d motion) {
@@ -66,12 +66,12 @@ public class MathUtil {
         EulerAngles angles = new EulerAngles();
 
         // roll (x-axis rotation)
-        double sinr_cosp = 2 * (q.getW() * q.getZ() + q.getX() * q.getY());
-        double cosr_cosp = 1 - 2 * (q.getZ() * q.getZ() + q.getX() * q.getX());
+        double sinr_cosp = 2 * (q.r() * q.k() + q.i() * q.j());
+        double cosr_cosp = 1 - 2 * (q.k() * q.k() + q.i() * q.i());
         angles.roll = Math.toDegrees(Math.atan2(sinr_cosp, cosr_cosp));
 
         // pitch (z-axis rotation)
-        double sinp = 2 * (q.getW() * q.getX() - q.getY() * q.getZ());
+        double sinp = 2 * (q.r() * q.i() - q.j() * q.k());
         if (Math.abs(sinp) >= 0.98) {
             angles.pitch = -Math.toDegrees(Math.signum(sinp) * Math.PI / 2); // use 90 degrees if out of range
         } else {
@@ -79,8 +79,8 @@ public class MathUtil {
         }
 
         // yaw (y-axis rotation)
-        double siny_cosp = 2 * (q.getW() * q.getY() + q.getZ() * q.getX());
-        double cosy_cosp = 1 - 2 * (q.getX() * q.getX() + q.getY() * q.getY());
+        double siny_cosp = 2 * (q.r() * q.j() + q.k() * q.i());
+        double cosy_cosp = 1 - 2 * (q.i() * q.i() + q.j() * q.j());
         angles.yaw = Math.toDegrees(Math.atan2(siny_cosp, cosy_cosp));
 
         return angles;
@@ -95,11 +95,11 @@ public class MathUtil {
     }
 
     public static Quaternion normalizeQuaternion(Quaternion q) {
-        float f = q.getX() * q.getX() + q.getY() * q.getY() + q.getZ() * q.getZ() + q.getW() * q.getW();
-        float x = q.getX();
-        float y = q.getY();
-        float z = q.getZ();
-        float w = q.getW();
+        float f = q.i() * q.i() + q.j() * q.j() + q.k() * q.k() + q.r() * q.r();
+        float x = q.i();
+        float y = q.j();
+        float z = q.k();
+        float w = q.r();
         if (f > 1.0E-6F) {
             float f1 = fastInvSqrt(f);
             x *= f1;
@@ -141,14 +141,14 @@ public class MathUtil {
         end = normalizeQuaternion(end);
 
         // Compute the cosine of the angle between the two vectors.
-        double dot = start.getX() * end.getX() + start.getY() * end.getY() + start.getZ() * end.getZ() + start.getW() * end.getW();
+        double dot = start.i() * end.i() + start.j() * end.j() + start.k() * end.k() + start.r() * end.r();
 
         // If the dot product is negative, slerp won't take
         // the shorter path. Note that v1 and -v1 are equivalent when
         // the negation is applied to all four components. Fix by
         // reversing one quaternion.
         if (dot < 0.0f) {
-            end = new Quaternion(-end.getX(), -end.getY(), -end.getZ(), -end.getW());
+            end = new Quaternion(-end.i(), -end.j(), -end.k(), -end.r());
             dot = -dot;
         }
 
@@ -158,10 +158,10 @@ public class MathUtil {
             // and normalize the result.
 
             Quaternion quaternion = new Quaternion(
-                start.getX() * (1 - perc) + end.getX() * perc,
-                start.getY() * (1 - perc) + end.getY() * perc,
-                start.getZ() * (1 - perc) + end.getZ() * perc,
-                start.getW() * (1 - perc) + end.getW() * perc
+                start.i() * (1 - perc) + end.i() * perc,
+                start.j() * (1 - perc) + end.j() * perc,
+                start.k() * (1 - perc) + end.k() * perc,
+                start.r() * (1 - perc) + end.r() * perc
             );
             return normalizeQuaternion(quaternion);
         }
@@ -176,10 +176,10 @@ public class MathUtil {
         float s1 = (float) (sin_theta / sin_theta_0);
 
         Quaternion quaternion = new Quaternion(
-            start.getX() * (s0) + end.getX() * s1,
-            start.getY() * (s0) + end.getY() * s1,
-            start.getZ() * (s0) + end.getZ() * s1,
-            start.getW() * (s0) + end.getW() * s1
+            start.i() * (s0) + end.i() * s1,
+            start.j() * (s0) + end.j() * s1,
+            start.k() * (s0) + end.k() * s1,
+            start.r() * (s0) + end.r() * s1
         );
         return normalizeQuaternion(quaternion);
     }

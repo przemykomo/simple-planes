@@ -26,12 +26,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.StorageContainer;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,15 +70,15 @@ public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvide
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(i);
             if (!itemStack.isEmpty()) {
-                planeEntity.entityDropItem(itemStack);
+                planeEntity.spawnAtLocation(itemStack);
             }
         }
-        planeEntity.entityDropItem(Items.CHEST);
+        planeEntity.spawnAtLocation(Items.CHEST);
     }
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
-        matrixStack.push();
+        matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
@@ -88,15 +86,15 @@ public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvide
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             matrixStack.translate(0, 0, 0.1);
         }
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(180));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
 
-        matrixStack.rotate(Vector3f.ZP.rotationDegrees(180));
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, -1.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
 
-        BlockState state = Blocks.CHEST.getDefaultState();
-        Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-        matrixStack.pop();
+        BlockState state = Blocks.CHEST.defaultBlockState();
+        Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        matrixStack.popPose();
     }
 
     @Override

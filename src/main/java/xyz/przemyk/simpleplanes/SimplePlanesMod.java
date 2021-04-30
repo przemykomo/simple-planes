@@ -16,7 +16,7 @@ import xyz.przemyk.simpleplanes.setup.*;
 @Mod(SimplePlanesMod.MODID)
 public class SimplePlanesMod {
     public static final String MODID = "simpleplanes";
-    public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = new DamageSource("plain_crash").setDamageBypassesArmor();
+    public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = new DamageSource("plain_crash").bypassArmor();
 
     public SimplePlanesMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SimplePlanesConfig.CONFIG);

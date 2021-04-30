@@ -23,5 +23,5 @@ public class SimplePlanesBlocks {
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final RegistryObject<PlaneWorkbenchBlock> PLANE_WORKBENCH_BLOCK = BLOCKS.register("plane_workbench", () -> new PlaneWorkbenchBlock(AbstractBlock.Properties.from(Blocks.CRAFTING_TABLE)));
+    public static final RegistryObject<PlaneWorkbenchBlock> PLANE_WORKBENCH_BLOCK = BLOCKS.register("plane_workbench", () -> new PlaneWorkbenchBlock(AbstractBlock.Properties.copy(Blocks.CRAFTING_TABLE)));
 }

@@ -20,19 +20,19 @@ public class RemoveUpgradesScreen extends ContainerScreen<RemoveUpgradesContaine
     @Override
     protected void init() {
         super.init();
-        Entity entity = minecraft.world.getEntityByID(container.planeID);
+        Entity entity = minecraft.level.getEntity(menu.planeID);
         if (entity instanceof PlaneEntity) {
             buttonsList = new UpgradeButtonsList(minecraft, 120, height, 32, height - 61, 20, (PlaneEntity) entity);
             children.add(buttonsList);
         } else {
-            closeScreen();
+            onClose();
         }
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {}
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {}
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {}
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {}
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {

@@ -30,12 +30,12 @@ public class RotationPacket {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity sender = ctx.getSender();
-            if (sender != null && sender.getRidingEntity() instanceof PlaneEntity) {
-                PlaneEntity planeEntity = (PlaneEntity) sender.getRidingEntity();
+            if (sender != null && sender.getVehicle() instanceof PlaneEntity) {
+                PlaneEntity planeEntity = (PlaneEntity) sender.getVehicle();
                 planeEntity.setQ(quaternion);
                 MathUtil.EulerAngles eulerAngles = MathUtil.toEulerAngles(quaternion);
-                planeEntity.rotationYaw = (float) eulerAngles.yaw;
-                planeEntity.rotationPitch = (float) eulerAngles.pitch;
+                planeEntity.yRot = (float) eulerAngles.yaw;
+                planeEntity.xRot = (float) eulerAngles.pitch;
                 planeEntity.rotationRoll = (float) eulerAngles.roll;
                 planeEntity.setQ_Client(quaternion);
             }

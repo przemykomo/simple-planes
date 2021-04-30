@@ -15,12 +15,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class TNTUpgrade extends LargeUpgrade {
 
@@ -35,20 +33,20 @@ public class TNTUpgrade extends LargeUpgrade {
 
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        ItemStack itemStack = event.getPlayer().getHeldItem(event.getHand());
+        ItemStack itemStack = event.getPlayer().getItemInHand(event.getHand());
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
-            TNTEntity tntEntity = new TNTEntity(planeEntity.world, planeEntity.getPosX() - 1.0, planeEntity.getPosY(), planeEntity.getPosZ(),
+            TNTEntity tntEntity = new TNTEntity(planeEntity.level, planeEntity.getX() - 1.0, planeEntity.getY(), planeEntity.getZ(),
                 event.getPlayer());
-            tntEntity.setMotion(planeEntity.getMotion());
-            planeEntity.world.addEntity(tntEntity);
-            itemStack.damageItem(1, event.getPlayer(), playerEntity -> playerEntity.sendBreakAnimation(event.getHand()));
+            tntEntity.setDeltaMovement(planeEntity.getDeltaMovement());
+            planeEntity.level.addFreshEntity(tntEntity);
+            itemStack.hurtAndBreak(1, event.getPlayer(), playerEntity -> playerEntity.broadcastBreakEvent(event.getHand()));
             remove();
         }
     }
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
-        matrixStack.push();
+        matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
@@ -57,12 +55,12 @@ public class TNTUpgrade extends LargeUpgrade {
             matrixStack.translate(0, 0, 0.1);
         }
 
-        matrixStack.rotate(Vector3f.ZP.rotationDegrees(180));
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
-        BlockState state = Blocks.TNT.getDefaultState();
-        Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-        matrixStack.pop();
+        BlockState state = Blocks.TNT.defaultBlockState();
+        Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        matrixStack.popPose();
     }
 
     @Override
@@ -73,6 +71,6 @@ public class TNTUpgrade extends LargeUpgrade {
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(Items.TNT);
+        planeEntity.spawnAtLocation(Items.TNT);
     }
 }

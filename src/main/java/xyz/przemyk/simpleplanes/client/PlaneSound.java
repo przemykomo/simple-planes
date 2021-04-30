@@ -20,8 +20,8 @@ public class PlaneSound extends TickableSound {
     public PlaneSound(PlaneEntity plane) {
         super(SimplePlanesSounds.PLANE_LOOP_SOUND_EVENT.get(), SoundCategory.NEUTRAL);
         this.plane = plane;
-        this.repeat = true;
-        PLAYING_FOR.put(plane.getEntityId(), this);
+        this.looping = true;
+        PLAYING_FOR.put(plane.getId(), this);
     }
 
     public static boolean isPlaying(int entityId) {
@@ -30,32 +30,32 @@ public class PlaneSound extends TickableSound {
         }
 
         PlaneSound sound = PLAYING_FOR.get(entityId);
-        return sound != null && !sound.isDonePlaying();
+        return sound != null && !sound.isStopped();
     }
 
     public static void tryToPlay(PlaneEntity planeEntity) {
-        if (!isPlaying(planeEntity.getEntityId())) {
-            Minecraft.getInstance().getSoundHandler().play(new PlaneSound(planeEntity));
+        if (!isPlaying(planeEntity.getId())) {
+            Minecraft.getInstance().getSoundManager().play(new PlaneSound(planeEntity));
         }
     }
 
     @Override
     public float getPitch() {
-        return (float) MathHelper.clamp(0.9f + plane.getMotion().length() / 3f, 0.9f, 1.3f);
+        return (float) MathHelper.clamp(0.9f + plane.getDeltaMovement().length() / 3f, 0.9f, 1.3f);
     }
 
     @Override
     public void tick() {
-        x = plane.getPosX();
-        y = plane.getPosY();
-        z = plane.getPosZ();
+        x = plane.getX();
+        y = plane.getY();
+        z = plane.getZ();
         if (fadeOut < 0 && !(plane.isPowered() && !plane.getParked())) {
             fadeOut = 0;
             synchronized (PLAYING_FOR) {
-                PLAYING_FOR.remove(plane.getEntityId());
+                PLAYING_FOR.remove(plane.getId());
             }
         } else if (fadeOut >= 10) {
-            finishPlaying();
+            stop();
         } else if (fadeOut >= 0) {
             volume = 1.0F - fadeOut / 10F;
             fadeOut++;

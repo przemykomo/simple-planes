@@ -23,14 +23,14 @@ public class BannerUpgrade extends Upgrade {
     public BannerUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BANNER.get(), planeEntity);
         banner = Items.WHITE_BANNER.getDefaultInstance();
-        prevRotation = planeEntity.prevRotationYaw;
-        rotation = planeEntity.prevRotationYaw;
+        prevRotation = planeEntity.yRotO;
+        rotation = planeEntity.yRotO;
     }
 
     @Override
     public void tick() {
         prevRotation = rotation;
-        rotation = MathUtil.lerpAngle(0.05f, rotation, planeEntity.prevRotationYaw);
+        rotation = MathUtil.lerpAngle(0.05f, rotation, planeEntity.yRotO);
     }
 
     @Override
@@ -44,13 +44,13 @@ public class BannerUpgrade extends Upgrade {
     public void deserializeNBT(CompoundNBT nbt) {
         final INBT banner = nbt.get("banner");
         if (banner instanceof CompoundNBT) {
-            this.banner = ItemStack.read((CompoundNBT) banner);
+            this.banner = ItemStack.of((CompoundNBT) banner);
         }
     }
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
-        BannerModel.renderBanner(this, partialTicks, matrixStack, buffer, banner, packedLight, BannerTileEntityRenderer.getModelRender());
+        BannerModel.renderBanner(this, partialTicks, matrixStack, buffer, banner, packedLight, BannerTileEntityRenderer.makeFlag());
     }
 
     @Override
@@ -64,16 +64,16 @@ public class BannerUpgrade extends Upgrade {
 
     @Override
     public void writePacket(PacketBuffer buffer) {
-        buffer.writeItemStack(banner);
+        buffer.writeItem(banner);
     }
 
     @Override
     public void readPacket(PacketBuffer buffer) {
-        banner = buffer.readItemStack();
+        banner = buffer.readItem();
     }
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(banner);
+        planeEntity.spawnAtLocation(banner);
     }
 }

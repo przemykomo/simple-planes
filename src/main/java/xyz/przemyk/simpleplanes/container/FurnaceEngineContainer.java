@@ -39,12 +39,12 @@ public class FurnaceEngineContainer extends Container {
             this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
         }
 
-        trackIntArray(engineData);
+        addDataSlots(engineData);
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        Entity entity = playerIn.getRidingEntity();
+    public boolean stillValid(PlayerEntity playerIn) {
+        Entity entity = playerIn.getVehicle();
         if (entity instanceof PlaneEntity && entity.isAlive()) {
             return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.FURNACE_ENGINE.getId());
         }
@@ -53,27 +53,27 @@ public class FurnaceEngineContainer extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
+        Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index != 0) {
                 if (ForgeHooks.getBurnTime(itemstack1) > 0) {
-                    if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
+                    if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else //noinspection ConstantConditions
                     if (index >= 1 && index < 28) {
-                        if (!this.mergeItemStack(itemstack1, 28, 37, false)) {
+                        if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
                             return ItemStack.EMPTY;
                         }
                     } else //noinspection ConstantConditions
-                        if (index >= 28 && index < 37 && !this.mergeItemStack(itemstack1, 3, 30, false)) {
+                        if (index >= 28 && index < 37 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
                             return ItemStack.EMPTY;
                         }
-            } else if (!this.mergeItemStack(itemstack1, 1, 37, false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 1, 37, false)) {
                 return ItemStack.EMPTY;
             }
         }

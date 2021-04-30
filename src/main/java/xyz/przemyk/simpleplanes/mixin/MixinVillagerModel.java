@@ -13,49 +13,47 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Random;
-
 @Mixin(VillagerModel.class)
 public abstract class MixinVillagerModel<T extends Entity> extends SegmentedModel<T> implements IHasHead, IHeadToggle {
 
     @Shadow
-    protected ModelRenderer villagerHead;
+    protected ModelRenderer head;
 
     @Final
     @Shadow
-    protected ModelRenderer villagerBody;
+    protected ModelRenderer body;
 
     @Final
     @Shadow
-    protected ModelRenderer villagerArms;
+    protected ModelRenderer arms;
 
     @Final
     @Shadow
-    protected ModelRenderer rightVillagerLeg;
+    protected ModelRenderer leg0;
 
     @Final
     @Shadow
-    protected ModelRenderer leftVillagerLeg;
+    protected ModelRenderer leg1;
 
     @SuppressWarnings("SpellCheckingInspection")
-    @Inject(method = "setRotationAngles(Lnet/minecraft/entity/Entity;FFFFF)V", at = @At("RETURN"))
+    @Inject(method = "setupAnim(Lnet/minecraft/entity/Entity;FFFFF)V", at = @At("RETURN"))
     public void setSittingRotation(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
-        if (isSitting) {
-            rightVillagerLeg.rotateAngleX = -1.4137167F;
-            rightVillagerLeg.rotateAngleY = ((float) Math.PI / 10F);
-            rightVillagerLeg.rotateAngleZ = 0.07853982F;
-            leftVillagerLeg.rotateAngleX = -1.4137167F;
-            leftVillagerLeg.rotateAngleY = (-(float) Math.PI / 10F);
-            leftVillagerLeg.rotateAngleZ = -0.07853982F;
+        if (riding) {
+            leg0.xRot = -1.4137167F;
+            leg0.yRot = ((float) Math.PI / 10F);
+            leg0.zRot = 0.07853982F;
+            leg1.xRot = -1.4137167F;
+            leg1.yRot = (-(float) Math.PI / 10F);
+            leg1.zRot = -0.07853982F;
 
-            rightVillagerLeg.rotationPointY = 12.0F;
-            leftVillagerLeg.rotationPointY = 12.0F;
-            villagerHead.rotationPointY = 0.0F;
-            villagerBody.rotationPointY = 0.0F;
+            leg0.y = 12.0F;
+            leg1.y = 12.0F;
+            head.y = 0.0F;
+            body.y = 0.0F;
 
-            villagerArms.rotationPointY = 3.0F;
-            villagerArms.rotationPointZ = -1.0F;
-            villagerArms.rotateAngleX = -0.75F;
+            arms.y = 3.0F;
+            arms.z = -1.0F;
+            arms.xRot = -0.75F;
         }
     }
 

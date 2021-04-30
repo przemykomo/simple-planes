@@ -25,7 +25,7 @@ public class UpgradeButtonsList extends AbstractList<UpgradeButtonsList.ButtonEn
 
     @Override
     protected void renderDecorations(MatrixStack matrixStack, int mouseX, int mouseY) {
-        minecraft.fontRenderer.func_243248_b(matrixStack, TITLE, 4, 4, 0xFFFFFF);
+        minecraft.font.draw(matrixStack, TITLE, 4, 4, 0xFFFFFF);
     }
 
     public static class ButtonEntry extends AbstractList.AbstractListEntry<ButtonEntry> {
@@ -50,7 +50,7 @@ public class UpgradeButtonsList extends AbstractList<UpgradeButtonsList.ButtonEn
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) {
                 this.button.onClick(mouseX, mouseY);
-                this.button.playDownSound(Minecraft.getInstance().getSoundHandler());
+                this.button.playDownSound(Minecraft.getInstance().getSoundManager());
                 return true;
             } else {
                 return false;

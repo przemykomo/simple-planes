@@ -23,20 +23,20 @@ public class FoldingModel extends EntityModel<PlaneEntity> {
     }
 
     @Override
-    public void setRotationAngles(PlaneEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(PlaneEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        matrixStack.push();
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
+    public void renderToBuffer(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        matrixStack.pushPose();
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(90));
         matrixStack.translate(0, 1.1, -0.2);
         matrixStack.scale(0.5f, 0.5f, 0.5f);
 
         rightWing.render(matrixStack, buffer, packedLight, packedOverlay);
         leftWing.render(matrixStack, buffer, packedLight, packedOverlay);
-        matrixStack.pop();
+        matrixStack.popPose();
 
     }
 

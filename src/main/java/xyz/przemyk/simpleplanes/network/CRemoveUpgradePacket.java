@@ -30,9 +30,9 @@ public class CRemoveUpgradePacket {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity sender = ctx.getSender();
-            if (sender.openContainer instanceof RemoveUpgradesContainer) {
-                RemoveUpgradesContainer container = (RemoveUpgradesContainer) sender.openContainer;
-                Entity entity = sender.world.getEntityByID(container.planeID);
+            if (sender.containerMenu instanceof RemoveUpgradesContainer) {
+                RemoveUpgradesContainer container = (RemoveUpgradesContainer) sender.containerMenu;
+                Entity entity = sender.level.getEntity(container.planeID);
                 if (entity instanceof PlaneEntity) {
                     ((PlaneEntity) entity).removeUpgrade(upgradeID);
                 }

@@ -14,33 +14,33 @@ public class BoosterModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer Body;
 
     public BoosterModel() {
-        textureWidth = 32;
-        textureHeight = 32;
+        texWidth = 32;
+        texHeight = 32;
 
         Body = new ModelRenderer(this);
-        Body.setRotationPoint(0.0F, 17.0F, 0.0F);
+        Body.setPos(0.0F, 17.0F, 0.0F);
         setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
 
         ModelRenderer booster = new ModelRenderer(this);
-        booster.setRotationPoint(0.0F, 0.0F, 0.0F);
+        booster.setPos(0.0F, 0.0F, 0.0F);
         Body.addChild(booster);
-        booster.setTextureOffset(0, 0).addBox(8.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
-        booster.setTextureOffset(0, 13).addBox(-12.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
+        booster.texOffs(0, 0).addBox(8.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
+        booster.texOffs(0, 13).addBox(-12.0F, -5.0F, 9.0F, 4.0F, 4.0F, 9.0F, 0.0F, false);
     }
 
     @Override
-    public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         //previously the render function, render code was moved to a method below
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderToBuffer(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         Body.render(matrixStack, buffer, packedLight, packedOverlay);
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+        modelRenderer.xRot = x;
+        modelRenderer.yRot = y;
+        modelRenderer.zRot = z;
     }
 }

@@ -38,26 +38,26 @@ public class ShooterUpgrade extends Upgrade {
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         PlayerEntity player = event.getPlayer();
-        ItemStack itemStack = player.getHeldItem(event.getHand());
-        Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1 + planeEntity.getMotion().length())));
+        ItemStack itemStack = player.getItemInHand(event.getHand());
+        Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1 + planeEntity.getDeltaMovement().length())));
         Vector3d motion = new Vector3d(motion1);
         World world = event.getWorld();
-        Random random = world.rand;
+        Random random = world.random;
 
         Vector3f pos = planeEntity.transformPos(new Vector3f(shootSide ? 0.8f : -0.8f, 0.8f, 0.8f));
         shootSide = !shootSide;
         updateClient();
 
-        double x = pos.getX() + planeEntity.getPosX();
-        double y = pos.getY() + planeEntity.getPosY();
-        double z = pos.getZ() + planeEntity.getPosZ();
+        double x = pos.x() + planeEntity.getX();
+        double y = pos.y() + planeEntity.getY();
+        double z = pos.z() + planeEntity.getZ();
 
         Item item = itemStack.getItem();
 
         if (item == FIREWORK_ROCKET) {
             FireworkRocketEntity fireworkrocketentity = new FireworkRocketEntity(world, itemStack, x, y, z, true);
             fireworkrocketentity.shoot(-motion.x, -motion.y, -motion.z, -(float) Math.max(0.5F, motion.length() * 1.5), 1.0F);
-            world.addEntity(fireworkrocketentity);
+            world.addFreshEntity(fireworkrocketentity);
             if (!player.isCreative()) {
                 itemStack.shrink(1);
             }
@@ -66,48 +66,48 @@ public class ShooterUpgrade extends Upgrade {
             double d4 = random.nextGaussian() * 0.05D;
             double d5 = random.nextGaussian() * 0.05D + 2 * motion.z;
             AbstractFireballEntity fireBallEntity = Util
-                .make(new SmallFireballEntity(world, player, d3, d4, d5), (p_229425_1_) -> p_229425_1_.setStack(itemStack));
-            fireBallEntity.forceSetPosition(x, y, z);
-            fireBallEntity.setMotion(motion.scale(2));
-            world.addEntity(fireBallEntity);
+                .make(new SmallFireballEntity(world, player, d3, d4, d5), (p_229425_1_) -> p_229425_1_.setItem(itemStack));
+            fireBallEntity.setPosAndOldPos(x, y, z);
+            fireBallEntity.setDeltaMovement(motion.scale(2));
+            world.addFreshEntity(fireBallEntity);
             if (!player.isCreative()) {
                 itemStack.shrink(1);
             }
         } else if (item == Items.ARROW) {
             ArrowEntity arrowentity = new ArrowEntity(world, x, y, z);
-            arrowentity.setShooter(player);
-            arrowentity.setMotion(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
+            arrowentity.setOwner(player);
+            arrowentity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
             if (!player.isCreative()) {
                 itemStack.shrink(1);
-                arrowentity.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
+                arrowentity.pickup = AbstractArrowEntity.PickupStatus.ALLOWED;
             }
-            world.addEntity(arrowentity);
+            world.addFreshEntity(arrowentity);
         } else if (item == Items.TIPPED_ARROW) {
             ArrowEntity arrowEntity = new ArrowEntity(world, x, y, z);
-            arrowEntity.setShooter(player);
-            arrowEntity.setPotionEffect(itemStack);
-            arrowEntity.setMotion(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
+            arrowEntity.setOwner(player);
+            arrowEntity.setEffectsFromItem(itemStack);
+            arrowEntity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
             if (!player.isCreative()) {
                 itemStack.shrink(1);
-                arrowEntity.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
+                arrowEntity.pickup = AbstractArrowEntity.PickupStatus.ALLOWED;
             }
-            world.addEntity(arrowEntity);
+            world.addFreshEntity(arrowEntity);
         } else if (item == Items.SPECTRAL_ARROW) {
             SpectralArrowEntity arrowEntity = new SpectralArrowEntity(world, x, y, z);
-            arrowEntity.setShooter(player);
-            arrowEntity.setMotion(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
+            arrowEntity.setOwner(player);
+            arrowEntity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
             if (!player.isCreative()) {
                 itemStack.shrink(1);
-                arrowEntity.pickupStatus = AbstractArrowEntity.PickupStatus.ALLOWED;
+                arrowEntity.pickup = AbstractArrowEntity.PickupStatus.ALLOWED;
             }
-            world.addEntity(arrowEntity);
+            world.addFreshEntity(arrowEntity);
         }
     }
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(ShooterModel.INSTANCE.getRenderType(TEXTURE));
-        ShooterModel.INSTANCE.render(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = buffer.getBuffer(ShooterModel.INSTANCE.renderType(TEXTURE));
+        ShooterModel.INSTANCE.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override
@@ -122,6 +122,6 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(Items.DISPENSER);
+        planeEntity.spawnAtLocation(Items.DISPENSER);
     }
 }

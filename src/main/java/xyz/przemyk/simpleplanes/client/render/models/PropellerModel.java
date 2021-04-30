@@ -15,39 +15,39 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer bone_propeller;
 
     public PropellerModel() {
-        textureWidth = 32;
-        textureHeight = 32;
+        texWidth = 32;
+        texHeight = 32;
 
         Body = new ModelRenderer(this);
-        Body.setRotationPoint(0.0F, 17.0F, 0.0F);
+        Body.setPos(0.0F, 17.0F, 0.0F);
 
         bone_propeller = new ModelRenderer(this);
-        bone_propeller.setRotationPoint(0.0F, -7.0F, -21.0F);
+        bone_propeller.setPos(0.0F, -7.0F, -21.0F);
         Body.addChild(bone_propeller);
         setRotationAngle(bone_propeller, 0.0F, 0.0F, 0.6109F);
-        bone_propeller.setTextureOffset(0, 0).addBox(-10.0F, -1.0F, -1.0F, 20.0F, 2.0F, 1.0F, 0.0F, false);
-        Body.setTextureOffset(17, 31).addBox(-1.0F, -8.0F, -21.0F, 2.0F, 2.0F, 3.0F, 0.0F, false);
+        bone_propeller.texOffs(0, 0).addBox(-10.0F, -1.0F, -1.0F, 20.0F, 2.0F, 1.0F, 0.0F, false);
+        Body.texOffs(17, 31).addBox(-1.0F, -8.0F, -21.0F, 2.0F, 2.0F, 3.0F, 0.0F, false);
 
     }
 
     @Override
-    public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
         if (entity.isPowered() && !entity.getParked()) {
-            bone_propeller.rotateAngleZ = getPropellerRotation(entity, limbSwing);
+            bone_propeller.zRot = getPropellerRotation(entity, limbSwing);
         } else {
-            bone_propeller.rotateAngleZ = 1;
+            bone_propeller.zRot = 1;
         }
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderToBuffer(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         Body.render(matrixStack, buffer, packedLight, packedOverlay);
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+        modelRenderer.xRot = x;
+        modelRenderer.yRot = y;
+        modelRenderer.zRot = z;
     }
 }

@@ -40,11 +40,11 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         super(renderManager);
         this.propellerModel = propellerModel;
         this.planeEntityModel = planeEntityModel;
-        this.shadowSize = shadowSize;
+        this.shadowRadius = shadowSize;
     }
 
     public static float getPropellerRotation(PlaneEntity entity, float partialTicks) {
-        return ((entity.ticksExisted + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+        return ((entity.tickCount + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         if (Minecraft.getInstance().player != null) {
             ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
             if (playerEntity == entityIn.getControllingPassenger()) {
-                if ((Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON) {
+                if ((Minecraft.getInstance()).options.cameraType == PointOfView.FIRST_PERSON) {
 
                     return new Vector3d(0, 0, 0);
                 }
@@ -64,24 +64,24 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
     @Override
     public void render(T planeEntity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        matrixStackIn.push();
+        matrixStackIn.pushPose();
         matrixStackIn.translate(0.0D, 0.375D, 0.0D);
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
         matrixStackIn.translate(0, -0.5, 0);
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180));
 
         double firstPersonYOffset = -0.7D;
-        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.isPassenger(Minecraft.getInstance().player)
-            && (Minecraft.getInstance()).gameSettings.pointOfView == PointOfView.FIRST_PERSON;
+        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.hasPassenger(Minecraft.getInstance().player)
+            && (Minecraft.getInstance()).options.cameraType == PointOfView.FIRST_PERSON;
         if (isPlayerRidingInFirstPersonView) {
             matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
         }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-        matrixStackIn.rotate(q);
+        matrixStackIn.mulPose(q);
 
         float rockingAngle = planeEntity.getRockingAngle(partialTicks);
-        if (!MathHelper.epsilonEquals(rockingAngle, 0.0F)) {
-            matrixStackIn.rotate(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
+        if (!MathHelper.equal(rockingAngle, 0.0F)) {
+            matrixStackIn.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
         }
         float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
         float f1 = planeEntity.getDamageTaken() - partialTicks;
@@ -91,8 +91,8 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         if (f > 0.0F) {
             float angle = MathHelper.clamp(f * f1 / 200.0F, -30, 30);
-            f = planeEntity.ticksExisted + partialTicks;
-            matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));
+            f = planeEntity.tickCount + partialTicks;
+            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));
         }
 
         matrixStackIn.translate(0, -0.6, 0);
@@ -101,26 +101,26 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             matrixStackIn.translate(0.0D, -firstPersonYOffset, 0.0D);
         }
 
-        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeEntityModel.getRenderType(this.getEntityTexture(planeEntity)));
-        planeEntityModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeEntityModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
+        planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
+        planeEntityModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
                 upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
         }
 
-        ivertexbuilder = ItemRenderer.getArmorVertexBuilder(bufferIn, planeEntityModel.getRenderType(PROPELLER_TEXTURE), false, planeEntity.hasNoGravity());
+        ivertexbuilder = ItemRenderer.getArmorFoilBuffer(bufferIn, planeEntityModel.renderType(PROPELLER_TEXTURE), false, planeEntity.isNoGravity());
 
-        propellerModel.setRotationAngles(planeEntity, partialTicks, 0, 0, 0, 0);
-        propellerModel.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        matrixStackIn.push();
-        matrixStackIn.pop();
-        matrixStackIn.pop();
+        propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
+        propellerModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        matrixStackIn.pushPose();
+        matrixStackIn.popPose();
+        matrixStackIn.popPose();
 
         super.render(planeEntity, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
     @Override
-    public ResourceLocation getEntityTexture(PlaneEntity entity) {
+    public ResourceLocation getTextureLocation(PlaneEntity entity) {
         Block block = entity.getMaterial();
         if (cachedTextures.containsKey(block)) {
             return cachedTextures.get(block);

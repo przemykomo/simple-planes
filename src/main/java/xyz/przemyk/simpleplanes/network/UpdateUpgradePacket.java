@@ -39,15 +39,15 @@ public class UpdateUpgradePacket {
 
     public void toBytes(PacketBuffer buffer) {
         buffer.writeBoolean(newUpgrade);
-        PlaneEntity planeEntity = (PlaneEntity) serverWorld.getEntityByID(planeEntityID);
+        PlaneEntity planeEntity = (PlaneEntity) serverWorld.getEntity(planeEntityID);
         planeEntity.writeUpdateUpgradePacket(upgradeID, buffer);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ClientWorld clientWorld = Minecraft.getInstance().world;
-            ((PlaneEntity) clientWorld.getEntityByID(planeEntityID)).readUpdateUpgradePacket(upgradeID, packetBuffer, newUpgrade);
+            ClientWorld clientWorld = Minecraft.getInstance().level;
+            ((PlaneEntity) clientWorld.getEntity(planeEntityID)).readUpdateUpgradePacket(upgradeID, packetBuffer, newUpgrade);
         });
         ctx.setPacketHandled(true);
     }

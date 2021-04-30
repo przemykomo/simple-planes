@@ -16,25 +16,25 @@ public class StorageScreen extends ContainerScreen<StorageContainer> {
 
     public StorageScreen(StorageContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-        ySize = 114 + inventoryRows * 18;
-        playerInventoryTitleY = ySize - 94;
+        imageHeight = 114 + inventoryRows * 18;
+        inventoryLabelY = imageHeight - 94;
     }
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bindTexture(TEXTURE);
-        int i = (width - xSize) / 2;
-        int j = (height - ySize) / 2;
-        blit(matrixStack, i, j, 0, 0, xSize, inventoryRows * 18 + 17);
-        blit(matrixStack, i, j + inventoryRows * 18 + 17, 0, 126, xSize, 96);
+        minecraft.getTextureManager().bind(TEXTURE);
+        int i = (width - imageWidth) / 2;
+        int j = (height - imageHeight) / 2;
+        blit(matrixStack, i, j, 0, 0, imageWidth, inventoryRows * 18 + 17);
+        blit(matrixStack, i, j + inventoryRows * 18 + 17, 0, 126, imageWidth, 96);
     }
 }

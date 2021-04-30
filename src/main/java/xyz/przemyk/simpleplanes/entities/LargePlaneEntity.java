@@ -31,10 +31,10 @@ public class LargePlaneEntity extends PlaneEntity {
     public void tick() {
         super.tick();
 
-        List<Entity> list = world.getEntitiesInAABBexcluding(this, getBoundingBox().grow(0.2F, -0.01F, 0.2F), EntityPredicates.pushableBy(this));
+        List<Entity> list = level.getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntityPredicates.pushableBy(this));
         for (Entity entity : list) {
-            if (!world.isRemote && !(getControllingPassenger() instanceof PlayerEntity) &&
-                !entity.isPassenger(this) &&
+            if (!level.isClientSide && !(getControllingPassenger() instanceof PlayerEntity) &&
+                !entity.hasPassenger(this) &&
                 !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
                 entity.startRiding(this);
             }
@@ -80,20 +80,20 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) {
+    protected boolean canAddPassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        if (passengers.size() > 1 || (passengers.size() == 1 && hasBlockUpgrade) || passenger.getRidingEntity() == this) {
+        if (passengers.size() > 1 || (passengers.size() == 1 && hasBlockUpgrade) || passenger.getVehicle() == this) {
             return false;
         }
         return !(passenger instanceof PlaneEntity);
     }
 
     @Override
-    public void updatePassenger(Entity passenger) {
+    public void positionRider(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        super.updatePassenger(passenger);
+        super.positionRider(passenger);
         if (passengers.indexOf(passenger) == 0) {
-            passenger.setPosition(passenger.getPosX(), getPosY() + getMountedYOffset() + getEntityYOffset(passenger), passenger.getPosZ());
+            passenger.setPos(passenger.getX(), getY() + getPassengersRidingOffset() + getEntityYOffset(passenger), passenger.getZ());
         } else {
             updateSecondPassenger(passenger);
         }
@@ -101,18 +101,18 @@ public class LargePlaneEntity extends PlaneEntity {
 
     public void updateSecondPassenger(Entity passenger) {
         Vector3f pos = transformPos(getSecondPassengerPos(passenger));
-        passenger.setPosition(getPosX() + pos.getX(), getPosY() + pos.getY(), getPosZ() + pos.getZ());
+        passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
     }
 
     protected Vector3f getSecondPassengerPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -1);
+        return new Vector3f(0, (float) (super.getPassengersRidingOffset() + getEntityYOffset(passenger)), -1);
     }
 
     public double getEntityYOffset(Entity passenger) {
         if (passenger instanceof VillagerEntity) {
-            return ((VillagerEntity) passenger).isChild() ? -0.1 : -0.3D;
+            return ((VillagerEntity) passenger).isBaby() ? -0.1 : -0.3D;
         }
-        return passenger.getYOffset();
+        return passenger.getMyRidingOffset();
     }
 
     @Override

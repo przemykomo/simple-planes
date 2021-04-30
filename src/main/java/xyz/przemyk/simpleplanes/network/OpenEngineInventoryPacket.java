@@ -20,7 +20,7 @@ public class OpenEngineInventoryPacket {
         ctx.enqueueWork(() -> {
             ServerPlayerEntity sender = ctx.getSender();
             if (sender != null) {
-                Entity entity = sender.getRidingEntity();
+                Entity entity = sender.getVehicle();
                 if (entity instanceof PlaneEntity) {
                     PlaneEntity planeEntity = (PlaneEntity) entity;
                     if (planeEntity.engineUpgrade != null) {

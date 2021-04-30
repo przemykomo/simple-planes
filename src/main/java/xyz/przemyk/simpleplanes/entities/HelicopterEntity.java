@@ -48,20 +48,20 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
-        if (world.isRemote() && Minecraft.getInstance().player == passenger) {
-            (Minecraft.getInstance()).ingameGUI.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
+        if (level.isClientSide() && Minecraft.getInstance().player == passenger) {
+            (Minecraft.getInstance()).gui.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
         }
     }
 
     protected void tickPitch(Vars vars) {
         if (vars.moveForward > 0.0F) {
-            rotationPitch = Math.max(rotationPitch - 1, -20);
+            xRot = Math.max(xRot - 1, -20);
         } else if (vars.moveForward < 0 && vars.passengerSprinting) {
-            rotationPitch = Math.min(rotationPitch + 1, 10);
+            xRot = Math.min(xRot + 1, 10);
         } else {
-            rotationPitch = MathUtil.lerpAngle(0.2f, rotationPitch, 0);
+            xRot = MathUtil.lerpAngle(0.2f, xRot, 0);
             double drag = 0.999;
-            setMotion(getMotion().mul(drag, 1, drag));
+            setDeltaMovement(getDeltaMovement().multiply(drag, 1, drag));
 
         }
     }
@@ -94,7 +94,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         if (!vars.passengerSprinting) {
             double turn = vars.moveStrafing > 0 ? yawDiff : vars.moveStrafing == 0 ? 0 : -yawDiff;
             rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
-            rotationYaw -= turn;
+            yRot -= turn;
         } else {
             int rollDiff = 15;
             float turn = vars.moveStrafing > 0 ? rollDiff : vars.moveStrafing == 0 ? 0 : -rollDiff;
@@ -104,15 +104,15 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Vector3f getSecondPassengerPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedYOffset() + getEntityYOffset(passenger)), -0.8f);
+        return new Vector3f(0, (float) (super.getPassengersRidingOffset() + getEntityYOffset(passenger)), -0.8f);
     }
 
     @Override
     public double getEntityYOffset(Entity passenger) {
         if (passenger instanceof VillagerEntity) {
-            return ((VillagerEntity) passenger).isChild() ? -0.1 : -0.35D;
+            return ((VillagerEntity) passenger).isBaby() ? -0.1 : -0.35D;
         }
-        return passenger.getYOffset();
+        return passenger.getMyRidingOffset();
     }
 
     @Override

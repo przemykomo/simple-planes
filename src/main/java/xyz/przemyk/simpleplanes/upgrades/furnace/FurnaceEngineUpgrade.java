@@ -33,7 +33,6 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
 
@@ -79,7 +78,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
 
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
-        matrixStack.push();
+        matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
@@ -88,12 +87,12 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
             matrixStack.translate(0, 0, 1.1);
         }
 
-        matrixStack.rotate(Vector3f.ZP.rotationDegrees(180));
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
-        BlockState state = Blocks.FURNACE.getDefaultState().with(AbstractFurnaceBlock.LIT, isPowered());
-        Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-        matrixStack.pop();
+        BlockState state = Blocks.FURNACE.defaultBlockState().setValue(AbstractFurnaceBlock.LIT, isPowered());
+        Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        matrixStack.popPose();
     }
 
     @Override
@@ -120,14 +119,14 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
 
     @Override
     public void writePacket(PacketBuffer buffer) {
-        buffer.writeItemStack(itemStackHandler.getStackInSlot(0));
+        buffer.writeItem(itemStackHandler.getStackInSlot(0));
         buffer.writeVarInt(burnTime);
         buffer.writeVarInt(burnTimeTotal);
     }
 
     @Override
     public void readPacket(PacketBuffer buffer) {
-        itemStackHandler.setStackInSlot(0, buffer.readItemStack());
+        itemStackHandler.setStackInSlot(0, buffer.readItem());
         burnTime = buffer.readVarInt();
         burnTimeTotal = buffer.readVarInt();
     }
@@ -162,7 +161,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
             public void set(int index, int value) {}
 
             @Override
-            public int size() {
+            public int getCount() {
                 return 2;
             }
         });
@@ -179,7 +178,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
 
     @Override
     public void dropItems() {
-        planeEntity.entityDropItem(Items.FURNACE);
-        planeEntity.entityDropItem(itemStackHandler.getStackInSlot(0));
+        planeEntity.spawnAtLocation(Items.FURNACE);
+        planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
     }
 }

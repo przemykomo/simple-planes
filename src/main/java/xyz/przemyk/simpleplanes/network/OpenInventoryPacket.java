@@ -22,8 +22,8 @@ public class OpenInventoryPacket {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity player = ctx.getSender();
-            if (player != null && player.getRidingEntity() instanceof PlaneEntity) {
-                final PlaneEntity plane = (PlaneEntity) player.getRidingEntity();
+            if (player != null && player.getVehicle() instanceof PlaneEntity) {
+                final PlaneEntity plane = (PlaneEntity) player.getVehicle();
                 Upgrade chest = plane.upgrades.get(SimplePlanesUpgrades.CHEST.getId());
                 if (chest instanceof ChestUpgrade) {
                     NetworkHooks.openGui(player, (INamedContainerProvider) chest);

@@ -40,7 +40,7 @@ public class PlaneWorkbenchContainer extends Container {
     private final CompoundNBT outputItemTag = new CompoundNBT();
 
     public PlaneWorkbenchContainer(int id, PlayerInventory playerInventory) {
-        this(id, playerInventory, IWorldPosCallable.DUMMY);
+        this(id, playerInventory, IWorldPosCallable.NULL);
     }
 
     public PlaneWorkbenchContainer(int id, PlayerInventory playerInventory, IWorldPosCallable worldPosCallable) {
@@ -64,7 +64,7 @@ public class PlaneWorkbenchContainer extends Container {
     }
 
     public void onInputChanged() {
-        worldPosCallable.consume(((world, blockPos) -> updateCraftingResult(world, player)));
+        worldPosCallable.execute(((world, blockPos) -> updateCraftingResult(world, player)));
     }
 
     public void cycleItems(CycleItemsPacket.TYPE type) {
@@ -88,11 +88,11 @@ public class PlaneWorkbenchContainer extends Container {
     }
 
     private void updateResultSlot() {
-        if (!player.world.isRemote && !itemHandler.getStackInSlot(2).isEmpty()) {
+        if (!player.level.isClientSide && !itemHandler.getStackInSlot(2).isEmpty()) {
             ItemStack result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
-            result.setTagInfo("EntityTag", outputItemTag);
+            result.addTagElement("EntityTag", outputItemTag);
             itemHandler.setStackInSlot(2, result);
-            ((ServerPlayerEntity) player).connection.sendPacket(new SSetSlotPacket(windowId, 2, result));
+            ((ServerPlayerEntity) player).connection.send(new SSetSlotPacket(containerId, 2, result));
         }
     }
 
@@ -103,7 +103,7 @@ public class PlaneWorkbenchContainer extends Container {
     }
 
     protected void updateCraftingResult(World world, PlayerEntity player) {
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
             ItemStack result = ItemStack.EMPTY;
             ItemStack input = itemHandler.getStackInSlot(0);
@@ -112,26 +112,26 @@ public class PlaneWorkbenchContainer extends Container {
 
             if (input.getItem() == Items.IRON_INGOT && input.getCount() >= IRON_NEEDED &&
                 secondInput.getCount() >= PLANKS_NEEDED && secondItem instanceof BlockItem &&
-                BlockTags.getCollection().getTagByID(PLANE_MATERIALS).contains(((BlockItem) secondItem).getBlock())) {
+                BlockTags.getAllTags().getTagOrEmpty(PLANE_MATERIALS).contains(((BlockItem) secondItem).getBlock())) {
 
                 result = OUTPUT_ITEMS[selectedOutputItem].getDefaultInstance();
                 Block block = ((BlockItem) secondItem).getBlock();
                 outputItemTag.putString("material", block.getRegistryName().toString());
-                result.setTagInfo("EntityTag", outputItemTag);
+                result.addTagElement("EntityTag", outputItemTag);
             }
 
             itemHandler.setStackInSlot(2, result);
-            serverPlayerEntity.connection.sendPacket(new SSetSlotPacket(windowId, 2, result));
+            serverPlayerEntity.connection.send(new SSetSlotPacket(containerId, 2, result));
         }
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
-        worldPosCallable.consume((world, blockPos) -> {
+    public void removed(PlayerEntity playerIn) {
+        super.removed(playerIn);
+        worldPosCallable.execute((world, blockPos) -> {
             if (!playerIn.isAlive() || playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected()) {
                 for (int i = 0; i < itemHandler.getSlots() - 1; ++i) {
-                    playerIn.dropItem(itemHandler.getStackInSlot(i), false);
+                    playerIn.drop(itemHandler.getStackInSlot(i), false);
                     itemHandler.setStackInSlot(i, ItemStack.EMPTY);
                 }
             } else {
@@ -144,49 +144,49 @@ public class PlaneWorkbenchContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(worldPosCallable, playerIn, SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get());
+    public boolean stillValid(PlayerEntity playerIn) {
+        return stillValid(worldPosCallable, playerIn, SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get());
     }
 
     @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        ItemStack itemStack = super.slotClick(slotId, dragType, clickTypeIn, player);
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        ItemStack itemStack = super.clicked(slotId, dragType, clickTypeIn, player);
         onInputChanged();
         return itemStack;
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
+        Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index == 0) {
-                this.worldPosCallable.consume((p_217067_2_, p_217067_3_) -> itemstack1.getItem().onCreated(itemstack1, p_217067_2_, playerIn));
-                if (!this.mergeItemStack(itemstack1, 10, 39, true)) {
+                this.worldPosCallable.execute((p_217067_2_, p_217067_3_) -> itemstack1.getItem().onCraftedBy(itemstack1, p_217067_2_, playerIn));
+                if (!this.moveItemStackTo(itemstack1, 10, 39, true)) {
                     return ItemStack.EMPTY;
                 }
 
-                slot.onSlotChange(itemstack1, itemstack);
+                slot.onQuickCraft(itemstack1, itemstack);
             } else if (index >= 10 && index < 39) {
-                if (!this.mergeItemStack(itemstack1, 1, 10, false)) {
+                if (!this.moveItemStackTo(itemstack1, 1, 10, false)) {
                     if (index < 37) {
-                        if (!this.mergeItemStack(itemstack1, 37, 39, false)) {
+                        if (!this.moveItemStackTo(itemstack1, 37, 39, false)) {
                             return ItemStack.EMPTY;
                         }
-                    } else if (!this.mergeItemStack(itemstack1, 10, 37, false)) {
+                    } else if (!this.moveItemStackTo(itemstack1, 10, 37, false)) {
                         return ItemStack.EMPTY;
                     }
                 }
-            } else if (!this.mergeItemStack(itemstack1, 10, 39, false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 10, 39, false)) {
                 return ItemStack.EMPTY;
             }
 
             if (itemstack1.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if (itemstack1.getCount() == itemstack.getCount()) {
@@ -195,7 +195,7 @@ public class PlaneWorkbenchContainer extends Container {
 
             ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
             if (index == 0) {
-                playerIn.dropItem(itemstack2, false);
+                playerIn.drop(itemstack2, false);
             }
         }
 

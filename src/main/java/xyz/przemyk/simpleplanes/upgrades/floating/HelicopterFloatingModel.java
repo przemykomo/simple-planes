@@ -15,27 +15,21 @@ public class HelicopterFloatingModel extends EntityModel<PlaneEntity> {
     private final ModelRenderer floating;
 
     public HelicopterFloatingModel() {
-        textureWidth = 128;
-        textureHeight = 128;
+        texWidth = 128;
+        texHeight = 128;
 
         floating = new ModelRenderer(this);
-        floating.setRotationPoint(0.0F, 24.0F, 0.0F);
-        floating.setTextureOffset(0, 0).addBox(-8.0F, -7.0F, -17.0F, 16.0F, 2.0F, 38.0F, 0.0F, false);
+        floating.setPos(0.0F, 24.0F, 0.0F);
+        floating.texOffs(0, 0).addBox(-8.0F, -7.0F, -17.0F, 16.0F, 2.0F, 38.0F, 0.0F, false);
     }
 
     @Override
-    public void setRotationAngles(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
         //previously the render function, render code was moved to a method below
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+    public void renderToBuffer(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
         floating.render(matrixStack, buffer, packedLight, packedOverlay);
-    }
-
-    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
     }
 }

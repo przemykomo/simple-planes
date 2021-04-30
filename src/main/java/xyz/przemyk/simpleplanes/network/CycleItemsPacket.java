@@ -27,8 +27,8 @@ public class CycleItemsPacket {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity sender = ctx.getSender();
-            if (sender.openContainer instanceof PlaneWorkbenchContainer) {
-                PlaneWorkbenchContainer workbenchContainer = (PlaneWorkbenchContainer) sender.openContainer;
+            if (sender.containerMenu instanceof PlaneWorkbenchContainer) {
+                PlaneWorkbenchContainer workbenchContainer = (PlaneWorkbenchContainer) sender.containerMenu;
                 workbenchContainer.cycleItems(type);
             }
         });

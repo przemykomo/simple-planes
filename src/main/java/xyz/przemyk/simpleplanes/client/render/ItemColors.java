@@ -29,7 +29,7 @@ public class ItemColors {
 
     @OnlyIn(Dist.CLIENT)
     public static int getColor(ItemStack itemStack, int i) {
-        CompoundNBT entityTag = itemStack.getChildTag("EntityTag");
+        CompoundNBT entityTag = itemStack.getTagElement("EntityTag");
         if (i != 0) {
             return -1;
         }

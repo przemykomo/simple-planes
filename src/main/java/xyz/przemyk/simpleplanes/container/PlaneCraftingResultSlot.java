@@ -17,13 +17,13 @@ public class PlaneCraftingResultSlot extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack) {
+    public boolean mayPlace(ItemStack stack) {
         return false;
     }
 
     @Override
     public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
-        stack.onCrafting(player.world, player, 1);
+        stack.onCraftedBy(player.level, player, 1);
         container.onCrafting();
         return super.onTake(thePlayer, stack);
     }

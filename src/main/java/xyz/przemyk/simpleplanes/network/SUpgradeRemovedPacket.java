@@ -32,8 +32,8 @@ public class SUpgradeRemovedPacket {
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ClientWorld clientWorld = Minecraft.getInstance().world;
-            ((PlaneEntity) clientWorld.getEntityByID(planeEntityID)).removeUpgrade(upgradeID);
+            ClientWorld clientWorld = Minecraft.getInstance().level;
+            ((PlaneEntity) clientWorld.getEntity(planeEntityID)).removeUpgrade(upgradeID);
         });
         ctx.setPacketHandled(true);
     }
