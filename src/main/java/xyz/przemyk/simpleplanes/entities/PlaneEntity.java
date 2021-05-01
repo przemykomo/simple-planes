@@ -946,10 +946,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     @Override
     public void positionRider(Entity passenger) {
         super.positionRider(passenger);
-        //TODO? mojmap
-//        boolean b = (passenger instanceof PlayerEntity) && ((PlayerEntity) passenger).isUser();
+        boolean b = (passenger instanceof PlayerEntity) && ((PlayerEntity) passenger).isLocalPlayer();
 
-        if (hasPassenger(passenger) /* && !b */) {
+        if (hasPassenger(passenger) && !b) {
             applyYawToEntity(passenger);
         }
     }
@@ -962,8 +961,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         entityToUpdate.yRotO += deltaRotation;
 
-        //TODO mojmap
-//        entityToUpdate.setRenderYawOffset(yRot);
+        entityToUpdate.setYBodyRot(yRot);
 
         float f = wrapDegrees(entityToUpdate.yRotO - yRot);
         float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
@@ -1054,9 +1052,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         lerpSteps = 10;
     }
 
-    //TODO? mojamp
-//    @Override
-    public void setPositionAndRotation(double x, double y, double z, float yaw, float pitch) {
+    @Override
+    public void absMoveTo(double x, double y, double z, float yaw, float pitch) {
         double d0 = MathHelper.clamp(x, -3.0E7D, 3.0E7D);
         double d1 = MathHelper.clamp(z, -3.0E7D, 3.0E7D);
         xOld = d0;
@@ -1078,7 +1075,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
             if (lerpSteps > 0) {
                 lerpSteps = 0;
-                setPositionAndRotation(lerpX, lerpY, lerpZ, yRot, xRot);
+                absMoveTo(lerpX, lerpY, lerpZ, yRot, xRot);
             }
         }
     }
