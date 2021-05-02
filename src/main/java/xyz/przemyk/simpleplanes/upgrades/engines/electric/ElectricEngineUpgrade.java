@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.upgrades.furnace;
+package xyz.przemyk.simpleplanes.upgrades.engines.electric;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.AbstractFurnaceBlock;
@@ -13,59 +13,46 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
+import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import xyz.przemyk.simpleplanes.CustomEnergyStorage;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
+import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContainerProvider {
+public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContainerProvider {
 
-    public final ItemStackHandler itemStackHandler = new ItemStackHandler();
-    public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
-    public int burnTime;
-    public int burnTimeTotal;
+    public static final int CAPACITY = 2_100_000;
 
-    public FurnaceEngineUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.FURNACE_ENGINE.get(), planeEntity);
+    public final CustomEnergyStorage energyStorage = new CustomEnergyStorage(CAPACITY);
+    public final LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
+
+    public ElectricEngineUpgrade(PlaneEntity planeEntity) {
+        super(SimplePlanesUpgrades.ELECTRIC_ENGINE.get(), planeEntity);
     }
 
     @Override
     public void tick() {
-        if (burnTime > 0) {
-            burnTime -= planeEntity.getFuelCost();
-            updateClient();
-        } else {
-            ItemStack itemStack = itemStackHandler.getStackInSlot(0);
-            int itemBurnTime = ForgeHooks.getBurnTime(itemStack);
-            if (itemBurnTime > 0) {
-                burnTimeTotal = itemBurnTime;
-                burnTime = itemBurnTime;
-                if (itemStack.hasContainerItem()) {
-                    itemStackHandler.setStackInSlot(0, itemStack.getContainerItem());
-                } else {
-                    itemStackHandler.extractItem(0, 1, false);
-                }
+        if (!planeEntity.getParked()) {
+            if (energyStorage.extractEnergy(20 * planeEntity.getFuelCost(), false) > 0) {
                 updateClient();
             }
         }
@@ -73,7 +60,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
 
     @Override
     public boolean isPowered() {
-        return burnTime > 0;
+        return energyStorage.getEnergyStored() > 0;
     }
 
     @Override
@@ -90,7 +77,8 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
         matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
-        BlockState state = Blocks.FURNACE.defaultBlockState().setValue(AbstractFurnaceBlock.LIT, isPowered());
+        //TODO: render electric engine instead of blackstone
+        BlockState state = Blocks.BLACKSTONE.defaultBlockState();
         Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         matrixStack.popPose();
     }
@@ -98,37 +86,29 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     @Override
     protected void invalidateCaps() {
         super.invalidateCaps();
-        itemHandlerLazyOptional.invalidate();
+        energyStorageLazyOptional.invalidate();
     }
 
     @Override
     public CompoundNBT serializeNBT() {
-        CompoundNBT compound = new CompoundNBT();
-        compound.put("item", itemStackHandler.serializeNBT());
-        compound.putInt("burnTime", burnTime);
-        compound.putInt("burnTimeTotal", burnTimeTotal);
-        return compound;
+        CompoundNBT compoundNBT = new CompoundNBT();
+        compoundNBT.putInt("energy", energyStorage.getEnergyStored());
+        return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound) {
-        itemStackHandler.deserializeNBT(compound.getCompound("item"));
-        burnTime = compound.getInt("burnTime");
-        burnTimeTotal = compound.getInt("burnTimeTotal");
+    public void deserializeNBT(CompoundNBT nbt) {
+        energyStorage.setEnergy(nbt.getInt("energy"));
     }
 
     @Override
     public void writePacket(PacketBuffer buffer) {
-        buffer.writeItem(itemStackHandler.getStackInSlot(0));
-        buffer.writeVarInt(burnTime);
-        buffer.writeVarInt(burnTimeTotal);
+        buffer.writeVarInt(energyStorage.getEnergyStored());
     }
 
     @Override
     public void readPacket(PacketBuffer buffer) {
-        itemStackHandler.setStackInSlot(0, buffer.readItem());
-        burnTime = buffer.readVarInt();
-        burnTimeTotal = buffer.readVarInt();
+        energyStorage.setEnergy(buffer.readVarInt());
     }
 
     @Override
@@ -143,42 +123,34 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
 
     @Override
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent(SimplePlanesMod.MODID + ".furnace_engine_container");
+        return new TranslationTextComponent(SimplePlanesMod.MODID + ".electric_engine_container");
     }
 
+    @Nullable
     @Override
     public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new FurnaceEngineContainer(id, playerInventory, itemStackHandler, new IIntArray() {
+        return new ElectricEngineContainer(id, playerInventory, new IntReferenceHolder() {
             @Override
-            public int get(int index) {
-                if (index == 0) {
-                    return burnTime;
-                }
-                return burnTimeTotal;
+            public int get() {
+                return energyStorage.getEnergyStored();
             }
 
             @Override
-            public void set(int index, int value) {}
-
-            @Override
-            public int getCount() {
-                return 2;
-            }
+            public void set(int value) {}
         });
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return itemHandlerLazyOptional.cast();
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyStorageLazyOptional.cast();
         }
         return super.getCapability(cap, side);
     }
 
     @Override
     public void dropItems() {
-        planeEntity.spawnAtLocation(Items.FURNACE);
-        planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
+        planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
     }
 }

@@ -52,7 +52,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.EngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
@@ -396,7 +396,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         Vector3d oldMotion = getDeltaMovement();
 
-        if (level.isClientSide && isPowered() && !isParked(vars)) {
+        boolean parked = isParked(vars);
+        if (level.isClientSide && isPowered() && !parked) {
             PlaneSound.tryToPlay(this);
         }
 

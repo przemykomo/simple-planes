@@ -50,6 +50,9 @@ public class SimplePlanesItems {
     public static final RegistryObject<Item> HEALING = ITEMS.register("healing", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
 //    public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
 
+    public static final RegistryObject<Item> ELECTRIC_ENGINE = ITEMS.register("electric_engine", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
+
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<BlockItem> PLANE_WORKBENCH = ITEMS.register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), new Item.Properties().tab(ITEM_GROUP)));
+    public static final RegistryObject<BlockItem> CHARGING_STATION = ITEMS.register("charging_station", () -> new BlockItem(SimplePlanesBlocks.CHARGING_STATION_BLOCK.get(), new Item.Properties().tab(ITEM_GROUP)));
 }

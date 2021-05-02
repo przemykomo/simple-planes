@@ -35,10 +35,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.client.gui.FurnaceEngineScreen;
-import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
-import xyz.przemyk.simpleplanes.client.gui.RemoveUpgradesScreen;
-import xyz.przemyk.simpleplanes.client.gui.StorageScreen;
+import xyz.przemyk.simpleplanes.client.gui.*;
 import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
 import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
@@ -51,7 +48,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.furnace.FurnaceEngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineUpgrade;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
@@ -74,9 +71,10 @@ public class ClientEventHandler {
         ClientRegistry.registerKeyBinding(openEngineInventoryKey);
 
         ScreenManager.register(SimplePlanesContainers.PLANE_WORKBENCH.get(), PlaneWorkbenchScreen::new);
-        ScreenManager.register(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
         ScreenManager.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
         ScreenManager.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
+        ScreenManager.register(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
+        ScreenManager.register(SimplePlanesContainers.ELECTRIC_ENGINE.get(), ElectricEngineScreen::new);
     }
 
     private static boolean playerRotationNeedToPop = false;

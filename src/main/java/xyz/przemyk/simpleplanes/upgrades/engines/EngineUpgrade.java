@@ -1,7 +1,9 @@
-package xyz.przemyk.simpleplanes.upgrades;
+package xyz.przemyk.simpleplanes.upgrades.engines;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public abstract class EngineUpgrade extends Upgrade {
 
