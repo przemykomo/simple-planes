@@ -1,0 +1,12 @@
+{
+    "type": "simpleplanes:plane_workbench",
+
+    "ingredient": {
+        "item": "simpleplanes:propeller"
+    },
+    "ingredient_amount": 2,
+    "material_amount": 7,
+    "result": {
+        "item": "simpleplanes:helicopter"
+    }
+}

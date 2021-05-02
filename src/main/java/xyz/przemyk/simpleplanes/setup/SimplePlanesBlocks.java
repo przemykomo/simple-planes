@@ -16,7 +16,6 @@ import xyz.przemyk.simpleplanes.blocks.ChargingStationTile;
 import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchBlock;
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SimplePlanesBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, SimplePlanesMod.MODID);
     public static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, SimplePlanesMod.MODID);
