@@ -51,7 +51,7 @@ public class HealingUpgrade extends Upgrade {
             int heal = planeEntity.getOnGround() ? 2 : 1;
             planeEntity.setHealth(Math.min(health + heal, m));
         }
-        planeEntity.health_timer = 0;
+        planeEntity.goldenHeartsTimeout = 0;
     }
 
     @Override

@@ -80,12 +80,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
 
-    //count how many ticks since on ground
-    private int groundTicks;
+    private int onGroundTicks;
     public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
     public EngineUpgrade engineUpgrade = null;
 
-    //rotation data
     public float rotationRoll;
     public float prevRotationRoll;
     //smooth rotation
@@ -93,16 +91,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     private float deltaRotationLeft;
     private int deltaRotationTicks;
 
-    //the object itself
     private Block planksMaterial;
-    //for the on mount massage
     public boolean mountMessage;
-    //so no spam damage
-    private int hurtTime;
-    //fixing the plane on the ground
-    public int not_moving_time;
-    //golden hearths decay
-    public int health_timer = 0;
+    private int damageTimeout;
+    public int notMovingTime;
+    public int goldenHeartsTimeout = 0;
 
     private final int networkUpdateInterval;
 
@@ -141,8 +134,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return entityData.get(MAX_SPEED);
     }
 
-    public void setMaxSpeed(float max_speed) {
-        entityData.set(MAX_SPEED, max_speed);
+    public void setMaxSpeed(float maxSpeed) {
+        entityData.set(MAX_SPEED, maxSpeed);
     }
 
     public Quaternion getQ() {
@@ -173,7 +166,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return planksMaterial;
     }
 
-    public void setHealth(Integer health) {
+    public void setHealth(int health) {
         entityData.set(HEALTH, Math.max(health, 0));
     }
 
@@ -285,7 +278,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         setTimeSinceHit(20);
         setDamageTaken(getDamageTaken() + 10 * amount);
 
-        if (isInvulnerableTo(source) || hurtTime > 0) {
+        if (isInvulnerableTo(source) || damageTimeout > 0) {
             return false;
         }
         if (level.isClientSide || removed) {
@@ -297,11 +290,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
 
         setHealth(health -= amount);
-        hurtTime = 10;
-        boolean is_player = source.getEntity() instanceof PlayerEntity;
-        boolean creative_player = is_player && ((PlayerEntity) source.getEntity()).abilities.instabuild;
-        if (creative_player || (is_player && getDamageTaken() > 30.0F) || health <= 0) {
-            if (!creative_player) {
+        damageTimeout = 10;
+        boolean isPlayer = source.getEntity() instanceof PlayerEntity;
+        boolean creativePlayer = isPlayer && ((PlayerEntity) source.getEntity()).abilities.instabuild;
+        if (creativePlayer || (isPlayer && getDamageTaken() > 30.0F) || health <= 0) {
+            if (!creativePlayer) {
                 if (source == SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH) {
                     explode();
                 }
@@ -363,9 +356,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         Vars vars = getMotionVars();
         if (isNoGravity()) {
             vars.gravity = 0;
-            vars.max_lift = 0;
+            vars.maxLift = 0;
             vars.push = 0.00f;
-            vars.passive_engine_push = 0;
+            vars.passiveEnginePush = 0;
         }
         Entity controllingPassenger = getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
@@ -377,11 +370,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             vars.moveStrafing = 0;
             setSprinting(false);
         }
-        vars.turn_threshold = SimplePlanesConfig.TURN_THRESHOLD.get() / 100d;
-        if (Math.abs(vars.moveForward) < vars.turn_threshold) {
+        vars.turnThreshold = SimplePlanesConfig.TURN_THRESHOLD.get() / 100d;
+        if (Math.abs(vars.moveForward) < vars.turnThreshold) {
             vars.moveForward = 0;
         }
-        if (Math.abs(vars.moveStrafing) < vars.turn_threshold) {
+        if (Math.abs(vars.moveStrafing) < vars.turnThreshold) {
             vars.moveStrafing = 0;
         }
         vars.passengerSprinting = isSprinting();
@@ -396,7 +389,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         Vector3d oldMotion = getDeltaMovement();
 
-        boolean parked = isParked(vars);
+        boolean parked = updateParkedState(vars);
         if (level.isClientSide && isPowered() && !parked) {
             PlaneSound.tryToPlay(this);
         }
@@ -405,17 +398,17 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (getDeltaMovement().length() > 0.05) {
             q = tickRotateMotion(vars, q, getDeltaMovement());
         }
-        boolean do_pitch = true;
+        boolean doPitch = true;
         //pitch + movement speed
         if (getOnGround() || isOnWater()) {
-            do_pitch = tickOnGround(vars);
+            doPitch = tickOnGround(vars);
         } else {
-            groundTicks--;
+            onGroundTicks--;
             if (!vars.passengerSprinting) {
-                vars.push = vars.passive_engine_push;
+                vars.push = vars.passiveEnginePush;
             }
         }
-        if (do_pitch) {
+        if (doPitch) {
             tickPitch(vars);
         }
 
@@ -427,14 +420,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         tickUpgrades();
 
         //made so plane fully stops when moves slow, removing the slipperiness effect
-        if (groundTicks > -50 && oldMotion.length() < 0.002 && getDeltaMovement().length() < 0.002) {
+        if (onGroundTicks > -50 && oldMotion.length() < 0.002 && getDeltaMovement().length() < 0.002) {
             setDeltaMovement(Vector3d.ZERO);
         }
         updateRocking();
         reapplyPosition();
 
         if (!onGround || getHorizontalDistanceSqr(getDeltaMovement()) > (double) 1.0E-5F || (tickCount + getId()) % 4 == 0) {
-            double speed_before = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
+            double speedBefore = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
             boolean onGroundOld = onGround;
             Vector3d motion = getDeltaMovement();
             if (motion.lengthSqr() > 0.25 || vars.moveForward != 0) {
@@ -442,10 +435,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             }
             move(MoverType.SELF, motion);
             onGround = ((motion.y()) == 0.0) ? onGroundOld : onGround;
-            if (horizontalCollision && !level.isClientSide && SimplePlanesConfig.PLANE_CRASH.get() && groundTicks <= 0) {
-                double speed_after = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
-                double speed_diff = speed_before - speed_after;
-                float f2 = (float) (speed_diff * 10.0D - 5.0D);
+            if (horizontalCollision && !level.isClientSide && SimplePlanesConfig.PLANE_CRASH.get() && onGroundTicks <= 0) {
+                double speedAfter = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
+                double speedDiff = speedBefore - speedAfter;
+                float f2 = (float) (speedDiff * 10.0D - 5.0D);
                 if (f2 > 5.0F) {
                     crash(f2);
                 }
@@ -473,8 +466,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 player.connection.aboveGroundVehicleTickCount = 0;
             }
         }
-        if (hurtTime > 0) {
-            --hurtTime;
+        if (damageTimeout > 0) {
+            --damageTimeout;
         }
         if (level.isClientSide && getTimeSinceHit() > 0) {
             setTimeSinceHit(getTimeSinceHit() - 1);
@@ -482,12 +475,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (getDamageTaken() > 0.0F) {
             setDamageTaken(getDamageTaken() - 1.0F);
         }
-        if (!level.isClientSide && getHealth() > getMaxHealth() & health_timer > (getOnGround() ? 300 : 100)) {
+        if (!level.isClientSide && getHealth() > getMaxHealth() & goldenHeartsTimeout > (getOnGround() ? 300 : 100)) {
             setHealth(getHealth() - 1);
-            health_timer = 0;
+            goldenHeartsTimeout = 0;
         }
-        if (health_timer < 1000 && isPowered()) {
-            health_timer++;
+        if (goldenHeartsTimeout < 1000 && isPowered()) {
+            goldenHeartsTimeout++;
         }
 
         tickLerp();
@@ -519,13 +512,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 1;
     }
 
-    private boolean isParked(Vars vars) {
+    private boolean updateParkedState(Vars vars) {
         Vector3d oldMotion = getDeltaMovement();
         final boolean parked = (isOnWater() || isOnGround()) &&
             (oldMotion.length() < 0.1) &&
             (!vars.passengerSprinting) &&
             (vars.moveStrafing == 0) &&
-            (not_moving_time > 100) &&
+            (notMovingTime > 100) &&
             (onGround || isOnWater()) &&
             (vars.moveForward == 0);
         setParked(parked);
@@ -534,7 +527,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected Vars getMotionVars() {
         VARS.reset();
-        VARS.max_push_speed = getMaxSpeed() * 10;
+        VARS.maxPushSpeed = getMaxSpeed() * 10;
         return VARS;
     }
 
@@ -591,11 +584,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 } else if (moveStrafing < 0) {
                     rotationRoll = Math.max(rotationRoll - f1, -15);
                 }
-                final double roll_old = toEulerAngles(getQ()).roll;
-                if (degreesDifferenceAbs(roll_old, 0) < 90) {
-                    turn = MathHelper.clamp(roll_old * vars.yaw_multiplayer, -yawdiff, yawdiff);
+                final double rollOld = toEulerAngles(getQ()).roll;
+                if (degreesDifferenceAbs(rollOld, 0) < 90) {
+                    turn = MathHelper.clamp(rollOld * vars.yawMultiplayer, -yawdiff, yawdiff);
                 } else {
-                    turn = MathHelper.clamp((180 - roll_old) * vars.yaw_multiplayer, -yawdiff, yawdiff);
+                    turn = MathHelper.clamp((180 - rollOld) * vars.yawMultiplayer, -yawdiff, yawdiff);
                 }
                 if (moveStrafing == 0) {
                     turn = 0;
@@ -612,10 +605,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         motion = getDeltaMovement();
         double speed = motion.length();
-        speed -= speed * speed * vars.drag_quad + speed * vars.drag_mul + vars.drag;
+        speed -= speed * speed * vars.dragQuad + speed * vars.dragMul + vars.drag;
         speed = Math.max(speed, 0);
-        if (speed > vars.max_speed) {
-            speed = MathHelper.lerp(0.2, speed, vars.max_speed);
+        if (speed > vars.maxSpeed) {
+            speed = MathHelper.lerp(0.2, speed, vars.maxSpeed);
         }
 
         if (speed == 0) {
@@ -627,7 +620,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         Vector3d pushVec = new Vector3d(getTickPush(vars));
         if (pushVec.length() != 0 && motion.length() > 0.1) {
             double dot = normalizedDotProduct(pushVec, motion);
-            pushVec = pushVec.scale(MathHelper.clamp(1 - dot * speed / (vars.max_push_speed * (vars.push + 0.05)), 0, 2));
+            pushVec = pushVec.scale(MathHelper.clamp(1 - dot * speed / (vars.maxPushSpeed * (vars.push + 0.05)), 0, 2));
         }
 
         motion = motion.add(pushVec);
@@ -657,25 +650,25 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected boolean tickOnGround(Vars vars) {
         if (getDeltaMovement().lengthSqr() < 0.01 && getOnGround()) {
-            not_moving_time += 1;
+            notMovingTime += 1;
         } else {
-            not_moving_time = 0;
+            notMovingTime = 0;
         }
-        if (not_moving_time > 200 && getHealth() < getMaxHealth() && getPlayer() != null) {
+        if (notMovingTime > 200 && getHealth() < getMaxHealth() && getPlayer() != null) {
             setHealth(getHealth() + 1);
-            not_moving_time = 100;
+            notMovingTime = 100;
         }
 
-        boolean speeding_up = true;
-        if (groundTicks < 0) {
-            groundTicks = 5;
+        boolean speedingUp = true;
+        if (onGroundTicks < 0) {
+            onGroundTicks = 5;
         } else {
-            groundTicks--;
+            onGroundTicks--;
         }
         float pitch = getGroundPitch();
         if ((isPowered() && vars.moveForward > 0.0F) || isOnWater()) {
             pitch = 0;
-        } else if (getDeltaMovement().length() > vars.take_off_speed) {
+        } else if (getDeltaMovement().length() > vars.takeOffSpeed) {
             pitch /= 2;
         }
         xRot = lerpAngle(0.1f, xRot, pitch);
@@ -683,13 +676,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (degreesDifferenceAbs(xRot, 0) > 1 && getDeltaMovement().length() < 0.1) {
             vars.push /= 5; //runs while the plane is taking off
         }
-        if (getDeltaMovement().length() < vars.take_off_speed) {
+        if (getDeltaMovement().length() < vars.takeOffSpeed) {
             //                rotationPitch = lerpAngle(0.2f, rotationPitch, pitch);
-            speeding_up = false;
+            speedingUp = false;
             //                push = 0;
         }
         if (vars.moveForward < 0) {
-            vars.push = -vars.ground_push;
+            vars.push = -vars.groundPush;
         }
         if (!isPowered() || vars.moveForward == 0) {
             vars.push = 0;
@@ -697,8 +690,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         float f;
         BlockPos pos = new BlockPos(getX(), getY() - 1.0D, getZ());
         f = level.getBlockState(pos).getSlipperiness(level, pos, this);
-        vars.drag_mul *= 20 * (3 - f);
-        return speeding_up;
+        vars.dragMul *= 20 * (3 - f);
+        return speedingUp;
     }
 
     protected float getGroundPitch() {
@@ -723,13 +716,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         d = 1 - d;
         //            speed = getMotion().length()*(d);
         double speed = getDeltaMovement().length();
-        double lift = Math.min(speed * vars.lift_factor, vars.max_lift) * d;
-        double cos_roll = (1 + 4 * Math.max(Math.cos(Math.toRadians(degreesDifferenceAbs(rotationRoll, 0))), 0)) / 5;
-        lift *= cos_roll;
-        d *= cos_roll;
+        double lift = Math.min(speed * vars.liftFactor, vars.maxLift) * d;
+        double cosRoll = (1 + 4 * Math.max(Math.cos(Math.toRadians(degreesDifferenceAbs(rotationRoll, 0))), 0)) / 5;
+        lift *= cosRoll;
+        d *= cosRoll;
 
         setDeltaMovement(rotationToVector(lerpAngle180(0.1f, yaw, yRot),
-            lerpAngle180(vars.pitch_to_motion * d, pitch, xRot) + lift,
+            lerpAngle180(vars.pitchToMotion * d, pitch, xRot) + lift,
             speed));
         if (!getOnGround() && !isOnWater() && motion.length() > 0.1) {
 
@@ -743,7 +736,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                     yaw = yaw - 180;
                 }
                 Quaternion q1 = toQuaternion(yaw, pitch, rotationRoll);
-                q = lerpQ(vars.motion_to_rotation, q, q1);
+                q = lerpQ(vars.motionToRotation, q, q1);
             }
 
         }
@@ -771,10 +764,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
 
         if (compound.contains("max_health")) {
-            int max_health = compound.getInt("max_health");
-            if (max_health <= 0)
-                max_health = 20;
-            entityData.set(MAX_HEALTH, max_health);
+            int maxHealth = compound.getInt("max_health");
+            if (maxHealth <= 0)
+                maxHealth = 20;
+            entityData.set(MAX_HEALTH, maxHealth);
         }
 
         if (compound.contains("health")) {
@@ -916,8 +909,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public void crash(float damage) {
         if (!level.isClientSide && !removed) {
             for (Entity entity : getPassengers()) {
-                float damage_mod = Math.min(1, 1 - ((float) getHealth() / getMaxHealth()));
-                entity.hurt(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage * damage_mod);
+                float damageMod = Math.min(1, 1 - ((float) getHealth() / getMaxHealth()));
+                entity.hurt(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage * damageMod);
             }
             hurt(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage + 2);
         }
@@ -928,7 +921,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public boolean getOnGround() {
-        return onGround || groundTicks > 1;
+        return onGround || onGroundTicks > 1;
     }
 
     public boolean isOnWater() {
@@ -1248,24 +1241,24 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected static class Vars {
         public float moveForward;
-        public double turn_threshold;
+        public double turnThreshold;
         public float moveStrafing;
         public boolean passengerSprinting;
-        double max_speed;
-        double max_push_speed;
-        double take_off_speed;
-        float max_lift;
-        double lift_factor;
+        double maxSpeed;
+        double maxPushSpeed;
+        double takeOffSpeed;
+        float maxLift;
+        double liftFactor;
         double gravity;
         double drag;
-        double drag_mul;
-        double drag_quad;
+        double dragMul;
+        double dragQuad;
         float push;
-        float ground_push;
-        float passive_engine_push;
-        float motion_to_rotation;
-        float pitch_to_motion;
-        float yaw_multiplayer;
+        float groundPush;
+        float passiveEnginePush;
+        float motionToRotation;
+        float pitchToMotion;
+        float yawMultiplayer;
 
         public Vars() {
             reset();
@@ -1273,24 +1266,23 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         public void reset() {
             moveForward = 0;
-            turn_threshold = 0;
+            turnThreshold = 0;
             moveStrafing = 0;
             passengerSprinting = false;
-            max_speed = 3;
-            take_off_speed = 0.3;
-            max_lift = 2;
-            lift_factor = 10;
+            maxSpeed = 3;
+            takeOffSpeed = 0.3;
+            maxLift = 2;
+            liftFactor = 10;
             gravity = -0.03;
             drag = 0.001;
-            drag_mul = 0.0005;
-            drag_quad = 0.001;
+            dragMul = 0.0005;
+            dragQuad = 0.001;
             push = 0.06f;
-            ground_push = 0.01f;
-            passive_engine_push = 0.025f;
-            motion_to_rotation = 0.05f;
-            pitch_to_motion = 0.2f;
-            yaw_multiplayer = 0.5f;
-
+            groundPush = 0.01f;
+            passiveEnginePush = 0.025f;
+            motionToRotation = 0.05f;
+            pitchToMotion = 0.2f;
+            yawMultiplayer = 0.5f;
         }
     }
 }

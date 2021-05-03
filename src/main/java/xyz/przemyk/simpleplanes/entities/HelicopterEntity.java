@@ -22,10 +22,10 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected Vars getMotionVars() {
         Vars motionVars = super.getMotionVars();
-        motionVars.passive_engine_push = 0.028f;
+        motionVars.passiveEnginePush = 0.028f;
         motionVars.push = 0.05f;
-        motionVars.drag_quad *= 10;
-        motionVars.drag_mul *= 2;
+        motionVars.dragQuad *= 10;
+        motionVars.dragMul *= 2;
         return motionVars;
     }
 
