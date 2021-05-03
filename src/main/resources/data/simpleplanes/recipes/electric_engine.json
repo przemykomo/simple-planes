@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#L#",
+        "#F#",
+        "RXR"
+    ],
+    "key": {
+        "#": {
+            "tag": "forge:gems/lapis"
+        },
+        "L": {
+            "item": "minecraft:light_weighted_pressure_plate"
+        },
+        "F": {
+            "item": "minecraft:furnace"
+        },
+        "R": {
+            "tag": "forge:dusts/redstone"
+        },
+        "X": {
+            "item": "minecraft:repeater"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:electric_engine",
+        "count": 1
+    }
+}

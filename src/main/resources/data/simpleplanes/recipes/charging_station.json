@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#L#",
+        "gRg",
+        "#D#"
+    ],
+    "key": {
+        "#": {
+            "tag": "forge:gems/lapis"
+        },
+        "L": {
+            "item": "minecraft:light_weighted_pressure_plate"
+        },
+        "g": {
+            "tag": "forge:ingots/gold"
+        },
+        "R": {
+            "tag": "forge:storage_blocks/redstone"
+        },
+        "D": {
+            "tag": "forge:dusts/redstone"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:charging_station",
+        "count": 1
+    }
+}
