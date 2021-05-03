@@ -656,7 +656,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (notMovingTime > 200 && getHealth() < getMaxHealth() && getPlayer() != null) {
             setHealth(getHealth() + 1);
-            notMovingTime = 100;
+            notMovingTime = 101;
         }
 
         boolean speedingUp = true;
