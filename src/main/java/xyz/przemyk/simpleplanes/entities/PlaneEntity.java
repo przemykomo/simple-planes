@@ -353,31 +353,31 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         markHurt();
 
-        Vars vars = getMotionVars();
+        TempMotionVars tempMotionVars = getMotionVars();
         if (isNoGravity()) {
-            vars.gravity = 0;
-            vars.maxLift = 0;
-            vars.push = 0.00f;
-            vars.passiveEnginePush = 0;
+            tempMotionVars.gravity = 0;
+            tempMotionVars.maxLift = 0;
+            tempMotionVars.push = 0.00f;
+            tempMotionVars.passiveEnginePush = 0;
         }
         Entity controllingPassenger = getControllingPassenger();
         if (controllingPassenger instanceof PlayerEntity) {
             PlayerEntity playerEntity = (PlayerEntity) controllingPassenger;
-            vars.moveForward = playerEntity.zza;
-            vars.moveStrafing = playerEntity.xxa;
+            tempMotionVars.moveForward = playerEntity.zza;
+            tempMotionVars.moveStrafing = playerEntity.xxa;
         } else {
-            vars.moveForward = 0;
-            vars.moveStrafing = 0;
+            tempMotionVars.moveForward = 0;
+            tempMotionVars.moveStrafing = 0;
             setSprinting(false);
         }
-        vars.turnThreshold = SimplePlanesConfig.TURN_THRESHOLD.get() / 100d;
-        if (Math.abs(vars.moveForward) < vars.turnThreshold) {
-            vars.moveForward = 0;
+        tempMotionVars.turnThreshold = SimplePlanesConfig.TURN_THRESHOLD.get() / 100d;
+        if (Math.abs(tempMotionVars.moveForward) < tempMotionVars.turnThreshold) {
+            tempMotionVars.moveForward = 0;
         }
-        if (Math.abs(vars.moveStrafing) < vars.turnThreshold) {
-            vars.moveStrafing = 0;
+        if (Math.abs(tempMotionVars.moveStrafing) < tempMotionVars.turnThreshold) {
+            tempMotionVars.moveStrafing = 0;
         }
-        vars.passengerSprinting = isSprinting();
+        tempMotionVars.passengerSprinting = isSprinting();
         Quaternion q;
         if (level.isClientSide) {
             q = getQ_Client();
@@ -389,33 +389,33 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         Vector3d oldMotion = getDeltaMovement();
 
-        boolean parked = updateParkedState(vars);
+        boolean parked = updateParkedState(tempMotionVars);
         if (level.isClientSide && isPowered() && !parked) {
             PlaneSound.tryToPlay(this);
         }
 
         //motion and rotation interpolation + lift.
         if (getDeltaMovement().length() > 0.05) {
-            q = tickRotateMotion(vars, q, getDeltaMovement());
+            q = tickRotateMotion(tempMotionVars, q, getDeltaMovement());
         }
         boolean doPitch = true;
         //pitch + movement speed
         if (getOnGround() || isOnWater()) {
-            doPitch = tickOnGround(vars);
+            doPitch = tickOnGround(tempMotionVars);
         } else {
             onGroundTicks--;
-            if (!vars.passengerSprinting) {
-                vars.push = vars.passiveEnginePush;
+            if (!tempMotionVars.passengerSprinting) {
+                tempMotionVars.push = tempMotionVars.passiveEnginePush;
             }
         }
         if (doPitch) {
-            tickPitch(vars);
+            tickPitch(tempMotionVars);
         }
 
-        tickMotion(vars);
+        tickMotion(tempMotionVars);
 
         //roll + yaw
-        tickRotation(vars);
+        tickRotation(tempMotionVars);
 
         tickUpgrades();
 
@@ -430,7 +430,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             double speedBefore = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
             boolean onGroundOld = onGround;
             Vector3d motion = getDeltaMovement();
-            if (motion.lengthSqr() > 0.25 || vars.moveForward != 0) {
+            if (motion.lengthSqr() > 0.25 || tempMotionVars.moveForward != 0) {
                 onGround = true;
             }
             move(MoverType.SELF, motion);
@@ -512,23 +512,23 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 1;
     }
 
-    private boolean updateParkedState(Vars vars) {
+    private boolean updateParkedState(TempMotionVars tempMotionVars) {
         Vector3d oldMotion = getDeltaMovement();
         final boolean parked = (isOnWater() || isOnGround()) &&
             (oldMotion.length() < 0.1) &&
-            (!vars.passengerSprinting) &&
-            (vars.moveStrafing == 0) &&
+            (!tempMotionVars.passengerSprinting) &&
+            (tempMotionVars.moveStrafing == 0) &&
             (notMovingTime > 100) &&
             (onGround || isOnWater()) &&
-            (vars.moveForward == 0);
+            (tempMotionVars.moveForward == 0);
         setParked(parked);
         return parked;
     }
 
-    protected Vars getMotionVars() {
-        VARS.reset();
-        VARS.maxPushSpeed = getMaxSpeed() * 10;
-        return VARS;
+    protected TempMotionVars getMotionVars() {
+        TEMP_MOTION_VARS.reset();
+        TEMP_MOTION_VARS.maxPushSpeed = getMaxSpeed() * 10;
+        return TEMP_MOTION_VARS;
     }
 
     protected void tickDeltaRotation(Quaternion q) {
@@ -554,10 +554,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    protected void tickRotation(Vars vars) {
+    protected void tickRotation(TempMotionVars tempMotionVars) {
         float f1 = 1f;
         double turn;
-        float moveStrafing = vars.moveStrafing;
+        float moveStrafing = tempMotionVars.moveStrafing;
 
             int yawdiff = 3;
             float roll = rotationRoll;
@@ -586,9 +586,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 }
                 final double rollOld = toEulerAngles(getQ()).roll;
                 if (degreesDifferenceAbs(rollOld, 0) < 90) {
-                    turn = MathHelper.clamp(rollOld * vars.yawMultiplayer, -yawdiff, yawdiff);
+                    turn = MathHelper.clamp(rollOld * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
                 } else {
-                    turn = MathHelper.clamp((180 - rollOld) * vars.yawMultiplayer, -yawdiff, yawdiff);
+                    turn = MathHelper.clamp((180 - rollOld) * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
                 }
                 if (moveStrafing == 0) {
                     turn = 0;
@@ -598,17 +598,17 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         yRot -= turn;
     }
 
-    protected void tickMotion(Vars vars) {
+    protected void tickMotion(TempMotionVars tempMotionVars) {
         Vector3d motion;
         if (!isPowered()) {
-            vars.push = 0;
+            tempMotionVars.push = 0;
         }
         motion = getDeltaMovement();
         double speed = motion.length();
-        speed -= speed * speed * vars.dragQuad + speed * vars.dragMul + vars.drag;
+        speed -= speed * speed * tempMotionVars.dragQuad + speed * tempMotionVars.dragMul + tempMotionVars.drag;
         speed = Math.max(speed, 0);
-        if (speed > vars.maxSpeed) {
-            speed = MathHelper.lerp(0.2, speed, vars.maxSpeed);
+        if (speed > tempMotionVars.maxSpeed) {
+            speed = MathHelper.lerp(0.2, speed, tempMotionVars.maxSpeed);
         }
 
         if (speed == 0) {
@@ -617,30 +617,30 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (motion.length() > 0)
             motion = motion.scale(speed / motion.length());
 
-        Vector3d pushVec = new Vector3d(getTickPush(vars));
+        Vector3d pushVec = new Vector3d(getTickPush(tempMotionVars));
         if (pushVec.length() != 0 && motion.length() > 0.1) {
             double dot = normalizedDotProduct(pushVec, motion);
-            pushVec = pushVec.scale(MathHelper.clamp(1 - dot * speed / (vars.maxPushSpeed * (vars.push + 0.05)), 0, 2));
+            pushVec = pushVec.scale(MathHelper.clamp(1 - dot * speed / (tempMotionVars.maxPushSpeed * (tempMotionVars.push + 0.05)), 0, 2));
         }
 
         motion = motion.add(pushVec);
 
-        motion = motion.add(0, vars.gravity, 0);
+        motion = motion.add(0, tempMotionVars.gravity, 0);
 
         setDeltaMovement(motion);
     }
 
-    protected Vector3f getTickPush(Vars vars) {
-        return transformPos(new Vector3f(0, 0, vars.push));
+    protected Vector3f getTickPush(TempMotionVars tempMotionVars) {
+        return transformPos(new Vector3f(0, 0, tempMotionVars.push));
     }
 
-    protected void tickPitch(Vars vars) {
+    protected void tickPitch(TempMotionVars tempMotionVars) {
         float pitch = 0f;
-        if (vars.moveForward > 0.0F) {
+        if (tempMotionVars.moveForward > 0.0F) {
 //            pitch = vars.passengerSprinting ? 2 : 1f;
             pitch = 1.3f;
         } else {
-            if (vars.moveForward < 0.0F) {
+            if (tempMotionVars.moveForward < 0.0F) {
 //                pitch = vars.passengerSprinting ? -2 : -1;
                 pitch = -1.3f;
             }
@@ -648,7 +648,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         xRot += pitch;
     }
 
-    protected boolean tickOnGround(Vars vars) {
+    protected boolean tickOnGround(TempMotionVars tempMotionVars) {
         if (getDeltaMovement().lengthSqr() < 0.01 && getOnGround()) {
             notMovingTime += 1;
         } else {
@@ -666,31 +666,31 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             onGroundTicks--;
         }
         float pitch = getGroundPitch();
-        if ((isPowered() && vars.moveForward > 0.0F) || isOnWater()) {
+        if ((isPowered() && tempMotionVars.moveForward > 0.0F) || isOnWater()) {
             pitch = 0;
-        } else if (getDeltaMovement().length() > vars.takeOffSpeed) {
+        } else if (getDeltaMovement().length() > tempMotionVars.takeOffSpeed) {
             pitch /= 2;
         }
         xRot = lerpAngle(0.1f, xRot, pitch);
 
         if (degreesDifferenceAbs(xRot, 0) > 1 && getDeltaMovement().length() < 0.1) {
-            vars.push /= 5; //runs while the plane is taking off
+            tempMotionVars.push /= 5; //runs while the plane is taking off
         }
-        if (getDeltaMovement().length() < vars.takeOffSpeed) {
+        if (getDeltaMovement().length() < tempMotionVars.takeOffSpeed) {
             //                rotationPitch = lerpAngle(0.2f, rotationPitch, pitch);
             speedingUp = false;
             //                push = 0;
         }
-        if (vars.moveForward < 0) {
-            vars.push = -vars.groundPush;
+        if (tempMotionVars.moveForward < 0) {
+            tempMotionVars.push = -tempMotionVars.groundPush;
         }
-        if (!isPowered() || vars.moveForward == 0) {
-            vars.push = 0;
+        if (!isPowered() || tempMotionVars.moveForward == 0) {
+            tempMotionVars.push = 0;
         }
         float f;
         BlockPos pos = new BlockPos(getX(), getY() - 1.0D, getZ());
         f = level.getBlockState(pos).getSlipperiness(level, pos, this);
-        vars.dragMul *= 20 * (3 - f);
+        tempMotionVars.dragMul *= 20 * (3 - f);
         return speedingUp;
     }
 
@@ -698,7 +698,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 15;
     }
 
-    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
+    protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vector3d motion) {
         float yaw = MathUtil.getYaw(motion);
         float pitch = MathUtil.getPitch(motion);
         if (degreesDifferenceAbs(yaw, yRot) > 5 && (getOnGround() || isOnWater())) {
@@ -716,13 +716,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         d = 1 - d;
         //            speed = getMotion().length()*(d);
         double speed = getDeltaMovement().length();
-        double lift = Math.min(speed * vars.liftFactor, vars.maxLift) * d;
+        double lift = Math.min(speed * tempMotionVars.liftFactor, tempMotionVars.maxLift) * d;
         double cosRoll = (1 + 4 * Math.max(Math.cos(Math.toRadians(degreesDifferenceAbs(rotationRoll, 0))), 0)) / 5;
         lift *= cosRoll;
         d *= cosRoll;
 
         setDeltaMovement(rotationToVector(lerpAngle180(0.1f, yaw, yRot),
-            lerpAngle180(vars.pitchToMotion * d, pitch, xRot) + lift,
+            lerpAngle180(tempMotionVars.pitchToMotion * d, pitch, xRot) + lift,
             speed));
         if (!getOnGround() && !isOnWater() && motion.length() > 0.1) {
 
@@ -736,7 +736,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                     yaw = yaw - 180;
                 }
                 Quaternion q1 = toQuaternion(yaw, pitch, rotationRoll);
-                q = lerpQ(vars.motionToRotation, q, q1);
+                q = lerpQ(tempMotionVars.motionToRotation, q, q1);
             }
 
         }
@@ -1237,9 +1237,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    private static final Vars VARS = new Vars();
+    private static final TempMotionVars TEMP_MOTION_VARS = new TempMotionVars();
 
-    protected static class Vars {
+    protected static class TempMotionVars {
         public float moveForward;
         public double turnThreshold;
         public float moveStrafing;
@@ -1260,7 +1260,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         float pitchToMotion;
         float yawMultiplayer;
 
-        public Vars() {
+        public TempMotionVars() {
             reset();
         }
 

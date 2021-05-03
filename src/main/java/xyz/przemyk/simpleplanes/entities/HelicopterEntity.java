@@ -20,29 +20,29 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected Vars getMotionVars() {
-        Vars motionVars = super.getMotionVars();
-        motionVars.passiveEnginePush = 0.028f;
-        motionVars.push = 0.05f;
-        motionVars.dragQuad *= 10;
-        motionVars.dragMul *= 2;
-        return motionVars;
+    protected TempMotionVars getMotionVars() {
+        TempMotionVars motionTempMotionVars = super.getMotionVars();
+        motionTempMotionVars.passiveEnginePush = 0.028f;
+        motionTempMotionVars.push = 0.05f;
+        motionTempMotionVars.dragQuad *= 10;
+        motionTempMotionVars.dragMul *= 2;
+        return motionTempMotionVars;
     }
 
     @Override
-    protected void tickMotion(Vars vars) {
-        super.tickMotion(vars);
+    protected void tickMotion(TempMotionVars tempMotionVars) {
+        super.tickMotion(tempMotionVars);
     }
 
     @Override
-    protected Vector3f getTickPush(Vars vars) {
-        if (vars.moveForward < 0 && isPowered() && !vars.passengerSprinting) {
-            vars.push *= 0.2;
+    protected Vector3f getTickPush(TempMotionVars tempMotionVars) {
+        if (tempMotionVars.moveForward < 0 && isPowered() && !tempMotionVars.passengerSprinting) {
+            tempMotionVars.push *= 0.2;
         }
-        if (vars.moveForward > 0 && isPowered() && !vars.passengerSprinting) {
-            vars.push *= 1.5;
+        if (tempMotionVars.moveForward > 0 && isPowered() && !tempMotionVars.passengerSprinting) {
+            tempMotionVars.push *= 1.5;
         }
-        return transformPos(new Vector3f(0, vars.push, 0));
+        return transformPos(new Vector3f(0, tempMotionVars.push, 0));
     }
 
     @Override
@@ -53,10 +53,10 @@ public class HelicopterEntity extends LargePlaneEntity {
         }
     }
 
-    protected void tickPitch(Vars vars) {
-        if (vars.moveForward > 0.0F) {
+    protected void tickPitch(TempMotionVars tempMotionVars) {
+        if (tempMotionVars.moveForward > 0.0F) {
             xRot = Math.max(xRot - 1, -20);
-        } else if (vars.moveForward < 0 && vars.passengerSprinting) {
+        } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerSprinting) {
             xRot = Math.min(xRot + 1, 10);
         } else {
             xRot = MathUtil.lerpAngle(0.2f, xRot, 0);
@@ -67,13 +67,13 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected boolean tickOnGround(Vars vars) {
-        float push = vars.push;
-        super.tickOnGround(vars);
-        if (vars.passengerSprinting) {
-            vars.push = push;
+    protected boolean tickOnGround(TempMotionVars tempMotionVars) {
+        float push = tempMotionVars.push;
+        super.tickOnGround(tempMotionVars);
+        if (tempMotionVars.passengerSprinting) {
+            tempMotionVars.push = push;
         } else {
-            vars.push = 0;
+            tempMotionVars.push = 0;
         }
         return false;
     }
@@ -84,20 +84,20 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected Quaternion tickRotateMotion(Vars vars, Quaternion q, Vector3d motion) {
+    protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vector3d motion) {
         return q;
     }
 
     @Override
-    protected void tickRotation(Vars vars) {
+    protected void tickRotation(TempMotionVars tempMotionVars) {
         int yawDiff = 2;
-        if (!vars.passengerSprinting) {
-            double turn = vars.moveStrafing > 0 ? yawDiff : vars.moveStrafing == 0 ? 0 : -yawDiff;
+        if (!tempMotionVars.passengerSprinting) {
+            double turn = tempMotionVars.moveStrafing > 0 ? yawDiff : tempMotionVars.moveStrafing == 0 ? 0 : -yawDiff;
             rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
             yRot -= turn;
         } else {
             int rollDiff = 15;
-            float turn = vars.moveStrafing > 0 ? rollDiff : vars.moveStrafing == 0 ? 0 : -rollDiff;
+            float turn = tempMotionVars.moveStrafing > 0 ? rollDiff : tempMotionVars.moveStrafing == 0 ? 0 : -rollDiff;
             rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, turn);
         }
     }
