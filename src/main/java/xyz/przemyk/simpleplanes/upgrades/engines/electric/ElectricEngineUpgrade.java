@@ -1,11 +1,12 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.electric;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -79,7 +80,16 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         //TODO: render electric engine instead of blackstone
         BlockState state = Blocks.BLACKSTONE.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+//        Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+//        renderModel(state, matrixStack, buffer, packedLight, Minecraft.getInstance().getBlockRenderer().getModelRenderer());
+        Minecraft minecraft = Minecraft.getInstance();
+        IBakedModel ibakedmodel = minecraft.getItemRenderer().getItemModelShaper().getItemModel(SimplePlanesItems.ELECTRIC_ENGINE.get());
+        int i = -1;
+        float f = (float)(i >> 16 & 255) / 255.0F;
+        float f1 = (float)(i >> 8 & 255) / 255.0F;
+        float f2 = (float)(i & 255) / 255.0F;
+        minecraft.getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), buffer.getBuffer(RenderTypeLookup.getRenderType(state, false)), state, ibakedmodel, f, f1, f2, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+
         matrixStack.popPose();
     }
 

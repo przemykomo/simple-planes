@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "simpleplanes:block/charging_station"
+    }
+  }
+}

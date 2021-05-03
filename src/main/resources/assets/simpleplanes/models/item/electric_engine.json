@@ -1,0 +1,8 @@
+{
+    "parent": "minecraft:block/cube_bottom_top",
+    "textures": {
+        "top": "simpleplanes:block/electric_engine_top",
+        "bottom": "minecraft:block/charging_station_bottom",
+        "side": "simpleplanes:block/electric_engine_side"
+    }
+}
