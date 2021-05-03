@@ -929,6 +929,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {
+        if (upgradeType.isEngine && engineUpgrade != null) {
+            return false;
+        }
         return !upgrades.containsKey(upgradeType.getRegistryName());
     }
 
