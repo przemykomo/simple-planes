@@ -518,7 +518,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             (oldMotion.length() < 0.1) &&
             (!tempMotionVars.passengerSprinting) &&
             (tempMotionVars.moveStrafing == 0) &&
-            (notMovingTime > 100) &&
+            (notMovingTime > 20) &&
             (onGround || isOnWater()) &&
             (tempMotionVars.moveForward == 0);
         setParked(parked);
@@ -656,7 +656,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (notMovingTime > 200 && getHealth() < getMaxHealth() && getPlayer() != null) {
             setHealth(getHealth() + 1);
-            notMovingTime = 101;
+            notMovingTime = 100;
         }
 
         boolean speedingUp = true;
