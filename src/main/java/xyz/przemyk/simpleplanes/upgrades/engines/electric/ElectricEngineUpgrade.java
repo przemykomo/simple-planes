@@ -17,6 +17,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
@@ -29,6 +30,7 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.CustomEnergyStorage;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -62,6 +64,27 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
     @Override
     public boolean isPowered() {
         return energyStorage.getEnergyStored() > 0;
+    }
+
+    @Override
+    public void renderPowerHUD(MatrixStack matrixStack, HandSide side, int scaledWidth, int scaledHeight, float partialTicks) {
+        int i = scaledWidth / 2;
+        if (side == HandSide.LEFT) {
+            ClientEventHandler.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
+        } else {
+            ClientEventHandler.blit(matrixStack, -90, i + 91, scaledHeight - 22, 38, 44, 22, 21);
+        }
+
+        int energy = energyStorage.getEnergyStored();
+
+        if (energy > 0) {
+            int energyScaled = energy * 15 / CAPACITY;
+            if (side == HandSide.LEFT) {
+                ClientEventHandler.blit(matrixStack, -90, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+            } else {
+                ClientEventHandler.blit(matrixStack, -90, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+            }
+        }
     }
 
     @Override

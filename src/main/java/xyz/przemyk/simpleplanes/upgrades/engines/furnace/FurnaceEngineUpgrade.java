@@ -18,6 +18,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -180,5 +182,38 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     public void dropItems() {
         planeEntity.spawnAtLocation(Items.FURNACE);
         planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
+    }
+
+    @Override
+    public void renderPowerHUD(MatrixStack matrixStack, HandSide side, int scaledWidth, int scaledHeight, float partialTicks) {
+        int i = scaledWidth / 2;
+        Minecraft mc = Minecraft.getInstance();
+        if (side == HandSide.LEFT) {
+            ClientEventHandler.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
+        } else {
+            ClientEventHandler.blit(matrixStack, -90, i + 91, scaledHeight - 40, 0, 44, 22, 40);
+        }
+
+        if (burnTime > 0) {
+            int burnTimeTotal2 = burnTimeTotal == 0 ? 200 : burnTimeTotal;
+            int burnLeftScaled = burnTime * 13 / burnTimeTotal2;
+            if (side == HandSide.LEFT) {
+                // render on left side
+                ClientEventHandler.blit(matrixStack, -90, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+            } else {
+                // render on right side
+                ClientEventHandler.blit(matrixStack, -90, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+            }
+        }
+
+        ItemStack fuelStack = itemStackHandler.getStackInSlot(0);
+        if (!fuelStack.isEmpty()) {
+            int i2 = scaledHeight - 16 - 3;
+            if (side == HandSide.LEFT) {
+                ClientEventHandler.renderHotbarItem(matrixStack, i - 91 - 26, i2, partialTicks, mc.player, fuelStack, mc.getItemRenderer(), mc);
+            } else {
+                ClientEventHandler.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, mc.player, fuelStack, mc.getItemRenderer(), mc);
+            }
+        }
     }
 }

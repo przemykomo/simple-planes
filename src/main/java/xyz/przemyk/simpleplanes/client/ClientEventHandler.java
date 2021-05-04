@@ -48,26 +48,27 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineUpgrade;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
 
     @OnlyIn(Dist.CLIENT)
-    public static KeyBinding keyBind;
+    public static KeyBinding boostKey;
     @OnlyIn(Dist.CLIENT)
     public static KeyBinding openEngineInventoryKey;
+
     static {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::planeColor);
     }
+
     public static void clientSetup() {
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.PLANE.get(), manager -> new PlaneRenderer<>(manager, new PlaneModel(), new PropellerModel(), 0.6F));
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.LARGE_PLANE.get(), manager -> new PlaneRenderer<>(manager, new LargePlaneModel(), new PropellerModel(), 1.0F));
         RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.HELICOPTER.get(), manager -> new PlaneRenderer<>(manager, new HelicopterModel(), new HelicopterPropellerModel(), 0.6F));
 
-        keyBind = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
+        boostKey = new KeyBinding("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         openEngineInventoryKey = new KeyBinding("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
-        ClientRegistry.registerKeyBinding(keyBind);
+        ClientRegistry.registerKeyBinding(boostKey);
         ClientRegistry.registerKeyBinding(openEngineInventoryKey);
 
         ScreenManager.register(SimplePlanesContainers.PLANE_WORKBENCH.get(), PlaneWorkbenchScreen::new);
@@ -150,7 +151,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static boolean old_sprint = false;
+    private static boolean oldBoostState = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onClientPlayerTick(PlayerTickEvent event) {
@@ -183,13 +184,13 @@ public class ClientEventHandler {
                     PlaneNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
                 }
 
-                boolean isSprinting = keyBind.isDown();
-                if (isSprinting != old_sprint || Math.random() < 0.1) {
-                    PlaneNetworking.INSTANCE.sendToServer(new BoostPacket(isSprinting));
+                boolean isBoosting = boostKey.isDown();
+                if (isBoosting != oldBoostState || Math.random() < 0.1) {
+                    PlaneNetworking.INSTANCE.sendToServer(new BoostPacket(isBoosting));
                 }
-                old_sprint = isSprinting;
+                oldBoostState = isBoosting;
             } else {
-                old_sprint = false;
+                oldBoostState = false;
             }
         }
     }
@@ -230,8 +231,6 @@ public class ClientEventHandler {
 
     public static final ResourceLocation HUD_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
-    private static int blitOffset;
-
     @SubscribeEvent()
     public static void renderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
@@ -267,65 +266,27 @@ public class ClientEventHandler {
                         int x = left_align - i * 16 - 16;
                         int vOffset = 35;
                         if (i + heart + 10 < health)
-                            blit(matrixStack, x, top, GOLD, vOffset, 16, 9);
+                            blit(matrixStack, 0, x, top, GOLD, vOffset, 16, 9);
                         else if (i + heart < health)
-                            blit(matrixStack, x, top, FULL, vOffset, 16, 9);
+                            blit(matrixStack, 0, x, top, FULL, vOffset, 16, 9);
                         else
-                            blit(matrixStack, x, top, EMPTY, vOffset, 16, 9);
+                            blit(matrixStack, 0, x, top, EMPTY, vOffset, 16, 9);
                     }
                     right_height += 10;
                 }
 
-                if (planeEntity.engineUpgrade instanceof FurnaceEngineUpgrade) {
-                    FurnaceEngineUpgrade furnaceEngineUpgrade = (FurnaceEngineUpgrade) planeEntity.engineUpgrade;
-                    ItemStack offhandStack = mc.player.getOffhandItem();
-                    HandSide primaryHand = mc.player.getMainArm();
-                    int i = scaledWidth / 2;
-                    int lastBlitOffset = blitOffset;
-                    blitOffset = -90;
-                    if (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) {
-                        // render on left side
-                        blit(matrixStack, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
-                    } else {
-                        // render on right side
-                        blit(matrixStack, i + 91, scaledHeight - 40, 0, 44, 22, 40);
-                    }
-
-                    if (furnaceEngineUpgrade.burnTime > 0) {
-                        int burnTimeTotal = furnaceEngineUpgrade.burnTimeTotal == 0 ? 200 : furnaceEngineUpgrade.burnTimeTotal;
-                        int burnLeftScaled = furnaceEngineUpgrade.burnTime * 13 / burnTimeTotal;
-                        if (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) {
-                            // render on left side
-                            blit(matrixStack, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
-                        } else {
-                            // render on right side
-                            blit(matrixStack, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
-                        }
-                    }
-
-                    blitOffset = lastBlitOffset;
-
-                    ItemStack fuelStack = furnaceEngineUpgrade.itemStackHandler.getStackInSlot(0);
-                    if (!fuelStack.isEmpty()) {
-                        int i2 = scaledHeight - 16 - 3;
-                        if (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) {
-                            // render on left side
-                            renderHotbarItem(matrixStack, i - 91 - 26, i2, event.getPartialTicks(), mc.player, fuelStack, mc.getItemRenderer(), mc);
-                        } else {
-                            // render on right side
-                            renderHotbarItem(matrixStack, i + 91 + 3, i2, event.getPartialTicks(), mc.player, fuelStack, mc.getItemRenderer(), mc);
-                        }
-                    }
-                }
+                ItemStack offhandStack = mc.player.getOffhandItem();
+                HandSide primaryHand = mc.player.getMainArm();
+                planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) ? HandSide.LEFT : HandSide.RIGHT, scaledWidth, scaledHeight, event.getPartialTicks());
 
                 if (planeEntity.mountMessage) {
                     planeEntity.mountMessage = false;
                     if (planeEntity instanceof HelicopterEntity) {
                         mc.gui.setOverlayMessage(new TranslationTextComponent("helicopter.onboard", mc.options.keyShift.getTranslatedKeyMessage(),
-                            keyBind.getTranslatedKeyMessage()), false);
+                            boostKey.getTranslatedKeyMessage()), false);
                     } else {
                         mc.gui.setOverlayMessage(new TranslationTextComponent("plane.onboard", mc.options.keyShift.getTranslatedKeyMessage(),
-                            keyBind.getTranslatedKeyMessage()), false);
+                            boostKey.getTranslatedKeyMessage()), false);
                     }
 
                 }
@@ -335,7 +296,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void renderHotbarItem(MatrixStack matrixStack, int x, int y, float partialTicks, PlayerEntity player, ItemStack stack, ItemRenderer itemRenderer, Minecraft mc) {
+    public static void renderHotbarItem(MatrixStack matrixStack, int x, int y, float partialTicks, PlayerEntity player, ItemStack stack, ItemRenderer itemRenderer, Minecraft mc) {
         if (!stack.isEmpty()) {
             float f = (float) stack.getUseDuration() - partialTicks;
             if (f > 0.0F) {
@@ -355,7 +316,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void blit(MatrixStack matrixStack, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
+    public static void blit(MatrixStack matrixStack, int blitOffset, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
         AbstractGui.blit(matrixStack, x, y, blitOffset, (float) uOffset, (float) vOffset, uWidth, vHeight, 256, 256);
     }
 
