@@ -13,17 +13,16 @@
             "item": "minecraft:light_weighted_pressure_plate"
         },
         "g": {
-            "tag": "forge:ingots/gold"
+            "tag": "forge:rods/blaze"
         },
         "R": {
-            "tag": "forge:storage_blocks/redstone"
+            "tag": "forge:obsidian"
         },
         "D": {
             "tag": "forge:dusts/redstone"
         }
     },
     "result": {
-        "item": "simpleplanes:charging_station",
-        "count": 1
+        "item": "simpleplanes:charging_station"
     }
 }

@@ -1,29 +1,25 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "#L#",
-        "#F#",
-        "RXR"
+        "###",
+        "/G/",
+        "R#R"
     ],
     "key": {
         "#": {
             "tag": "forge:gems/lapis"
         },
-        "L": {
-            "item": "minecraft:light_weighted_pressure_plate"
+        "/": {
+            "tag": "forge:rods/blaze"
         },
-        "F": {
-            "item": "minecraft:furnace"
+        "G": {
+            "item": "simpleplanes:propeller"
         },
         "R": {
-            "tag": "forge:dusts/redstone"
-        },
-        "X": {
-            "item": "minecraft:repeater"
+            "tag": "forge:storage_blocks/redstone"
         }
     },
     "result": {
-        "item": "simpleplanes:electric_engine",
-        "count": 1
+        "item": "simpleplanes:electric_engine"
     }
 }

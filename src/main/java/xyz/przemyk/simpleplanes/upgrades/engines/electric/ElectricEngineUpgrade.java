@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 
 public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContainerProvider {
 
-    public static final int CAPACITY = 2_100_000;
+    public static final int CAPACITY = 480_000;
 
     public final CustomEnergyStorage energyStorage = new CustomEnergyStorage(CAPACITY);
     public final LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
@@ -53,7 +53,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
     @Override
     public void tick() {
         if (!planeEntity.getParked()) {
-            if (energyStorage.extractEnergy(20 * planeEntity.getFuelCost(), false) > 0) {
+            if (energyStorage.extractEnergy(40 * planeEntity.getFuelCost(), false) > 0) {
                 updateClient();
             }
         }
@@ -108,7 +108,8 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        energyStorage.setEnergy(nbt.getInt("energy"));
+        int energy = nbt.getInt("energy");
+        energyStorage.setEnergy(Math.min(energy, CAPACITY));
     }
 
     @Override
