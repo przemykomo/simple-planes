@@ -298,7 +298,8 @@ public class ClientEventHandler {
         }
     }
 
-    public static void renderHotbarItem(MatrixStack matrixStack, int x, int y, float partialTicks, PlayerEntity player, ItemStack stack, ItemRenderer itemRenderer, Minecraft mc) {
+    public static void renderHotbarItem(MatrixStack matrixStack, int x, int y, float partialTicks, ItemStack stack, Minecraft mc) {
+        ItemRenderer itemRenderer = mc.getItemRenderer();
         if (!stack.isEmpty()) {
             float f = (float) stack.getUseDuration() - partialTicks;
             if (f > 0.0F) {
@@ -309,7 +310,7 @@ public class ClientEventHandler {
                 matrixStack.translate((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
             }
 
-            itemRenderer.renderAndDecorateItem(player, stack, x, y);
+            itemRenderer.renderAndDecorateItem(mc.player, stack, x, y);
             if (f > 0.0F) {
                 matrixStack.popPose();
             }

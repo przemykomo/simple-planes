@@ -210,9 +210,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
         if (!fuelStack.isEmpty()) {
             int i2 = scaledHeight - 16 - 3;
             if (side == HandSide.LEFT) {
-                ClientEventHandler.renderHotbarItem(matrixStack, i - 91 - 26, i2, partialTicks, mc.player, fuelStack, mc.getItemRenderer(), mc);
+                ClientEventHandler.renderHotbarItem(matrixStack, i - 91 - 26, i2, partialTicks, fuelStack, mc);
             } else {
-                ClientEventHandler.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, mc.player, fuelStack, mc.getItemRenderer(), mc);
+                ClientEventHandler.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, fuelStack, mc);
             }
         }
     }
