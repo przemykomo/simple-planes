@@ -275,9 +275,11 @@ public class ClientEventHandler {
                     right_height += 10;
                 }
 
-                ItemStack offhandStack = mc.player.getOffhandItem();
-                HandSide primaryHand = mc.player.getMainArm();
-                planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) ? HandSide.LEFT : HandSide.RIGHT, scaledWidth, scaledHeight, event.getPartialTicks());
+                if (planeEntity.engineUpgrade != null) {
+                    ItemStack offhandStack = mc.player.getOffhandItem();
+                    HandSide primaryHand = mc.player.getMainArm();
+                    planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HandSide.LEFT || offhandStack.isEmpty()) ? HandSide.LEFT : HandSide.RIGHT, scaledWidth, scaledHeight, event.getPartialTicks());
+                }
 
                 if (planeEntity.mountMessage) {
                     planeEntity.mountMessage = false;
