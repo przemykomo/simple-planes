@@ -36,6 +36,7 @@ import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.*;
+import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
 import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
@@ -59,6 +60,7 @@ public class ClientEventHandler {
 
     static {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::planeColor);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::reloadTextures);
     }
 
     public static void clientSetup() {
@@ -80,22 +82,14 @@ public class ClientEventHandler {
 
     private static boolean playerRotationNeedToPop = false;
 
-    @SubscribeEvent()
     public static void planeColor(ColorHandlerEvent.Item event) {
         ItemColors itemColors = event.getItemColors();
-        SimplePlanesItems.getPlaneItems().forEach(item -> {
-//            IColoredMaterialItem coloredMaterialItem = (IColoredMaterialItem) item;
-            itemColors.register(xyz.przemyk.simpleplanes.client.render.ItemColors::getColor, item);
-        });
+        SimplePlanesItems.getPlaneItems().forEach(item -> itemColors.register(PlaneItemColors::getColor, item));
     }
-//    TODO: reload colors
-//    @SubscribeEvent()
-//    public static void reloadTextures(AddReloadListenerEvent event) {
-//        event.addListener((stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor) -> {
-//            return
-//        });
-//    }
 
+    public static void reloadTextures(TextureStitchEvent.Post event) {
+        PlaneItemColors.clearCache();
+    }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
