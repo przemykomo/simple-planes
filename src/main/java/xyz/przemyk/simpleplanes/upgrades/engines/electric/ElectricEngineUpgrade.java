@@ -2,10 +2,7 @@ package xyz.przemyk.simpleplanes.upgrades.engines.electric;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -20,7 +17,6 @@ import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -29,6 +25,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.CustomEnergyStorage;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
+import xyz.przemyk.simpleplanes.client.ClientUtil;
 import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -99,11 +96,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
         matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
-        Minecraft minecraft = Minecraft.getInstance();
-        IBakedModel ibakedmodel = minecraft.getItemRenderer().getItemModelShaper().getItemModel(SimplePlanesItems.ELECTRIC_ENGINE.get());
-        float f = (float)(-1 >> 16 & 255) / 255.0F;
-        float f1 = (float)(-1 >> 8 & 255) / 255.0F;
-        minecraft.getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), buffer.getBuffer(Atlases.cutoutBlockSheet()), null, ibakedmodel, f, f1, 1.0F, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        ClientUtil.renderItemModelAsBlock(matrixStack, Minecraft.getInstance(), buffer, packedLight, SimplePlanesItems.ELECTRIC_ENGINE.get());
 
         matrixStack.popPose();
     }

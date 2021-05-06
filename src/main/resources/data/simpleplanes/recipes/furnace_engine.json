@@ -1,0 +1,28 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "iRi",
+        "YBY",
+        "LLL"
+    ],
+    "key": {
+        "i": {
+            "tag": "forge:ingots/iron"
+        },
+        "R": {
+            "item": "simpleplanes:propeller"
+        },
+        "Y": {
+            "tag": "forge:dusts/redstone"
+        },
+        "B": {
+            "item": "minecraft:blast_furnace"
+        },
+        "L": {
+            "item": "minecraft:light_weighted_pressure_plate"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:furnace_engine"
+    }
+}
