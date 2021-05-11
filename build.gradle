@@ -89,7 +89,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven { name = "Progwml6 maven"; url = "https://dvs1.progwml6.com/files/maven/" } //JEI
+    maven { name = "Progwml6 maven"; url = "https://dvs1.progwml6.com/files/maven/" } //JEI & Iron chest
     maven { name = "ModMaven";       url = "https://modmaven.k-4u.nl" }               // JEI fallback
     maven { name = "blamejared";     url = "https://maven.blamejared.com" }           // Patchouli
 }
@@ -105,6 +105,8 @@ dependencies {
 
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
+
+    compile fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
 }

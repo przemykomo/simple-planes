@@ -10,6 +10,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
+import xyz.przemyk.simpleplanes.compat.IronChestsCompat;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.*;
 
@@ -65,6 +66,8 @@ public class SimplePlanesMod {
 
             SimplePlanesUpgrades.registerLargeUpgradeItem(Items.TNT, SimplePlanesUpgrades.TNT.get());
             SimplePlanesUpgrades.registerLargeUpgradeItem(Items.CHEST, SimplePlanesUpgrades.CHEST.get());
+
+            IronChestsCompat.registerUpgradeItems();
         });
     }
 

@@ -26,7 +26,7 @@ public class OpenInventoryPacket {
                 final PlaneEntity plane = (PlaneEntity) player.getVehicle();
                 Upgrade chest = plane.upgrades.get(SimplePlanesUpgrades.CHEST.getId());
                 if (chest instanceof ChestUpgrade) {
-                    NetworkHooks.openGui(player, (INamedContainerProvider) chest);
+                    NetworkHooks.openGui(player, (INamedContainerProvider) chest, buffer -> buffer.writeUtf(((ChestUpgrade) chest).chestType.getRegistryName().toString()));
                 }
             }
         });
