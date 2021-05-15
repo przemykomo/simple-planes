@@ -65,7 +65,7 @@ public class PlaneWorkbenchContainer extends Container {
         }
     }
 
-    public void onInputChanged() {
+    public void updateCraftingResult() {
         worldPosCallable.execute(((world, blockPos) -> updateCraftingResult(world, player)));
     }
 
@@ -93,16 +93,7 @@ public class PlaneWorkbenchContainer extends Container {
                 } while (selectedRecipe != prevSelectedRecipe && !recipeList.get(selectedRecipe).canCraft(ingredient, material));
         }
 
-        updateResultSlot();
-    }
-
-    private void updateResultSlot() {
-        if (!player.level.isClientSide && recipeList.get(selectedRecipe).canCraft(itemHandler.getStackInSlot(0), itemHandler.getStackInSlot(1))) {
-            ItemStack result = recipeList.get(selectedRecipe).result.copy();
-            result.addTagElement("EntityTag", resultItemTag);
-            itemHandler.setStackInSlot(2, result);
-            ((ServerPlayerEntity) player).connection.send(new SSetSlotPacket(containerId, 2, result));
-        }
+        updateCraftingResult();
     }
 
     public void onCrafting() {
@@ -110,7 +101,7 @@ public class PlaneWorkbenchContainer extends Container {
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe);
             itemHandler.extractItem(0, recipe.ingredient.getItems()[0].getCount(), false);
             itemHandler.extractItem(1, recipe.materialAmount, false);
-            onInputChanged();
+            updateCraftingResult();
         }
     }
 
@@ -164,7 +155,7 @@ public class PlaneWorkbenchContainer extends Container {
     @Override
     public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         ItemStack itemStack = super.clicked(slotId, dragType, clickTypeIn, player);
-        onInputChanged();
+        updateCraftingResult();
         return itemStack;
     }
 
