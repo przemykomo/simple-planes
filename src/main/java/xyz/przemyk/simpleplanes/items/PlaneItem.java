@@ -6,13 +6,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
@@ -23,6 +22,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import javax.annotation.Nullable;
@@ -113,6 +113,19 @@ public class PlaneItem extends Item {
             } else {
                 return ActionResult.pass(itemstack);
             }
+        }
+    }
+
+    @Override
+    public void fillItemCategory(ItemGroup itemGroup, NonNullList<ItemStack> itemStacks) {
+        if (allowdedIn(itemGroup)) {
+            BlockTags.getAllTags().getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS).getValues().forEach(block -> {
+                ItemStack itemStack = new ItemStack(this);
+                CompoundNBT itemTag = new CompoundNBT();
+                itemTag.putString("material", block.getRegistryName().toString());
+                itemStack.addTagElement("EntityTag", itemTag);
+                itemStacks.add(itemStack);
+            });
         }
     }
 }

@@ -39,10 +39,6 @@ public class SimplePlanesItems {
         return planeItems;
     }
 
-    public static final RegistryObject<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.PLANE));
-    public static final RegistryObject<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
-    public static final RegistryObject<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.HELICOPTER));
-
     public static final RegistryObject<Item> PROPELLER = ITEMS.register("propeller", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
 
     public static final RegistryObject<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
@@ -56,4 +52,8 @@ public class SimplePlanesItems {
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<BlockItem> PLANE_WORKBENCH = ITEMS.register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<BlockItem> CHARGING_STATION = ITEMS.register("charging_station", () -> new BlockItem(SimplePlanesBlocks.CHARGING_STATION_BLOCK.get(), new Item.Properties().tab(ITEM_GROUP)));
+
+    public static final RegistryObject<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.PLANE));
+    public static final RegistryObject<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
+    public static final RegistryObject<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.HELICOPTER));
 }
