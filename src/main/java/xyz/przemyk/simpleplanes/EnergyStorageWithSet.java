@@ -2,9 +2,9 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraftforge.energy.EnergyStorage;
 
-public class CustomEnergyStorage extends EnergyStorage {
+public class EnergyStorageWithSet extends EnergyStorage {
 
-    public CustomEnergyStorage(int capacity) {
+    public EnergyStorageWithSet(int capacity) {
         super(capacity);
     }
 

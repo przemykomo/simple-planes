@@ -21,5 +21,5 @@ public class SimplePlanesContainers {
     public static final RegistryObject<ContainerType<StorageContainer>> STORAGE = CONTAINERS.register("storage", () -> IForgeContainerType.create(StorageContainer::new));
 
     public static final RegistryObject<ContainerType<FurnaceEngineContainer>> FURNACE_ENGINE = CONTAINERS.register("furnace_engine", () -> new ContainerType<>(FurnaceEngineContainer::new));
-    public static final RegistryObject<ContainerType<ElectricEngineContainer>> ELECTRIC_ENGINE = CONTAINERS.register("electric_engine", () -> new ContainerType<>(ElectricEngineContainer::new));
+    public static final RegistryObject<ContainerType<ElectricEngineContainer>> ELECTRIC_ENGINE = CONTAINERS.register("electric_engine", () -> IForgeContainerType.create(ElectricEngineContainer::new));
 }

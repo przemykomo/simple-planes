@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.HandSide;
-import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -22,7 +21,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.network.NetworkHooks;
-import xyz.przemyk.simpleplanes.CustomEnergyStorage;
+import xyz.przemyk.simpleplanes.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.client.ClientUtil;
@@ -40,7 +39,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
 
     public static final int CAPACITY = 480_000;
 
-    public final CustomEnergyStorage energyStorage = new CustomEnergyStorage(CAPACITY);
+    public final EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(CAPACITY);
     public final LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
 
     public ElectricEngineUpgrade(PlaneEntity planeEntity) {
@@ -137,7 +136,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
 
     @Override
     public void openGui(ServerPlayerEntity playerEntity) {
-        NetworkHooks.openGui(playerEntity, this);
+        NetworkHooks.openGui(playerEntity, this, buffer -> buffer.writeVarInt(planeEntity.getId()));
     }
 
     @Override
@@ -148,15 +147,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
     @Nullable
     @Override
     public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new ElectricEngineContainer(id, playerInventory, new IntReferenceHolder() {
-            @Override
-            public int get() {
-                return energyStorage.getEnergyStored();
-            }
-
-            @Override
-            public void set(int value) {}
-        });
+        return new ElectricEngineContainer(id, playerInventory, planeEntity.getId());
     }
 
     @Nonnull

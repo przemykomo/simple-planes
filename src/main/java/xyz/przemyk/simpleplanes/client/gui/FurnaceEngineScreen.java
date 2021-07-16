@@ -29,12 +29,10 @@ public class FurnaceEngineScreen extends ContainerScreen<FurnaceEngineContainer>
     protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(GUI);
-        int i = this.leftPos;
-        int j = this.topPos;
-        this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
         if (menu.engineData.get(0) > 0) {
-            int k = getBurnLeftScaled();
-            this.blit(matrixStack, i + 80, j + 57 - k, 176, 12 - k, 14, k + 1);
+            int burnLeftScaled = getBurnLeftScaled();
+            this.blit(matrixStack, this.leftPos + 80, this.topPos + 57 - burnLeftScaled, 176, 12 - burnLeftScaled, 14, burnLeftScaled + 1);
         }
     }
 

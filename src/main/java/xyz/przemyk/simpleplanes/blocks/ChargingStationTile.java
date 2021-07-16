@@ -9,7 +9,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
-import xyz.przemyk.simpleplanes.CustomEnergyStorage;
+import xyz.przemyk.simpleplanes.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class ChargingStationTile extends TileEntity implements ITickableTileEntity {
 
-    public CustomEnergyStorage energyStorage = new CustomEnergyStorage(1000);
+    public EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(1000);
     public LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
 
     public ChargingStationTile() {

@@ -6,22 +6,22 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IntReferenceHolder;
+import net.minecraft.network.PacketBuffer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 public class ElectricEngineContainer extends Container {
 
-    public final IntReferenceHolder energyReference;
+    public final int planeID;
 
-    public ElectricEngineContainer(int id, PlayerInventory playerInventory) {
-        this(id, playerInventory, IntReferenceHolder.standalone());
+    public ElectricEngineContainer(int id, PlayerInventory playerInventory, PacketBuffer buffer) {
+        this(id, playerInventory, buffer.readVarInt());
     }
 
-    public ElectricEngineContainer(int id, PlayerInventory playerInventory, IntReferenceHolder energyReference) {
+    public ElectricEngineContainer(int id, PlayerInventory playerInventory, int planeID) {
         super(SimplePlanesContainers.ELECTRIC_ENGINE.get(), id);
-        this.energyReference = energyReference;
+        this.planeID = planeID;
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
@@ -32,8 +32,6 @@ public class ElectricEngineContainer extends Container {
         for (int k = 0; k < 9; ++k) {
             this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
         }
-
-        addDataSlot(energyReference);
     }
 
     @Override

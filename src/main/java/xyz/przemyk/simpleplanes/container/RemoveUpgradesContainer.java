@@ -11,8 +11,8 @@ public class RemoveUpgradesContainer extends Container {
     public final int planeID;
 
     @SuppressWarnings("unused")
-    public RemoveUpgradesContainer(int id, PlayerInventory playerInventory, PacketBuffer data) {
-        this(id, data.readVarInt());
+    public RemoveUpgradesContainer(int id, PlayerInventory playerInventory, PacketBuffer buffer) {
+        this(id, buffer.readVarInt());
     }
 
     public RemoveUpgradesContainer(int id, int planeID) {
