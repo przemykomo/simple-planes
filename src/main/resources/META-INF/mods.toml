@@ -1,6 +1,6 @@
 modLoader="javafml" #mandatory
 loaderVersion="[36,)"
-license="GNU General Public License"
+license="GNU LGPLv3"
 [[mods]]
 modId="simpleplanes"
 version="${file.jarVersion}"
