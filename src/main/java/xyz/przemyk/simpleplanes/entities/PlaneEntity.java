@@ -509,7 +509,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public int getFuelCost() {
-        return 1;
+        return SimplePlanesConfig.PLANE_FUEL_COST.get();
     }
 
     private boolean updateParkedState(TempMotionVars tempMotionVars) {

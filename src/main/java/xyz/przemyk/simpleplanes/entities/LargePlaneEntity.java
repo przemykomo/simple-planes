@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -76,7 +77,7 @@ public class LargePlaneEntity extends PlaneEntity {
 
     @Override
     public int getFuelCost() {
-        return 2;
+        return SimplePlanesConfig.LARGE_PLANE_FUEL_COST.get();
     }
 
     @Override

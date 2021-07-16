@@ -11,6 +11,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 public class HelicopterEntity extends LargePlaneEntity {
@@ -81,6 +82,11 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected float getGroundPitch() {
         return 0;
+    }
+
+    @Override
+    public int getFuelCost() {
+        return SimplePlanesConfig.HELICOPTER_FUEL_COST.get();
     }
 
     @Override
