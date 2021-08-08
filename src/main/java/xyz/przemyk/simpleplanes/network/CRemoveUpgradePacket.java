@@ -1,10 +1,10 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
@@ -18,20 +18,19 @@ public class CRemoveUpgradePacket {
         this.upgradeID = upgradeID;
     }
 
-    public CRemoveUpgradePacket(PacketBuffer buffer) {
+    public CRemoveUpgradePacket(FriendlyByteBuf buffer) {
         upgradeID = buffer.readResourceLocation();
     }
 
-    public void toBytes(PacketBuffer buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(upgradeID);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ServerPlayerEntity sender = ctx.getSender();
-            if (sender.containerMenu instanceof RemoveUpgradesContainer) {
-                RemoveUpgradesContainer container = (RemoveUpgradesContainer) sender.containerMenu;
+            ServerPlayer sender = ctx.getSender();
+            if (sender.containerMenu instanceof RemoveUpgradesContainer container) {
                 Entity entity = sender.level.getEntity(container.planeID);
                 if (entity instanceof PlaneEntity) {
                     ((PlaneEntity) entity).removeUpgrade(upgradeID);

@@ -1,9 +1,9 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Supplier;
@@ -12,17 +12,16 @@ import java.util.function.Supplier;
 public class OpenEngineInventoryPacket {
 
     public OpenEngineInventoryPacket() {}
-    public OpenEngineInventoryPacket(PacketBuffer buffer) {}
-    public void toBytes(PacketBuffer buffer) {}
+    public OpenEngineInventoryPacket(FriendlyByteBuf buffer) {}
+    public void toBytes(FriendlyByteBuf buffer) {}
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ServerPlayerEntity sender = ctx.getSender();
+            ServerPlayer sender = ctx.getSender();
             if (sender != null) {
                 Entity entity = sender.getVehicle();
-                if (entity instanceof PlaneEntity) {
-                    PlaneEntity planeEntity = (PlaneEntity) entity;
+                if (entity instanceof PlaneEntity planeEntity) {
                     if (planeEntity.engineUpgrade != null) {
                         planeEntity.engineUpgrade.openGui(sender);
                     }

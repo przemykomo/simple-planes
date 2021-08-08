@@ -1,9 +1,9 @@
 package xyz.przemyk.simpleplanes.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
 
@@ -11,14 +11,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlaneSound extends TickableSound {
+public class PlaneSound extends AbstractTickableSoundInstance {
 
     public static final Map<Integer, PlaneSound> PLAYING_FOR = Collections.synchronizedMap(new HashMap<>());
     private final PlaneEntity plane;
     private int fadeOut = -1;
 
     public PlaneSound(PlaneEntity plane) {
-        super(SimplePlanesSounds.PLANE_LOOP_SOUND_EVENT.get(), SoundCategory.NEUTRAL);
+        super(SimplePlanesSounds.PLANE_LOOP_SOUND_EVENT.get(), SoundSource.NEUTRAL);
         this.plane = plane;
         this.looping = true;
         PLAYING_FOR.put(plane.getId(), this);
@@ -41,7 +41,7 @@ public class PlaneSound extends TickableSound {
 
     @Override
     public float getPitch() {
-        return (float) MathHelper.clamp(0.9f + plane.getDeltaMovement().length() / 3f, 0.9f, 1.3f);
+        return (float) Mth.clamp(0.9f + plane.getDeltaMovement().length() / 3f, 0.9f, 1.3f);
     }
 
     @Override

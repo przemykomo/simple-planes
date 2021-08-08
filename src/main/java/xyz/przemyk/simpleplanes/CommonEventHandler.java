@@ -1,9 +1,9 @@
 package xyz.przemyk.simpleplanes;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,7 +16,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void interact(PlayerInteractEvent.RightClickItem event) {
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
         Entity entity = player.getRootVehicle();
         if (entity instanceof PlaneEntity) {
             ItemStack itemStack = player.getItemInHand(event.getHand());

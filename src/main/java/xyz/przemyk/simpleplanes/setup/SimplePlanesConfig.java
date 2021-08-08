@@ -6,10 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.nio.file.Path;
 
-//@Mod.EventBusSubscriber
 public class SimplePlanesConfig {
-
-//    public static final int CONFIG_VERSION = 5;
 
     public static final String CATEGORY_GENERAL = "general";
     public static final ForgeConfigSpec.BooleanValue THIEF;
@@ -17,8 +14,6 @@ public class SimplePlanesConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     public static ForgeConfigSpec CONFIG;
-
-//    public static ForgeConfigSpec.IntValue VERSION;
 
     public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
     public static ForgeConfigSpec.BooleanValue EASY_FLIGHT;
@@ -31,8 +26,6 @@ public class SimplePlanesConfig {
     static {
         BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);
 
-//        VERSION = BUILDER.comment("Version, do not change")
-//            .defineInRange("Version", 0, 0, Integer.MAX_VALUE);
         TURN_THRESHOLD = BUILDER.comment("For controllers, a threshold for the joystick movement of the plane")
             .defineInRange("turnThreshold", 20, 0, 90);
         EASY_FLIGHT = BUILDER.comment("Easier flight mode, disables the extreme movements")
@@ -60,15 +53,5 @@ public class SimplePlanesConfig {
             .build();
         configData.load();
         spec.setConfig(configData);
-//        if (VERSION.get() != CONFIG_VERSION) {
-//            configData = CommentedFileConfig.builder(path)
-//                .sync()
-//                .autosave()
-//                .writingMode(WritingMode.REPLACE)
-//                .build();
-//            spec.setConfig(configData);
-//            VERSION.set(CONFIG_VERSION);
-//            configData.save();
-//        }
     }
 }

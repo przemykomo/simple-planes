@@ -1,18 +1,18 @@
 package xyz.przemyk.simpleplanes.upgrades.tnt;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.TNTEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -27,7 +27,7 @@ public class TNTUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    public void onApply(ItemStack itemStack, Player playerEntity) {
         super.onApply(itemStack, playerEntity);
     }
 
@@ -35,7 +35,7 @@ public class TNTUpgrade extends LargeUpgrade {
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getItemInHand(event.getHand());
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
-            TNTEntity tntEntity = new TNTEntity(planeEntity.level, planeEntity.getX() - 1.0, planeEntity.getY(), planeEntity.getZ(),
+            PrimedTnt tntEntity = new PrimedTnt(planeEntity.level, planeEntity.getX() - 1.0, planeEntity.getY(), planeEntity.getZ(),
                 event.getPlayer());
             tntEntity.setDeltaMovement(planeEntity.getDeltaMovement());
             planeEntity.level.addFreshEntity(tntEntity);
@@ -45,7 +45,7 @@ public class TNTUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
         matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
@@ -59,15 +59,16 @@ public class TNTUpgrade extends LargeUpgrade {
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = Blocks.TNT.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        //TODO: maybe I should use a different method to render block?
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         matrixStack.popPose();
     }
 
     @Override
-    public void writePacket(PacketBuffer buffer) {}
+    public void writePacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(PacketBuffer buffer) {}
+    public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
     public void dropItems() {

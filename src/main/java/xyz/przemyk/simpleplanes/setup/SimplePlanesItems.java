@@ -1,10 +1,10 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -24,7 +24,7 @@ public class SimplePlanesItems {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final ItemGroup ITEM_GROUP = new ItemGroup(SimplePlanesMod.MODID) {
+    public static final CreativeModeTab ITEM_GROUP = new CreativeModeTab(SimplePlanesMod.MODID) {
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(PLANE_ITEM.get());

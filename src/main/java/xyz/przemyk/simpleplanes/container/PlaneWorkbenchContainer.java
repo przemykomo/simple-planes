@@ -1,21 +1,21 @@
 package xyz.przemyk.simpleplanes.container;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -27,23 +27,24 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesRecipes;
 
 import java.util.List;
 
-public class PlaneWorkbenchContainer extends Container {
+//TODO: make plane workbench work like crafting station with proper item handler, don't try to replicate bugged crafting table
+public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
     public static final ResourceLocation PLANE_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "plane_materials");
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(3);
-    private final IWorldPosCallable worldPosCallable;
-    private final PlayerEntity player;
+    private final ContainerLevelAccess worldPosCallable;
+    private final Player player;
 
     private int selectedRecipe = 0;
-    private final CompoundNBT resultItemTag = new CompoundNBT();
+    private final CompoundTag resultItemTag = new CompoundTag();
     private List<PlaneWorkbenchRecipe> recipeList;
 
-    public PlaneWorkbenchContainer(int id, PlayerInventory playerInventory) {
-        this(id, playerInventory, IWorldPosCallable.NULL);
+    public PlaneWorkbenchContainer(int id, Inventory playerInventory) {
+        this(id, playerInventory, ContainerLevelAccess.NULL);
     }
 
-    public PlaneWorkbenchContainer(int id, PlayerInventory playerInventory, IWorldPosCallable worldPosCallable) {
+    public PlaneWorkbenchContainer(int id, Inventory playerInventory, ContainerLevelAccess worldPosCallable) {
         super(SimplePlanesContainers.PLANE_WORKBENCH.get(), id);
         this.worldPosCallable = worldPosCallable;
         this.player = playerInventory.player;
@@ -105,9 +106,9 @@ public class PlaneWorkbenchContainer extends Container {
         }
     }
 
-    protected void updateCraftingResult(World world, PlayerEntity player) {
+    protected void updateCraftingResult(Level world, Player player) {
         if (!world.isClientSide) {
-            ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
+            ServerPlayer serverPlayerEntity = (ServerPlayer) player;
             ItemStack result = ItemStack.EMPTY;
             ItemStack ingredientStack = itemHandler.getStackInSlot(0);
             ItemStack materialStack = itemHandler.getStackInSlot(1);
@@ -125,15 +126,15 @@ public class PlaneWorkbenchContainer extends Container {
             }
 
             itemHandler.setStackInSlot(2, result);
-            serverPlayerEntity.connection.send(new SSetSlotPacket(containerId, 2, result));
+            serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(containerId, 2, result));
         }
     }
 
     @Override
-    public void removed(PlayerEntity playerIn) {
+    public void removed(Player playerIn) {
         super.removed(playerIn);
         worldPosCallable.execute((world, blockPos) -> {
-            if (!playerIn.isAlive() || playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected()) {
+            if (!playerIn.isAlive() || playerIn instanceof ServerPlayer && ((ServerPlayer) playerIn).hasDisconnected()) {
                 for (int i = 0; i < itemHandler.getSlots() - 1; ++i) {
                     playerIn.drop(itemHandler.getStackInSlot(i), false);
                     itemHandler.setStackInSlot(i, ItemStack.EMPTY);
@@ -148,19 +149,19 @@ public class PlaneWorkbenchContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         return stillValid(worldPosCallable, playerIn, SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get());
     }
 
     @Override
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
         ItemStack itemStack = super.clicked(slotId, dragType, clickTypeIn, player);
         updateCraftingResult();
         return itemStack;
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {

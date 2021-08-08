@@ -1,26 +1,26 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.electric;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.HumanoidArm;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
@@ -35,7 +35,7 @@ import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContainerProvider {
+public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider {
 
     public static final int CAPACITY = 480_000;
 
@@ -61,9 +61,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
     }
 
     @Override
-    public void renderPowerHUD(MatrixStack matrixStack, HandSide side, int scaledWidth, int scaledHeight, float partialTicks) {
+    public void renderPowerHUD(PoseStack matrixStack, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
-        if (side == HandSide.LEFT) {
+        if (side == HumanoidArm.LEFT) {
             ClientEventHandler.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
         } else {
             ClientEventHandler.blit(matrixStack, -90, i + 91, scaledHeight - 22, 38, 44, 22, 21);
@@ -73,7 +73,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
 
         if (energy > 0) {
             int energyScaled = energy * 15 / CAPACITY;
-            if (side == HandSide.LEFT) {
+            if (side == HumanoidArm.LEFT) {
                 ClientEventHandler.blit(matrixStack, -90, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
             } else {
                 ClientEventHandler.blit(matrixStack, -90, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
@@ -82,7 +82,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
         matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
@@ -101,31 +101,31 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
     }
 
     @Override
-    protected void invalidateCaps() {
+    public void invalidateCaps() {
         super.invalidateCaps();
         energyStorageLazyOptional.invalidate();
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compoundNBT = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putInt("energy", energyStorage.getEnergyStored());
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         int energy = nbt.getInt("energy");
         energyStorage.setEnergy(Math.min(energy, CAPACITY));
     }
 
     @Override
-    public void writePacket(PacketBuffer buffer) {
+    public void writePacket(FriendlyByteBuf buffer) {
         buffer.writeVarInt(energyStorage.getEnergyStored());
     }
 
     @Override
-    public void readPacket(PacketBuffer buffer) {
+    public void readPacket(FriendlyByteBuf buffer) {
         energyStorage.setEnergy(buffer.readVarInt());
     }
 
@@ -135,18 +135,18 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements INamedContai
     }
 
     @Override
-    public void openGui(ServerPlayerEntity playerEntity) {
+    public void openGui(ServerPlayer playerEntity) {
         NetworkHooks.openGui(playerEntity, this, buffer -> buffer.writeVarInt(planeEntity.getId()));
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent(SimplePlanesMod.MODID + ".electric_engine_container");
+    public Component getDisplayName() {
+        return new TranslatableComponent(SimplePlanesMod.MODID + ".electric_engine_container");
     }
 
     @Nullable
     @Override
-    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
         return new ElectricEngineContainer(id, playerInventory, planeEntity.getId());
     }
 

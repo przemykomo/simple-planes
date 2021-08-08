@@ -1,10 +1,10 @@
 package xyz.przemyk.simpleplanes.blocks;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -15,7 +15,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ChargingStationTile extends TileEntity implements ITickableTileEntity {
+public class ChargingStationTile extends BlockEntity implements TickableBlockEntity {
 
     public EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(1000);
     public LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
@@ -26,7 +26,7 @@ public class ChargingStationTile extends TileEntity implements ITickableTileEnti
 
     @Override
     public void tick() {
-        for (Entity entity : level.getEntities(null, new AxisAlignedBB(worldPosition.above()))) {
+        for (Entity entity : level.getEntities(null, new AABB(worldPosition.above()))) {
             entity.getCapability(CapabilityEnergy.ENERGY, Direction.DOWN).ifPresent(entityEnergy ->
                     energyStorage.extractEnergy(entityEnergy.receiveEnergy(energyStorage.extractEnergy(1000, true), false), false));
         }

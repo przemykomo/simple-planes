@@ -1,12 +1,12 @@
 package xyz.przemyk.simpleplanes.client.render;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -25,7 +25,7 @@ public class PlaneItemColors {
     }
 
     public static int getColor(ItemStack itemStack, int tintIndex) {
-        CompoundNBT entityTag = itemStack.getTagElement("EntityTag");
+        CompoundTag entityTag = itemStack.getTagElement("EntityTag");
         if (tintIndex != 0) {
             return -1;
         }

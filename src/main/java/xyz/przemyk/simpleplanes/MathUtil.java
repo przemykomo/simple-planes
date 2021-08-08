@@ -1,42 +1,46 @@
 package xyz.przemyk.simpleplanes;
 
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.Mth;
+import com.mojang.math.Quaternion;
+import net.minecraft.world.phys.Vec3;
 
 public class MathUtil {
 
-    public static double normalizedDotProduct(Vector3d v1, Vector3d v2) {
+    public static double getHorizontalDistanceSqr(Vec3 vec3) {
+        return Math.sqrt((vec3.x * vec3.x) + (vec3.z * vec3.z));
+    }
+
+    public static double normalizedDotProduct(Vec3 v1, Vec3 v2) {
         return v1.dot(v2) / (v1.length() * v2.length());
     }
 
-    public static float getPitch(Vector3d motion) {
+    public static float getPitch(Vec3 motion) {
         double y = motion.y;
         return (float) Math.toDegrees(Math.atan2(y, Math.sqrt(motion.x * motion.x + motion.z * motion.z)));
     }
 
-    public static float getYaw(Vector3d motion) {
+    public static float getYaw(Vec3 motion) {
         return (float) Math.toDegrees(Math.atan2(-motion.x, motion.z));
     }
 
     public static float lerpAngle(float perc, float start, float end) {
-        return start + perc * MathHelper.wrapDegrees(end - start);
+        return start + perc * Mth.wrapDegrees(end - start);
     }
 
     public static float lerpAngle180(float perc, float start, float end) {
         if (degreesDifferenceAbs(start, end) > 90)
             end += 180;
-        return start + perc * MathHelper.wrapDegrees(end - start);
+        return start + perc * Mth.wrapDegrees(end - start);
     }
 
     public static double lerpAngle180(double perc, double start, double end) {
         if (degreesDifferenceAbs(start, end) > 90)
             end += 180;
-        return start + perc * MathHelper.wrapDegrees(end - start);
+        return start + perc * Mth.wrapDegrees(end - start);
     }
 
     public static double lerpAngle(double perc, double start, double end) {
-        return start + perc * MathHelper.wrapDegrees(end - start);
+        return start + perc * Mth.wrapDegrees(end - start);
     }
 
     public static double degreesDifferenceAbs(double p_203301_0_, double p_203301_1_) {
@@ -44,21 +48,21 @@ public class MathUtil {
     }
 
     public static double wrapSubtractDegrees(double p_203302_0_, double p_203302_1_) {
-        return MathHelper.wrapDegrees(p_203302_1_ - p_203302_0_);
+        return Mth.wrapDegrees(p_203302_1_ - p_203302_0_);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch) {
+    public static Vec3 rotationToVector(double yaw, double pitch) {
         yaw = Math.toRadians(yaw);
         pitch = Math.toRadians(pitch);
         double xzLen = Math.cos(pitch);
         double x = -xzLen * Math.sin(yaw);
         double y = Math.sin(pitch);
         double z = xzLen * Math.cos(-yaw);
-        return new Vector3d(x, y, z);
+        return new Vec3(x, y, z);
     }
 
-    public static Vector3d rotationToVector(double yaw, double pitch, double size) {
-        Vector3d vec = rotationToVector(yaw, pitch);
+    public static Vec3 rotationToVector(double yaw, double pitch, double size) {
+        Vec3 vec = rotationToVector(yaw, pitch);
         return vec.scale(size / vec.length());
     }
 

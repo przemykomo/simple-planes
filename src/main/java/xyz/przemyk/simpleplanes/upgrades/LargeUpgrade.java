@@ -7,15 +7,15 @@ public abstract class LargeUpgrade extends Upgrade {
 
     public LargeUpgrade(UpgradeType type, PlaneEntity planeEntity) {
         super(type, planeEntity);
-        if (planeEntity instanceof LargePlaneEntity) {
-            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = true;
+        if (planeEntity instanceof LargePlaneEntity largePlaneEntity) {
+            largePlaneEntity.hasBlockUpgrade = true;
         }
     }
 
     @Override
     public void remove() {
-        if (planeEntity instanceof LargePlaneEntity) {
-            ((LargePlaneEntity) planeEntity).hasBlockUpgrade = false;
+        if (planeEntity instanceof LargePlaneEntity largePlaneEntity) {
+            largePlaneEntity.hasBlockUpgrade = false;
         }
         super.remove();
     }

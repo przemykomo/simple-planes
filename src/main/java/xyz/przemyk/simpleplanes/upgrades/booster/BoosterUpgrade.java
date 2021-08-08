@@ -1,19 +1,20 @@
 package xyz.przemyk.simpleplanes.upgrades.booster;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -23,8 +24,6 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import static net.minecraft.item.Items.GUNPOWDER;
-
 public class BoosterUpgrade extends Upgrade {
     
     public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/rocket.png");
@@ -33,24 +32,24 @@ public class BoosterUpgrade extends Upgrade {
     public int fuel = 0;
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compoundNBT = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putInt("fuel", fuel);
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compoundNBT) {
+    public void deserializeNBT(CompoundTag compoundNBT) {
         fuel = compoundNBT.getInt("fuel");
     }
 
     @Override
-    public void writePacket(PacketBuffer buffer) {
+    public void writePacket(FriendlyByteBuf buffer) {
         buffer.writeVarInt(fuel);
     }
 
     @Override
-    public void readPacket(PacketBuffer buffer) {
+    public void readPacket(FriendlyByteBuf buffer) {
         fuel = buffer.readVarInt();
     }
 
@@ -67,7 +66,7 @@ public class BoosterUpgrade extends Upgrade {
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getItemInHand(event.getHand());
         if (fuel <= 0) {
-            if (itemStack.getItem().equals(GUNPOWDER)) {
+            if (itemStack.getItem().equals(Items.GUNPOWDER)) {
                 if (!event.getPlayer().isCreative()) {
                     itemStack.shrink(1);
                 }
@@ -85,9 +84,9 @@ public class BoosterUpgrade extends Upgrade {
         --fuel;
         updateClient();
 
-        Vector3d m = planeEntity.getDeltaMovement();
+        Vec3 m = planeEntity.getDeltaMovement();
         float pitch = 0;
-        PlayerEntity player = planeEntity.getPlayer();
+        Player player = planeEntity.getPlayer();
         if (player != null) {
             if (player.zza > 0.0F) {
                 if (planeEntity.isSprinting()) {
@@ -104,7 +103,7 @@ public class BoosterUpgrade extends Upgrade {
             pitch = 0;
         }
         planeEntity.xRot += pitch;
-        Vector3d motion = MathUtil.rotationToVector(planeEntity.yRot, planeEntity.xRot, 0.05);
+        Vec3 motion = MathUtil.rotationToVector(planeEntity.yRot, planeEntity.xRot, 0.05);
 
         planeEntity.setDeltaMovement(m.add(motion));
         if (planeEntity.level.isClientSide) {
@@ -113,11 +112,11 @@ public class BoosterUpgrade extends Upgrade {
         }
     }
 
-    public void spawnParticle(IParticleData particleData, Vector3f relPos) {
+    public void spawnParticle(ParticleOptions particleData, Vector3f relPos) {
         relPos = new Vector3f(relPos.x(), relPos.y() - 0.3f, relPos.z());
         relPos = planeEntity.transformPos(relPos);
         relPos = new Vector3f(relPos.x(), relPos.y() + 0.9f, relPos.z());
-        Vector3d motion = planeEntity.getDeltaMovement();
+        Vec3 motion = planeEntity.getDeltaMovement();
         double speed = motion.length() / 4;
         planeEntity.level.addParticle(particleData,
                 planeEntity.getX() + relPos.x(),
@@ -129,8 +128,8 @@ public class BoosterUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
-        IVertexBuilder ivertexbuilder = buffer.getBuffer(BoosterModel.INSTANCE.renderType(TEXTURE));
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
+        VertexConsumer ivertexbuilder = buffer.getBuffer(BoosterModel.INSTANCE.renderType(TEXTURE));
         BoosterModel.INSTANCE.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 

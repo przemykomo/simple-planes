@@ -1,9 +1,9 @@
 package xyz.przemyk.simpleplanes.compat.ironchest;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.registries.ObjectHolder;
@@ -90,7 +90,7 @@ public class IronChestsCompat {
         }
     }
 
-    public static void addSlots(String chestType, IItemHandler itemHandler, int rowCount, PlayerInventory playerInventory, Consumer<Slot> addSlotFunction) {
+    public static void addSlots(String chestType, IItemHandler itemHandler, int rowCount, Inventory playerInventory, Consumer<Slot> addSlotFunction) {
         if (chestType.equals(DIRT_CHEST_NAME)) {
             addSlotFunction.accept(new DirtChestSlot(itemHandler, 0, 84, 44));
         } else {

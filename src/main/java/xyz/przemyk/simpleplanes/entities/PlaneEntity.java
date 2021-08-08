@@ -1,44 +1,43 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.HitResult;
+import com.mojang.math.Quaternion;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -60,23 +59,29 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static net.minecraft.util.math.MathHelper.wrapDegrees;
+import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.MathUtil.*;
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
 import xyz.przemyk.simpleplanes.MathUtil.EulerAngles;
 
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+
 @SuppressWarnings("ConstantConditions")
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
-    public static final DataParameter<Integer> MAX_HEALTH = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.INT);
-    public static final DataParameter<Integer> HEALTH = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.INT);
-    public static final DataParameter<Float> MAX_SPEED = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.FLOAT);
-    public static final DataParameter<String> MATERIAL = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.STRING);
-    public static final DataParameter<Integer> ROCKING_TICKS = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.INT);
-    public static final DataParameter<Integer> TIME_SINCE_HIT = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.INT);
-    public static final DataParameter<Float> DAMAGE_TAKEN = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.FLOAT);
-    public static final DataParameter<Boolean> PARKED = EntityDataManager.defineId(PlaneEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Quaternion> Q = EntityDataManager.defineId(PlaneEntity.class, QUATERNION_SERIALIZER);
+    public static final EntityDataAccessor<Integer> MAX_HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Float> MAX_SPEED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<String> MATERIAL = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Integer> ROCKING_TICKS = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> TIME_SINCE_HIT = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Float> DAMAGE_TAKEN = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Boolean> PARKED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, QUATERNION_SERIALIZER);
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
 
@@ -99,11 +104,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     private final int networkUpdateInterval;
 
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn) {
+    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, Level worldIn) {
         this(entityTypeIn, worldIn, Blocks.OAK_PLANKS);
     }
 
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, Block material) {
+    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, Level worldIn, Block material) {
         super(entityTypeIn, worldIn);
         networkUpdateInterval = entityTypeIn.updateInterval();
         maxUpStep = 0.9999f;
@@ -111,7 +116,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         setMaxSpeed(1f);
     }
 
-    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, World worldIn, Block material, double x, double y, double z) {
+    public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, Level worldIn, Block material, double x, double y, double z) {
         this(entityTypeIn, worldIn, material);
         setPos(x, y, z);
     }
@@ -188,7 +193,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) {
+    public ItemStack getPickedResult(HitResult target) {
         return getItemStack();
     }
 
@@ -209,12 +214,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public ActionResultType interact(PlayerEntity player, Hand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (player.isShiftKeyDown() && itemStack.isEmpty()) {
             boolean hasPlayer = false;
             for (Entity passenger : getPassengers()) {
-                if ((passenger instanceof PlayerEntity)) {
+                if ((passenger instanceof Player)) {
                     hasPlayer = true;
                     break;
                 }
@@ -222,29 +227,29 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             if ((!hasPlayer) || SimplePlanesConfig.THIEF.get()) {
                 ejectPassengers();
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (itemStack.getItem() == SimplePlanesItems.WRENCH.get()) {
             if (!level.isClientSide) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, new SimpleNamedContainerProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), StringTextComponent.EMPTY), buf -> buf.writeVarInt(getId()));
-                return ActionResultType.CONSUME;
+                NetworkHooks.openGui((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), TextComponent.EMPTY), buf -> buf.writeVarInt(getId()));
+                return InteractionResult.CONSUME;
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (tryToAddUpgrade(player, itemStack)) {
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (!level.isClientSide) {
-            return player.startRiding(this) ? ActionResultType.CONSUME : ActionResultType.FAIL;
+            return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.FAIL;
         } else {
-            return player.getRootVehicle() == getRootVehicle() ? ActionResultType.FAIL : ActionResultType.SUCCESS;
+            return player.getRootVehicle() == getRootVehicle() ? InteractionResult.FAIL : InteractionResult.SUCCESS;
         }
     }
 
-    protected boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
+    protected boolean tryToAddUpgrade(Player playerEntity, ItemStack itemStack) {
         Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getUpgradeFromItem(itemStack.getItem());
         return upgradeTypeOptional.map(upgradeType -> {
             if (canAddUpgrade(upgradeType)) {
@@ -256,7 +261,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }).orElse(false);
     }
 
-    protected void addUpgrade(PlayerEntity playerEntity, ItemStack itemStack, Upgrade upgrade) {
+    protected void addUpgrade(Player playerEntity, ItemStack itemStack, Upgrade upgrade) {
         upgrade.onApply(itemStack, playerEntity);
         if (!playerEntity.isCreative()) {
             itemStack.shrink(1);
@@ -267,21 +272,19 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             engineUpgrade = (EngineUpgrade) upgrade;
         }
         if (!level.isClientSide) {
-            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getId(), (ServerWorld) level, true));
+            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getId(), (ServerLevel) level, true));
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean hurt(DamageSource source, float amount) {
-//        setRockingTicks(60);
         setTimeSinceHit(20);
         setDamageTaken(getDamageTaken() + 10 * amount);
 
         if (isInvulnerableTo(source) || damageTimeout > 0) {
             return false;
         }
-        if (level.isClientSide || removed) {
+        if (level.isClientSide || isRemoved()) {
             return false;
         }
         int health = getHealth();
@@ -291,8 +294,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         setHealth(health -= amount);
         damageTimeout = 10;
-        boolean isPlayer = source.getEntity() instanceof PlayerEntity;
-        boolean creativePlayer = isPlayer && ((PlayerEntity) source.getEntity()).abilities.instabuild;
+        boolean isPlayer = source.getEntity() instanceof Player;
+        boolean creativePlayer = isPlayer && ((Player) source.getEntity()).getAbilities().instabuild;
         if (creativePlayer || (isPlayer && getDamageTaken() > 30.0F) || health <= 0) {
             if (!creativePlayer) {
                 if (source == SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH) {
@@ -302,23 +305,23 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                     dropItem();
                 }
             }
-            remove();
+            kill();
         }
         return true;
     }
 
     private void explode() {
-        ((ServerWorld) level).sendParticles(ParticleTypes.SMOKE,
+        ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE,
             getX(),
             getY(),
             getZ(),
             5, 1, 1, 1, 2);
-        ((ServerWorld) level).sendParticles(ParticleTypes.POOF,
+        ((ServerLevel) level).sendParticles(ParticleTypes.POOF,
             getX(),
             getY(),
             getZ(),
             10, 1, 1, 1, 1);
-        level.explode(this, getX(), getY(), getZ(), 0, Explosion.Mode.NONE);
+        level.explode(this, getX(), getY(), getZ(), 0, Explosion.BlockInteraction.NONE);
     }
 
     protected void dropItem() {
@@ -338,15 +341,15 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         super.tick();
 
         if (Double.isNaN(getDeltaMovement().length())) {
-            setDeltaMovement(Vector3d.ZERO);
+            setDeltaMovement(Vec3.ZERO);
         }
-        yRotO = yRot;
-        xRotO = xRot;
+        yRotO = getYRot();
+        xRotO = getXRot();
         prevRotationRoll = rotationRoll;
 
         if (level.isClientSide && !isControlledByLocalInstance()) {
             tickLerp();
-            setDeltaMovement(Vector3d.ZERO);
+            setDeltaMovement(Vec3.ZERO);
             tickDeltaRotation(getQ_Client());
             tickUpgrades();
             return;
@@ -361,8 +364,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             tempMotionVars.passiveEnginePush = 0;
         }
         Entity controllingPassenger = getControllingPassenger();
-        if (controllingPassenger instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity) controllingPassenger;
+        if (controllingPassenger instanceof Player playerEntity) {
             tempMotionVars.moveForward = playerEntity.zza;
             tempMotionVars.moveStrafing = playerEntity.xxa;
         } else {
@@ -387,7 +389,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         EulerAngles angelsOld = toEulerAngles(q).copy();
 
-        Vector3d oldMotion = getDeltaMovement();
+        Vec3 oldMotion = getDeltaMovement();
 
         boolean parked = updateParkedState(tempMotionVars);
         if (level.isClientSide && isPowered() && !parked) {
@@ -421,7 +423,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         //made so plane fully stops when moves slow, removing the slipperiness effect
         if (onGroundTicks > -50 && oldMotion.length() < 0.002 && getDeltaMovement().length() < 0.002) {
-            setDeltaMovement(Vector3d.ZERO);
+            setDeltaMovement(Vec3.ZERO);
         }
         updateRocking();
         reapplyPosition();
@@ -429,7 +431,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (!onGround || getHorizontalDistanceSqr(getDeltaMovement()) > (double) 1.0E-5F || (tickCount + getId()) % 4 == 0) {
             double speedBefore = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
             boolean onGroundOld = onGround;
-            Vector3d motion = getDeltaMovement();
+            Vec3 motion = getDeltaMovement();
             if (motion.lengthSqr() > 0.25 || tempMotionVars.moveForward != 0) {
                 onGround = true;
             }
@@ -447,8 +449,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         //back to q
         q.mul(new Quaternion(Vector3f.ZP, ((float) (rotationRoll - angelsOld.roll)), true));
-        q.mul(new Quaternion(Vector3f.XN, ((float) (xRot - angelsOld.pitch)), true));
-        q.mul(new Quaternion(Vector3f.YP, ((float) (yRot - angelsOld.yaw)), true));
+        q.mul(new Quaternion(Vector3f.XN, ((float) (getXRot() - angelsOld.pitch)), true));
+        q.mul(new Quaternion(Vector3f.YP, ((float) (getYRot() - angelsOld.yaw)), true));
 
         q = normalizeQuaternion(q);
 
@@ -461,7 +463,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
             PlaneNetworking.INSTANCE.sendToServer(new RotationPacket(getQ()));
         } else {
-            ServerPlayerEntity player = (ServerPlayerEntity) getPlayer();
+            ServerPlayer player = (ServerPlayer) getPlayer();
             if (player != null) {
                 player.connection.aboveGroundVehicleTickCount = 0;
             }
@@ -503,7 +505,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (tickCount % networkUpdateInterval == 0) {
             for (ResourceLocation name : upgradesToUpdate) {
-                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getId(), (ServerWorld) level));
+                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getId(), (ServerLevel) level));
             }
         }
     }
@@ -513,7 +515,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     private boolean updateParkedState(TempMotionVars tempMotionVars) {
-        Vector3d oldMotion = getDeltaMovement();
+        Vec3 oldMotion = getDeltaMovement();
         final boolean parked = (isOnWater() || isOnGround()) &&
             (oldMotion.length() < 0.1) &&
             (!tempMotionVars.passengerSprinting) &&
@@ -533,11 +535,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected void tickDeltaRotation(Quaternion q) {
         EulerAngles angels1 = toEulerAngles(q);
-        xRot = (float) angels1.pitch;
-        yRot = (float) angels1.yaw;
+        setXRot((float) angels1.pitch);
+        setYRot((float) angels1.yaw);
         rotationRoll = (float) angels1.roll;
 
-        float d = (float) wrapSubtractDegrees(yRotO, yRot);
+        float d = (float) wrapSubtractDegrees(yRotO, getYRot());
         if (rotationRoll >= 90 && prevRotationRoll <= 90) {
             d = 0;
         }
@@ -561,9 +563,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
             int yawdiff = 3;
             float roll = rotationRoll;
-            if (degreesDifferenceAbs(xRot, 0) < 45) {
+            if (degreesDifferenceAbs(getXRot(), 0) < 45) {
                 for (int i = 0; i < 360; i += 180) {
-                    if (MathHelper.degreesDifferenceAbs(rotationRoll, i) < 80) {
+                    if (Mth.degreesDifferenceAbs(rotationRoll, i) < 80) {
                         roll = lerpAngle(0.1f * f1, rotationRoll, i);
                         break;
                     }
@@ -586,20 +588,20 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 }
                 final double rollOld = toEulerAngles(getQ()).roll;
                 if (degreesDifferenceAbs(rollOld, 0) < 90) {
-                    turn = MathHelper.clamp(rollOld * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
+                    turn = Mth.clamp(rollOld * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
                 } else {
-                    turn = MathHelper.clamp((180 - rollOld) * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
+                    turn = Mth.clamp((180 - rollOld) * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
                 }
                 if (moveStrafing == 0) {
                     turn = 0;
                 }
             }
 
-        yRot -= turn;
+        setYRot((float) (getYRot() - turn));
     }
 
     protected void tickMotion(TempMotionVars tempMotionVars) {
-        Vector3d motion;
+        Vec3 motion;
         if (!isPowered()) {
             tempMotionVars.push = 0;
         }
@@ -608,19 +610,19 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         speed -= speed * speed * tempMotionVars.dragQuad + speed * tempMotionVars.dragMul + tempMotionVars.drag;
         speed = Math.max(speed, 0);
         if (speed > tempMotionVars.maxSpeed) {
-            speed = MathHelper.lerp(0.2, speed, tempMotionVars.maxSpeed);
+            speed = Mth.lerp(0.2, speed, tempMotionVars.maxSpeed);
         }
 
         if (speed == 0) {
-            motion = Vector3d.ZERO;
+            motion = Vec3.ZERO;
         }
         if (motion.length() > 0)
             motion = motion.scale(speed / motion.length());
 
-        Vector3d pushVec = new Vector3d(getTickPush(tempMotionVars));
+        Vec3 pushVec = new Vec3(getTickPush(tempMotionVars));
         if (pushVec.length() != 0 && motion.length() > 0.1) {
             double dot = normalizedDotProduct(pushVec, motion);
-            pushVec = pushVec.scale(MathHelper.clamp(1 - dot * speed / (tempMotionVars.maxPushSpeed * (tempMotionVars.push + 0.05)), 0, 2));
+            pushVec = pushVec.scale(Mth.clamp(1 - dot * speed / (tempMotionVars.maxPushSpeed * (tempMotionVars.push + 0.05)), 0, 2));
         }
 
         motion = motion.add(pushVec);
@@ -645,7 +647,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 pitch = -1.3f;
             }
         }
-        xRot += pitch;
+        setXRot(getXRot() + pitch);
     }
 
     protected boolean tickOnGround(TempMotionVars tempMotionVars) {
@@ -671,9 +673,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         } else if (getDeltaMovement().length() > tempMotionVars.takeOffSpeed) {
             pitch /= 2;
         }
-        xRot = lerpAngle(0.1f, xRot, pitch);
+        setXRot(lerpAngle(0.1f, getXRot(), pitch));
 
-        if (degreesDifferenceAbs(xRot, 0) > 1 && getDeltaMovement().length() < 0.1) {
+        if (degreesDifferenceAbs(getXRot(), 0) > 1 && getDeltaMovement().length() < 0.1) {
             tempMotionVars.push /= 5; //runs while the plane is taking off
         }
         if (getDeltaMovement().length() < tempMotionVars.takeOffSpeed) {
@@ -689,7 +691,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         float f;
         BlockPos pos = new BlockPos(getX(), getY() - 1.0D, getZ());
-        f = level.getBlockState(pos).getSlipperiness(level, pos, this);
+        f = level.getBlockState(pos).getFriction(level, pos, this);
         tempMotionVars.dragMul *= 20 * (3 - f);
         return speedingUp;
     }
@@ -698,14 +700,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 15;
     }
 
-    protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vector3d motion) {
+    protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vec3 motion) {
         float yaw = MathUtil.getYaw(motion);
         float pitch = MathUtil.getPitch(motion);
-        if (degreesDifferenceAbs(yaw, yRot) > 5 && (getOnGround() || isOnWater())) {
+        if (degreesDifferenceAbs(yaw, getYRot()) > 5 && (getOnGround() || isOnWater())) {
             setDeltaMovement(motion.scale(0.98));
         }
 
-        float d = (float) degreesDifferenceAbs(pitch, xRot);
+        float d = (float) degreesDifferenceAbs(pitch, getXRot());
         if (d > 180) {
             d = d - 180;
         }
@@ -721,18 +723,18 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         lift *= cosRoll;
         d *= cosRoll;
 
-        setDeltaMovement(rotationToVector(lerpAngle180(0.1f, yaw, yRot),
-            lerpAngle180(tempMotionVars.pitchToMotion * d, pitch, xRot) + lift,
+        setDeltaMovement(rotationToVector(lerpAngle180(0.1f, yaw, getYRot()),
+            lerpAngle180(tempMotionVars.pitchToMotion * d, pitch, getXRot()) + lift,
             speed));
         if (!getOnGround() && !isOnWater() && motion.length() > 0.1) {
 
-            if (degreesDifferenceAbs(pitch, xRot) > 90) {
+            if (degreesDifferenceAbs(pitch, getXRot()) > 90) {
                 pitch = wrapDegrees(pitch + 180);
             }
-            if (Math.abs(xRot) < 85) {
+            if (Math.abs(getXRot()) < 85) {
 
                 yaw = MathUtil.getYaw(getDeltaMovement());
-                if (degreesDifferenceAbs(yaw, yRot) > 90) {
+                if (degreesDifferenceAbs(yaw, getYRot()) > 90) {
                     yaw = yaw - 180;
                 }
                 Quaternion q1 = toQuaternion(yaw, pitch, rotationRoll);
@@ -758,7 +760,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundNBT compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         if (compound.contains("max_speed")) {
             entityData.set(MAX_SPEED, compound.getFloat("max_speed"));
         }
@@ -782,12 +784,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
 
         if (compound.contains("upgrades")) {
-            CompoundNBT upgradesNBT = compound.getCompound("upgrades");
+            CompoundTag upgradesNBT = compound.getCompound("upgrades");
             deserializeUpgrades(upgradesNBT);
         }
     }
 
-    private void deserializeUpgrades(CompoundNBT upgradesNBT) {
+    private void deserializeUpgrades(CompoundTag upgradesNBT) {
         for (String key : upgradesNBT.getAllKeys()) {
             ResourceLocation resourceLocation = new ResourceLocation(key);
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
@@ -803,7 +805,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundNBT compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         compound.putInt("health", entityData.get(HEALTH));
         compound.putInt("max_health", entityData.get(MAX_HEALTH));
         compound.putFloat("max_speed", entityData.get(MAX_SPEED));
@@ -811,8 +813,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         compound.put("upgrades", getUpgradesNBT());
     }
 
-    private CompoundNBT getUpgradesNBT() {
-        CompoundNBT upgradesNBT = new CompoundNBT();
+    private CompoundTag getUpgradesNBT() {
+        CompoundTag upgradesNBT = new CompoundTag();
         for (Upgrade upgrade : upgrades.values()) {
             upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
         }
@@ -835,12 +837,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public IPacket<?> getAddEntityPacket() {
+    public Packet<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    public void onSyncedDataUpdated(DataParameter<?> key) {
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
         if (MATERIAL.equals(key) && level.isClientSide()) {
             Block block = ForgeRegistries.BLOCKS.getValue((new ResourceLocation(entityData.get(MATERIAL))));
@@ -887,7 +889,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if ((onGroundIn || isOnWater()) && SimplePlanesConfig.PLANE_CRASH.get()) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).y();
             if (y1 < Math.cos(Math.toRadians(getLandingAngle()))) {
-                state.getBlock().fallOn(level, pos, this, (float) (getDeltaMovement().length() * 5));
+                state.getBlock().fallOn(level, state, pos, this, (float) (getDeltaMovement().length() * 5));
             }
             fallDistance = 0.0F;
         }
@@ -898,16 +900,16 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier) {
+    public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource p_146830_) {
         if (isVehicle()) {
-            crash(distance * damageMultiplier);
+            crash(fallDistance * damageMultiplier);
         }
         return false;
     }
 
-    @SuppressWarnings("deprecation")
+    //TODO: add explosion
     public void crash(float damage) {
-        if (!level.isClientSide && !removed) {
+        if (!level.isClientSide && isAlive()) {
             for (Entity entity : getPassengers()) {
                 float damageMod = Math.min(1, 1 - ((float) getHealth() / getMaxHealth()));
                 entity.hurt(SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH, damage * damageMod);
@@ -917,7 +919,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public boolean isCreative() {
-        return getControllingPassenger() instanceof PlayerEntity && ((PlayerEntity) getControllingPassenger()).isCreative();
+        return getControllingPassenger() instanceof Player && ((Player) getControllingPassenger()).isCreative();
     }
 
     public boolean getOnGround() {
@@ -943,7 +945,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     @Override
     public void positionRider(Entity passenger) {
         super.positionRider(passenger);
-        boolean b = (passenger instanceof PlayerEntity) && ((PlayerEntity) passenger).isLocalPlayer();
+        boolean b = (passenger instanceof Player) && ((Player) passenger).isLocalPlayer();
 
         if (hasPassenger(passenger) && !b) {
             applyYawToEntity(passenger);
@@ -958,23 +960,23 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         entityToUpdate.yRotO += deltaRotation;
 
-        entityToUpdate.setYBodyRot(yRot);
+        entityToUpdate.setYBodyRot(getYRot());
 
-        float f = wrapDegrees(entityToUpdate.yRotO - yRot);
-        float f1 = MathHelper.clamp(f, -105.0F, 105.0F);
+        float f = wrapDegrees(entityToUpdate.yRotO - getYRot());
+        float f1 = Mth.clamp(f, -105.0F, 105.0F);
 
         float perc = deltaRotationTicks > 0 ? 1f / deltaRotationTicks : 1f;
         float diff = (f1 - f) * perc;
 
-        entityToUpdate.yRot += diff;
+        entityToUpdate.setYRot(entityToUpdate.getYRot() + diff);
         entityToUpdate.yRotO += diff;
 
-        entityToUpdate.setYHeadRot(entityToUpdate.yRot);
+        entityToUpdate.setYHeadRot(entityToUpdate.getYRot());
     }
 
     //on dismount
     @Override
-    public Vector3d getDismountLocationForPassenger(LivingEntity livingEntity) {
+    public Vec3 getDismountLocationForPassenger(LivingEntity livingEntity) {
         // TODO: folding upgrade
 //        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
 //            if (livingEntity instanceof PlayerEntity) {
@@ -993,7 +995,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public ItemStack getItemStack() {
         ItemStack itemStack = getItem().getDefaultInstance();
-        CompoundNBT compound = new CompoundNBT();
+        CompoundTag compound = new CompoundTag();
         addAdditionalSaveData(compound);
         compound.putInt("health", entityData.get(MAX_HEALTH));
         compound.putBoolean("Used", true);
@@ -1051,17 +1053,17 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public void absMoveTo(double x, double y, double z, float yaw, float pitch) {
-        double d0 = MathHelper.clamp(x, -3.0E7D, 3.0E7D);
-        double d1 = MathHelper.clamp(z, -3.0E7D, 3.0E7D);
+        double d0 = Mth.clamp(x, -3.0E7D, 3.0E7D);
+        double d1 = Mth.clamp(z, -3.0E7D, 3.0E7D);
         xOld = d0;
         yOld = y;
         zOld = d1;
         setPos(d0, y, d1);
-        yRot = yaw % 360.0F;
-        xRot = pitch % 360.0F;
+        setYRot(yaw % 360.0F);
+        setXRot(pitch % 360.0F);
 
-        yRotO = yRot;
-        xRotO = xRot;
+        yRotO = getYRot();
+        xRotO = getXRot();
     }
 
     @Override
@@ -1072,14 +1074,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
             if (lerpSteps > 0) {
                 lerpSteps = 0;
-                absMoveTo(lerpX, lerpY, lerpZ, yRot, xRot);
+                absMoveTo(lerpX, lerpY, lerpZ, getYRot(), getXRot());
             }
         }
     }
 
-    public PlayerEntity getPlayer() {
-        if (getControllingPassenger() instanceof PlayerEntity) {
-            return (PlayerEntity) getControllingPassenger();
+    public Player getPlayer() {
+        if (getControllingPassenger() instanceof Player) {
+            return (Player) getControllingPassenger();
         }
         return null;
     }
@@ -1106,7 +1108,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 rockingIntensity -= 0.1F;
             }
 
-            rockingIntensity = MathHelper.clamp(rockingIntensity, 0.0F, 1.0F);
+            rockingIntensity = Mth.clamp(rockingIntensity, 0.0F, 1.0F);
             prevRockingAngle = rockingAngle;
             rockingAngle = 10.0F * (float) Math.sin(0.5F * (float) level.getGameTime()) * rockingIntensity;
         } else {
@@ -1121,8 +1123,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 int j = 60 - k - 1;
                 if (j > 0 && k == 0) {
                     setRockingTicks(0);
-                    Vector3d vector3d = getDeltaMovement();
-                    setDeltaMovement(vector3d.x, hasPassenger(PlayerEntity.class) ? 2.7D : 0.6D, vector3d.z);
+                    Vec3 vector3d = getDeltaMovement();
+                    setDeltaMovement(vector3d.x, hasPassenger(entity -> entity instanceof Player) ? 2.7D : 0.6D, vector3d.z);
                 }
 
                 rocking = false;
@@ -1132,7 +1134,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public float getRockingAngle(float partialTicks) {
-        return MathHelper.lerp(partialTicks, prevRockingAngle, rockingAngle);
+        return Mth.lerp(partialTicks, prevRockingAngle, rockingAngle);
     }
 
     /**
@@ -1167,14 +1169,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 1;
     }
 
-    public void writeUpdateUpgradePacket(ResourceLocation upgradeID, PacketBuffer buffer) {
+    public void writeUpdateUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf buffer) {
         buffer.writeVarInt(getId());
         buffer.writeResourceLocation(upgradeID);
         upgrades.get(upgradeID).writePacket(buffer);
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void readUpdateUpgradePacket(ResourceLocation upgradeID, PacketBuffer buffer, boolean newUpgrade) {
+    public void readUpdateUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf buffer, boolean newUpgrade) {
         if (newUpgrade) {
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
@@ -1203,7 +1205,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void writeSpawnData(PacketBuffer buffer) {
+    public void writeSpawnData(FriendlyByteBuf buffer) {
         Collection<Upgrade> upgrades = this.upgrades.values();
         buffer.writeVarInt(upgrades.size());
         for (Upgrade upgrade : upgrades) {
@@ -1214,7 +1216,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public void readSpawnData(PacketBuffer additionalData) {
+    public void readSpawnData(FriendlyByteBuf additionalData) {
         int upgradesSize = additionalData.readVarInt();
         for (int i = 0; i < upgradesSize; i++) {
             ResourceLocation upgradeID = additionalData.readResourceLocation();

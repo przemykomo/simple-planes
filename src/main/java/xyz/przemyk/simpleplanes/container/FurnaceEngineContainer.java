@@ -1,13 +1,13 @@
 package xyz.przemyk.simpleplanes.container;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -15,15 +15,15 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
-public class FurnaceEngineContainer extends Container {
+public class FurnaceEngineContainer extends AbstractContainerMenu {
 
-    public final IIntArray engineData;
+    public final ContainerData engineData;
 
-    public FurnaceEngineContainer(int id, PlayerInventory playerInventory) {
-        this(id, playerInventory, new ItemStackHandler(), new IntArray(2));
+    public FurnaceEngineContainer(int id, Inventory playerInventory) {
+        this(id, playerInventory, new ItemStackHandler(), new SimpleContainerData(2));
     }
 
-    public FurnaceEngineContainer(int id, PlayerInventory playerInventory, IItemHandler itemHandler, IIntArray engineData) {
+    public FurnaceEngineContainer(int id, Inventory playerInventory, IItemHandler itemHandler, ContainerData engineData) {
         super(SimplePlanesContainers.FURNACE_ENGINE.get(), id);
         this.engineData = engineData;
 
@@ -43,7 +43,7 @@ public class FurnaceEngineContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         Entity entity = playerIn.getVehicle();
         if (entity instanceof PlaneEntity && entity.isAlive()) {
             return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.FURNACE_ENGINE.getId());
@@ -53,14 +53,14 @@ public class FurnaceEngineContainer extends Container {
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index != 0) {
-                if (ForgeHooks.getBurnTime(itemstack1) > 0) {
+                if (ForgeHooks.getBurnTime(itemstack1, null) > 0) {
                     if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }

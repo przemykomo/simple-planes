@@ -1,38 +1,44 @@
 package xyz.przemyk.simpleplanes;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.AbstractList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.CRemoveUpgradePacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 
-public class UpgradeButtonsList extends AbstractList<UpgradeButtonsList.ButtonEntry> {
+public class UpgradeButtonsList extends AbstractSelectionList<UpgradeButtonsList.ButtonEntry> {
 
-    public static final ITextComponent TITLE = new TranslationTextComponent(SimplePlanesMod.MODID + ".remove_upgrades");
+    public static final Component TITLE = new TranslatableComponent(SimplePlanesMod.MODID + ".remove_upgrades");
 
     public UpgradeButtonsList(Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int itemHeightIn, PlaneEntity planeEntity) {
         super(mcIn, widthIn, heightIn, topIn, bottomIn, itemHeightIn);
 
         for (ResourceLocation resourceLocation : planeEntity.upgrades.keySet()) {
-            addEntry(new ButtonEntry(x0 + widthIn / 2 - widthIn / 2, y0, widthIn, itemHeightIn - 4, new TranslationTextComponent(resourceLocation.toString()), planeEntity, resourceLocation, this));
+            addEntry(new ButtonEntry(x0 + widthIn / 2 - widthIn / 2, y0, widthIn, itemHeightIn - 4, new TranslatableComponent(resourceLocation.toString()), planeEntity, resourceLocation, this));
         }
     }
 
     @Override
-    protected void renderDecorations(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void renderDecorations(PoseStack matrixStack, int mouseX, int mouseY) {
         minecraft.font.draw(matrixStack, TITLE, 4, 4, 0xFFFFFF);
     }
 
-    public static class ButtonEntry extends AbstractList.AbstractListEntry<ButtonEntry> {
+    @Override
+    public void updateNarration(NarrationElementOutput p_169152_) {
+
+    }
+
+    public static class ButtonEntry extends AbstractSelectionList.Entry<ButtonEntry> {
 
         private final Button button;
 
-        public ButtonEntry(int x, int y, int width, int height, ITextComponent title, PlaneEntity planeEntity, ResourceLocation resourceLocation, UpgradeButtonsList list) {
+        public ButtonEntry(int x, int y, int width, int height, Component title, PlaneEntity planeEntity, ResourceLocation resourceLocation, UpgradeButtonsList list) {
             this.button = new Button(x + 4, y, width - 8, height, title, b -> {
                 planeEntity.removeUpgrade(resourceLocation);
                 PlaneNetworking.INSTANCE.sendToServer(new CRemoveUpgradePacket(resourceLocation));
@@ -41,7 +47,7 @@ public class UpgradeButtonsList extends AbstractList<UpgradeButtonsList.ButtonEn
         }
 
         @Override
-        public void render(MatrixStack matrixStack, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks) {
+        public void render(PoseStack matrixStack, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks) {
             button.y = top;
             button.render(matrixStack, mouseX, mouseY, partialTicks);
         }

@@ -1,9 +1,9 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.math.Quaternion;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
@@ -18,24 +18,23 @@ public class RotationPacket {
         this.quaternion = quaternion;
     }
 
-    public RotationPacket(PacketBuffer buffer) {
+    public RotationPacket(FriendlyByteBuf buffer) {
         this.quaternion = SimplePlanesDataSerializers.QUATERNION_SERIALIZER.read(buffer);
     }
 
-    public void toBytes(PacketBuffer buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         SimplePlanesDataSerializers.QUATERNION_SERIALIZER.write(buffer, quaternion);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ServerPlayerEntity sender = ctx.getSender();
-            if (sender != null && sender.getVehicle() instanceof PlaneEntity) {
-                PlaneEntity planeEntity = (PlaneEntity) sender.getVehicle();
+            ServerPlayer sender = ctx.getSender();
+            if (sender != null && sender.getVehicle() instanceof PlaneEntity planeEntity) {
                 planeEntity.setQ(quaternion);
                 MathUtil.EulerAngles eulerAngles = MathUtil.toEulerAngles(quaternion);
-                planeEntity.yRot = (float) eulerAngles.yaw;
-                planeEntity.xRot = (float) eulerAngles.pitch;
+                planeEntity.setYRot((float) eulerAngles.yaw);
+                planeEntity.setXRot((float) eulerAngles.pitch);
                 planeEntity.rotationRoll = (float) eulerAngles.roll;
                 planeEntity.setQ_Client(quaternion);
             }

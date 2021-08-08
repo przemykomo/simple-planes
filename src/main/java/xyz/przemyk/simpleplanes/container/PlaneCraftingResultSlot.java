@@ -1,16 +1,16 @@
 package xyz.przemyk.simpleplanes.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class PlaneCraftingResultSlot extends SlotItemHandler {
 
     private final PlaneWorkbenchContainer container;
-    private final PlayerEntity player;
+    private final Player player;
 
-    public PlaneCraftingResultSlot(PlayerEntity player, PlaneWorkbenchContainer container, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+    public PlaneCraftingResultSlot(Player player, PlaneWorkbenchContainer container, IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.player = player;
         this.container = container;
@@ -22,9 +22,8 @@ public class PlaneCraftingResultSlot extends SlotItemHandler {
     }
 
     @Override
-    public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
+    public void onTake(Player thePlayer, ItemStack stack) {
         stack.onCraftedBy(player.level, player, 1);
         container.onCrafting();
-        return super.onTake(thePlayer, stack);
     }
 }

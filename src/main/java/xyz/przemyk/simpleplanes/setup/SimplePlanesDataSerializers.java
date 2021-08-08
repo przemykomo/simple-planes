@@ -1,9 +1,9 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.IDataSerializer;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import com.mojang.math.Quaternion;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,10 +18,10 @@ public class SimplePlanesDataSerializers {
         DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final IDataSerializer<Quaternion> QUATERNION_SERIALIZER = new IDataSerializer<Quaternion>() {
+    public static final EntityDataSerializer<Quaternion> QUATERNION_SERIALIZER = new EntityDataSerializer<Quaternion>() {
 
         @Override
-        public void write(PacketBuffer buf, Quaternion q) {
+        public void write(FriendlyByteBuf buf, Quaternion q) {
             buf.writeFloat(q.i());
             buf.writeFloat(q.j());
             buf.writeFloat(q.k());
@@ -29,7 +29,7 @@ public class SimplePlanesDataSerializers {
         }
 
         @Override
-        public Quaternion read(PacketBuffer buf) {
+        public Quaternion read(FriendlyByteBuf buf) {
             try {
                 return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
             } catch (IndexOutOfBoundsException e) {

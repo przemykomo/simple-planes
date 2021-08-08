@@ -1,27 +1,27 @@
 package xyz.przemyk.simpleplanes.upgrades.storage;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -39,7 +39,7 @@ import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvider {
+public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(27);
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
@@ -50,32 +50,32 @@ public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvide
     }
 
     @Override
-    protected void invalidateCaps() {
+    public void invalidateCaps() {
         super.invalidateCaps();
         itemHandlerLazyOptional.invalidate();
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = itemStackHandler.serializeNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = itemStackHandler.serializeNBT();
         nbt.putString("ChestType", chestType.getRegistryName().toString());
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         itemStackHandler.deserializeNBT(nbt);
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString("ChestType")));
         chestType = item == null ? Items.CHEST : item;
     }
 
     @Override
-    public void writePacket(PacketBuffer buffer) {
+    public void writePacket(FriendlyByteBuf buffer) {
         buffer.writeRegistryId(chestType);
     }
 
     @Override
-    public void readPacket(PacketBuffer buffer) {
+    public void readPacket(FriendlyByteBuf buffer) {
         chestType = buffer.readRegistryIdSafe(Item.class);
     }
 
@@ -91,7 +91,7 @@ public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvide
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
         matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
@@ -107,17 +107,18 @@ public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvide
         matrixStack.scale(0.82f, 0.82f, 0.82f);
 
         BlockState state = chestType instanceof BlockItem ? ((BlockItem) chestType).getBlock().defaultBlockState() : Blocks.CHEST.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        //TODO: maybe I should use a different method to render block?
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         matrixStack.popPose();
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent(SimplePlanesMod.MODID + ":chest");
+    public Component getDisplayName() {
+        return new TranslatableComponent(SimplePlanesMod.MODID + ":chest");
     }
 
     @Override
-    public Container createMenu(int id, PlayerInventory playerInventoryIn, PlayerEntity playerEntity) {
+    public AbstractContainerMenu createMenu(int id, Inventory playerInventoryIn, Player playerEntity) {
         return new StorageContainer(id, playerInventoryIn, itemStackHandler, chestType.getRegistryName().toString());
     }
 
@@ -130,7 +131,7 @@ public class ChestUpgrade extends LargeUpgrade implements INamedContainerProvide
     }
 
     @Override
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    public void onApply(ItemStack itemStack, Player playerEntity) {
         chestType = itemStack.getItem();
         itemStackHandler.setSize(IronChestsCompat.getSize(chestType.getRegistryName().toString()));
     }

@@ -1,17 +1,17 @@
 package xyz.przemyk.simpleplanes.container;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.network.FriendlyByteBuf;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 
-public class RemoveUpgradesContainer extends Container {
+public class RemoveUpgradesContainer extends AbstractContainerMenu {
 
     public final int planeID;
 
     @SuppressWarnings("unused")
-    public RemoveUpgradesContainer(int id, PlayerInventory playerInventory, PacketBuffer buffer) {
+    public RemoveUpgradesContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
         this(id, buffer.readVarInt());
     }
 
@@ -21,7 +21,7 @@ public class RemoveUpgradesContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         return true;
     }
 }

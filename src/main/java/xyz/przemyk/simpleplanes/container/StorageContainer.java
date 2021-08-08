@@ -1,12 +1,12 @@
 package xyz.przemyk.simpleplanes.container;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
@@ -14,21 +14,21 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
-public class StorageContainer extends Container {
+public class StorageContainer extends AbstractContainerMenu {
 
     public final int rowCount;
     public final int size;
     public final String chestType;
 
-    public StorageContainer(int id, PlayerInventory playerInventory, PacketBuffer buffer) {
+    public StorageContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
         this(id, playerInventory, buffer.readUtf(32767));
     }
 
-    private StorageContainer(int id, PlayerInventory playerInventory, String chestType) {
+    private StorageContainer(int id, Inventory playerInventory, String chestType) {
         this(id, playerInventory, new ItemStackHandler(IronChestsCompat.getSize(chestType)), chestType);
     }
 
-    public StorageContainer(int id, PlayerInventory playerInventory, IItemHandler itemHandler, String chestType) {
+    public StorageContainer(int id, Inventory playerInventory, IItemHandler itemHandler, String chestType) {
         super(SimplePlanesContainers.STORAGE.get(), id);
         rowCount = IronChestsCompat.getRowCount(chestType);
         IronChestsCompat.addSlots(chestType, itemHandler, rowCount, playerInventory, this::addSlot);
@@ -37,7 +37,7 @@ public class StorageContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         Entity entity = playerIn.getVehicle();
         if (entity instanceof PlaneEntity && entity.isAlive()) {
             return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
@@ -47,7 +47,7 @@ public class StorageContainer extends Container {
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {

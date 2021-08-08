@@ -1,20 +1,25 @@
 package xyz.przemyk.simpleplanes.recipes;
 
 import com.google.gson.JsonObject;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRecipes;
 
 import javax.annotation.Nullable;
 
-public class PlaneWorkbenchRecipe implements IRecipe<IInventory> {
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+
+public class PlaneWorkbenchRecipe implements Recipe<Container> {
 
     public static final Serializer SERIALIZER = new Serializer();
 
@@ -47,16 +52,16 @@ public class PlaneWorkbenchRecipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return SERIALIZER;
     }
 
     @Override
-    public IRecipeType<?> getType() {
+    public RecipeType<?> getType() {
         return SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<PlaneWorkbenchRecipe> {
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<PlaneWorkbenchRecipe> {
 
         public Serializer() {
             setRegistryName(SimplePlanesMod.MODID, "plane_workbench");
@@ -64,16 +69,16 @@ public class PlaneWorkbenchRecipe implements IRecipe<IInventory> {
 
         @Override
         public PlaneWorkbenchRecipe fromJson(ResourceLocation id, JsonObject json) {
-            Ingredient ingredient = Ingredient.fromJson(JSONUtils.getAsJsonObject(json, "ingredient"));
-            int ingredientAmount = JSONUtils.getAsInt(json, "ingredient_amount");
-            int materialAmount = JSONUtils.getAsInt(json, "material_amount");
-            ItemStack result = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(json, "result"));
+            Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "ingredient"));
+            int ingredientAmount = GsonHelper.getAsInt(json, "ingredient_amount");
+            int materialAmount = GsonHelper.getAsInt(json, "material_amount");
+            ItemStack result = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "result")).getDefaultInstance();
             return new PlaneWorkbenchRecipe(id, ingredient, ingredientAmount, materialAmount, result);
         }
 
         @Nullable
         @Override
-        public PlaneWorkbenchRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) {
+        public PlaneWorkbenchRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
             Ingredient ingredient = Ingredient.fromNetwork(buffer);
             int ingredientAmount = buffer.readVarInt();
             int materialAmount = buffer.readVarInt();
@@ -82,7 +87,7 @@ public class PlaneWorkbenchRecipe implements IRecipe<IInventory> {
         }
 
         @Override
-        public void toNetwork(PacketBuffer buffer, PlaneWorkbenchRecipe recipe) {
+        public void toNetwork(FriendlyByteBuf buffer, PlaneWorkbenchRecipe recipe) {
             recipe.ingredient.toNetwork(buffer);
             buffer.writeVarInt(recipe.ingredientAmount);
             buffer.writeVarInt(recipe.materialAmount);
@@ -90,7 +95,7 @@ public class PlaneWorkbenchRecipe implements IRecipe<IInventory> {
         }
     }
 
-    @Override public boolean matches(IInventory p_77569_1_, World p_77569_2_) { return false; }
-    @Override public ItemStack assemble(IInventory p_77572_1_) { return null; }
+    @Override public boolean matches(Container p_77569_1_, Level p_77569_2_) { return false; }
+    @Override public ItemStack assemble(Container p_77572_1_) { return null; }
     @Override public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) { return false; }
 }

@@ -1,10 +1,10 @@
 package xyz.przemyk.simpleplanes.network;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Supplier;
@@ -19,12 +19,12 @@ public class SUpgradeRemovedPacket {
         this.planeEntityID = planeEntityID;
     }
 
-    public SUpgradeRemovedPacket(PacketBuffer buffer) {
+    public SUpgradeRemovedPacket(FriendlyByteBuf buffer) {
         upgradeID = buffer.readResourceLocation();
         planeEntityID = buffer.readVarInt();
     }
 
-    public void toBytes(PacketBuffer buffer) {
+    public void toBytes(FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(upgradeID);
         buffer.writeVarInt(planeEntityID);
     }
@@ -32,7 +32,7 @@ public class SUpgradeRemovedPacket {
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ClientWorld clientWorld = Minecraft.getInstance().level;
+            ClientLevel clientWorld = Minecraft.getInstance().level;
             ((PlaneEntity) clientWorld.getEntity(planeEntityID)).removeUpgrade(upgradeID);
         });
         ctx.setPacketHandled(true);

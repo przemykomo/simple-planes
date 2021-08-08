@@ -1,10 +1,10 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -15,18 +15,17 @@ import java.util.function.Supplier;
 public class OpenInventoryPacket {
 
     public OpenInventoryPacket() {}
-    public OpenInventoryPacket(PacketBuffer buffer) {}
-    public void toBytes(PacketBuffer buffer) {}
+    public OpenInventoryPacket(FriendlyByteBuf buffer) {}
+    public void toBytes(FriendlyByteBuf buffer) {}
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.getSender();
-            if (player != null && player.getVehicle() instanceof PlaneEntity) {
-                final PlaneEntity plane = (PlaneEntity) player.getVehicle();
+            ServerPlayer player = ctx.getSender();
+            if (player != null && player.getVehicle() instanceof PlaneEntity plane) {
                 Upgrade chest = plane.upgrades.get(SimplePlanesUpgrades.CHEST.getId());
                 if (chest instanceof ChestUpgrade) {
-                    NetworkHooks.openGui(player, (INamedContainerProvider) chest, buffer -> buffer.writeUtf(((ChestUpgrade) chest).chestType.getRegistryName().toString()));
+                    NetworkHooks.openGui(player, (MenuProvider) chest, buffer -> buffer.writeUtf(((ChestUpgrade) chest).chestType.getRegistryName().toString()));
                 }
             }
         });

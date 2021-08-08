@@ -1,23 +1,23 @@
 package xyz.przemyk.simpleplanes.client.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.block.Block;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.settings.PointOfView;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.CameraType;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import com.mojang.math.Quaternion;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import xyz.przemyk.simpleplanes.MathUtil;
@@ -36,7 +36,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected final EntityModel<T> planeEntityModel;
     public static final ResourceLocation PROPELLER_TEXTURE = new ResourceLocation("textures/block/iron_block.png");
 
-    public PlaneRenderer(EntityRendererManager renderManager, EntityModel<T> planeEntityModel, EntityModel<PlaneEntity> propellerModel, float shadowSize) {
+    public PlaneRenderer(EntityRenderDispatcher renderManager, EntityModel<T> planeEntityModel, EntityModel<PlaneEntity> propellerModel, float shadowSize) {
         super(renderManager);
         this.propellerModel = propellerModel;
         this.planeEntityModel = planeEntityModel;
@@ -48,13 +48,13 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     @Override
-    public Vector3d getRenderOffset(T entityIn, float partialTicks) {
+    public Vec3 getRenderOffset(T entityIn, float partialTicks) {
         if (Minecraft.getInstance().player != null) {
-            ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
+            LocalPlayer playerEntity = Minecraft.getInstance().player;
             if (playerEntity == entityIn.getControllingPassenger()) {
-                if ((Minecraft.getInstance()).options.cameraType == PointOfView.FIRST_PERSON) {
+                if ((Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON) {
 
-                    return new Vector3d(0, 0, 0);
+                    return new Vec3(0, 0, 0);
                 }
             }
         }
@@ -63,7 +63,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     @Override
-    public void render(T planeEntity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+    public void render(T planeEntity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
         matrixStackIn.pushPose();
         matrixStackIn.translate(0.0D, 0.375D, 0.0D);
         matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
@@ -72,7 +72,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         double firstPersonYOffset = -0.7D;
         boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.hasPassenger(Minecraft.getInstance().player)
-            && (Minecraft.getInstance()).options.cameraType == PointOfView.FIRST_PERSON;
+            && (Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON;
         if (isPlayerRidingInFirstPersonView) {
             matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
         }
@@ -80,7 +80,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         matrixStackIn.mulPose(q);
 
         float rockingAngle = planeEntity.getRockingAngle(partialTicks);
-        if (!MathHelper.equal(rockingAngle, 0.0F)) {
+        if (!Mth.equal(rockingAngle, 0.0F)) {
             matrixStackIn.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
         }
         float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
@@ -90,9 +90,9 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         }
 
         if (f > 0.0F) {
-            float angle = MathHelper.clamp(f * f1 / 200.0F, -30, 30);
+            float angle = Mth.clamp(f * f1 / 200.0F, -30, 30);
             f = planeEntity.tickCount + partialTicks;
-            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(MathHelper.sin(f) * angle));
+            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
         }
 
         matrixStackIn.translate(0, -0.6, 0);
@@ -101,7 +101,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             matrixStackIn.translate(0.0D, -firstPersonYOffset, 0.0D);
         }
 
-        IVertexBuilder ivertexbuilder = bufferIn.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
+        VertexConsumer ivertexbuilder = bufferIn.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         planeEntityModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {

@@ -1,17 +1,17 @@
 package xyz.przemyk.simpleplanes.upgrades;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INBTSerializable<CompoundNBT> {
+public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INBTSerializable<CompoundTag> {
 
     private final UpgradeType type;
     protected final PlaneEntity planeEntity;
@@ -67,27 +67,27 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
      * @param buffer Render type buffer
      * @param packedLight packed light
      */
-    public abstract void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks);
+    public abstract void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks);
 
     @Override
-    public CompoundNBT serializeNBT() {
-        return new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        return new CompoundTag();
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {}
+    public void deserializeNBT(CompoundTag nbt) {}
 
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {}
+    public void onApply(ItemStack itemStack, Player playerEntity) {}
 
     /**
      * Called on the server.
      */
-    public abstract void writePacket(PacketBuffer buffer);
+    public abstract void writePacket(FriendlyByteBuf buffer);
 
     /**
      * Called on the client.
      */
-    public abstract void readPacket(PacketBuffer buffer);
+    public abstract void readPacket(FriendlyByteBuf buffer);
 
     /**
      * Called when upgrade is removed using wrench.

@@ -1,15 +1,15 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.EntitySelector;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.level.Level;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -24,7 +24,7 @@ public class LargePlaneEntity extends PlaneEntity {
 
     public boolean hasBlockUpgrade = false;
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
     }
 
@@ -32,18 +32,18 @@ public class LargePlaneEntity extends PlaneEntity {
     public void tick() {
         super.tick();
 
-        List<Entity> list = level.getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntityPredicates.pushableBy(this));
+        List<Entity> list = level.getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
         for (Entity entity : list) {
-            if (!level.isClientSide && !(getControllingPassenger() instanceof PlayerEntity) &&
+            if (!level.isClientSide && !(getControllingPassenger() instanceof Player) &&
                 !entity.hasPassenger(this) &&
-                !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+                !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof Player)) {
                 entity.startRiding(this);
             }
         }
     }
 
     @Override
-    public boolean tryToAddUpgrade(PlayerEntity playerEntity, ItemStack itemStack) {
+    public boolean tryToAddUpgrade(Player playerEntity, ItemStack itemStack) {
         if (super.tryToAddUpgrade(playerEntity, itemStack)) {
             return true;
         }
@@ -62,7 +62,7 @@ public class LargePlaneEntity extends PlaneEntity {
         return false;
     }
 
-    public boolean tryToAddTNT(PlayerEntity playerEntity, ItemStack itemStack) {
+    public boolean tryToAddTNT(Player playerEntity, ItemStack itemStack) {
         if (!hasBlockUpgrade && canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
             addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
             return true;
@@ -110,8 +110,8 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     public double getEntityYOffset(Entity passenger) {
-        if (passenger instanceof VillagerEntity) {
-            return ((VillagerEntity) passenger).isBaby() ? -0.1 : -0.3D;
+        if (passenger instanceof Villager) {
+            return ((Villager) passenger).isBaby() ? -0.1 : -0.3D;
         }
         return passenger.getMyRidingOffset();
     }

@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.container;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -15,6 +15,6 @@ public class FuelSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@Nonnull ItemStack stack) {
-        return ForgeHooks.getBurnTime(stack) > 0;
+        return ForgeHooks.getBurnTime(stack, null) > 0;
     }
 }

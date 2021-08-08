@@ -1,25 +1,29 @@
 package xyz.przemyk.simpleplanes.items;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
@@ -32,7 +36,7 @@ import java.util.function.Supplier;
 
 public class PlaneItem extends Item {
 
-    private static final Predicate<Entity> ENTITY_PREDICATE = EntityPredicates.NO_SPECTATORS.and(Entity::isPickable);
+    private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
     private final Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType;
 
     public PlaneItem(Properties properties, Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType) {
@@ -41,26 +45,26 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        CompoundNBT entityTag = stack.getTagElement("EntityTag");
+        CompoundTag entityTag = stack.getTagElement("EntityTag");
 
         if (entityTag != null) {
             if (entityTag.contains("material")) {
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
                 if (block != null) {
-                    tooltip.add(new TranslationTextComponent(SimplePlanesMod.MODID + ".material").append(block.getName()));
+                    tooltip.add(new TranslatableComponent(SimplePlanesMod.MODID + ".material").append(block.getName()));
                 }
             }
             if (entityTag.contains("upgrades")) {
-                CompoundNBT upgradesNBT = entityTag.getCompound("upgrades");
+                CompoundTag upgradesNBT = entityTag.getCompound("upgrades");
                 for (String key : upgradesNBT.getAllKeys()) {
-                    CompoundNBT upgradeNbt = upgradesNBT.getCompound(key);
+                    CompoundTag upgradeNbt = upgradesNBT.getCompound(key);
                     ResourceLocation resourceLocation = new ResourceLocation(key);
                     if (upgradeNbt.contains("desc")) {
-                        tooltip.add(new StringTextComponent(upgradeNbt.getString("desc")));
+                        tooltip.add(new TextComponent(upgradeNbt.getString("desc")));
                     } else {
-                        tooltip.add(new TranslationTextComponent("name." + resourceLocation.toString().replace(":", ".")));
+                        tooltip.add(new TranslatableComponent("name." + resourceLocation.toString().replace(":", ".")));
                     }
                 }
             }
@@ -68,60 +72,60 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
-        RayTraceResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn, RayTraceContext.FluidMode.ANY);
-        if (raytraceresult.getType() == RayTraceResult.Type.MISS) {
-            return ActionResult.pass(itemstack);
+        HitResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn, ClipContext.Fluid.ANY);
+        if (raytraceresult.getType() == HitResult.Type.MISS) {
+            return InteractionResultHolder.pass(itemstack);
         } else {
-            Vector3d vec3d = playerIn.getViewVector(1.0F);
+            Vec3 vec3d = playerIn.getViewVector(1.0F);
             List<Entity> list = worldIn.getEntities(playerIn, playerIn.getBoundingBox().expandTowards(vec3d.scale(5.0D)).inflate(1.0D), ENTITY_PREDICATE);
             if (!list.isEmpty()) {
-                Vector3d vec3d1 = playerIn.getEyePosition(1.0F);
+                Vec3 vec3d1 = playerIn.getEyePosition(1.0F);
 
                 for (Entity entity : list) {
-                    AxisAlignedBB axisalignedbb = entity.getBoundingBox().inflate(entity.getPickRadius());
+                    AABB axisalignedbb = entity.getBoundingBox().inflate(entity.getPickRadius());
                     if (axisalignedbb.contains(vec3d1)) {
-                        return ActionResult.pass(itemstack);
+                        return InteractionResultHolder.pass(itemstack);
                     }
                 }
             }
 
-            if (raytraceresult.getType() == RayTraceResult.Type.BLOCK) {
+            if (raytraceresult.getType() == HitResult.Type.BLOCK) {
                 PlaneEntity planeEntity = planeEntityType.get().create(worldIn);
 
                 planeEntity.setPos(raytraceresult.getLocation().x(), raytraceresult.getLocation().y(), raytraceresult.getLocation().z());
-                planeEntity.yRot = playerIn.yRot;
-                planeEntity.yRotO = playerIn.yRotO;
+                planeEntity.setXRot(playerIn.getXRot());
+                planeEntity.xRotO = playerIn.xRotO;
                 planeEntity.setCustomName(itemstack.getHoverName());
-                CompoundNBT entityTag = itemstack.getTagElement("EntityTag");
+                CompoundTag entityTag = itemstack.getTagElement("EntityTag");
                 if (entityTag != null) {
                     planeEntity.readAdditionalSaveData(entityTag);
                 }
                 if (!worldIn.noCollision(planeEntity, planeEntity.getBoundingBox().inflate(-0.1D))) {
-                    return ActionResult.fail(itemstack);
+                    return InteractionResultHolder.fail(itemstack);
                 } else {
                     if (!worldIn.isClientSide) {
                         worldIn.addFreshEntity(planeEntity);
-                        if (!playerIn.abilities.instabuild) {
+                        if (!playerIn.getAbilities().instabuild) {
                             itemstack.shrink(1);
                         }
                     }
                     playerIn.awardStat(Stats.ITEM_USED.get(this));
-                    return ActionResult.success(itemstack);
+                    return InteractionResultHolder.success(itemstack);
                 }
             } else {
-                return ActionResult.pass(itemstack);
+                return InteractionResultHolder.pass(itemstack);
             }
         }
     }
 
     @Override
-    public void fillItemCategory(ItemGroup itemGroup, NonNullList<ItemStack> itemStacks) {
+    public void fillItemCategory(CreativeModeTab itemGroup, NonNullList<ItemStack> itemStacks) {
         if (allowdedIn(itemGroup)) {
             BlockTags.getAllTags().getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS).getValues().forEach(block -> {
                 ItemStack itemStack = new ItemStack(this);
-                CompoundNBT itemTag = new CompoundNBT();
+                CompoundTag itemTag = new CompoundTag();
                 itemTag.putString("material", block.getRegistryName().toString());
                 itemStack.addTagElement("EntityTag", itemTag);
                 itemStacks.add(itemStack);

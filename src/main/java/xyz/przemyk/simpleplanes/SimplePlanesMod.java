@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes;
 
-import net.minecraft.item.Items;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;

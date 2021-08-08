@@ -1,27 +1,27 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.inventory.ContainerData;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -37,7 +37,7 @@ import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContainerProvider {
+public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler();
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
@@ -55,7 +55,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
             updateClient();
         } else {
             ItemStack itemStack = itemStackHandler.getStackInSlot(0);
-            int itemBurnTime = ForgeHooks.getBurnTime(itemStack);
+            int itemBurnTime = ForgeHooks.getBurnTime(itemStack, null);
             if (itemBurnTime > 0) {
                 burnTimeTotal = itemBurnTime;
                 burnTime = itemBurnTime;
@@ -75,7 +75,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
         matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
@@ -94,14 +94,14 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     }
 
     @Override
-    protected void invalidateCaps() {
+    public void invalidateCaps() {
         super.invalidateCaps();
         itemHandlerLazyOptional.invalidate();
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compound = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag compound = new CompoundTag();
         compound.put("item", itemStackHandler.serializeNBT());
         compound.putInt("burnTime", burnTime);
         compound.putInt("burnTimeTotal", burnTimeTotal);
@@ -109,21 +109,21 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound) {
+    public void deserializeNBT(CompoundTag compound) {
         itemStackHandler.deserializeNBT(compound.getCompound("item"));
         burnTime = compound.getInt("burnTime");
         burnTimeTotal = compound.getInt("burnTimeTotal");
     }
 
     @Override
-    public void writePacket(PacketBuffer buffer) {
+    public void writePacket(FriendlyByteBuf buffer) {
         buffer.writeItem(itemStackHandler.getStackInSlot(0));
         buffer.writeVarInt(burnTime);
         buffer.writeVarInt(burnTimeTotal);
     }
 
     @Override
-    public void readPacket(PacketBuffer buffer) {
+    public void readPacket(FriendlyByteBuf buffer) {
         itemStackHandler.setStackInSlot(0, buffer.readItem());
         burnTime = buffer.readVarInt();
         burnTimeTotal = buffer.readVarInt();
@@ -135,18 +135,18 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     }
 
     @Override
-    public void openGui(ServerPlayerEntity playerEntity) {
+    public void openGui(ServerPlayer playerEntity) {
         NetworkHooks.openGui(playerEntity, this);
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent(SimplePlanesMod.MODID + ".furnace_engine_container");
+    public Component getDisplayName() {
+        return new TranslatableComponent(SimplePlanesMod.MODID + ".furnace_engine_container");
     }
 
     @Override
-    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new FurnaceEngineContainer(id, playerInventory, itemStackHandler, new IIntArray() {
+    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
+        return new FurnaceEngineContainer(id, playerInventory, itemStackHandler, new ContainerData() {
             @Override
             public int get(int index) {
                 if (index == 0) {
@@ -181,10 +181,10 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
     }
 
     @Override
-    public void renderPowerHUD(MatrixStack matrixStack, HandSide side, int scaledWidth, int scaledHeight, float partialTicks) {
+    public void renderPowerHUD(PoseStack matrixStack, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
         Minecraft mc = Minecraft.getInstance();
-        if (side == HandSide.LEFT) {
+        if (side == HumanoidArm.LEFT) {
             ClientEventHandler.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
         } else {
             ClientEventHandler.blit(matrixStack, -90, i + 91, scaledHeight - 40, 0, 44, 22, 40);
@@ -193,7 +193,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
         if (burnTime > 0) {
             int burnTimeTotal2 = burnTimeTotal == 0 ? 200 : burnTimeTotal;
             int burnLeftScaled = burnTime * 13 / burnTimeTotal2;
-            if (side == HandSide.LEFT) {
+            if (side == HumanoidArm.LEFT) {
                 // render on left side
                 ClientEventHandler.blit(matrixStack, -90, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
             } else {
@@ -205,7 +205,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements INamedContain
         ItemStack fuelStack = itemStackHandler.getStackInSlot(0);
         if (!fuelStack.isEmpty()) {
             int i2 = scaledHeight - 16 - 3;
-            if (side == HandSide.LEFT) {
+            if (side == HumanoidArm.LEFT) {
                 ClientEventHandler.renderHotbarItem(matrixStack, i - 91 - 26, i2, partialTicks, fuelStack, mc);
             } else {
                 ClientEventHandler.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, fuelStack, mc);

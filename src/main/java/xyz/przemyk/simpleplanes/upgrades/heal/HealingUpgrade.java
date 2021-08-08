@@ -1,11 +1,11 @@
 package xyz.przemyk.simpleplanes.upgrades.heal;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -20,14 +20,14 @@ public class HealingUpgrade extends Upgrade {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compoundNBT = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putInt("cooldown", cooldown);
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compoundNBT) {
+    public void deserializeNBT(CompoundTag compoundNBT) {
         cooldown = compoundNBT.getInt("cooldown");
     }
 
@@ -41,10 +41,10 @@ public class HealingUpgrade extends Upgrade {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, float partialTicks) {}
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {}
 
     @Override
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
+    public void onApply(ItemStack itemStack, Player playerEntity) {
         int health = planeEntity.getHealth();
         int m = planeEntity.getMaxHealth() * 2;
         if (health < m) {
@@ -55,10 +55,10 @@ public class HealingUpgrade extends Upgrade {
     }
 
     @Override
-    public void writePacket(PacketBuffer buffer) {}
+    public void writePacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(PacketBuffer buffer) {}
+    public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
     public void dropItems() {}

@@ -2,17 +2,17 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
+//        maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+//        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'org.spongepowered.mixin'
+//apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
@@ -20,13 +20,13 @@ version = "${minecraft_version}-${simpleplanes_version}"
 group = 'xyz.przemyk.simpleplanes'
 archivesBaseName = 'simpleplanes'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
-mixin {
-    add sourceSets.main, "simpleplanes.refmap.json"
-}
+//mixin {
+//    add sourceSets.main, "simpleplanes.refmap.json"
+//}
 
 minecraft {
     mappings channel: 'official', version: minecraft_version
@@ -97,18 +97,18 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+//    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
-    compileOnly fg.deobf("mezz.jei:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:${jei_version}")
+//    compileOnly fg.deobf("mezz.jei:${jei_version}:api")
+//    runtimeOnly fg.deobf("mezz.jei:${jei_version}")
 
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
+//    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+//    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
-    compile fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
+//    compile fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+//    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
 }
 
 jar {
@@ -120,8 +120,8 @@ jar {
             "Implementation-Title": project.name,
             "Implementation-Version": project.version,
             "Implementation-Vendor": "Przemyk",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "MixinConfigs": "simpleplanes.mixins.json"
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")/*,
+            "MixinConfigs": "simpleplanes.mixins.json" */
         ])
     }
 }

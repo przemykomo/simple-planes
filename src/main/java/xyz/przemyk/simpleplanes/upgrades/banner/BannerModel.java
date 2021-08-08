@@ -2,21 +2,23 @@ package xyz.przemyk.simpleplanes.upgrades.banner;
 // Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.tileentity.BannerTileEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.blockentity.BannerRenderer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BannerItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.util.Mth;
+import com.mojang.math.Vector3f;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -24,10 +26,10 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import java.util.List;
 
 public class BannerModel {
-    private static final BannerTileEntity BANNER_TE = new BannerTileEntity();
+    private static final BannerBlockEntity BANNER_TE = new BannerBlockEntity(BlockPos.ZERO, Blocks.BLACK_BANNER.defaultBlockState());
 
-    public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, ItemStack banner,
-                                    int packedLight, ModelRenderer modelRenderer) {
+    public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, ItemStack banner,
+                                    int packedLight, ModelPart modelRenderer) {
         PlaneEntity planeEntity = bannerUpgrade.getPlaneEntity();
         if (!banner.isEmpty()) {
             matrixStackIn.pushPose();
@@ -49,12 +51,12 @@ public class BannerModel {
             final BannerItem item = (BannerItem) banner.getItem();
             BANNER_TE.fromItem(banner, item.getColor());
             final float f2 = partialTicks + planeEntity.tickCount;
-            float r = (0.05F * MathHelper.cos(f2 / 5)) * (float) 180;
-            r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.yRot);
+            float r = (0.05F * Mth.cos(f2 / 5)) * (float) 180;
+            r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.getYRot());
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
             matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(r));
             List<Pair<BannerPattern, DyeColor>> list = BANNER_TE.getPatterns();
-            BannerTileEntityRenderer.renderPatterns(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, modelRenderer, ModelBakery.BANNER_BASE, true, list);
+            BannerRenderer.renderPatterns(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, modelRenderer, ModelBakery.BANNER_BASE, true, list);
 
             matrixStackIn.popPose();
         }

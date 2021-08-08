@@ -1,22 +1,22 @@
 package xyz.przemyk.simpleplanes.entities;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.item.Item;
+import com.mojang.math.Quaternion;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 public class HelicopterEntity extends LargePlaneEntity {
 
-    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, World worldIn) {
+    public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
     }
 
@@ -50,17 +50,17 @@ public class HelicopterEntity extends LargePlaneEntity {
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
         if (level.isClientSide() && Minecraft.getInstance().player == passenger) {
-            (Minecraft.getInstance()).gui.setOverlayMessage(new StringTextComponent("sprint to take off"), false);
+            (Minecraft.getInstance()).gui.setOverlayMessage(new TextComponent("sprint to take off"), false);
         }
     }
 
     protected void tickPitch(TempMotionVars tempMotionVars) {
         if (tempMotionVars.moveForward > 0.0F) {
-            xRot = Math.max(xRot - 1, -20);
+            setXRot(Math.max(getXRot() - 1, -20));
         } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerSprinting) {
-            xRot = Math.min(xRot + 1, 10);
+            setXRot(Math.min(getXRot() + 1, 10));
         } else {
-            xRot = MathUtil.lerpAngle(0.2f, xRot, 0);
+            setXRot(MathUtil.lerpAngle(0.2f, getXRot(), 0));
             double drag = 0.999;
             setDeltaMovement(getDeltaMovement().multiply(drag, 1, drag));
 
@@ -90,7 +90,7 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vector3d motion) {
+    protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vec3 motion) {
         return q;
     }
 
@@ -98,9 +98,9 @@ public class HelicopterEntity extends LargePlaneEntity {
     protected void tickRotation(TempMotionVars tempMotionVars) {
         int yawDiff = 2;
         if (!tempMotionVars.passengerSprinting) {
-            double turn = tempMotionVars.moveStrafing > 0 ? yawDiff : tempMotionVars.moveStrafing == 0 ? 0 : -yawDiff;
+            float turn = tempMotionVars.moveStrafing > 0 ? yawDiff : tempMotionVars.moveStrafing == 0 ? 0 : -yawDiff;
             rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
-            yRot -= turn;
+            setYRot(getYRot() - turn);
         } else {
             int rollDiff = 15;
             float turn = tempMotionVars.moveStrafing > 0 ? rollDiff : tempMotionVars.moveStrafing == 0 ? 0 : -rollDiff;
@@ -115,8 +115,8 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     public double getEntityYOffset(Entity passenger) {
-        if (passenger instanceof VillagerEntity) {
-            return ((VillagerEntity) passenger).isBaby() ? -0.1 : -0.35D;
+        if (passenger instanceof Villager) {
+            return ((Villager) passenger).isBaby() ? -0.1 : -0.35D;
         }
         return passenger.getMyRidingOffset();
     }
