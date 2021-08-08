@@ -1,9 +1,8 @@
-package xyz.przemyk.simpleplanes.compat;
+package xyz.przemyk.simpleplanes.compat.ironchest;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
