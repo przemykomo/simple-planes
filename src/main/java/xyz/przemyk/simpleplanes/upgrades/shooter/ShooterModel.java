@@ -1,6 +1,4 @@
 package xyz.przemyk.simpleplanes.upgrades.shooter;
-// Made with Blockbench 3.5.2
-// Exported for Minecraft version 1.15
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,7 +11,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class ShooterModel extends EntityModel<PlaneEntity> {
 
     private final ModelPart shooter;
@@ -27,21 +24,10 @@ public class ShooterModel extends EntityModel<PlaneEntity> {
 
     public ShooterModel(ModelPart part) {
         shooter = part.getChild("shooter");
-//        texWidth = 256;
-//        texWidth = 64;
-//        texHeight = 64;
-//
-//        shooter = new ModelPart(this);
-//        shooter.setPos(0.0F, 17.0F, 0.0F);
-//        setRotationAngle(shooter, 0.0F, 0.0F, 0.0F);
-//
-//        shooter.texOffs(0, 0).addBox(0.0F, 0.0F, -12.0F, 16.0F, 16.0F, 16.0F, 0.0F, false);
     }
 
     @Override
-    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        //previously the render function, render code was moved to a method below
-    }
+    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
 
     @Override
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {

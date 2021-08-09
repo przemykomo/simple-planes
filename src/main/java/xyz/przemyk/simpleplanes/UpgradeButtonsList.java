@@ -30,9 +30,7 @@ public class UpgradeButtonsList extends AbstractSelectionList<UpgradeButtonsList
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput p_169152_) {
-
-    }
+    public void updateNarration(NarrationElementOutput p_169152_) {}
 
     public static class ButtonEntry extends AbstractSelectionList.Entry<ButtonEntry> {
 

@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.items;
 
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -95,8 +97,8 @@ public class PlaneItem extends Item {
                 PlaneEntity planeEntity = planeEntityType.get().create(worldIn);
 
                 planeEntity.setPos(raytraceresult.getLocation().x(), raytraceresult.getLocation().y(), raytraceresult.getLocation().z());
-                planeEntity.setXRot(playerIn.getXRot());
-                planeEntity.xRotO = playerIn.xRotO;
+                planeEntity.setYRot(playerIn.getYRot()); //TODO: make it have correct rotation instantly after placing it
+                planeEntity.yRotO = playerIn.yRotO;
                 planeEntity.setCustomName(itemstack.getHoverName());
                 CompoundTag entityTag = itemstack.getTagElement("EntityTag");
                 if (entityTag != null) {
