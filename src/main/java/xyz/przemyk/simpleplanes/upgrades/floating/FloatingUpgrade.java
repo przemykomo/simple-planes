@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -43,11 +44,11 @@ public class FloatingUpgrade extends Upgrade {
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
         EntityType<?> entityType = planeEntity.getType();
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            HelicopterFloatingModel.INSTANCE.renderToBuffer(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.renderType(HELICOPTER_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            UpgradesModels.HELICOPTER_FLOATING.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.HELICOPTER_FLOATING.renderType(HELICOPTER_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            LargeFloatingModel.INSTANCE.renderToBuffer(matrixStack, buffer.getBuffer(LargeFloatingModel.INSTANCE.renderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            UpgradesModels.LARGE_FLOATING.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.LARGE_FLOATING.renderType(LARGE_TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         } else {
-            FloatingModel.INSTANCE.renderToBuffer(matrixStack, buffer.getBuffer(FloatingModel.INSTANCE.renderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            UpgradesModels.FLOATING.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.FLOATING.renderType(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 

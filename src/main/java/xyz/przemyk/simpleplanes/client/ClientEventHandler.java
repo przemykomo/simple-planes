@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -28,16 +29,16 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.*;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
+import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -49,6 +50,11 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
+import xyz.przemyk.simpleplanes.upgrades.floating.FloatingModel;
+import xyz.przemyk.simpleplanes.upgrades.floating.HelicopterFloatingModel;
+import xyz.przemyk.simpleplanes.upgrades.floating.LargeFloatingModel;
+import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterModel;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
@@ -64,10 +70,6 @@ public class ClientEventHandler {
     }
 
     public static void clientSetup() {
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.PLANE.get(), manager -> new PlaneRenderer<>(manager, new PlaneModel(), new PropellerModel(), 0.6F));
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.LARGE_PLANE.get(), manager -> new PlaneRenderer<>(manager, new LargePlaneModel(), new PropellerModel(), 1.0F));
-        RenderingRegistry.registerEntityRenderingHandler(SimplePlanesEntities.HELICOPTER.get(), manager -> new PlaneRenderer<>(manager, new HelicopterModel(), new HelicopterPropellerModel(), 0.6F));
-
         boostKey = new KeyMapping("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         openEngineInventoryKey = new KeyMapping("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(boostKey);
@@ -78,6 +80,20 @@ public class ClientEventHandler {
         MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
         MenuScreens.register(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
         MenuScreens.register(SimplePlanesContainers.ELECTRIC_ENGINE.get(), ElectricEngineScreen::new);
+    }
+
+    @SubscribeEvent
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
+        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f));
+        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 1.0f));
+        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f));
+
+        UpgradesModels.BOOSTER = new BoosterModel(entityModelSet.bakeLayer(PlanesModelLayers.BOOSTER));
+        UpgradesModels.SHOOTER = new ShooterModel(entityModelSet.bakeLayer(PlanesModelLayers.SHOOTER));
+        UpgradesModels.FLOATING = new FloatingModel(entityModelSet.bakeLayer(PlanesModelLayers.FLOATING));
+        UpgradesModels.LARGE_FLOATING = new LargeFloatingModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_FLOATING));
+        UpgradesModels.HELICOPTER_FLOATING = new HelicopterFloatingModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_FLOATING));
     }
 
     private static boolean playerRotationNeedToPop = false;
@@ -95,8 +111,7 @@ public class ClientEventHandler {
     public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
         LivingEntity livingEntity = event.getEntity();
         Entity entity = livingEntity.getRootVehicle();
-        if (entity instanceof PlaneEntity) {
-            PlaneEntity planeEntity = (PlaneEntity) entity;
+        if (entity instanceof PlaneEntity planeEntity) {
             PoseStack matrixStack = event.getMatrixStack();
             matrixStack.pushPose();
             playerRotationNeedToPop = true;
@@ -111,7 +126,7 @@ public class ClientEventHandler {
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialRenderTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
             quaternion.set(quaternion.i(), -quaternion.j(), -quaternion.k(), quaternion.r());
             matrixStack.mulPose(quaternion);
-            float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.yRotO, entity.yRot);
+            float rotationYaw = MathUtil.lerpAngle(event.getPartialRenderTick(), entity.yRotO, entity.getYRot());
 
             matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationYaw));
             matrixStack.translate(0, -0.7, 0);
@@ -119,7 +134,7 @@ public class ClientEventHandler {
                 matrixStack.translate(0.0D, -firstPersonYOffset, 0.0D);
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
-                livingEntity.yHeadRot = planeEntity.yRot * 2 - livingEntity.yHeadRot;
+                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - livingEntity.yHeadRot;
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
                 livingEntity.yHeadRotO = planeEntity.yRotO * 2 - livingEntity.yHeadRotO;
@@ -137,7 +152,7 @@ public class ClientEventHandler {
             PlaneEntity planeEntity = (PlaneEntity) entity;
 
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
-                event.getEntity().yHeadRot = planeEntity.yRot * 2 - event.getEntity().yHeadRot;
+                event.getEntity().yHeadRot = planeEntity.getYRot() * 2 - event.getEntity().yHeadRot;
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
                 event.getEntity().yHeadRotO = planeEntity.yRotO * 2 - event.getEntity().yHeadRotO;
@@ -151,30 +166,29 @@ public class ClientEventHandler {
     public static void onClientPlayerTick(PlayerTickEvent event) {
         final Player player = event.player;
         if ((event.phase == Phase.END) && (player instanceof LocalPlayer)) {
-            if (player.getVehicle() instanceof PlaneEntity) {
-                PlaneEntity planeEntity = (PlaneEntity) player.getVehicle();
+            if (player.getVehicle() instanceof PlaneEntity planeEntity) {
                 Minecraft mc = Minecraft.getInstance();
                 if (mc.options.cameraType == CameraType.FIRST_PERSON) {
-                    float yawDiff = planeEntity.yRot - planeEntity.yRotO;
-                    player.yRot += yawDiff;
-                    float relativePlayerYaw = Mth.wrapDegrees(player.yRot - planeEntity.yRot);
+                    float yawDiff = planeEntity.getYRot() - planeEntity.yRotO;
+                    player.setYRot(player.getYRot() + yawDiff);
+                    float relativePlayerYaw = Mth.wrapDegrees(player.getYRot() - planeEntity.getYRot());
                     float clampedRelativePlayerYaw = Mth.clamp(relativePlayerYaw, -105.0F, 105.0F);
 
                     float diff = (clampedRelativePlayerYaw - relativePlayerYaw);
                     player.yRotO += diff;
-                    player.yRot += diff;
-                    player.setYHeadRot(player.yRot);
+                    player.setYRot(player.getYRot() + diff);
+                    player.setYHeadRot(player.getYRot());
 
-                    relativePlayerYaw = Mth.wrapDegrees(player.xRot - 0);
+                    relativePlayerYaw = Mth.wrapDegrees(player.getXRot() - 0);
                     clampedRelativePlayerYaw = Mth.clamp(relativePlayerYaw, -50, 50);
                     float perc = (clampedRelativePlayerYaw - relativePlayerYaw) * 0.5f;
                     player.xRotO += perc;
-                    player.xRot += perc;
+                    player.setXRot(player.getXRot() + perc);
                 } else {
                     planeEntity.applyYawToEntity(player);
                 }
 
-                if (planeEntity.engineUpgrade != null && mc.screen == null && mc.overlay == null && openEngineInventoryKey.consumeClick() && planeEntity.engineUpgrade.canOpenGui()) {
+                if (planeEntity.engineUpgrade != null && mc.screen == null && mc.getOverlay() == null && openEngineInventoryKey.consumeClick() && planeEntity.engineUpgrade.canOpenGui()) {
                     PlaneNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
                 }
 
@@ -193,10 +207,7 @@ public class ClientEventHandler {
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
         Camera renderInfo = event.getInfo();
         Entity entity = renderInfo.getEntity();
-        if (entity instanceof LocalPlayer && entity.getVehicle() instanceof PlaneEntity) {
-            PlaneEntity planeEntity = (PlaneEntity) entity.getVehicle();
-            LocalPlayer playerEntity = (LocalPlayer) entity;
-
+        if (entity instanceof LocalPlayer playerEntity && entity.getVehicle() instanceof PlaneEntity planeEntity) {
             if (renderInfo.isDetached()) {
                 renderInfo.move(-renderInfo.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
             } else {
@@ -211,7 +222,7 @@ public class ClientEventHandler {
                 MathUtil.EulerAngles angles_prev = MathUtil.toEulerAngles(q_prev);
 
                 Quaternion q_client = planeEntity.getQ_Client();
-                diff = (float) Mth.clamp(MathUtil.wrapSubtractDegrees(planeEntity.yRot, playerEntity.yRot), -max, max);
+                diff = (float) Mth.clamp(MathUtil.wrapSubtractDegrees(planeEntity.getYRot(), playerEntity.getYRot()), -max, max);
                 q_client.mul(Vector3f.YP.rotationDegrees(diff));
                 q_client.mul(Vector3f.XP.rotationDegrees(pitch));
                 MathUtil.EulerAngles angles = MathUtil.toEulerAngles(q_client);
@@ -232,10 +243,9 @@ public class ClientEventHandler {
         int scaledHeight = mc.getWindow().getGuiScaledHeight();
         PoseStack matrixStack = event.getMatrixStack();
 
-        if (mc.player.getVehicle() instanceof PlaneEntity) {
-            PlaneEntity planeEntity = (PlaneEntity) mc.player.getVehicle();
+        if (mc.player.getVehicle() instanceof PlaneEntity planeEntity) {
             if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-                mc.getTextureManager().bind(HUD_TEXTURE);
+                mc.getTextureManager().bindForSetup(HUD_TEXTURE); //TODO: ???
                 int left_align = scaledWidth / 2 + 91;
 
                 int health = (int) Math.ceil(planeEntity.getHealth());
@@ -304,7 +314,7 @@ public class ClientEventHandler {
                 matrixStack.translate((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
             }
 
-            itemRenderer.renderAndDecorateItem(mc.player, stack, x, y);
+            itemRenderer.renderAndDecorateItem(stack, x, y);
             if (f > 0.0F) {
                 matrixStack.popPose();
             }
@@ -320,8 +330,7 @@ public class ClientEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void planeInventory(GuiOpenEvent event) {
         final LocalPlayer player = Minecraft.getInstance().player;
-        if (event.getGui() instanceof InventoryScreen && player.getVehicle() instanceof PlaneEntity) {
-            PlaneEntity plane = (PlaneEntity) player.getVehicle();
+        if (event.getGui() instanceof InventoryScreen && player.getVehicle() instanceof PlaneEntity plane) {
             if (plane.upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId())) {
                 event.setCanceled(true);
                 PlaneNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());

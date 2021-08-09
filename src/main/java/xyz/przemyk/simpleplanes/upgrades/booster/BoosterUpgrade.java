@@ -18,6 +18,7 @@ import com.mojang.math.Vector3f;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -102,8 +103,8 @@ public class BoosterUpgrade extends Upgrade {
         if (planeEntity instanceof HelicopterEntity) {
             pitch = 0;
         }
-        planeEntity.xRot += pitch;
-        Vec3 motion = MathUtil.rotationToVector(planeEntity.yRot, planeEntity.xRot, 0.05);
+        planeEntity.setXRot(planeEntity.getXRot() + pitch);
+        Vec3 motion = MathUtil.rotationToVector(planeEntity.getYRot(), planeEntity.getXRot(), 0.05);
 
         planeEntity.setDeltaMovement(m.add(motion));
         if (planeEntity.level.isClientSide) {
@@ -129,8 +130,8 @@ public class BoosterUpgrade extends Upgrade {
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        VertexConsumer ivertexbuilder = buffer.getBuffer(BoosterModel.INSTANCE.renderType(TEXTURE));
-        BoosterModel.INSTANCE.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        VertexConsumer ivertexbuilder = buffer.getBuffer(UpgradesModels.BOOSTER.renderType(TEXTURE));
+        UpgradesModels.BOOSTER.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override

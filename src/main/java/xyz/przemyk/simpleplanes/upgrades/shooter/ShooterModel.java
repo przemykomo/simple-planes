@@ -6,29 +6,36 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class ShooterModel extends EntityModel<PlaneEntity> {
-    public static final ShooterModel INSTANCE = new ShooterModel();
 
-    private ModelPart shooter;
+    private final ModelPart shooter;
 
-    public ShooterModel() {
-        rebuild();
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshDefinition = new MeshDefinition();
+        PartDefinition root = meshDefinition.getRoot();
+        root.addOrReplaceChild("shooter", CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, -12.0F, 16.0F, 16.0F, 16.0F), PartPose.offset(0, 17, 0));
+        return LayerDefinition.create(meshDefinition, 64, 64);
     }
 
-    private void rebuild() {
-        texWidth = 256;
-        texWidth = 64;
-        texHeight = 64;
-
-        shooter = new ModelPart(this);
-        shooter.setPos(0.0F, 17.0F, 0.0F);
-        setRotationAngle(shooter, 0.0F, 0.0F, 0.0F);
-
-        shooter.texOffs(0, 0).addBox(0.0F, 0.0F, -12.0F, 16.0F, 16.0F, 16.0F, 0.0F, false);
-
+    public ShooterModel(ModelPart part) {
+        shooter = part.getChild("shooter");
+//        texWidth = 256;
+//        texWidth = 64;
+//        texHeight = 64;
+//
+//        shooter = new ModelPart(this);
+//        shooter.setPos(0.0F, 17.0F, 0.0F);
+//        setRotationAngle(shooter, 0.0F, 0.0F, 0.0F);
+//
+//        shooter.texOffs(0, 0).addBox(0.0F, 0.0F, -12.0F, 16.0F, 16.0F, 16.0F, 0.0F, false);
     }
 
     @Override

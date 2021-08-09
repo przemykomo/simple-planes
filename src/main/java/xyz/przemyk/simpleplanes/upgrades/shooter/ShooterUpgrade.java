@@ -16,6 +16,7 @@ import com.mojang.math.Vector3f;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -109,8 +110,8 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        VertexConsumer ivertexbuilder = buffer.getBuffer(ShooterModel.INSTANCE.renderType(TEXTURE));
-        ShooterModel.INSTANCE.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        VertexConsumer ivertexbuilder = buffer.getBuffer(UpgradesModels.SHOOTER.renderType(TEXTURE));
+        UpgradesModels.SHOOTER.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override

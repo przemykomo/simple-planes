@@ -4,6 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.RenderType;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 // Made with Blockbench 3.5.2
@@ -12,115 +18,175 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 public class PlaneModel extends EntityModel<PlaneEntity> {
 
     private final ModelPart Body;
-    private final ModelPart main;
-    private final ModelPart tail;
-    private final ModelPart box;
-    private final ModelPart wheels;
-    private final ModelPart bone;
-    private final ModelPart bone2;
-    private final ModelPart wings;
-    private final ModelPart right;
-    private final ModelPart right_r1;
-    private final ModelPart left_r1;
-    private final ModelPart left;
-    private final ModelPart left_r2;
-    private final ModelPart left_r3;
+//    private final ModelPart main;
+//    private final ModelPart tail;
+//    private final ModelPart box;
+//    private final ModelPart wheels;
+//    private final ModelPart bone;
+//    private final ModelPart bone2;
+//    private final ModelPart wings;
+//    private final ModelPart right;
+//    private final ModelPart right_r1;
+//    private final ModelPart left_r1;
+//    private final ModelPart left;
+//    private final ModelPart left_r2;
+//    private final ModelPart left_r3;
     private final ModelPart bb_main;
 
-    public PlaneModel() {
-        texWidth = 16;
-        texHeight = 16;
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshDefinition = new MeshDefinition();
+        PartDefinition partDefinition = meshDefinition.getRoot();
+        PartDefinition body = partDefinition.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0, 17, 0));
+        PartDefinition main = body.addOrReplaceChild("main", CubeListBuilder.create(), PartPose.offset(0, 0, 18));
+        main.addOrReplaceChild("tail", CubeListBuilder.create()
+                        .texOffs(92, 92).addBox(-1.0f, 7.0f, 1.0f, 2.0f, 11.0f, 17.0f)
+                        .texOffs(37, 45).addBox(-15.0F, 11.0F, 4.0F, 30.0F, 2.0F, 12.0F),
+                PartPose.offset(0, -19, 1)
+        );
 
-        Body = new ModelPart(this);
-        Body.setPos(0.0F, 17.0F, 0.0F);
+        main.addOrReplaceChild("box", CubeListBuilder.create()
+                .texOffs(0, 45).addBox(-9.0F, -13.0F, -34.0F, 2.0F, 13.0F, 35.0F)
+                .texOffs(0, 10).addBox(-7.0F, -1.0F, -34.0F, 14.0F, 2.0F, 34.0F)
+                .texOffs(37, 58).addBox(7.0F, -13.0F, -34.0F, 2.0F, 13.0F, 35.0F)
+                .texOffs(0, 45).addBox(-7.0F, -13.0F, 0.0F, 14.0F, 13.0F, 2.0F)
+                .texOffs(0, 10).addBox(-8.0F, -13.0F, -36.0F, 16.0F, 13.0F, 2.0F)
+                .texOffs(0, 106).addBox(-8.0F, -14.0F, -35.0F, 16.0F, 2.0F, 11.0F),
+                PartPose.ZERO);
 
+        PartDefinition wheels = body.addOrReplaceChild("wheels", CubeListBuilder.create()
+                .texOffs(0, 38).addBox(-4.0F, 5.0F, -1.0F, 12.0F, 2.0F, 3.0F)
+                .texOffs(16, 59).addBox(4.0F, -1.0F, -1.0F, 1.0F, 6.0F, 3.0F)
+                .texOffs(12, 59).addBox(-1.0F, -1.0F, -1.0F, 1.0F, 6.0F, 3.0F),
+                PartPose.offset(-2, 1, -7)
+        );
 
-        main = new ModelPart(this);
-        main.setPos(0.0F, 0.0F, 18.0F);
-        Body.addChild(main);
+        wheels.addOrReplaceChild("bone", CubeListBuilder.create().texOffs(37, 45).addBox(-2.0F, -4.0F, -2.0F, 2.0F, 5.0F, 5.0F), PartPose.offset(-4, 7, 0));
+        wheels.addOrReplaceChild("bone2", CubeListBuilder.create().texOffs(1, 2).addBox(-1.0F, -4.0F, -2.0F, 2.0F, 5.0F, 5.0F), PartPose.offset(9, 7, 0));
 
+        PartDefinition wings = body.addOrReplaceChild("wings", CubeListBuilder.create(), PartPose.offset(0, 7, 0));
+        PartDefinition rightWing = wings.addOrReplaceChild("right", CubeListBuilder.create(), PartPose.offsetAndRotation(0, -7, 0, 0, 0, 0.0873F));
+        rightWing.addOrReplaceChild("right_r1", CubeListBuilder.create()
+                .texOffs(30, 45).addBox(19.0F, -9.0007F, -1.0F, 2.0F, 20.0F, 2.0F)
+                .texOffs(30, 45).addBox(-1.0F, -9.0F, -1.0F, 2.0F, 19.0F, 2.0F),
+                PartPose.offsetAndRotation(-27, -10, -10, 0, 0, -0.0873F)
+        );
 
-        tail = new ModelPart(this);
-        tail.setPos(0.0F, -19.0F, 1.0F);
-        main.addChild(tail);
-        tail.texOffs(92, 92).addBox(-1.0F, 7.0F, 1.0F, 2.0F, 11.0F, 17.0F, 0.0F, false);
-        tail.texOffs(37, 45).addBox(-15.0F, 11.0F, 4.0F, 30.0F, 2.0F, 12.0F, 0.0F, false);
+        rightWing.addOrReplaceChild("left_r1", CubeListBuilder.create().texOffs(74, 58).addBox(-12.131F, 2.8195F, -5.0F, 25.0F, 2.0F, 10.0F), PartPose.offsetAndRotation(-21.7418F, -3.5333F, -10.0F, 0.0F, 0.0F, -0.0873F));
 
-        box = new ModelPart(this);
-        box.setPos(0.0F, 0.0F, 0.0F);
-        main.addChild(box);
-        box.texOffs(0, 45).addBox(-9.0F, -13.0F, -34.0F, 2.0F, 13.0F, 35.0F, 0.0F, false);
-        box.texOffs(0, 10).addBox(-7.0F, -1.0F, -34.0F, 14.0F, 2.0F, 34.0F, 0.0F, false);
-        box.texOffs(37, 58).addBox(7.0F, -13.0F, -34.0F, 2.0F, 13.0F, 35.0F, 0.0F, false);
-        box.texOffs(0, 45).addBox(-7.0F, -13.0F, 0.0F, 14.0F, 13.0F, 2.0F, 0.0F, false);
-        box.texOffs(0, 10).addBox(-8.0F, -13.0F, -36.0F, 16.0F, 13.0F, 2.0F, 0.0F, false);
-        box.texOffs(0, 106).addBox(-8.0F, -14.0F, -35.0F, 16.0F, 2.0F, 11.0F, 0.0F, false);
+        PartDefinition leftWing = wings.addOrReplaceChild("left", CubeListBuilder.create(), PartPose.offsetAndRotation(0, -7, 0, 0, 0, -0.0873F));
+        leftWing.addOrReplaceChild("left_r2", CubeListBuilder.create()
+                .texOffs(8, 59).addBox(-23.2013F, -12.7491F, -11.0F, 2.0F, 20.0F, 2.0F)
+                .texOffs(8, 59).addBox(-4.2013F, -12.7484F, -11.0F, 2.0F, 19.0F, 2.0F),
+                PartPose.offsetAndRotation(29.2012F, -5.5016F, 0.0F, 0.0F, 0.0F, 0.0873F)
+        );
 
-        wheels = new ModelPart(this);
-        wheels.setPos(-2.0F, 1.0F, -7.0F);
-        Body.addChild(wheels);
-        wheels.texOffs(0, 38).addBox(-4.0F, 5.0F, -1.0F, 12.0F, 2.0F, 3.0F, 0.0F, false);
-        wheels.texOffs(16, 59).addBox(4.0F, -1.0F, -1.0F, 1.0F, 6.0F, 3.0F, 0.0F, false);
-        wheels.texOffs(12, 59).addBox(-1.0F, -1.0F, -1.0F, 1.0F, 6.0F, 3.0F, 0.0F, false);
+        leftWing.addOrReplaceChild("left_r3", CubeListBuilder.create()
+                .texOffs(74, 58).addBox(-53.7079F, -20.7781F, -5.0F, 66.0F, 2.0F, 10.0F)
+                .texOffs(74, 58).addBox(-12.7085F, -0.7781F, -5.0F, 25.0F, 2.0F, 10.0F),
+                PartPose.offsetAndRotation(20.7085F, -0.2219F, -10.0F, 0.0F, 0.0F, 0.0873F)
+        );
 
-        bone = new ModelPart(this);
-        bone.setPos(-4.0F, 7.0F, 0.0F);
-        wheels.addChild(bone);
-        bone.texOffs(37, 45).addBox(-2.0F, -4.0F, -2.0F, 2.0F, 5.0F, 5.0F, 0.0F, false);
+        partDefinition.addOrReplaceChild("bb_main", CubeListBuilder.create()
+                .texOffs(0, 0).addBox(-1.0F, -19.0F, 37.0F, 2.0F, 9.0F, 3.0F)
+                .texOffs(21, 10).addBox(-1.0F, -23.0F, 23.0F, 2.0F, 4.0F, 14.0F),
+                PartPose.offset(0, 24, 0)
+        );
 
-        bone2 = new ModelPart(this);
-        bone2.setPos(9.0F, 7.0F, 0.0F);
-        wheels.addChild(bone2);
-        bone2.texOffs(1, 2).addBox(-1.0F, -4.0F, -2.0F, 2.0F, 5.0F, 5.0F, 0.0F, false);
+        return LayerDefinition.create(meshDefinition, 16, 16);
+    }
 
-        wings = new ModelPart(this);
-        wings.setPos(0.0F, 7.0F, 0.0F);
-        Body.addChild(wings);
+    public PlaneModel(ModelPart part) {
+        Body = part.getChild("body");
+        bb_main = part.getChild("bb_main");
 
-
-        right = new ModelPart(this);
-        right.setPos(0.0F, -7.0F, 0.0F);
-        wings.addChild(right);
-        setRotationAngle(right, 0.0F, 0.0F, 0.0873F);
-
-
-        right_r1 = new ModelPart(this);
-        right_r1.setPos(-27.0F, -10.0F, -10.0F);
-        right.addChild(right_r1);
-        setRotationAngle(right_r1, 0.0F, 0.0F, -0.0873F);
-        right_r1.texOffs(30, 45).addBox(19.0F, -9.0007F, -1.0F, 2.0F, 20.0F, 2.0F, 0.0F, false);
-        right_r1.texOffs(30, 45).addBox(-1.0F, -9.0F, -1.0F, 2.0F, 19.0F, 2.0F, 0.0F, false);
-
-        left_r1 = new ModelPart(this);
-        left_r1.setPos(-21.7418F, -3.5333F, -10.0F);
-        right.addChild(left_r1);
-        setRotationAngle(left_r1, 0.0F, 0.0F, -0.0873F);
-        left_r1.texOffs(74, 58).addBox(-12.131F, 2.8195F, -5.0F, 25.0F, 2.0F, 10.0F, 0.0F, false);
-
-        left = new ModelPart(this);
-        left.setPos(0.0F, -7.0F, 0.0F);
-        wings.addChild(left);
-        setRotationAngle(left, 0.0F, 0.0F, -0.0873F);
-
-
-        left_r2 = new ModelPart(this);
-        left_r2.setPos(29.2012F, -5.5016F, 0.0F);
-        left.addChild(left_r2);
-        setRotationAngle(left_r2, 0.0F, 0.0F, 0.0873F);
-        left_r2.texOffs(8, 59).addBox(-23.2013F, -12.7491F, -11.0F, 2.0F, 20.0F, 2.0F, 0.0F, false);
-        left_r2.texOffs(8, 59).addBox(-4.2013F, -12.7484F, -11.0F, 2.0F, 19.0F, 2.0F, 0.0F, false);
-
-        left_r3 = new ModelPart(this);
-        left_r3.setPos(20.7085F, -0.2219F, -10.0F);
-        left.addChild(left_r3);
-        setRotationAngle(left_r3, 0.0F, 0.0F, 0.0873F);
-        left_r3.texOffs(74, 58).addBox(-53.7079F, -20.7781F, -5.0F, 66.0F, 2.0F, 10.0F, 0.0F, false);
-        left_r3.texOffs(74, 58).addBox(-12.7085F, -0.7781F, -5.0F, 25.0F, 2.0F, 10.0F, 0.0F, false);
-
-        bb_main = new ModelPart(this);
-        bb_main.setPos(0.0F, 24.0F, 0.0F);
-        bb_main.texOffs(0, 0).addBox(-1.0F, -19.0F, 37.0F, 2.0F, 9.0F, 3.0F, 0.0F, false);
-        bb_main.texOffs(21, 10).addBox(-1.0F, -23.0F, 23.0F, 2.0F, 4.0F, 14.0F, 0.0F, false);
+//        texWidth = 16;
+//        texHeight = 16;
+//
+//        Body = new ModelPart(this);
+//        Body.setPos(0.0F, 17.0F, 0.0F);
+//
+//        main = new ModelPart(this);
+//        main.setPos(0.0F, 0.0F, 18.0F);
+//        Body.addChild(main);
+//
+//        tail = new ModelPart(this);
+//        tail.setPos(0.0F, -19.0F, 1.0F);
+//        main.addChild(tail);
+//        tail.texOffs(92, 92).addBox(-1.0F, 7.0F, 1.0F, 2.0F, 11.0F, 17.0F, 0.0F, false);
+//        tail.texOffs(37, 45).addBox(-15.0F, 11.0F, 4.0F, 30.0F, 2.0F, 12.0F, 0.0F, false);
+//
+//        box = new ModelPart(this);
+//        box.setPos(0.0F, 0.0F, 0.0F);
+//        main.addChild(box);
+//        box.texOffs(0, 45).addBox(-9.0F, -13.0F, -34.0F, 2.0F, 13.0F, 35.0F, 0.0F, false);
+//        box.texOffs(0, 10).addBox(-7.0F, -1.0F, -34.0F, 14.0F, 2.0F, 34.0F, 0.0F, false);
+//        box.texOffs(37, 58).addBox(7.0F, -13.0F, -34.0F, 2.0F, 13.0F, 35.0F, 0.0F, false);
+//        box.texOffs(0, 45).addBox(-7.0F, -13.0F, 0.0F, 14.0F, 13.0F, 2.0F, 0.0F, false);
+//        box.texOffs(0, 10).addBox(-8.0F, -13.0F, -36.0F, 16.0F, 13.0F, 2.0F, 0.0F, false);
+//        box.texOffs(0, 106).addBox(-8.0F, -14.0F, -35.0F, 16.0F, 2.0F, 11.0F, 0.0F, false);
+//
+//        wheels = new ModelPart(this);
+//        wheels.setPos(-2.0F, 1.0F, -7.0F);
+//        Body.addChild(wheels);
+//        wheels.texOffs(0, 38).addBox(-4.0F, 5.0F, -1.0F, 12.0F, 2.0F, 3.0F, 0.0F, false);
+//        wheels.texOffs(16, 59).addBox(4.0F, -1.0F, -1.0F, 1.0F, 6.0F, 3.0F, 0.0F, false);
+//        wheels.texOffs(12, 59).addBox(-1.0F, -1.0F, -1.0F, 1.0F, 6.0F, 3.0F, 0.0F, false);
+//
+//        bone = new ModelPart(this);
+//        bone.setPos(-4.0F, 7.0F, 0.0F);
+//        wheels.addChild(bone);
+//        bone.texOffs(37, 45).addBox(-2.0F, -4.0F, -2.0F, 2.0F, 5.0F, 5.0F, 0.0F, false);
+//
+//        bone2 = new ModelPart(this);
+//        bone2.setPos(9.0F, 7.0F, 0.0F);
+//        wheels.addChild(bone2);
+//        bone2.texOffs(1, 2).addBox(-1.0F, -4.0F, -2.0F, 2.0F, 5.0F, 5.0F, 0.0F, false);
+//
+//        wings = new ModelPart(this);
+//        wings.setPos(0.0F, 7.0F, 0.0F);
+//        Body.addChild(wings);
+//
+//        right = new ModelPart(this);
+//        right.setPos(0.0F, -7.0F, 0.0F);
+//        wings.addChild(right);
+//        setRotationAngle(right, 0.0F, 0.0F, 0.0873F);
+//
+//        right_r1 = new ModelPart(this);
+//        right_r1.setPos(-27.0F, -10.0F, -10.0F);
+//        right.addChild(right_r1);
+//        setRotationAngle(right_r1, 0.0F, 0.0F, -0.0873F);
+//        right_r1.texOffs(30, 45).addBox(19.0F, -9.0007F, -1.0F, 2.0F, 20.0F, 2.0F, 0.0F, false);
+//        right_r1.texOffs(30, 45).addBox(-1.0F, -9.0F, -1.0F, 2.0F, 19.0F, 2.0F, 0.0F, false);
+//
+//        left_r1 = new ModelPart(this);
+//        left_r1.setPos(-21.7418F, -3.5333F, -10.0F);
+//        right.addChild(left_r1);
+//        setRotationAngle(left_r1, 0.0F, 0.0F, -0.0873F);
+//        left_r1.texOffs(74, 58).addBox(-12.131F, 2.8195F, -5.0F, 25.0F, 2.0F, 10.0F, 0.0F, false);
+//
+//        left = new ModelPart(this);
+//        left.setPos(0.0F, -7.0F, 0.0F);
+//        wings.addChild(left);
+//        setRotationAngle(left, 0.0F, 0.0F, -0.0873F);
+//
+//        left_r2 = new ModelPart(this);
+//        left_r2.setPos(29.2012F, -5.5016F, 0.0F);
+//        left.addChild(left_r2);
+//        setRotationAngle(left_r2, 0.0F, 0.0F, 0.0873F);
+//        left_r2.texOffs(8, 59).addBox(-23.2013F, -12.7491F, -11.0F, 2.0F, 20.0F, 2.0F, 0.0F, false);
+//        left_r2.texOffs(8, 59).addBox(-4.2013F, -12.7484F, -11.0F, 2.0F, 19.0F, 2.0F, 0.0F, false);
+//
+//        left_r3 = new ModelPart(this);
+//        left_r3.setPos(20.7085F, -0.2219F, -10.0F);
+//        left.addChild(left_r3);
+//        setRotationAngle(left_r3, 0.0F, 0.0F, 0.0873F);
+//        left_r3.texOffs(74, 58).addBox(-53.7079F, -20.7781F, -5.0F, 66.0F, 2.0F, 10.0F, 0.0F, false);
+//        left_r3.texOffs(74, 58).addBox(-12.7085F, -0.7781F, -5.0F, 25.0F, 2.0F, 10.0F, 0.0F, false);
+//
+//        bb_main = new ModelPart(this);
+//        bb_main.setPos(0.0F, 24.0F, 0.0F);
+//        bb_main.texOffs(0, 0).addBox(-1.0F, -19.0F, 37.0F, 2.0F, 9.0F, 3.0F, 0.0F, false);
+//        bb_main.texOffs(21, 10).addBox(-1.0F, -23.0F, 23.0F, 2.0F, 4.0F, 14.0F, 0.0F, false);
     }
 
     @Override

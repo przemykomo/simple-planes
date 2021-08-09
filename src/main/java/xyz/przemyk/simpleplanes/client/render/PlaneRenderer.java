@@ -2,22 +2,22 @@ package xyz.przemyk.simpleplanes.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.world.level.block.Block;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.CameraType;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import com.mojang.math.Quaternion;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import xyz.przemyk.simpleplanes.MathUtil;
@@ -36,8 +36,8 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected final EntityModel<T> planeEntityModel;
     public static final ResourceLocation PROPELLER_TEXTURE = new ResourceLocation("textures/block/iron_block.png");
 
-    public PlaneRenderer(EntityRenderDispatcher renderManager, EntityModel<T> planeEntityModel, EntityModel<PlaneEntity> propellerModel, float shadowSize) {
-        super(renderManager);
+    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeEntityModel, EntityModel<PlaneEntity> propellerModel, float shadowSize) {
+        super(context);
         this.propellerModel = propellerModel;
         this.planeEntityModel = planeEntityModel;
         this.shadowRadius = shadowSize;
@@ -133,6 +133,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;
         }
+
         cachedTextures.put(block, texture);
         return texture;
     }
