@@ -321,7 +321,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             getY(),
             getZ(),
             10, 1, 1, 1, 1);
-        level.explode(this, getX(), getY(), getZ(), 0, Explosion.BlockInteraction.NONE);
+        level.explode(this, getX(), getY(), getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
     }
 
     protected void dropItem() {
@@ -907,7 +907,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return false;
     }
 
-    //TODO: add explosion
     public void crash(float damage) {
         if (!level.isClientSide && isAlive()) {
             for (Entity entity : getPassengers()) {
