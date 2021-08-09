@@ -11,7 +11,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class LargePlaneModel extends EntityModel<LargePlaneEntity> {
 
     private final ModelPart Body;

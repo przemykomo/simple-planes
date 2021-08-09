@@ -11,7 +11,6 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class PlaneModel extends EntityModel<PlaneEntity> {
 
     private final ModelPart Body;
