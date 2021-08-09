@@ -4,9 +4,10 @@ package xyz.przemyk.simpleplanes.upgrades.banner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,7 @@ public class BannerModel {
     private static final BannerBlockEntity BANNER_TE = new BannerBlockEntity(BlockPos.ZERO, Blocks.BLACK_BANNER.defaultBlockState());
 
     public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, ItemStack banner,
-                                    int packedLight, ModelPart modelRenderer) {
+                                    int packedLight) {
         PlaneEntity planeEntity = bannerUpgrade.getPlaneEntity();
         if (!banner.isEmpty()) {
             matrixStackIn.pushPose();
@@ -56,8 +57,10 @@ public class BannerModel {
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
             matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(r));
             List<Pair<BannerPattern, DyeColor>> list = BANNER_TE.getPatterns();
-            BannerRenderer.renderPatterns(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, modelRenderer, ModelBakery.BANNER_BASE, true, list);
-
+            BlockEntityRenderer<BannerBlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(BANNER_TE);
+            if (renderer instanceof BannerRenderer bannerRenderer) {
+                BannerRenderer.renderPatterns(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, bannerRenderer.flag, ModelBakery.BANNER_BASE, true, list);
+            }
             matrixStackIn.popPose();
         }
     }

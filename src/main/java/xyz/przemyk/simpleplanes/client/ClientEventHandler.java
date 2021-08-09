@@ -1,27 +1,24 @@
 package xyz.przemyk.simpleplanes.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.Camera;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.Camera;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.color.item.ItemColors;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.CameraType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
@@ -37,24 +34,14 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.*;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
-import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
-import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
-import xyz.przemyk.simpleplanes.client.render.models.*;
-import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.BoostPacket;
 import xyz.przemyk.simpleplanes.network.OpenEngineInventoryPacket;
 import xyz.przemyk.simpleplanes.network.OpenInventoryPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
-import xyz.przemyk.simpleplanes.upgrades.floating.FloatingModel;
-import xyz.przemyk.simpleplanes.upgrades.floating.HelicopterFloatingModel;
-import xyz.przemyk.simpleplanes.upgrades.floating.LargeFloatingModel;
-import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterModel;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
@@ -80,20 +67,6 @@ public class ClientEventHandler {
         MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
         MenuScreens.register(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
         MenuScreens.register(SimplePlanesContainers.ELECTRIC_ENGINE.get(), ElectricEngineScreen::new);
-    }
-
-    @SubscribeEvent
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
-        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f));
-        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 1.0f));
-        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f));
-
-        UpgradesModels.BOOSTER = new BoosterModel(entityModelSet.bakeLayer(PlanesModelLayers.BOOSTER));
-        UpgradesModels.SHOOTER = new ShooterModel(entityModelSet.bakeLayer(PlanesModelLayers.SHOOTER));
-        UpgradesModels.FLOATING = new FloatingModel(entityModelSet.bakeLayer(PlanesModelLayers.FLOATING));
-        UpgradesModels.LARGE_FLOATING = new LargeFloatingModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_FLOATING));
-        UpgradesModels.HELICOPTER_FLOATING = new HelicopterFloatingModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_FLOATING));
     }
 
     private static boolean playerRotationNeedToPop = false;
@@ -236,71 +209,71 @@ public class ClientEventHandler {
 
     public static final ResourceLocation HUD_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
-    @SubscribeEvent()
-    public static void renderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
-        Minecraft mc = Minecraft.getInstance();
-        int scaledWidth = mc.getWindow().getGuiScaledWidth();
-        int scaledHeight = mc.getWindow().getGuiScaledHeight();
-        PoseStack matrixStack = event.getMatrixStack();
-
-        if (mc.player.getVehicle() instanceof PlaneEntity planeEntity) {
-            if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-                mc.getTextureManager().bindForSetup(HUD_TEXTURE); //TODO: ???
-                int left_align = scaledWidth / 2 + 91;
-
-                int health = (int) Math.ceil(planeEntity.getHealth());
-                float healthMax = planeEntity.getMaxHealth();
-                int hearts = (int) (healthMax);
-
-                if (hearts > 10) hearts = 10;
-
-                final int FULL = 0;
-                final int EMPTY = 16;
-                final int GOLD = 32;
-                int right_height = 39;
-                int max_row_size = 5;
-
-                for (int heart = 0; hearts > 0; heart += max_row_size) {
-                    int top = scaledHeight - right_height;
-
-                    int rowCount = Math.min(hearts, max_row_size);
-                    hearts -= rowCount;
-
-                    for (int i = 0; i < rowCount; ++i) {
-                        int x = left_align - i * 16 - 16;
-                        int vOffset = 35;
-                        if (i + heart + 10 < health)
-                            blit(matrixStack, 0, x, top, GOLD, vOffset, 16, 9);
-                        else if (i + heart < health)
-                            blit(matrixStack, 0, x, top, FULL, vOffset, 16, 9);
-                        else
-                            blit(matrixStack, 0, x, top, EMPTY, vOffset, 16, 9);
-                    }
-                    right_height += 10;
-                }
-
-                if (planeEntity.engineUpgrade != null) {
-                    ItemStack offhandStack = mc.player.getOffhandItem();
-                    HumanoidArm primaryHand = mc.player.getMainArm();
-                    planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, event.getPartialTicks());
-                }
-
-                if (planeEntity.mountMessage) {
-                    planeEntity.mountMessage = false;
-                    if (planeEntity instanceof HelicopterEntity) {
-                        mc.gui.setOverlayMessage(new TranslatableComponent("helicopter.onboard", mc.options.keyShift.getTranslatedKeyMessage(),
-                            boostKey.getTranslatedKeyMessage()), false);
-                    } else {
-                        mc.gui.setOverlayMessage(new TranslatableComponent("plane.onboard", mc.options.keyShift.getTranslatedKeyMessage(),
-                            boostKey.getTranslatedKeyMessage()), false);
-                    }
-
-                }
-            } else if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD) {
-                event.setCanceled(true);
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void renderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
+//        Minecraft mc = Minecraft.getInstance();
+//        int scaledWidth = mc.getWindow().getGuiScaledWidth();
+//        int scaledHeight = mc.getWindow().getGuiScaledHeight();
+//        PoseStack matrixStack = event.getMatrixStack();
+//
+//        if (mc.player.getVehicle() instanceof PlaneEntity planeEntity) {
+//            if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+//                mc.getTextureManager().bindForSetup(HUD_TEXTURE); //TODO: ???
+//                int left_align = scaledWidth / 2 + 91;
+//
+//                int health = (int) Math.ceil(planeEntity.getHealth());
+//                float healthMax = planeEntity.getMaxHealth();
+//                int hearts = (int) (healthMax);
+//
+//                if (hearts > 10) hearts = 10;
+//
+//                final int FULL = 0;
+//                final int EMPTY = 16;
+//                final int GOLD = 32;
+//                int right_height = 39;
+//                int max_row_size = 5;
+//
+//                for (int heart = 0; hearts > 0; heart += max_row_size) {
+//                    int top = scaledHeight - right_height;
+//
+//                    int rowCount = Math.min(hearts, max_row_size);
+//                    hearts -= rowCount;
+//
+//                    for (int i = 0; i < rowCount; ++i) {
+//                        int x = left_align - i * 16 - 16;
+//                        int vOffset = 35;
+//                        if (i + heart + 10 < health)
+//                            blit(matrixStack, 0, x, top, GOLD, vOffset, 16, 9);
+//                        else if (i + heart < health)
+//                            blit(matrixStack, 0, x, top, FULL, vOffset, 16, 9);
+//                        else
+//                            blit(matrixStack, 0, x, top, EMPTY, vOffset, 16, 9);
+//                    }
+//                    right_height += 10;
+//                }
+//
+//                if (planeEntity.engineUpgrade != null) {
+//                    ItemStack offhandStack = mc.player.getOffhandItem();
+//                    HumanoidArm primaryHand = mc.player.getMainArm();
+//                    planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, event.getPartialTicks());
+//                }
+//
+//                if (planeEntity.mountMessage) {
+//                    planeEntity.mountMessage = false;
+//                    if (planeEntity instanceof HelicopterEntity) {
+//                        mc.gui.setOverlayMessage(new TranslatableComponent("helicopter.onboard", mc.options.keyShift.getTranslatedKeyMessage(),
+//                            boostKey.getTranslatedKeyMessage()), false);
+//                    } else {
+//                        mc.gui.setOverlayMessage(new TranslatableComponent("plane.onboard", mc.options.keyShift.getTranslatedKeyMessage(),
+//                            boostKey.getTranslatedKeyMessage()), false);
+//                    }
+//
+//                }
+//            } else if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD) {
+//                event.setCanceled(true);
+//            }
+//        }
+//    }
 
     public static void renderHotbarItem(PoseStack matrixStack, int x, int y, float partialTicks, ItemStack stack, Minecraft mc) {
         ItemRenderer itemRenderer = mc.getItemRenderer();

@@ -36,8 +36,8 @@ public class HelicopterPropellerModel extends EntityModel<PlaneEntity> {
 
     public HelicopterPropellerModel(ModelPart part) {
         p = part.getChild("p");
-        bone_propeller = part.getChild("bone_propeller");
-        bone_propeller2 = part.getChild("bone_propeller2");
+        bone_propeller = p.getChild("bone_propeller");
+        bone_propeller2 = p.getChild("bone_propeller2");
 
 //        texWidth = 16;
 //        texHeight = 16;

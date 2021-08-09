@@ -126,7 +126,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
             }
 
             itemHandler.setStackInSlot(2, result);
-            serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(containerId, 2, result));
+            serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(containerId, 0, 2, result));
         }
     }
 
@@ -141,7 +141,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
                 }
             } else {
                 for (int i = 0; i < itemHandler.getSlots() - 1; ++i) {
-                    playerIn.inventory.placeItemBackInInventory(world, itemHandler.getStackInSlot(i));
+                    playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(i));
                     itemHandler.setStackInSlot(i, ItemStack.EMPTY);
                 }
             }
@@ -154,56 +154,13 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
-        ItemStack itemStack = super.clicked(slotId, dragType, clickTypeIn, player);
+    public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+        super.clicked(slotId, dragType, clickTypeIn, player);
         updateCraftingResult();
-        return itemStack;
     }
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index == 0) {
-                this.worldPosCallable.execute((p_217067_2_, p_217067_3_) -> itemstack1.getItem().onCraftedBy(itemstack1, p_217067_2_, playerIn));
-                if (!this.moveItemStackTo(itemstack1, 10, 39, true)) {
-                    return ItemStack.EMPTY;
-                }
-
-                slot.onQuickCraft(itemstack1, itemstack);
-            } else if (index >= 10 && index < 39) {
-                if (!this.moveItemStackTo(itemstack1, 1, 10, false)) {
-                    if (index < 37) {
-                        if (!this.moveItemStackTo(itemstack1, 37, 39, false)) {
-                            return ItemStack.EMPTY;
-                        }
-                    } else if (!this.moveItemStackTo(itemstack1, 10, 37, false)) {
-                        return ItemStack.EMPTY;
-                    }
-                }
-            } else if (!this.moveItemStackTo(itemstack1, 10, 39, false)) {
-                return ItemStack.EMPTY;
-            }
-
-            if (itemstack1.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-
-            if (itemstack1.getCount() == itemstack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-
-            ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
-            if (index == 0) {
-                playerIn.drop(itemstack2, false);
-            }
-        }
-
-        return itemstack;
+        return ItemStack.EMPTY;
     }
 }

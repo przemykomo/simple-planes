@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.client;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -7,14 +9,17 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
+import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.client.render.models.*;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.HelicopterFloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.LargeFloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterModel;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PlanesModelLayers {
     public static final ModelLayerLocation PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "main");
     public static final ModelLayerLocation LARGE_PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "main");
@@ -41,5 +46,23 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(FLOATING, FloatingModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_FLOATING, LargeFloatingModel::createBodyLayer);
         event.registerLayerDefinition(HELICOPTER_FLOATING, HelicopterFloatingModel::createBodyLayer);
+    }
+
+    @SubscribeEvent
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
+        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f));
+        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new LargePlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 1.0f));
+        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new HelicopterModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f));
+    }
+
+    @SubscribeEvent
+    public static void bakeModelLayers(EntityRenderersEvent.AddLayers event) {
+        EntityModelSet entityModelSet = event.getEntityModels();
+        UpgradesModels.BOOSTER = new BoosterModel(entityModelSet.bakeLayer(BOOSTER));
+        UpgradesModels.SHOOTER = new ShooterModel(entityModelSet.bakeLayer(SHOOTER));
+        UpgradesModels.FLOATING = new FloatingModel(entityModelSet.bakeLayer(FLOATING));
+        UpgradesModels.LARGE_FLOATING = new LargeFloatingModel(entityModelSet.bakeLayer(LARGE_FLOATING));
+        UpgradesModels.HELICOPTER_FLOATING = new HelicopterFloatingModel(entityModelSet.bakeLayer(HELICOPTER_FLOATING));
     }
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,7 @@ import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 
 public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbenchContainer> {
-    public static final ResourceLocation GUI_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_workbench.png");
+    public static final ResourceLocation GUI = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_workbench.png");
 
     public PlaneWorkbenchScreen(PlaneWorkbenchContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
@@ -23,11 +24,11 @@ public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbench
     protected void init() {
         super.init();
         // left recipe output
-        addWidget(new ImageButton(leftPos + 122, topPos + 47, 10, 15, 176, 0, 15, GUI_TEXTURE,
+        addWidget(new ImageButton(leftPos + 122, topPos + 47, 10, 15, 176, 0, 15, GUI,
                 button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_LEFT))));
 
         // right recipe output
-        addWidget(new ImageButton(leftPos + 152, topPos + 47, 10, 15, 186, 0, 15, GUI_TEXTURE,
+        addWidget(new ImageButton(leftPos + 152, topPos + 47, 10, 15, 186, 0, 15, GUI,
                 button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_RIGHT))));
     }
 
@@ -38,11 +39,11 @@ public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbench
         renderTooltip(matrixStack, mouseX, mouseY);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(GUI_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUI);
         int i = this.leftPos;
         int j = (this.height - this.imageHeight) / 2;
         this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);

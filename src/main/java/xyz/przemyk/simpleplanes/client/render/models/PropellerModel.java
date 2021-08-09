@@ -29,7 +29,7 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
 
     public PropellerModel(ModelPart part) {
         Body = part.getChild("body");
-        bone_propeller = part.getChild("bone_propeller");
+        bone_propeller = Body.getChild("bone_propeller");
 //        texWidth = 32;
 //        texHeight = 32;
 //

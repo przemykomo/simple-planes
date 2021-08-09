@@ -12,10 +12,9 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 public class ClientUtil {
 
     public static void renderItemModelAsBlock(PoseStack matrixStack, Minecraft minecraft, MultiBufferSource buffer, int packedLight, Item item) {
-        BakedModel ibakedmodel = minecraft.getItemRenderer().getItemModelShaper().getItemModel(item);
+        BakedModel bakedModel = minecraft.getItemRenderer().getItemModelShaper().getItemModel(item);
         float f = (float)(-1 >> 16 & 255) / 255.0F;
         float f1 = (float)(-1 >> 8 & 255) / 255.0F;
-        minecraft.getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), buffer.getBuffer(Sheets.cutoutBlockSheet()), null, ibakedmodel, f, f1, 1.0F, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-
+        minecraft.getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), buffer.getBuffer(Sheets.cutoutBlockSheet()), null, bakedModel, f, f1, 1.0F, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
     }
 }

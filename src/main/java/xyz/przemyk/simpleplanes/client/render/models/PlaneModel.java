@@ -35,8 +35,8 @@ public class PlaneModel extends EntityModel<PlaneEntity> {
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshDefinition = new MeshDefinition();
-        PartDefinition partDefinition = meshDefinition.getRoot();
-        PartDefinition body = partDefinition.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0, 17, 0));
+        PartDefinition root = meshDefinition.getRoot();
+        PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0, 17, 0));
         PartDefinition main = body.addOrReplaceChild("main", CubeListBuilder.create(), PartPose.offset(0, 0, 18));
         main.addOrReplaceChild("tail", CubeListBuilder.create()
                         .texOffs(92, 92).addBox(-1.0f, 7.0f, 1.0f, 2.0f, 11.0f, 17.0f)
@@ -86,7 +86,7 @@ public class PlaneModel extends EntityModel<PlaneEntity> {
                 PartPose.offsetAndRotation(20.7085F, -0.2219F, -10.0F, 0.0F, 0.0F, 0.0873F)
         );
 
-        partDefinition.addOrReplaceChild("bb_main", CubeListBuilder.create()
+        root.addOrReplaceChild("bb_main", CubeListBuilder.create()
                 .texOffs(0, 0).addBox(-1.0F, -19.0F, 37.0F, 2.0F, 9.0F, 3.0F)
                 .texOffs(21, 10).addBox(-1.0F, -23.0F, 23.0F, 2.0F, 4.0F, 14.0F),
                 PartPose.offset(0, 24, 0)

@@ -1,9 +1,10 @@
 package xyz.przemyk.simpleplanes.blocks;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -15,25 +16,24 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ChargingStationTile extends BlockEntity implements TickableBlockEntity {
+public class ChargingStationTile extends BlockEntity {
 
     public EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(1000);
     public LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
 
-    public ChargingStationTile() {
-        super(SimplePlanesBlocks.CHARGING_STATION_TILE.get());
+    public ChargingStationTile(BlockPos blockPos, BlockState blockState) {
+        super(SimplePlanesBlocks.CHARGING_STATION_TILE.get(), blockPos, blockState);
     }
 
-    @Override
-    public void tick() {
-        for (Entity entity : level.getEntities(null, new AABB(worldPosition.above()))) {
+    public static void tick(ChargingStationTile blockEntity) {
+        for (Entity entity : blockEntity.level.getEntities(null, new AABB(blockEntity.worldPosition.above()))) {
             entity.getCapability(CapabilityEnergy.ENERGY, Direction.DOWN).ifPresent(entityEnergy ->
-                    energyStorage.extractEnergy(entityEnergy.receiveEnergy(energyStorage.extractEnergy(1000, true), false), false));
+                    blockEntity.energyStorage.extractEnergy(entityEnergy.receiveEnergy(blockEntity.energyStorage.extractEnergy(1000, true), false), false));
         }
     }
 
     @Override
-    protected void invalidateCaps() {
+    public void invalidateCaps() {
         super.invalidateCaps();
         energyStorageLazyOptional.invalidate();
     }
