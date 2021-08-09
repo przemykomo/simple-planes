@@ -13,6 +13,7 @@ import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 
+//TODO: fix buttons not displaying
 public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbenchContainer> {
     public static final ResourceLocation GUI = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_workbench.png");
 
