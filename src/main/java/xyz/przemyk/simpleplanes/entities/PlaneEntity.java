@@ -329,9 +329,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         spawnAtLocation(itemStack).setInvulnerable(true);
     }
 
-    /**
-     * @return Does it collide like a boat/shulker?
-     */
     public boolean isPickable() {
         return true;
     }
