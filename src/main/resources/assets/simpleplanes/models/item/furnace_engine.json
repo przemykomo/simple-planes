@@ -1,8 +1,9 @@
 {
-    "parent": "minecraft:block/cube_bottom_top",
+    "parent": "minecraft:block/orientable_with_bottom",
     "textures": {
-        "top": "minecraft:block/blast_furnace_top",
-        "bottom": "minecraft:block/blast_furnace_top",
+        "top": "simpleplanes:block/furnace_engine_top",
+        "front": "simpleplanes:block/furnace_engine_front",
+        "bottom": "simpleplanes:block/furnace_engine_bottom",
         "side": "simpleplanes:block/furnace_engine_side"
     }
 }
