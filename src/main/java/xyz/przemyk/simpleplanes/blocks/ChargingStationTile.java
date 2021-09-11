@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
@@ -30,6 +31,18 @@ public class ChargingStationTile extends BlockEntity {
             entity.getCapability(CapabilityEnergy.ENERGY, Direction.DOWN).ifPresent(entityEnergy ->
                     blockEntity.energyStorage.extractEnergy(entityEnergy.receiveEnergy(blockEntity.energyStorage.extractEnergy(1000, true), false), false));
         }
+    }
+
+    @Override
+    public CompoundTag save(CompoundTag compoundTag) {
+        compoundTag.putInt("energy", energyStorage.getEnergyStored());
+        return super.save(compoundTag);
+    }
+
+    @Override
+    public void load(CompoundTag compoundTag) {
+        energyStorage.setEnergy(compoundTag.getInt("energy"));
+        super.load(compoundTag);
     }
 
     @Override
