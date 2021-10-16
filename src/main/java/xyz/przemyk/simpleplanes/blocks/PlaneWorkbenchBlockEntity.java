@@ -15,13 +15,13 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class PlaneWorkbenchTile extends BlockEntity {
+public class PlaneWorkbenchBlockEntity extends BlockEntity {
 
     public ItemStackHandler itemStackHandler = new ItemStackHandler(2);
     public LazyOptional<ItemStackHandler> itemStackHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
     public DataSlot selectedRecipe = DataSlot.standalone();
 
-    public PlaneWorkbenchTile(BlockPos blockPos, BlockState blockState) {
+    public PlaneWorkbenchBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(SimplePlanesBlocks.PLANE_WORKBENCH_TILE.get(), blockPos, blockState);
     }
 

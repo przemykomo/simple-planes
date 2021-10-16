@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -34,10 +35,10 @@ public class PlaneWorkbenchBlock extends Block implements EntityBlock {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
-            PlaneWorkbenchTile planeWorkbenchTile = (PlaneWorkbenchTile) level.getBlockEntity(blockPos);
-            if (planeWorkbenchTile != null) {
+            PlaneWorkbenchBlockEntity planeWorkbenchBlockEntity = (PlaneWorkbenchBlockEntity) level.getBlockEntity(blockPos);
+            if (planeWorkbenchBlockEntity != null) {
                 NetworkHooks.openGui((ServerPlayer) playerIn, new SimpleMenuProvider((id, inventory, player) ->
-                        new PlaneWorkbenchContainer(id, inventory, blockPos, planeWorkbenchTile.itemStackHandler, planeWorkbenchTile.selectedRecipe), CONTAINER_NAME));
+                        new PlaneWorkbenchContainer(id, inventory, blockPos, planeWorkbenchBlockEntity.itemStackHandler, planeWorkbenchBlockEntity.selectedRecipe), CONTAINER_NAME));
             }
             return InteractionResult.CONSUME;
         }
@@ -46,6 +47,19 @@ public class PlaneWorkbenchBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new PlaneWorkbenchTile(blockPos, blockState);
+        return new PlaneWorkbenchBlockEntity(blockPos, blockState);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos blockPos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            PlaneWorkbenchBlockEntity blockEntity = (PlaneWorkbenchBlockEntity) level.getBlockEntity(blockPos);
+            if (blockEntity != null) {
+                Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockEntity.itemStackHandler.getStackInSlot(0));
+                Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockEntity.itemStackHandler.getStackInSlot(1));
+            }
+        }
+        super.onRemove(state, level, blockPos, newState, isMoving);
     }
 }
