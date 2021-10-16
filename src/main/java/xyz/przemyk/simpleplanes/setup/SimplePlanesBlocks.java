@@ -13,6 +13,7 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.blocks.ChargingStationBlock;
 import xyz.przemyk.simpleplanes.blocks.ChargingStationTile;
 import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchBlock;
+import xyz.przemyk.simpleplanes.blocks.PlaneWorkbenchTile;
 
 @SuppressWarnings("unused")
 public class SimplePlanesBlocks {
@@ -27,5 +28,6 @@ public class SimplePlanesBlocks {
     public static final RegistryObject<PlaneWorkbenchBlock> PLANE_WORKBENCH_BLOCK = BLOCKS.register("plane_workbench", () -> new PlaneWorkbenchBlock(BlockBehaviour.Properties.copy(Blocks.CRAFTING_TABLE)));
     public static final RegistryObject<ChargingStationBlock> CHARGING_STATION_BLOCK = BLOCKS.register("charging_station", () -> new ChargingStationBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE)));
 
+    public static final RegistryObject<BlockEntityType<PlaneWorkbenchTile>> PLANE_WORKBENCH_TILE = TILES.register("plane_workbench", () -> new BlockEntityType<>(PlaneWorkbenchTile::new, ImmutableSet.of(PLANE_WORKBENCH_BLOCK.get()), null));
     public static final RegistryObject<BlockEntityType<ChargingStationTile>> CHARGING_STATION_TILE = TILES.register("charging_station", () -> new BlockEntityType<>(ChargingStationTile::new, ImmutableSet.of(CHARGING_STATION_BLOCK.get()), null));
 }
