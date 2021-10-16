@@ -59,18 +59,15 @@ public class IronChestsCompat {
     }
 
     public static int getSize(String chestType) {
-        switch (chestType) {
-            case IRON_CHEST_NAME: return 54;
-            case GOLD_CHEST_NAME: return 81;
-            case DIAMOND_CHEST_NAME:
-            case OBSIDIAN_CHEST_NAME:
-            case CRYSTAL_CHEST_NAME:
-                return 108;
-            case COPPER_CHEST_NAME: return 45;
-            case SILVER_CHEST_NAME: return 72;
-            case DIRT_CHEST_NAME: return 1;
-            default: return 27;
-        }
+        return switch (chestType) {
+            case IRON_CHEST_NAME -> 54;
+            case GOLD_CHEST_NAME -> 81;
+            case DIAMOND_CHEST_NAME, OBSIDIAN_CHEST_NAME, CRYSTAL_CHEST_NAME -> 108;
+            case COPPER_CHEST_NAME -> 45;
+            case SILVER_CHEST_NAME -> 72;
+            case DIRT_CHEST_NAME -> 1;
+            default -> 27;
+        };
     }
 
     public static int getRowCount(String chestType) {
@@ -78,16 +75,11 @@ public class IronChestsCompat {
     }
 
     public static int getRowLength(String chestType) {
-        switch (chestType) {
-            case DIAMOND_CHEST_NAME:
-            case CRYSTAL_CHEST_NAME:
-            case OBSIDIAN_CHEST_NAME:
-                return 12;
-            case DIRT_CHEST_NAME:
-                return 1;
-            default:
-                return 9;
-        }
+        return switch (chestType) {
+            case DIAMOND_CHEST_NAME, CRYSTAL_CHEST_NAME, OBSIDIAN_CHEST_NAME -> 12;
+            case DIRT_CHEST_NAME -> 1;
+            default -> 9;
+        };
     }
 
     public static void addSlots(String chestType, IItemHandler itemHandler, int rowCount, Inventory playerInventory, Consumer<Slot> addSlotFunction) {
@@ -118,65 +110,38 @@ public class IronChestsCompat {
     }
 
     public static int getXSize(String chestType) {
-        switch (chestType) {
-            case DIAMOND_CHEST_NAME:
-            case CRYSTAL_CHEST_NAME:
-            case OBSIDIAN_CHEST_NAME:
-                return 238;
-            default:
-                return 184;
-        }
+        return switch (chestType) {
+            case DIAMOND_CHEST_NAME, CRYSTAL_CHEST_NAME, OBSIDIAN_CHEST_NAME -> 238;
+            default -> 184;
+        };
     }
 
     public static int getYSize(String chestType) {
-        switch (chestType) {
-            case IRON_CHEST_NAME:
-                return 222;
-            case GOLD_CHEST_NAME:
-            case DIAMOND_CHEST_NAME:
-            case CRYSTAL_CHEST_NAME:
-            case OBSIDIAN_CHEST_NAME:
-                return 276;
-            case COPPER_CHEST_NAME:
-                return 204;
-            case DIRT_CHEST_NAME:
-                return 184;
-            default:
-                return 168;
-        }
+        return switch (chestType) {
+            case IRON_CHEST_NAME -> 222;
+            case GOLD_CHEST_NAME, DIAMOND_CHEST_NAME, CRYSTAL_CHEST_NAME, OBSIDIAN_CHEST_NAME -> 276;
+            case COPPER_CHEST_NAME -> 204;
+            case DIRT_CHEST_NAME -> 184;
+            default -> 168;
+        };
     }
 
     public static ResourceLocation getGuiTexture(String chestType) {
-        switch (chestType) {
-            case IRON_CHEST_NAME:
-                return IRON_CHEST_GUI;
-            case GOLD_CHEST_NAME:
-                return GOLD_CHEST_GUI;
-            case DIAMOND_CHEST_NAME:
-            case CRYSTAL_CHEST_NAME:
-            case OBSIDIAN_CHEST_NAME:
-                return DIAMOND_CHEST_GUI;
-            case COPPER_CHEST_NAME:
-                return COPPER_CHEST_GUI;
-            case SILVER_CHEST_NAME:
-                return SILVER_CHEST_GUI;
-            case DIRT_CHEST_NAME:
-                return DIRT_CHEST_GUI;
-            default:
-                return VANILLA_CHEST_GUI;
-        }
+        return switch (chestType) {
+            case IRON_CHEST_NAME -> IRON_CHEST_GUI;
+            case GOLD_CHEST_NAME -> GOLD_CHEST_GUI;
+            case DIAMOND_CHEST_NAME, CRYSTAL_CHEST_NAME, OBSIDIAN_CHEST_NAME -> DIAMOND_CHEST_GUI;
+            case COPPER_CHEST_NAME -> COPPER_CHEST_GUI;
+            case SILVER_CHEST_NAME -> SILVER_CHEST_GUI;
+            case DIRT_CHEST_NAME -> DIRT_CHEST_GUI;
+            default -> VANILLA_CHEST_GUI;
+        };
     }
 
     public static int getTextureYSize(String chestType) {
-        switch (chestType) {
-            case GOLD_CHEST_NAME:
-            case DIAMOND_CHEST_NAME:
-            case SILVER_CHEST_NAME:
-            case CRYSTAL_CHEST_NAME:
-            case OBSIDIAN_CHEST_NAME:
-                return 276;
-            default:
-                return 256;
-        }
+        return switch (chestType) {
+            case GOLD_CHEST_NAME, DIAMOND_CHEST_NAME, SILVER_CHEST_NAME, CRYSTAL_CHEST_NAME, OBSIDIAN_CHEST_NAME -> 276;
+            default -> 256;
+        };
     }
 }
