@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 

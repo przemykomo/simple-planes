@@ -1,5 +1,5 @@
-modLoader="javafml" #mandatory
-loaderVersion="[37,)"
+modLoader="javafml"
+loaderVersion="[38,)"
 license="GNU LGPLv3"
 [[mods]]
 modId="simpleplanes"
@@ -9,15 +9,15 @@ authors="adoxentor, Przemyk"
 description='''
 Adds upgradeable planes and helicopters.
 '''
-[[dependencies.simpleplanes]] #optional
+[[dependencies.simpleplanes]]
     modId="forge"
     mandatory=true
-    versionRange="[37,)"
+    versionRange="[38,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.simpleplanes]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17.1,1.18)"
+    versionRange="[1.18,1.19)"
     ordering="NONE"
     side="BOTH"

@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -38,7 +38,7 @@ public class PlaneItemColors {
                 }
 
                 try {
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getModel(ModelLoader.getInventoryVariant(block.getRegistryName().toString())).getQuads(null, Direction.SOUTH, new Random(42L), EmptyModelData.INSTANCE).get(0).getSprite();
+                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getModel(ForgeModelBakery.getInventoryVariant(block.getRegistryName().toString())).getQuads(null, Direction.SOUTH, new Random(42L), EmptyModelData.INSTANCE).get(0).getSprite();
 
                     int g = 0;
                     int b = 0;

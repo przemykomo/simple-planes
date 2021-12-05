@@ -3,7 +3,7 @@ package xyz.przemyk.simpleplanes.setup;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import com.mojang.math.Quaternion;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,7 +18,7 @@ public class SimplePlanesDataSerializers {
         DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final EntityDataSerializer<Quaternion> QUATERNION_SERIALIZER = new EntityDataSerializer<Quaternion>() {
+    public static final EntityDataSerializer<Quaternion> QUATERNION_SERIALIZER = new EntityDataSerializer<>() {
 
         @Override
         public void write(FriendlyByteBuf buf, Quaternion q) {
