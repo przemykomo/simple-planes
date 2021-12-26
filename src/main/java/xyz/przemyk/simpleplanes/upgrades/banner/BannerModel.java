@@ -36,27 +36,29 @@ public class BannerModel {
             EntityType<?> entityType = planeEntity.getType();
             if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
                 matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
-                matrixStackIn.translate(-3, -0.5, 0);
+                matrixStackIn.translate(-3, -1.8, 0.025);
             } else {
                 matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(90));
                 matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
-                matrixStackIn.translate(0.7, 2.35, 0.05);
+                matrixStackIn.translate(0.6, 1.25, 0.05);
                 if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
                     matrixStackIn.translate(0, 1.1, 0);
                 }
             }
 
-            matrixStackIn.scale(0.6f, 0.6f, 0.6f);
+            matrixStackIn.scale(0.6f, -0.6f, -0.6f);
             final BannerItem item = (BannerItem) banner.getItem();
             BANNER_BLOCK_ENTITY.fromItem(banner, item.getColor());
             final float f2 = partialTicks + planeEntity.tickCount;
             float r = (0.05F * Mth.cos(f2 / 5)) * (float) 180;
             r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.getYRot());
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
-            matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(r));
+//            matrixStackIn.mulPose(Vector3f);
+//            matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(r));
             List<Pair<BannerPattern, DyeColor>> list = BANNER_BLOCK_ENTITY.getPatterns();
             BlockEntityRenderer<BannerBlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(BANNER_BLOCK_ENTITY);
             if (renderer instanceof BannerRenderer bannerRenderer) {
+                bannerRenderer.flag.xRot = (float) (Math.PI + r / 100.0f);
                 BannerRenderer.renderPatterns(matrixStackIn, bufferIn, packedLight, OverlayTexture.NO_OVERLAY, bannerRenderer.flag, ModelBakery.BANNER_BASE, true, list);
             }
             matrixStackIn.popPose();
