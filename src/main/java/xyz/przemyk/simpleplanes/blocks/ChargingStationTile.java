@@ -34,9 +34,8 @@ public class ChargingStationTile extends BlockEntity {
     }
 
     @Override
-    public CompoundTag save(CompoundTag compoundTag) {
+    protected void saveAdditional(CompoundTag compoundTag) {
         compoundTag.putInt("energy", energyStorage.getEnergyStored());
-        return super.save(compoundTag);
     }
 
     @Override

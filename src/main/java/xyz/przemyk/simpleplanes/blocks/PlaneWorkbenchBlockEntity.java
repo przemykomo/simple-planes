@@ -26,10 +26,9 @@ public class PlaneWorkbenchBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag save(CompoundTag compoundTag) {
+    public void saveAdditional(CompoundTag compoundTag) {
         compoundTag.put("input", itemStackHandler.serializeNBT());
         compoundTag.putInt("selected_recipe", selectedRecipe.get());
-        return super.save(compoundTag);
     }
 
     @Override
