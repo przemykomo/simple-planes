@@ -2,6 +2,8 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.world.item.Items;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -10,6 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
+import xyz.przemyk.simpleplanes.compat.MrCrayfishGunCompat;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
 import xyz.przemyk.simpleplanes.network.PlaneNetworking;
 import xyz.przemyk.simpleplanes.setup.*;
@@ -36,6 +39,7 @@ public class SimplePlanesMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().register(SimplePlanesConfig.class);
+        ModList.get().getModContainerById("cgm").ifPresent(cgm -> MinecraftForge.EVENT_BUS.register(MrCrayfishGunCompat.class));
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
