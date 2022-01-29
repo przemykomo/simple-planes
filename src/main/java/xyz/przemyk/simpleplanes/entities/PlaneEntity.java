@@ -1,38 +1,41 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.util.*;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.HitResult;
-import com.mojang.math.Quaternion;
-import net.minecraft.world.phys.Vec3;
-import com.mojang.math.Vector3f;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -51,9 +54,9 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,14 +65,6 @@ import java.util.*;
 import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.MathUtil.*;
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
-
-import xyz.przemyk.simpleplanes.MathUtil.EulerAngles;
-
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 
 @SuppressWarnings("ConstantConditions")
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
@@ -278,6 +273,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (getOnGround() && source.getDirectEntity() instanceof Player) {
+            amount *= 3;
+        }
         setTimeSinceHit(20);
         setDamageTaken(getDamageTaken() + 10 * amount);
 
@@ -292,35 +290,38 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             return false;
         }
 
-        setHealth(health -= amount);
+        setHealth((int) (health - amount));
         damageTimeout = 10;
-        boolean isPlayer = source.getEntity() instanceof Player;
+        boolean isPlayer = source.getDirectEntity() instanceof Player;
         boolean creativePlayer = isPlayer && ((Player) source.getEntity()).getAbilities().instabuild;
-        if (creativePlayer || (isPlayer && getDamageTaken() > 30.0F) || health <= 0) {
-            if (!creativePlayer) {
-                if (source == SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH) {
-                    explode();
-                }
-                if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                    dropItem();
-                }
-            }
+        if (creativePlayer) {
             kill();
+        } else if (source == SimplePlanesMod.DAMAGE_SOURCE_PLANE_CRASH) {
+            explode();
+            kill();
+            if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                dropItem();
+            }
+        } else if (getOnGround() && getHealth() <= 0) {
+            kill();
+            if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                dropItem();
+            }
         }
         return true;
     }
 
     private void explode() {
         ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE,
-            getX(),
-            getY(),
-            getZ(),
-            5, 1, 1, 1, 2);
+                getX(),
+                getY(),
+                getZ(),
+                5, 1, 1, 1, 2);
         ((ServerLevel) level).sendParticles(ParticleTypes.POOF,
-            getX(),
-            getY(),
-            getZ(),
-            10, 1, 1, 1, 1);
+                getX(),
+                getY(),
+                getZ(),
+                10, 1, 1, 1, 1);
         level.explode(this, getX(), getY(), getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
     }
 
@@ -343,6 +344,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         yRotO = getYRot();
         xRotO = getXRot();
         prevRotationRoll = rotationRoll;
+
+        if (level.isClientSide && getHealth() <= 0) {
+            level.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, true, getX(), getY(), getZ(), 0.0, 0.005, 0.0);
+        }
 
         if (level.isClientSide && !isControlledByLocalInstance()) {
             tickLerp();
@@ -434,14 +439,22 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             }
             move(MoverType.SELF, motion);
             onGround = ((motion.y()) == 0.0) ? onGroundOld : onGround;
-            if (horizontalCollision && !level.isClientSide && SimplePlanesConfig.PLANE_CRASH.get() && onGroundTicks <= 0) {
-                double speedAfter = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
-                double speedDiff = speedBefore - speedAfter;
-                float f2 = (float) (speedDiff * 10.0D - 5.0D);
-                if (f2 > 5.0F) {
-                    crash(f2);
+            if (horizontalCollision && !level.isClientSide && onGroundTicks <= 0) {
+                if (getHealth() <= 0) {
+                    crash(16);
+                } else {
+                    double speedAfter = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
+                    double speedDiff = speedBefore - speedAfter;
+                    float f2 = (float) (speedDiff * 10.0D - 5.0D);
+                    if (f2 > 5.0F) {
+                        crash(f2);
+                    }
                 }
             }
+        }
+
+        if (getHealth() <= 0 && onGround && !isRemoved()) {
+            crash(16);
         }
 
         //back to q
@@ -514,12 +527,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     private boolean updateParkedState(TempMotionVars tempMotionVars) {
         Vec3 oldMotion = getDeltaMovement();
         final boolean parked = (isOnWater() || isOnGround()) &&
-            (oldMotion.length() < 0.1) &&
-            (!tempMotionVars.passengerSprinting) &&
-            (tempMotionVars.moveStrafing == 0) &&
-            (notMovingTime > 20) &&
-            (onGround || isOnWater()) &&
-            (tempMotionVars.moveForward == 0);
+                (oldMotion.length() < 0.1) &&
+                (!tempMotionVars.passengerSprinting) &&
+                (tempMotionVars.moveStrafing == 0) &&
+                (notMovingTime > 20) &&
+                (onGround || isOnWater()) &&
+                (tempMotionVars.moveForward == 0);
         setParked(parked);
         return parked;
     }
@@ -554,45 +567,50 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     protected void tickRotation(TempMotionVars tempMotionVars) {
+        if (getHealth() <= 0) {
+            rotationRoll += getId() % 2 == 0 ? 10.0f : -10.0f;
+            return;
+        }
+
         float f1 = 1f;
         double turn;
         float moveStrafing = tempMotionVars.moveStrafing;
 
-            int yawdiff = 3;
-            float roll = rotationRoll;
-            if (degreesDifferenceAbs(getXRot(), 0) < 45) {
-                for (int i = 0; i < 360; i += 180) {
-                    if (Mth.degreesDifferenceAbs(rotationRoll, i) < 80) {
-                        roll = lerpAngle(0.1f * f1, rotationRoll, i);
-                        break;
-                    }
+        int yawdiff = 3;
+        float roll = rotationRoll;
+        if (degreesDifferenceAbs(getXRot(), 0) < 45) {
+            for (int i = 0; i < 360; i += 180) {
+                if (Mth.degreesDifferenceAbs(rotationRoll, i) < 80) {
+                    roll = lerpAngle(0.1f * f1, rotationRoll, i);
+                    break;
                 }
             }
+        }
 
-            if (getOnGround() || isOnWater()) {
-                turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
-                rotationRoll = roll;
-            } else if (degreesDifferenceAbs(rotationRoll, 0) > 30) {
-                turn = moveStrafing > 0 ? -yawdiff : moveStrafing == 0 ? 0 : yawdiff;
-                rotationRoll = roll;
-            } else {
-                if (moveStrafing == 0) {
-                    rotationRoll = lerpAngle180(0.2f, rotationRoll, 0);
-                } else if (moveStrafing > 0) {
-                    rotationRoll = Math.min(rotationRoll + f1, 15);
-                } else if (moveStrafing < 0) {
-                    rotationRoll = Math.max(rotationRoll - f1, -15);
-                }
-                final double rollOld = toEulerAngles(getQ()).roll;
-                if (degreesDifferenceAbs(rollOld, 0) < 90) {
-                    turn = Mth.clamp(rollOld * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
-                } else {
-                    turn = Mth.clamp((180 - rollOld) * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
-                }
-                if (moveStrafing == 0) {
-                    turn = 0;
-                }
+        if (getOnGround() || isOnWater()) {
+            turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
+            rotationRoll = roll;
+        } else if (degreesDifferenceAbs(rotationRoll, 0) > 30) {
+            turn = moveStrafing > 0 ? -yawdiff : moveStrafing == 0 ? 0 : yawdiff;
+            rotationRoll = roll;
+        } else {
+            if (moveStrafing == 0) {
+                rotationRoll = lerpAngle180(0.2f, rotationRoll, 0);
+            } else if (moveStrafing > 0) {
+                rotationRoll = Math.min(rotationRoll + f1, 15);
+            } else if (moveStrafing < 0) {
+                rotationRoll = Math.max(rotationRoll - f1, -15);
             }
+            final double rollOld = toEulerAngles(getQ()).roll;
+            if (degreesDifferenceAbs(rollOld, 0) < 90) {
+                turn = Mth.clamp(rollOld * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
+            } else {
+                turn = Mth.clamp((180 - rollOld) * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
+            }
+            if (moveStrafing == 0) {
+                turn = 0;
+            }
+        }
 
         setYRot((float) (getYRot() - turn));
     }
@@ -613,8 +631,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (speed == 0) {
             motion = Vec3.ZERO;
         }
-        if (motion.length() > 0)
+        if (motion.length() > 0) {
             motion = motion.scale(speed / motion.length());
+        }
 
         Vec3 pushVec = new Vec3(getTickPush(tempMotionVars));
         if (pushVec.length() != 0 && motion.length() > 0.1) {
@@ -635,13 +654,15 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected void tickPitch(TempMotionVars tempMotionVars) {
         float pitch = 0f;
-        if (tempMotionVars.moveForward > 0.0F) {
-//            pitch = vars.passengerSprinting ? 2 : 1f;
-            pitch = 1.3f;
+        if (getHealth() <= 0) {
+            pitch = 10.0f;
         } else {
-            if (tempMotionVars.moveForward < 0.0F) {
-//                pitch = vars.passengerSprinting ? -2 : -1;
-                pitch = -1.3f;
+            if (tempMotionVars.moveForward > 0.0F) {
+                pitch = 1.3f;
+            } else {
+                if (tempMotionVars.moveForward < 0.0F) {
+                    pitch = -1.3f;
+                }
             }
         }
         setXRot(getXRot() + pitch);
@@ -716,13 +737,16 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         //            speed = getMotion().length()*(d);
         double speed = getDeltaMovement().length();
         double lift = Math.min(speed * tempMotionVars.liftFactor, tempMotionVars.maxLift) * d;
+        if (getHealth() <= 0) {
+            lift = 0;
+        }
         double cosRoll = (1 + 4 * Math.max(Math.cos(Math.toRadians(degreesDifferenceAbs(rotationRoll, 0))), 0)) / 5;
         lift *= cosRoll;
         d *= cosRoll;
 
         setDeltaMovement(rotationToVector(lerpAngle180(0.1f, yaw, getYRot()),
-            lerpAngle180(tempMotionVars.pitchToMotion * d, pitch, getXRot()) + lift,
-            speed));
+                lerpAngle180(tempMotionVars.pitchToMotion * d, pitch, getXRot()) + lift,
+                speed));
         if (!getOnGround() && !isOnWater() && motion.length() > 0.1) {
 
             if (degreesDifferenceAbs(pitch, getXRot()) > 90) {
@@ -743,10 +767,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public Vector3f transformPos(Vector3f relPos) {
-        EulerAngles angels = toEulerAngles(getQ_Client());
-        angels.yaw = -angels.yaw;
-        angels.roll = -angels.roll;
-        relPos.transform(toQuaternion(angels.yaw, angels.pitch, angels.roll));
+        EulerAngles angles = toEulerAngles(getQ_Client());
+        angles.yaw = -angles.yaw;
+        angles.roll = -angles.roll;
+        relPos.transform(toQuaternion(angles.yaw, angles.pitch, angles.roll));
         return relPos;
     }
 
@@ -764,15 +788,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         if (compound.contains("max_health")) {
             int maxHealth = compound.getInt("max_health");
-            if (maxHealth <= 0)
+            if (maxHealth <= 0) {
                 maxHealth = 20;
+            }
             entityData.set(MAX_HEALTH, maxHealth);
         }
 
         if (compound.contains("health")) {
             int health = compound.getInt("health");
-            if (health <= 0)
-                health = 1;
             entityData.set(HEALTH, health);
         }
 
@@ -883,7 +906,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     protected void checkFallDamage(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
-        if ((onGroundIn || isOnWater()) && SimplePlanesConfig.PLANE_CRASH.get()) {
+        if ((onGroundIn || isOnWater())) {
             final double y1 = transformPos(new Vector3f(0, 1, 0)).y();
             if (y1 < Math.cos(Math.toRadians(getLandingAngle()))) {
                 state.getBlock().fallOn(level, state, pos, this, (float) (getDeltaMovement().length() * 5));
@@ -1036,7 +1059,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void lerpTo(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) {
         if (x == getX() && y == getY() && z == getZ()) {
             return;

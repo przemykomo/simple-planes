@@ -1,3 +1,4 @@
+// TODO: Do we really need this? It's the only thing which needs mixin and nobody complained since its removal
 //package xyz.przemyk.simpleplanes.mixin;
 //
 //import net.minecraft.client.renderer.entity.model.IHasHead;

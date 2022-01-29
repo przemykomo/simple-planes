@@ -17,7 +17,6 @@ public class SimplePlanesConfig {
 
     public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
     public static ForgeConfigSpec.BooleanValue EASY_FLIGHT;
-    public static ForgeConfigSpec.BooleanValue PLANE_CRASH;
 
     public static ForgeConfigSpec.IntValue PLANE_FUEL_COST;
     public static ForgeConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
@@ -30,8 +29,6 @@ public class SimplePlanesConfig {
             .defineInRange("turnThreshold", 20, 0, 90);
         EASY_FLIGHT = BUILDER.comment("Easier flight mode, disables the extreme movements")
             .define("easyFlight", false);
-        PLANE_CRASH = BUILDER.comment("Planes crash on bad landings")
-            .define("planeCrash", true);
         THIEF = BUILDER.comment("Allow stealing planes by players")
             .define("plane_heist", true);
 
