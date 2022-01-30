@@ -56,6 +56,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
 import javax.annotation.Nonnull;
@@ -275,6 +276,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public boolean hurt(DamageSource source, float amount) {
         if (getOnGround() && source.getDirectEntity() instanceof Player) {
             amount *= 3;
+        } else {
+            Upgrade upgrade = upgrades.get(SimplePlanesUpgrades.ARMOR.getId());
+            if (upgrade instanceof ArmorUpgrade armorUpgrade) {
+                amount = armorUpgrade.getReducedDamage(amount);
+            }
         }
         setTimeSinceHit(20);
         setDamageTaken(getDamageTaken() + 10 * amount);

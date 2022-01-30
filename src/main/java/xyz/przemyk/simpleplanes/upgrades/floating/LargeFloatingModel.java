@@ -33,10 +33,4 @@ public class LargeFloatingModel extends EntityModel<LargePlaneEntity> {
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
         floating.render(matrixStack, buffer, packedLight, packedOverlay);
     }
-
-    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
-        modelRenderer.xRot = x;
-        modelRenderer.yRot = y;
-        modelRenderer.zRot = z;
-    }
 }

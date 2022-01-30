@@ -44,6 +44,7 @@ public class SimplePlanesItems {
     public static final RegistryObject<Item> FLOATY_BEDDING = ITEMS.register("floaty_bedding", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> HEALING = ITEMS.register("healing", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final RegistryObject<Item> ARMOR = ITEMS.register("armor", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
 //    public static final RegistryObject<InformationItem> FOLDING = ITEMS.register("folding", () -> new InformationItem(new TranslationTextComponent("description.simpleplanes.folding")));
 
     public static final RegistryObject<Item> ELECTRIC_ENGINE = ITEMS.register("electric_engine", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));

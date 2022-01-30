@@ -13,6 +13,8 @@ import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.upgrades.armor.ArmorModel;
+import xyz.przemyk.simpleplanes.upgrades.armor.LargeArmorModel;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.HelicopterFloatingModel;
@@ -29,9 +31,11 @@ public class PlanesModelLayers {
 
     public static final ModelLayerLocation BOOSTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "booster"), "main");
     public static final ModelLayerLocation SHOOTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "shooter"), "main");
-    public static final ModelLayerLocation FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "floating"), "main"); //todo: maybe the same resource location, but different layer name?
+    public static final ModelLayerLocation FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "floating"), "main");
     public static final ModelLayerLocation LARGE_FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_floating"), "main");
     public static final ModelLayerLocation HELICOPTER_FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter_floating"), "main");
+    public static final ModelLayerLocation ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "main");
+    public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_armor"), "main");
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -46,6 +50,9 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(FLOATING, FloatingModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_FLOATING, LargeFloatingModel::createBodyLayer);
         event.registerLayerDefinition(HELICOPTER_FLOATING, HelicopterFloatingModel::createBodyLayer);
+
+        event.registerLayerDefinition(ARMOR, ArmorModel::createBodyLayer);
+        event.registerLayerDefinition(LARGE_ARMOR, LargeArmorModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -64,5 +71,7 @@ public class PlanesModelLayers {
         UpgradesModels.FLOATING = new FloatingModel(entityModelSet.bakeLayer(FLOATING));
         UpgradesModels.LARGE_FLOATING = new LargeFloatingModel(entityModelSet.bakeLayer(LARGE_FLOATING));
         UpgradesModels.HELICOPTER_FLOATING = new HelicopterFloatingModel(entityModelSet.bakeLayer(HELICOPTER_FLOATING));
+        UpgradesModels.ARMOR = new ArmorModel(entityModelSet.bakeLayer(ARMOR));
+        UpgradesModels.LARGE_ARMOR = new LargeArmorModel(entityModelSet.bakeLayer(LARGE_ARMOR));
     }
 }
