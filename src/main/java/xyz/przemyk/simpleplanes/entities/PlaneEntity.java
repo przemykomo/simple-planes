@@ -544,10 +544,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     protected void tickDeltaRotation(Quaternion q) {
-        EulerAngles angels1 = toEulerAngles(q);
-        setXRot((float) angels1.pitch);
-        setYRot((float) angels1.yaw);
-        rotationRoll = (float) angels1.roll;
+        EulerAngles angles = toEulerAngles(q);
+        setXRot((float) angles.pitch);
+        setYRot((float) angles.yaw);
+        rotationRoll = (float) angles.roll;
 
         float d = (float) wrapSubtractDegrees(yRotO, getYRot());
         if (rotationRoll >= 90 && prevRotationRoll <= 90) {

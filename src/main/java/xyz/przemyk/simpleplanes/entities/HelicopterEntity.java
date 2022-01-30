@@ -55,15 +55,19 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     protected void tickPitch(TempMotionVars tempMotionVars) {
-        if (tempMotionVars.moveForward > 0.0F) {
-            setXRot(Math.max(getXRot() - 1, -20));
-        } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerSprinting) {
-            setXRot(Math.min(getXRot() + 1, 10));
+        if (getHealth() <= 0) {
+            setXRot(-2);
+            setDeltaMovement(getDeltaMovement().add(0, -0.04, 0));
         } else {
-            setXRot(MathUtil.lerpAngle(0.2f, getXRot(), 0));
-            double drag = 0.999;
-            setDeltaMovement(getDeltaMovement().multiply(drag, 1, drag));
-
+            if (tempMotionVars.moveForward > 0.0F) {
+                setXRot(Math.max(getXRot() - 1, -20));
+            } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerSprinting) {
+                setXRot(Math.min(getXRot() + 1, 10));
+            } else {
+                setXRot(MathUtil.lerpAngle(0.2f, getXRot(), 0));
+                double drag = 0.999;
+                setDeltaMovement(getDeltaMovement().multiply(drag, 1, drag));
+            }
         }
     }
 
@@ -96,6 +100,11 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected void tickRotation(TempMotionVars tempMotionVars) {
+        if (getHealth() <= 0) {
+            setYRot(getYRot() + (getId() % 2 == 0 ? 16.0f : -16.0f));
+            return;
+        }
+
         int yawDiff = 2;
         if (!tempMotionVars.passengerSprinting) {
             float turn = tempMotionVars.moveStrafing > 0 ? yawDiff : tempMotionVars.moveStrafing == 0 ? 0 : -yawDiff;
