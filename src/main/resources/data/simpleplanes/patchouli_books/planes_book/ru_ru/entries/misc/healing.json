@@ -1,0 +1,16 @@
+{
+    "name": "Набор экспресс-ремонта",
+    "icon": "simpleplanes:healing",
+    "category": "simpleplanes:misc",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Используй его для экспресс-ремонта самолёта."
+        },
+        {
+            "type": "crafting",
+            "recipe": "simpleplanes:healing",
+            "recipe2": "simpleplanes:healing_enchanted"
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Зарядная станция",
+    "icon": "simpleplanes:charging_station",
+    "category": "simpleplanes:misc",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Он может заряжать электрические компоненты самолёта, расположенный над ним. Принимает энергию Forge."
+        },
+        {
+            "type": "crafting",
+            "recipe": "simpleplanes:charging_station"
+        }
+    ]
+}
