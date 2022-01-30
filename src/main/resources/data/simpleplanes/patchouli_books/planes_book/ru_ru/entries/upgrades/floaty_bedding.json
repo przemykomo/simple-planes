@@ -1,0 +1,15 @@
+{
+    "name": "Надувная подушка",
+    "icon": "simpleplanes:floaty_bedding",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "text",
+            "text": "Заставляет самолёт плавать по воде."
+        },
+        {
+            "type": "crafting",
+            "recipe": "simpleplanes:floaty_bedding"
+        }
+    ]
+}
