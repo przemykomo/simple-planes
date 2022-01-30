@@ -14,7 +14,7 @@ public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
      * Upgrade Type Constructor
      *
      * @param instanceSupplier Supplier of Upgrade instances
-     * @param isEngine Is it engine?
+     * @param isEngine Is it an engine?
      */
     public UpgradeType(Function<PlaneEntity, Upgrade> instanceSupplier, boolean isEngine) {
         this.instanceSupplier = instanceSupplier;
