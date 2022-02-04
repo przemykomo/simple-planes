@@ -26,9 +26,9 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class BoosterUpgrade extends Upgrade {
-    
+
     public static final ResourceLocation TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/rocket.png");
-    public static int FUEL_PER_GUNPOWDER = 20;
+    public static final int FUEL_PER_GUNPOWDER = 20;
 
     public int fuel = 0;
 
@@ -130,8 +130,8 @@ public class BoosterUpgrade extends Upgrade {
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        VertexConsumer ivertexbuilder = buffer.getBuffer(UpgradesModels.BOOSTER.renderType(TEXTURE));
-        UpgradesModels.BOOSTER.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        VertexConsumer vertexConsumer = buffer.getBuffer(UpgradesModels.BOOSTER.renderType(TEXTURE));
+        UpgradesModels.BOOSTER.renderToBuffer(matrixStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override

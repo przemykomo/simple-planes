@@ -17,9 +17,9 @@ import javax.annotation.Nullable;
 
 public class PlaneWorkbenchBlockEntity extends BlockEntity {
 
-    public ItemStackHandler itemStackHandler = new ItemStackHandler(2);
-    public LazyOptional<ItemStackHandler> itemStackHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
-    public DataSlot selectedRecipe = DataSlot.standalone();
+    public final ItemStackHandler itemStackHandler = new ItemStackHandler(2);
+    public final LazyOptional<ItemStackHandler> itemStackHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
+    public final DataSlot selectedRecipe = DataSlot.standalone();
 
     public PlaneWorkbenchBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(SimplePlanesBlocks.PLANE_WORKBENCH_TILE.get(), blockPos, blockState);

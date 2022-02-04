@@ -13,22 +13,19 @@ public class SimplePlanesConfig {
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    public static ForgeConfigSpec CONFIG;
+    public static final ForgeConfigSpec CONFIG;
 
-    public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
-    public static ForgeConfigSpec.BooleanValue EASY_FLIGHT;
+    public static final ForgeConfigSpec.IntValue TURN_THRESHOLD;
 
-    public static ForgeConfigSpec.IntValue PLANE_FUEL_COST;
-    public static ForgeConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
-    public static ForgeConfigSpec.IntValue HELICOPTER_FUEL_COST;
+    public static final ForgeConfigSpec.IntValue PLANE_FUEL_COST;
+    public static final ForgeConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
+    public static final ForgeConfigSpec.IntValue HELICOPTER_FUEL_COST;
 
     static {
         BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);
 
         TURN_THRESHOLD = BUILDER.comment("For controllers, a threshold for the joystick movement of the plane")
             .defineInRange("turnThreshold", 20, 0, 90);
-        EASY_FLIGHT = BUILDER.comment("Easier flight mode, disables the extreme movements")
-            .define("easyFlight", false);
         THIEF = BUILDER.comment("Allow stealing planes by players")
             .define("plane_heist", true);
 

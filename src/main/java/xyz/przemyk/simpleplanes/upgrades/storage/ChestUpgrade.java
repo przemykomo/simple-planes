@@ -107,7 +107,6 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
         matrixStack.scale(0.82f, 0.82f, 0.82f);
 
         BlockState state = chestType instanceof BlockItem ? ((BlockItem) chestType).getBlock().defaultBlockState() : Blocks.CHEST.defaultBlockState();
-        //TODO: maybe I should use a different method to render block?
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         matrixStack.popPose();
     }

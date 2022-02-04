@@ -82,7 +82,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
 
     private int onGroundTicks;
-    public HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
+    public final HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
     public EngineUpgrade engineUpgrade = null;
 
     public float rotationRoll;
@@ -93,7 +93,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     private int deltaRotationTicks;
 
     private Block planksMaterial;
-    public boolean mountMessage;
     private int damageTimeout;
     public int notMovingTime;
     public int goldenHeartsTimeout = 0;
@@ -395,7 +394,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             q = getQ();
         }
 
-        EulerAngles angelsOld = toEulerAngles(q).copy();
+        EulerAngles anglesOld = toEulerAngles(q).copy();
 
         Vec3 oldMotion = getDeltaMovement();
 
@@ -464,9 +463,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
 
         //back to q
-        q.mul(new Quaternion(Vector3f.ZP, ((float) (rotationRoll - angelsOld.roll)), true));
-        q.mul(new Quaternion(Vector3f.XN, ((float) (getXRot() - angelsOld.pitch)), true));
-        q.mul(new Quaternion(Vector3f.YP, ((float) (getYRot() - angelsOld.yaw)), true));
+        q.mul(new Quaternion(Vector3f.ZP, ((float) (rotationRoll - anglesOld.roll)), true));
+        q.mul(new Quaternion(Vector3f.XN, ((float) (getXRot() - anglesOld.pitch)), true));
+        q.mul(new Quaternion(Vector3f.YP, ((float) (getYRot() - anglesOld.yaw)), true));
 
         q = normalizeQuaternion(q);
 
@@ -813,6 +812,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             CompoundTag upgradesNBT = compound.getCompound("upgrades");
             deserializeUpgrades(upgradesNBT);
         }
+
+        setQ(new Quaternion(getXRot(), getYRot(), 0, true));
     }
 
     private void deserializeUpgrades(CompoundTag upgradesNBT) {
@@ -963,11 +964,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public void rideTick() {
-        super.rideTick();
-    }
-
-    @Override
     public void positionRider(Entity passenger) {
         super.positionRider(passenger);
         boolean b = (passenger instanceof Player) && ((Player) passenger).isLocalPlayer();
@@ -1094,8 +1090,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
         if (isControlledByLocalInstance()) {
-            mountMessage = true;
-
             if (lerpSteps > 0) {
                 lerpSteps = 0;
                 absMoveTo(lerpX, lerpY, lerpZ, getYRot(), getXRot());

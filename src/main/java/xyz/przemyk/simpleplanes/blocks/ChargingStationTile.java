@@ -19,8 +19,8 @@ import javax.annotation.Nullable;
 
 public class ChargingStationTile extends BlockEntity {
 
-    public EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(1000);
-    public LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
+    public final EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(1000);
+    public final LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
 
     public ChargingStationTile(BlockPos blockPos, BlockState blockState) {
         super(SimplePlanesBlocks.CHARGING_STATION_TILE.get(), blockPos, blockState);

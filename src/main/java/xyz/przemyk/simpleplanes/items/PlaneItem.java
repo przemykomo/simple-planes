@@ -1,7 +1,5 @@
 package xyz.przemyk.simpleplanes.items;
 
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -76,8 +74,8 @@ public class PlaneItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
-        HitResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn, ClipContext.Fluid.ANY);
-        if (raytraceresult.getType() == HitResult.Type.MISS) {
+        HitResult hitResult = getPlayerPOVHitResult(worldIn, playerIn, ClipContext.Fluid.ANY);
+        if (hitResult.getType() == HitResult.Type.MISS) {
             return InteractionResultHolder.pass(itemstack);
         } else {
             Vec3 vec3d = playerIn.getViewVector(1.0F);
@@ -86,18 +84,18 @@ public class PlaneItem extends Item {
                 Vec3 vec3d1 = playerIn.getEyePosition(1.0F);
 
                 for (Entity entity : list) {
-                    AABB axisalignedbb = entity.getBoundingBox().inflate(entity.getPickRadius());
-                    if (axisalignedbb.contains(vec3d1)) {
+                    AABB aabb = entity.getBoundingBox().inflate(entity.getPickRadius());
+                    if (aabb.contains(vec3d1)) {
                         return InteractionResultHolder.pass(itemstack);
                     }
                 }
             }
 
-            if (raytraceresult.getType() == HitResult.Type.BLOCK) {
+            if (hitResult.getType() == HitResult.Type.BLOCK) {
                 PlaneEntity planeEntity = planeEntityType.get().create(worldIn);
 
-                planeEntity.setPos(raytraceresult.getLocation().x(), raytraceresult.getLocation().y(), raytraceresult.getLocation().z());
-                planeEntity.setYRot(playerIn.getYRot()); //TODO: make it have correct rotation instantly after placing it
+                planeEntity.setPos(hitResult.getLocation().x(), hitResult.getLocation().y(), hitResult.getLocation().z());
+                planeEntity.setYRot(playerIn.getYRot());
                 planeEntity.yRotO = playerIn.yRotO;
                 planeEntity.setCustomName(itemstack.getHoverName());
                 CompoundTag entityTag = itemstack.getTagElement("EntityTag");

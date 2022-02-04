@@ -64,15 +64,13 @@ public class FurnaceEngineContainer extends AbstractContainerMenu {
                     if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else //noinspection ConstantConditions
-                    if (index >= 1 && index < 28) {
-                        if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
-                            return ItemStack.EMPTY;
-                        }
-                    } else //noinspection ConstantConditions
-                        if (index >= 28 && index < 37 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
-                            return ItemStack.EMPTY;
-                        }
+                } else if (index >= 1 && index < 28) {
+                    if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index >= 28 && index < 37 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
+                    return ItemStack.EMPTY;
+                }
             } else if (!this.moveItemStackTo(itemstack1, 1, 37, false)) {
                 return ItemStack.EMPTY;
             }

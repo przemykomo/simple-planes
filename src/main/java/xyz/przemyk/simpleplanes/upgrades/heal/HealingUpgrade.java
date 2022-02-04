@@ -18,7 +18,6 @@ public class HealingUpgrade extends Upgrade {
 
     private int cooldown = 10;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag compoundNBT = new CompoundTag();

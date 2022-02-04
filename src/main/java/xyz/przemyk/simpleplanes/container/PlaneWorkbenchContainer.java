@@ -97,8 +97,8 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     public void onCrafting() {
         if (!player.level.isClientSide) {
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
-            itemHandler.extractItem(0, recipe.ingredient.getItems()[0].getCount(), false);
-            itemHandler.extractItem(1, recipe.materialAmount, false);
+            itemHandler.extractItem(0, recipe.ingredient().getItems()[0].getCount(), false);
+            itemHandler.extractItem(1, recipe.materialAmount(), false);
             updateCraftingResult();
         }
     }
@@ -116,7 +116,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
             if (recipe.canCraft(ingredientStack, materialStack) && materialItem instanceof BlockItem &&
                 BlockTags.getAllTags().getTagOrEmpty(PLANE_MATERIALS).contains(((BlockItem) materialItem).getBlock())) {
 
-                result = recipe.result.copy();
+                result = recipe.result().copy();
                 Block block = ((BlockItem) materialItem).getBlock();
                 resultItemTag.putString("material", block.getRegistryName().toString());
                 result.addTagElement("EntityTag", resultItemTag);

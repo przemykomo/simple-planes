@@ -62,11 +62,11 @@ public class PlaneWorkbenchRecipeCategory implements IRecipeCategory<PlaneWorkbe
     @Override
     public void setIngredients(PlaneWorkbenchRecipe recipe, IIngredients ingredients) {
         Stream<ItemStack> materialStackStream = BlockTags.getAllTags().getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS)
-                .getValues().stream().map(block -> new ItemStack(block.asItem(), recipe.materialAmount));
+                .getValues().stream().map(block -> new ItemStack(block.asItem(), recipe.materialAmount()));
         ingredients.setInputIngredients(Arrays.asList(
-                Ingredient.of(Arrays.stream(recipe.ingredient.getItems()).map(itemStack -> new ItemStack(itemStack.getItem(), recipe.ingredientAmount))),
+                Ingredient.of(Arrays.stream(recipe.ingredient().getItems()).map(itemStack -> new ItemStack(itemStack.getItem(), recipe.ingredientAmount()))),
                 Ingredient.of(materialStackStream)));
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.result);
+        ingredients.setOutput(VanillaTypes.ITEM, recipe.result());
     }
 
     @Override

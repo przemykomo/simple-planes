@@ -19,23 +19,12 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 
-public class PlaneWorkbenchRecipe implements Recipe<Container> {
+public record PlaneWorkbenchRecipe(ResourceLocation id,
+                                   Ingredient ingredient, int ingredientAmount,
+                                   int materialAmount,
+                                   ItemStack result) implements Recipe<Container> {
 
     public static final Serializer SERIALIZER = new Serializer();
-
-    public final ResourceLocation id;
-    public final Ingredient ingredient;
-    public final int ingredientAmount;
-    public final int materialAmount;
-    public final ItemStack result;
-
-    public PlaneWorkbenchRecipe(ResourceLocation id, Ingredient ingredient, int ingredientAmount, int materialAmount, ItemStack result) {
-        this.id = id;
-        this.ingredient = ingredient;
-        this.ingredientAmount = ingredientAmount;
-        this.materialAmount = materialAmount;
-        this.result = result;
-    }
 
     public boolean canCraft(ItemStack ingredientStack, ItemStack materialStack) {
         return ingredientStack.getCount() >= ingredientAmount && materialStack.getCount() >= materialAmount && ingredient.test(ingredientStack);
@@ -95,7 +84,18 @@ public class PlaneWorkbenchRecipe implements Recipe<Container> {
         }
     }
 
-    @Override public boolean matches(Container p_77569_1_, Level p_77569_2_) { return false; }
-    @Override public ItemStack assemble(Container p_77572_1_) { return null; }
-    @Override public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) { return false; }
+    @Override
+    public boolean matches(Container p_77569_1_, Level p_77569_2_) {
+        return false;
+    }
+
+    @Override
+    public ItemStack assemble(Container p_77572_1_) {
+        return null;
+    }
+
+    @Override
+    public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) {
+        return false;
+    }
 }

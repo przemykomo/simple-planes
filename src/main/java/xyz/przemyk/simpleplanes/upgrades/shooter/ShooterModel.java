@@ -41,10 +41,4 @@ public class ShooterModel extends EntityModel<PlaneEntity> {
         matrixStack.popPose();
 
     }
-
-    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
-        modelRenderer.xRot = x;
-        modelRenderer.yRot = y;
-        modelRenderer.zRot = z;
-    }
 }

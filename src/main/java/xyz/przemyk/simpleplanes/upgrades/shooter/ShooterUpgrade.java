@@ -78,14 +78,14 @@ public class ShooterUpgrade extends Upgrade {
                 itemStack.shrink(1);
             }
         } else if (item == Items.ARROW) {
-            Arrow arrowentity = new Arrow(world, x, y, z);
-            arrowentity.setOwner(player);
-            arrowentity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
+            Arrow arrowEntity = new Arrow(world, x, y, z);
+            arrowEntity.setOwner(player);
+            arrowEntity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
             if (!player.isCreative()) {
                 itemStack.shrink(1);
-                arrowentity.pickup = AbstractArrow.Pickup.ALLOWED;
+                arrowEntity.pickup = AbstractArrow.Pickup.ALLOWED;
             }
-            world.addFreshEntity(arrowentity);
+            world.addFreshEntity(arrowEntity);
         } else if (item == Items.TIPPED_ARROW) {
             Arrow arrowEntity = new Arrow(world, x, y, z);
             arrowEntity.setOwner(player);
@@ -110,8 +110,8 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        VertexConsumer ivertexbuilder = buffer.getBuffer(UpgradesModels.SHOOTER.renderType(TEXTURE));
-        UpgradesModels.SHOOTER.renderToBuffer(matrixStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        VertexConsumer vertexConsumer = buffer.getBuffer(UpgradesModels.SHOOTER.renderType(TEXTURE));
+        UpgradesModels.SHOOTER.renderToBuffer(matrixStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override

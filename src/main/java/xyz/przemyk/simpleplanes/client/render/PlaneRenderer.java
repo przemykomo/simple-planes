@@ -101,17 +101,17 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             matrixStackIn.translate(0.0D, -firstPersonYOffset, 0.0D);
         }
 
-        VertexConsumer ivertexbuilder = bufferIn.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
+        VertexConsumer vertexConsumer = bufferIn.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeEntityModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        planeEntityModel.renderToBuffer(matrixStackIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
                 upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
         }
 
-        ivertexbuilder = ItemRenderer.getArmorFoilBuffer(bufferIn, planeEntityModel.renderType(PROPELLER_TEXTURE), false, planeEntity.isNoGravity());
+        vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, planeEntityModel.renderType(PROPELLER_TEXTURE), false, planeEntity.isNoGravity());
 
         propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        propellerModel.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        propellerModel.renderToBuffer(matrixStackIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStackIn.pushPose();
         matrixStackIn.popPose();
         matrixStackIn.popPose();

@@ -25,7 +25,6 @@ public class FurnaceEngineScreen extends AbstractContainerScreen<FurnaceEngineCo
         renderTooltip(matrixStack, mouseX, mouseY);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);

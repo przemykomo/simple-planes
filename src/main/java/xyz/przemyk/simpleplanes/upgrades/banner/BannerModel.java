@@ -27,8 +27,7 @@ import java.util.List;
 public class BannerModel {
     private static final BannerBlockEntity BANNER_BLOCK_ENTITY = new BannerBlockEntity(BlockPos.ZERO, Blocks.BLACK_BANNER.defaultBlockState());
 
-    public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, ItemStack banner,
-                                    int packedLight) {
+    public static void renderBanner(BannerUpgrade bannerUpgrade, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, ItemStack banner, int packedLight) {
         PlaneEntity planeEntity = bannerUpgrade.getPlaneEntity();
         if (!banner.isEmpty()) {
             matrixStackIn.pushPose();
@@ -53,8 +52,6 @@ public class BannerModel {
             float r = (0.05F * Mth.cos(f2 / 5)) * (float) 180;
             r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.getYRot());
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
-//            matrixStackIn.mulPose(Vector3f);
-//            matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(r));
             List<Pair<BannerPattern, DyeColor>> list = BANNER_BLOCK_ENTITY.getPatterns();
             BlockEntityRenderer<BannerBlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(BANNER_BLOCK_ENTITY);
             if (renderer instanceof BannerRenderer bannerRenderer) {

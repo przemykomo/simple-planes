@@ -29,7 +29,7 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     }
 
     /**
-     * Call it when data is changed and it needs to be synced to the client.
+     * Call it when data is changed, and it needs to be synced to the client.
      * If called on a server, results in calling writePacket method on a server and readPacket on a client
      */
     protected void updateClient() {
@@ -61,7 +61,7 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     public void tick() {}
 
     /**
-     * Called to render upgrade model. Loading model outside of this method may crash server.
+     * Called to render upgrade model. Loading model outside this method may crash server.
      *
      * @param matrixStack matrix stack.
      * @param buffer Render type buffer

@@ -59,7 +59,6 @@ public class TNTUpgrade extends LargeUpgrade {
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = Blocks.TNT.defaultBlockState();
-        //TODO: maybe I should use a different method to render block?
         Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         matrixStack.popPose();
     }

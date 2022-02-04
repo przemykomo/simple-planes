@@ -12,6 +12,7 @@ import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class OpenInventoryPacket {
 
     public OpenInventoryPacket() {}
