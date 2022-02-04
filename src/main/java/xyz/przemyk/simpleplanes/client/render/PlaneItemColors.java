@@ -1,19 +1,17 @@
 package xyz.przemyk.simpleplanes.client.render;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 public class PlaneItemColors {
@@ -43,9 +41,6 @@ public class PlaneItemColors {
                     int g = 0;
                     int b = 0;
                     int a = 0;
-                    List<Integer> g1 = new ArrayList<>();
-                    List<Integer> b1 = new ArrayList<>();
-                    List<Integer> a1 = new ArrayList<>();
 
                     for (int x = 0; x < 16; x++) {
                         for (int y = 0; y < 16; y++) {
@@ -54,9 +49,6 @@ public class PlaneItemColors {
                             g += (pixelRGBA & 0x00ff0000) >>> 16;
                             b += (pixelRGBA & 0x0000ff00) >>> 8;
                             a += (pixelRGBA & 0x000000ff);
-                            g1.add((pixelRGBA & 0x00ff0000) >>> 16);
-                            b1.add((pixelRGBA & 0x0000ff00) >>> 8);
-                            a1.add((pixelRGBA & 0x000000ff));
                         }
                     }
 
@@ -66,9 +58,6 @@ public class PlaneItemColors {
                     g = (int) Math.min(255, g * 1.1);
                     b = (int) Math.min(255, b * 1.1);
                     a = (int) Math.min(255, a * 1.1);
-                    g1.sort(Integer::compareTo);
-                    b1.sort(Integer::compareTo);
-                    a1.sort(Integer::compareTo);
 
                     int redo = g | b << 8 | a << 16;
 
@@ -79,7 +68,7 @@ public class PlaneItemColors {
                     cachedColors.put(block, redo);
                     return redo;
 
-                } catch (IndexOutOfBoundsException exception) {
+                } catch (IndexOutOfBoundsException | IllegalArgumentException exception) {
                     cachedColors.put(block, DEFAULT_COLOR);
                     return DEFAULT_COLOR;
                 }
