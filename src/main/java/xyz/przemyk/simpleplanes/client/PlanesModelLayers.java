@@ -1,8 +1,10 @@
 package xyz.przemyk.simpleplanes.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ShulkerModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -73,5 +75,6 @@ public class PlanesModelLayers {
         UpgradesModels.HELICOPTER_FLOATING = new HelicopterFloatingModel(entityModelSet.bakeLayer(HELICOPTER_FLOATING));
         UpgradesModels.ARMOR = new ArmorModel(entityModelSet.bakeLayer(ARMOR));
         UpgradesModels.LARGE_ARMOR = new LargeArmorModel(entityModelSet.bakeLayer(LARGE_ARMOR));
+        UpgradesModels.SHULKER_FOLDING = new ShulkerModel<>(entityModelSet.bakeLayer(ModelLayers.SHULKER));
     }
 }

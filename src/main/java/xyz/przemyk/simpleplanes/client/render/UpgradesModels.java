@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.client.render;
 
+import net.minecraft.client.model.ShulkerModel;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorModel;
 import xyz.przemyk.simpleplanes.upgrades.armor.LargeArmorModel;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
@@ -16,4 +17,5 @@ public class UpgradesModels {
     public static HelicopterFloatingModel HELICOPTER_FLOATING;
     public static ArmorModel ARMOR;
     public static LargeArmorModel LARGE_ARMOR;
+    public static ShulkerModel<?> SHULKER_FOLDING;
 }

@@ -9,6 +9,7 @@
     "item.simpleplanes.floaty_bedding": "Floaty Bedding",
     "item.simpleplanes.healing": "Quick Fix Kit",
     "item.simpleplanes.wrench": "Wrench",
+    "item.simpleplanes.folding": "Folding Upgrade",
 
     "block.simpleplanes.charger_block": "FE charging station",
     "block.simpleplanes.fueling_block": "plane fueling station",
@@ -31,7 +32,7 @@
 
     "itemGroup.simpleplanes": "Simple Planes",
     "simpleplanes.container.plane_workbench": "Plane Workbench",
-    "death.attack.plane_crash": "%1$s Died in a plane crash",
+    "death.attack.plane_crash": "%1$s died in a plane crash",
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",
     "helicopter.onboard": "Press %2$s to TakeOff | Press %1$s to Dismount",
     "key.simpleplanes.category": "Simple Planes",
@@ -77,6 +78,8 @@
     "simpleplanes:tnt": "TNT",
     "simpleplanes:banner": "Banner",
     "simpleplanes:chest": "Chest",
+    "simpleplanes:armor": "Armor",
+    "simpleplanes:folding": "Folding",
 
     "entity.simpleplanes.plane": "Plane",
     "entity.simpleplanes.large_plane": "Large Plane",

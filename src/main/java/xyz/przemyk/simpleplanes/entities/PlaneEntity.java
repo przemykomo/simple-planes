@@ -998,19 +998,20 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     //on dismount
     @Override
     public Vec3 getDismountLocationForPassenger(LivingEntity livingEntity) {
-        // TODO: folding upgrade
-//        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
-//            if (livingEntity instanceof PlayerEntity) {
-//                final PlayerEntity playerEntity = (PlayerEntity) livingEntity;
-//
-//                if (!playerEntity.isCreative() && getPassengers().size() == 0 && isAlive()) {
-//                    ItemStack itemStack = getItemStack();
-//
-//                    playerEntity.addItemStackToInventory(itemStack);
-//                    remove();
-//                }
-//            }
-//        }
+        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+            if (livingEntity instanceof Player player) {
+
+                if (!player.isCreative() && getPassengers().size() == 0 && isAlive()) {
+                    ItemStack itemStack = getItemStack();
+
+                    if (!player.addItem(itemStack)) {
+                        player.drop(itemStack, false);
+                    }
+                    kill();
+                    return player.position();
+                }
+            }
+        }
         return super.getDismountLocationForPassenger(livingEntity);
     }
 
