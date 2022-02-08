@@ -7,7 +7,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -17,7 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import xyz.przemyk.simpleplanes.MathUtil;
@@ -48,40 +46,25 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     @Override
-    public Vec3 getRenderOffset(T entityIn, float partialTicks) {
-        if (Minecraft.getInstance().player != null) {
-            LocalPlayer playerEntity = Minecraft.getInstance().player;
-            if (playerEntity == entityIn.getControllingPassenger()) {
-                if ((Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON) {
-
-                    return new Vec3(0, 0, 0);
-                }
-            }
-        }
-
-        return super.getRenderOffset(entityIn, partialTicks);
-    }
-
-    @Override
-    public void render(T planeEntity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        matrixStackIn.pushPose();
-        matrixStackIn.translate(0.0D, 0.375D, 0.0D);
-        matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
-        matrixStackIn.translate(0, -0.5, 0);
-        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180));
+    public void render(T planeEntity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+        poseStack.translate(0.0D, 0.375D, 0.0D);
+        poseStack.scale(-1.0F, -1.0F, 1.0F);
+        poseStack.translate(0, -0.5, 0);
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
 
         double firstPersonYOffset = -0.7D;
         boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.hasPassenger(Minecraft.getInstance().player)
             && (Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON;
         if (isPlayerRidingInFirstPersonView) {
-            matrixStackIn.translate(0.0D, firstPersonYOffset, 0.0D);
+            poseStack.translate(0.0D, firstPersonYOffset, 0.0D);
         }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-        matrixStackIn.mulPose(q);
+        poseStack.mulPose(q);
 
         float rockingAngle = planeEntity.getRockingAngle(partialTicks);
         if (!Mth.equal(rockingAngle, 0.0F)) {
-            matrixStackIn.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
+            poseStack.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
         }
         float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
         float f1 = planeEntity.getDamageTaken() - partialTicks;
@@ -92,31 +75,31 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         if (f > 0.0F) {
             float angle = Mth.clamp(f * f1 / 200.0F, -30, 30);
             f = planeEntity.tickCount + partialTicks;
-            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
         }
 
-        matrixStackIn.translate(0, -0.6, 0);
+        poseStack.translate(0, -0.6, 0);
 
         if (isPlayerRidingInFirstPersonView) {
-            matrixStackIn.translate(0.0D, -firstPersonYOffset, 0.0D);
+            poseStack.translate(0.0D, -firstPersonYOffset, 0.0D);
         }
 
-        VertexConsumer vertexConsumer = bufferIn.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
+        VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeEntityModel.renderToBuffer(matrixStackIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        planeEntityModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
-                upgrade.render(matrixStackIn, bufferIn, packedLightIn, partialTicks);
+                upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
 
-        vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, planeEntityModel.renderType(PROPELLER_TEXTURE), false, planeEntity.isNoGravity());
+        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(PROPELLER_TEXTURE), false, planeEntity.isNoGravity());
 
         propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        propellerModel.renderToBuffer(matrixStackIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        matrixStackIn.pushPose();
-        matrixStackIn.popPose();
-        matrixStackIn.popPose();
+        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        poseStack.pushPose();
+        poseStack.popPose();
+        poseStack.popPose();
 
-        super.render(planeEntity, 0, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        super.render(planeEntity, 0, partialTicks, poseStack, buffer, packedLight);
     }
 
     @Override
