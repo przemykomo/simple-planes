@@ -2,29 +2,30 @@ package xyz.przemyk.simpleplanes.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
-import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-public class OpenInventoryPacket {
+public class DropPayloadPacket {
 
-    public OpenInventoryPacket() {}
-    public OpenInventoryPacket(FriendlyByteBuf buffer) {}
+    public DropPayloadPacket() {}
+    public DropPayloadPacket(FriendlyByteBuf buffer) {}
     public void toBytes(FriendlyByteBuf buffer) {}
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
-            if (player != null && player.getVehicle() instanceof LargePlaneEntity plane) {
-                for (Upgrade upgrade : plane.upgrades.values()) {
-                    if (upgrade instanceof LargeUpgrade largeUpgrade) {
-                        if (largeUpgrade.hasStorage()) {
-                            largeUpgrade.openStorageGui(player);
+            ServerPlayer sender = ctx.getSender();
+            if (sender != null) {
+                Entity entity = sender.getVehicle();
+                if (entity instanceof PlaneEntity planeEntity) {
+                    for (Upgrade upgrade : planeEntity.upgrades.values()) {
+                        if (upgrade.canBeDroppedAsPayload()) {
+                            upgrade.dropAsPayload();
                             break;
                         }
                     }
@@ -33,4 +34,5 @@ public class OpenInventoryPacket {
         });
         ctx.setPacketHandled(true);
     }
+
 }

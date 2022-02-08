@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 public class LargePlaneEntity extends PlaneEntity {
 
-    public boolean hasBlockUpgrade = false;
+    public boolean hasLargeUpgrade = false;
 
     public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
@@ -47,7 +48,7 @@ public class LargePlaneEntity extends PlaneEntity {
         if (super.tryToAddUpgrade(playerEntity, itemStack)) {
             return true;
         }
-        if (!hasBlockUpgrade && getPassengers().size() < 2) {
+        if (!hasLargeUpgrade && getPassengers().size() < 2) {
             Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getLargeUpgradeFromItem(itemStack.getItem());
             return upgradeTypeOptional.map(upgradeType -> {
                 if (canAddUpgrade(upgradeType)) {
@@ -63,7 +64,7 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     public boolean tryToAddTNT(Player playerEntity, ItemStack itemStack) {
-        if (!hasBlockUpgrade && canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
+        if (!hasLargeUpgrade && canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
             addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
             return true;
         }
@@ -83,7 +84,7 @@ public class LargePlaneEntity extends PlaneEntity {
     @Override
     protected boolean canAddPassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        if (passengers.size() > 1 || (passengers.size() == 1 && hasBlockUpgrade) || passenger.getVehicle() == this) {
+        if (passengers.size() > 1 || (passengers.size() == 1 && hasLargeUpgrade) || passenger.getVehicle() == this) {
             return false;
         }
         return !(passenger instanceof PlaneEntity);
@@ -124,5 +125,17 @@ public class LargePlaneEntity extends PlaneEntity {
     @Override
     protected Item getItem() {
         return SimplePlanesItems.LARGE_PLANE_ITEM.get();
+    }
+
+    public boolean hasStorageUpgrade() {
+        if (hasLargeUpgrade) {
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade instanceof LargeUpgrade largeUpgrade) {
+                    return largeUpgrade.hasStorage();
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -10,6 +10,7 @@
     "item.simpleplanes.healing": "Quick Fix Kit",
     "item.simpleplanes.wrench": "Wrench",
     "item.simpleplanes.folding": "Folding Upgrade",
+    "item.simpleplanes.supply_crate": "Supply Crate",
 
     "block.simpleplanes.charger_block": "FE charging station",
     "block.simpleplanes.fueling_block": "plane fueling station",
@@ -29,6 +30,7 @@
     "name.simpleplanes.banner": "Banner",
     "name.simpleplanes.tnt": "TNT",
     "name.simpleplanes.armor": "Plane Armor",
+    "name.simpleplanes.supply_crate": "Supply Crate",
 
     "itemGroup.simpleplanes": "Simple Planes",
     "simpleplanes.container.plane_workbench": "Plane Workbench",
@@ -38,10 +40,12 @@
     "key.simpleplanes.category": "Simple Planes",
     "key.plane_boost.desc": "Plane Boost Key",
     "key.plane_engine_open.desc": "Open Plane Engine Screen",
+    "key.plane_drop_payload.desc": "Drop Payload",
 
     "item.simpleplanes.plane": "Plane",
     "item.simpleplanes.large_plane": "Large Plane",
     "item.simpleplanes.helicopter": "Helicopter",
+    "item.simpleplanes.parachute": "Parachute",
 
     "text.autoconfig.simpleplanes.title": "simple planes",
     "text.autoconfig.simpleplanes.category.default": "misc",
@@ -80,10 +84,12 @@
     "simpleplanes:chest": "Chest",
     "simpleplanes:armor": "Armor",
     "simpleplanes:folding": "Folding",
+    "simpleplanes:supply_crate": "Supply Crate",
 
     "entity.simpleplanes.plane": "Plane",
     "entity.simpleplanes.large_plane": "Large Plane",
     "entity.simpleplanes.helicopter": "Helicopter",
+    "entity.simpleplanes.parachute": "parachute",
 
     "simpleplanes.gui.energy": "Energy: %s FE"
 }

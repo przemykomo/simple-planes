@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.storage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -27,6 +28,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
@@ -133,5 +135,15 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     public void onApply(ItemStack itemStack, Player playerEntity) {
         chestType = itemStack.getItem();
         itemStackHandler.setSize(IronChestsCompat.getSize(chestType.getRegistryName().toString()));
+    }
+
+    @Override
+    public boolean hasStorage() {
+        return true;
+    }
+
+    @Override
+    public void openStorageGui(ServerPlayer player) {
+        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(chestType.getRegistryName().toString()));
     }
 }

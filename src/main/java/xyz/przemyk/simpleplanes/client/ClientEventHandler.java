@@ -23,7 +23,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -39,24 +38,21 @@ import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.*;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
+import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.network.BoostPacket;
-import xyz.przemyk.simpleplanes.network.OpenEngineInventoryPacket;
-import xyz.przemyk.simpleplanes.network.OpenInventoryPacket;
-import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
 
     public static final ResourceLocation HUD_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
-    @OnlyIn(Dist.CLIENT)
     public static KeyMapping boostKey;
-    @OnlyIn(Dist.CLIENT)
     public static KeyMapping openEngineInventoryKey;
+    public static KeyMapping dropPayloadKey;
 
     static {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::planeColor);
@@ -66,8 +62,10 @@ public class ClientEventHandler {
     public static void clientSetup() {
         boostKey = new KeyMapping("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         openEngineInventoryKey = new KeyMapping("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
+        dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(boostKey);
         ClientRegistry.registerKeyBinding(openEngineInventoryKey);
+        ClientRegistry.registerKeyBinding(dropPayloadKey);
 
         MenuScreens.register(SimplePlanesContainers.PLANE_WORKBENCH.get(), PlaneWorkbenchScreen::new);
         MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
@@ -223,6 +221,14 @@ public class ClientEventHandler {
 
                 if (planeEntity.engineUpgrade != null && mc.screen == null && mc.getOverlay() == null && openEngineInventoryKey.consumeClick() && planeEntity.engineUpgrade.canOpenGui()) {
                     PlaneNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
+                } else if (dropPayloadKey.consumeClick()) {
+                    for (Upgrade upgrade : planeEntity.upgrades.values()) {
+                        if (upgrade.canBeDroppedAsPayload()) {
+                            upgrade.dropAsPayload();
+                            PlaneNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
+                            break;
+                        }
+                    }
                 }
 
                 boolean isBoosting = boostKey.isDown();
@@ -295,8 +301,8 @@ public class ClientEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void planeInventory(ScreenOpenEvent event) {
         final LocalPlayer player = Minecraft.getInstance().player;
-        if (event.getScreen() instanceof InventoryScreen && player.getVehicle() instanceof PlaneEntity plane) {
-            if (plane.upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId())) {
+        if (event.getScreen() instanceof InventoryScreen && player.getVehicle() instanceof LargePlaneEntity largePlaneEntity) {
+            if (largePlaneEntity.hasStorageUpgrade()) {
                 event.setCanceled(true);
                 PlaneNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
             }

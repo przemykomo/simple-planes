@@ -35,12 +35,8 @@ public class TNTUpgrade extends LargeUpgrade {
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         ItemStack itemStack = event.getPlayer().getItemInHand(event.getHand());
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
-            PrimedTnt tntEntity = new PrimedTnt(planeEntity.level, planeEntity.getX() - 1.0, planeEntity.getY(), planeEntity.getZ(),
-                event.getPlayer());
-            tntEntity.setDeltaMovement(planeEntity.getDeltaMovement());
-            planeEntity.level.addFreshEntity(tntEntity);
             itemStack.hurtAndBreak(1, event.getPlayer(), playerEntity -> playerEntity.broadcastBreakEvent(event.getHand()));
-            remove();
+            dropAsPayload();
         }
     }
 
@@ -72,5 +68,18 @@ public class TNTUpgrade extends LargeUpgrade {
     @Override
     public void dropItems() {
         planeEntity.spawnAtLocation(Items.TNT);
+    }
+
+    @Override
+    public boolean canBeDroppedAsPayload() {
+        return true;
+    }
+
+    @Override
+    public void dropAsPayload() {
+        PrimedTnt tntEntity = new PrimedTnt(planeEntity.level, planeEntity.getX() - 1.0, planeEntity.getY(), planeEntity.getZ(), planeEntity.getPlayer());
+        tntEntity.setDeltaMovement(planeEntity.getDeltaMovement());
+        planeEntity.level.addFreshEntity(tntEntity);
+        remove();
     }
 }

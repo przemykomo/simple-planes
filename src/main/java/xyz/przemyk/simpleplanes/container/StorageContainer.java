@@ -1,18 +1,17 @@
 package xyz.przemyk.simpleplanes.container;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
-import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 
 public class StorageContainer extends AbstractContainerMenu {
 
@@ -39,8 +38,8 @@ public class StorageContainer extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player playerIn) {
         Entity entity = playerIn.getVehicle();
-        if (entity instanceof PlaneEntity && entity.isAlive()) {
-            return ((PlaneEntity) entity).upgrades.containsKey(SimplePlanesUpgrades.CHEST.getId());
+        if (entity instanceof LargePlaneEntity largePlaneEntity && entity.isAlive()) {
+            return largePlaneEntity.hasStorageUpgrade();
         }
 
         return false;

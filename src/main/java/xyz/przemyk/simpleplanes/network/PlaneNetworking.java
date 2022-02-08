@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class PlaneNetworking {
 
-    private static final String PROTOCOL_VERSION = "4";
+    private static final String PROTOCOL_VERSION = "5";
     public static SimpleChannel INSTANCE;
 
     public static void init() {
@@ -93,6 +93,15 @@ public class PlaneNetworking {
                 SUpgradeRemovedPacket::new,
                 SUpgradeRemovedPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                DropPayloadPacket.class,
+                DropPayloadPacket::toBytes,
+                DropPayloadPacket::new,
+                DropPayloadPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
     }
 }
