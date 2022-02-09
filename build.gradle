@@ -50,6 +50,22 @@ minecraft {
             }
         }
 
+        clientRandom {
+            workingDirectory project.file('run')
+            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+//            args '--username', 'random#'
+
+            mods {
+                simpleplanes {
+                    source sourceSets.main
+                }
+            }
+        }
+
         server {
             workingDirectory project.file('run')
             properties 'mixin.env.remapRefMap': 'true'

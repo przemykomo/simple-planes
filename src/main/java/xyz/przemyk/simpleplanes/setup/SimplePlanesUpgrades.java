@@ -14,6 +14,7 @@ import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.heal.HealingUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.supplycrate.SupplyCrateUpgrade;
@@ -59,6 +60,8 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> SHOOTER = UPGRADE_TYPES.register("shooter", () -> new UpgradeType(ShooterUpgrade::new));
     public static final RegistryObject<UpgradeType> HEALING = UPGRADE_TYPES.register("healing", () -> new UpgradeType(HealingUpgrade::new));
     public static final RegistryObject<UpgradeType> ARMOR = UPGRADE_TYPES.register("armor", () -> new UpgradeType(ArmorUpgrade::new));
+    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(FoldingUpgrade::new));
+    public static final RegistryObject<UpgradeType> SEATS = UPGRADE_TYPES.register("seats", () -> new UpgradeType(SeatsUpgrade::new));
 
     public static final RegistryObject<UpgradeType> FURNACE_ENGINE = UPGRADE_TYPES.register("furnace_engine", () -> new UpgradeType(FurnaceEngineUpgrade::new, true));
     public static final RegistryObject<UpgradeType> ELECTRIC_ENGINE = UPGRADE_TYPES.register("electric_engine", () -> new UpgradeType(ElectricEngineUpgrade::new, true));
@@ -67,6 +70,4 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> TNT = UPGRADE_TYPES.register("tnt", () -> new UpgradeType(TNTUpgrade::new));
     public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(ChestUpgrade::new));
     public static final RegistryObject<UpgradeType> SUPPLY_CRATE = UPGRADE_TYPES.register("supply_crate", () -> new UpgradeType(SupplyCrateUpgrade::new));
-
-    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(FoldingUpgrade::new));
 }

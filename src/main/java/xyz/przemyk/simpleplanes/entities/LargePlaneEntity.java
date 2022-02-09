@@ -97,17 +97,13 @@ public class LargePlaneEntity extends PlaneEntity {
         if (passengers.indexOf(passenger) == 0) {
             passenger.setPos(passenger.getX(), getY() + getPassengersRidingOffset() + getEntityYOffset(passenger), passenger.getZ());
         } else {
-            updateSecondPassenger(passenger);
+            Vector3f pos = transformPos(getSecondPassengerPos(passenger));
+            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         }
     }
 
-    public void updateSecondPassenger(Entity passenger) {
-        Vector3f pos = transformPos(getSecondPassengerPos(passenger));
-        passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
-    }
-
     protected Vector3f getSecondPassengerPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getPassengersRidingOffset() + getEntityYOffset(passenger)), -1);
+        return new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -1);
     }
 
     public double getEntityYOffset(Entity passenger) {

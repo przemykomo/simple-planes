@@ -209,6 +209,16 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        List<Entity> passengers = getPassengers();
+        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+            return passengers.isEmpty();
+        } else {
+            return passengers.size() < 3;
+        }
+    }
+
+    @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (player.isShiftKeyDown() && itemStack.isEmpty()) {
@@ -966,10 +976,19 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     @Override
     public void positionRider(Entity passenger) {
         super.positionRider(passenger);
-        boolean b = (passenger instanceof Player) && ((Player) passenger).isLocalPlayer();
+        boolean local = (passenger instanceof Player) && ((Player) passenger).isLocalPlayer();
 
-        if (hasPassenger(passenger) && !b) {
+        if (hasPassenger(passenger) && !local) {
             applyYawToEntity(passenger);
+        }
+
+        int index = getPassengers().indexOf(passenger);
+        if (index == 1) {
+            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1));
+            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+        } else if (index == 2) {
+            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1));
+            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         }
     }
 
