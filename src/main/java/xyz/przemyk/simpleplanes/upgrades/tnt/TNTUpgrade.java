@@ -66,7 +66,7 @@ public class TNTUpgrade extends LargeUpgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(Items.TNT);
     }
 

@@ -82,7 +82,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     }
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(i);
             if (!itemStack.isEmpty()) {

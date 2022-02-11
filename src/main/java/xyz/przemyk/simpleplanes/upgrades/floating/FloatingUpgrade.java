@@ -59,7 +59,7 @@ public class FloatingUpgrade extends Upgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(SimplePlanesItems.FLOATY_BEDDING.get());
     }
 }

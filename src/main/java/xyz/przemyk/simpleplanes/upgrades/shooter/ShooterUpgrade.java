@@ -125,7 +125,7 @@ public class ShooterUpgrade extends Upgrade {
     }
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(Items.DISPENSER);
     }
 }

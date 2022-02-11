@@ -135,7 +135,7 @@ public class BoosterUpgrade extends Upgrade {
     }
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(SimplePlanesItems.BOOSTER.get());
     }
 }

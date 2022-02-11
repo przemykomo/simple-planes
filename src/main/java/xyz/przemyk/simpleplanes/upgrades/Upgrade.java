@@ -92,7 +92,7 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     /**
      * Called when upgrade is removed using wrench.
      */
-    public abstract void dropItems();
+    public abstract void onRemoved();
 
     public boolean canBeDroppedAsPayload() {
         return false;

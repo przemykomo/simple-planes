@@ -396,7 +396,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (Math.abs(tempMotionVars.moveStrafing) < tempMotionVars.turnThreshold) {
             tempMotionVars.moveStrafing = 0;
         }
-        tempMotionVars.passengerSprinting = isSprinting();
+        tempMotionVars.passengerPressingSpace = isSprinting();
         Quaternion q;
         if (level.isClientSide) {
             q = getQ_Client();
@@ -423,7 +423,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             doPitch = tickOnGround(tempMotionVars);
         } else {
             onGroundTicks--;
-            if (!tempMotionVars.passengerSprinting) {
+            if (!tempMotionVars.passengerPressingSpace) {
                 tempMotionVars.push = tempMotionVars.passiveEnginePush;
             }
         }
@@ -543,7 +543,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         Vec3 oldMotion = getDeltaMovement();
         final boolean parked = (isOnWater() || isOnGround()) &&
                 (oldMotion.length() < 0.1) &&
-                (!tempMotionVars.passengerSprinting) &&
+                (!tempMotionVars.passengerPressingSpace) &&
                 (tempMotionVars.moveStrafing == 0) &&
                 (notMovingTime > 20) &&
                 (onGround || isOnWater()) &&
@@ -975,20 +975,24 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public void positionRider(Entity passenger) {
+        positionRiderGeneric(passenger);
+
+        int index = getPassengers().indexOf(passenger);
+        if (index == 1) {
+            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+        } else if (index == 2) {
+            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+        }
+    }
+
+    protected void positionRiderGeneric(Entity passenger) {
         super.positionRider(passenger);
         boolean local = (passenger instanceof Player) && ((Player) passenger).isLocalPlayer();
 
         if (hasPassenger(passenger) && !local) {
             applyYawToEntity(passenger);
-        }
-
-        int index = getPassengers().indexOf(passenger);
-        if (index == 1) {
-            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1));
-            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
-        } else if (index == 2) {
-            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1));
-            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         }
     }
 
@@ -1271,7 +1275,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public void removeUpgrade(ResourceLocation upgradeID) {
         Upgrade upgrade = upgrades.remove(upgradeID);
         if (upgrade != null) {
-            upgrade.dropItems();
+            upgrade.onRemoved();
             upgrade.remove();
 
             if (!level.isClientSide) {
@@ -1286,7 +1290,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         public float moveForward;
         public double turnThreshold;
         public float moveStrafing;
-        public boolean passengerSprinting;
+        public boolean passengerPressingSpace;
         double maxSpeed;
         double maxPushSpeed;
         double takeOffSpeed;
@@ -1311,7 +1315,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             moveForward = 0;
             turnThreshold = 0;
             moveStrafing = 0;
-            passengerSprinting = false;
+            passengerPressingSpace = false;
             maxSpeed = 3;
             takeOffSpeed = 0.3;
             maxLift = 2;

@@ -175,7 +175,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
     }
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(SimplePlanesItems.FURNACE_ENGINE.get());
         planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
     }

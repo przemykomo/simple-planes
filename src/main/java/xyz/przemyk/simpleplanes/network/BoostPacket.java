@@ -27,7 +27,7 @@ public class BoostPacket {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
             ServerPlayer sender = ctx.getSender();
-            if (sender != null && sender.getVehicle() instanceof PlaneEntity planeEntity) {
+            if (sender != null && sender.getVehicle() instanceof PlaneEntity planeEntity && planeEntity.getControllingPassenger() == sender) {
                 planeEntity.setSprinting(boost);
             }
         });

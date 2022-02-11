@@ -22,6 +22,7 @@ import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.HelicopterFloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.LargeFloatingModel;
+import xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgradeModel;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterModel;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -41,6 +42,7 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation HELICOPTER_FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter_floating"), "main");
     public static final ModelLayerLocation ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "main");
     public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_armor"), "main");
+    public static final ModelLayerLocation SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "main");
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -57,6 +59,7 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(FLOATING, FloatingModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_FLOATING, LargeFloatingModel::createBodyLayer);
         event.registerLayerDefinition(HELICOPTER_FLOATING, HelicopterFloatingModel::createBodyLayer);
+        event.registerLayerDefinition(SEATS, SeatsUpgradeModel::createBodyLayer);
 
         event.registerLayerDefinition(ARMOR, ArmorModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_ARMOR, LargeArmorModel::createBodyLayer);
@@ -83,5 +86,6 @@ public class PlanesModelLayers {
         UpgradesModels.ARMOR = new ArmorModel(entityModelSet.bakeLayer(ARMOR));
         UpgradesModels.LARGE_ARMOR = new LargeArmorModel(entityModelSet.bakeLayer(LARGE_ARMOR));
         UpgradesModels.SHULKER_FOLDING = new ShulkerModel<>(entityModelSet.bakeLayer(ModelLayers.SHULKER));
+        UpgradesModels.SEATS = new SeatsUpgradeModel(entityModelSet.bakeLayer(SEATS));
     }
 }

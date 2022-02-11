@@ -1,15 +1,13 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import net.minecraft.client.Minecraft;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.Item;
-import com.mojang.math.Quaternion;
-import net.minecraft.world.phys.Vec3;
-import com.mojang.math.Vector3f;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -37,21 +35,13 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Vector3f getTickPush(TempMotionVars tempMotionVars) {
-        if (tempMotionVars.moveForward < 0 && isPowered() && !tempMotionVars.passengerSprinting) {
+        if (tempMotionVars.moveForward < 0 && isPowered() && !tempMotionVars.passengerPressingSpace) {
             tempMotionVars.push *= 0.2;
         }
-        if (tempMotionVars.moveForward > 0 && isPowered() && !tempMotionVars.passengerSprinting) {
+        if (tempMotionVars.moveForward > 0 && isPowered() && !tempMotionVars.passengerPressingSpace) {
             tempMotionVars.push *= 1.5;
         }
         return transformPos(new Vector3f(0, tempMotionVars.push, 0));
-    }
-
-    @Override
-    protected void addPassenger(Entity passenger) {
-        super.addPassenger(passenger);
-        if (level.isClientSide() && Minecraft.getInstance().player == passenger) {
-            (Minecraft.getInstance()).gui.setOverlayMessage(new TextComponent("sprint to take off"), false);
-        }
     }
 
     protected void tickPitch(TempMotionVars tempMotionVars) {
@@ -61,7 +51,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         } else {
             if (tempMotionVars.moveForward > 0.0F) {
                 setXRot(Math.max(getXRot() - 1, -20));
-            } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerSprinting) {
+            } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerPressingSpace) {
                 setXRot(Math.min(getXRot() + 1, 10));
             } else {
                 setXRot(MathUtil.lerpAngle(0.2f, getXRot(), 0));
@@ -75,7 +65,7 @@ public class HelicopterEntity extends LargePlaneEntity {
     protected boolean tickOnGround(TempMotionVars tempMotionVars) {
         float push = tempMotionVars.push;
         super.tickOnGround(tempMotionVars);
-        if (tempMotionVars.passengerSprinting) {
+        if (tempMotionVars.passengerPressingSpace) {
             tempMotionVars.push = push;
         } else {
             tempMotionVars.push = 0;
@@ -106,7 +96,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         }
 
         int yawDiff = 2;
-        if (!tempMotionVars.passengerSprinting) {
+        if (!tempMotionVars.passengerPressingSpace) {
             float turn = tempMotionVars.moveStrafing > 0 ? yawDiff : tempMotionVars.moveStrafing == 0 ? 0 : -yawDiff;
             rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
             setYRot(getYRot() - turn);

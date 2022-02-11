@@ -72,7 +72,7 @@ public class ArmorUpgrade extends Upgrade {
     }
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         ItemStack itemStack = SimplePlanesItems.ARMOR.get().getDefaultInstance();
         if (protectionLevel > 0) {
             itemStack.enchant(Enchantments.ALL_DAMAGE_PROTECTION, protectionLevel);

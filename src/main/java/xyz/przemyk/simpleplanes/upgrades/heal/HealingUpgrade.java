@@ -60,5 +60,5 @@ public class HealingUpgrade extends Upgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void dropItems() {}
+    public void onRemoved() {}
 }

@@ -5,16 +5,13 @@ package xyz.przemyk.simpleplanes.upgrades.seats;// Made with Blockbench 4.0.3
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class SeatsUpgradeModel extends EntityModel<PlaneEntity> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "seatsupgrademodel"), "main");
 	private final ModelPart bb_main;
 
 	public SeatsUpgradeModel(ModelPart root) {
@@ -25,8 +22,8 @@ public class SeatsUpgradeModel extends EntityModel<PlaneEntity> {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition bb_main = partdefinition.addOrReplaceChild("bb_main", CubeListBuilder.create().texOffs(74, 58).addBox(8.0F, -10.0F, 2.0F, 17.0F, 2.0F, 10.0F, new CubeDeformation(0.0F))
-		.texOffs(74, 58).addBox(-26.0F, -10.0F, 2.0F, 17.0F, 2.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+		partdefinition.addOrReplaceChild("bb_main", CubeListBuilder.create().texOffs(74, 58).addBox(8.0F, -10.0F, 2.0F, 17.0F, 2.0F, 10.0F, new CubeDeformation(0.0F))
+				.texOffs(74, 58).addBox(-26.0F, -10.0F, 2.0F, 17.0F, 2.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 16, 16);
 	}

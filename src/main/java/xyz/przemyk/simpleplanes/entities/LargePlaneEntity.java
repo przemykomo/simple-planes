@@ -84,21 +84,41 @@ public class LargePlaneEntity extends PlaneEntity {
     @Override
     protected boolean canAddPassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        if (passengers.size() > 1 || (passengers.size() == 1 && hasLargeUpgrade) || passenger.getVehicle() == this) {
+        if (passenger.getVehicle() == this || passenger instanceof PlaneEntity) {
             return false;
         }
-        return !(passenger instanceof PlaneEntity);
+        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+            return passengers.size() <= 1 && (passengers.size() == 0 || !hasLargeUpgrade);
+        } else {
+            return hasLargeUpgrade ? passengers.size() < 3 : passengers.size() < 4;
+        }
     }
 
     @Override
     public void positionRider(Entity passenger) {
-        List<Entity> passengers = getPassengers();
-        super.positionRider(passenger);
-        if (passengers.indexOf(passenger) == 0) {
+        positionRiderGeneric(passenger);
+        int index = getPassengers().indexOf(passenger);
+
+        if (index == 0) {
             passenger.setPos(passenger.getX(), getY() + getPassengersRidingOffset() + getEntityYOffset(passenger), passenger.getZ());
         } else {
-            Vector3f pos = transformPos(getSecondPassengerPos(passenger));
-            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+            if (hasLargeUpgrade) {
+                index++;
+            }
+            switch (index) {
+                case 1 -> {
+                    Vector3f pos = transformPos(getSecondPassengerPos(passenger));
+                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                }
+                case 2 -> {
+                    Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                }
+                case 3 -> {
+                    Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                }
+            }
         }
     }
 

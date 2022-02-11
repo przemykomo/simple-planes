@@ -11,6 +11,7 @@
     "item.simpleplanes.wrench": "Wrench",
     "item.simpleplanes.folding": "Folding Upgrade",
     "item.simpleplanes.supply_crate": "Supply Crate",
+    "item.simpleplanes.seats": "Seats Upgrade",
 
     "block.simpleplanes.charger_block": "FE charging station",
     "block.simpleplanes.fueling_block": "plane fueling station",
@@ -31,6 +32,7 @@
     "name.simpleplanes.tnt": "TNT",
     "name.simpleplanes.armor": "Plane Armor",
     "name.simpleplanes.supply_crate": "Supply Crate",
+    "name.simpleplanes.seats": "Seats",
 
     "itemGroup.simpleplanes": "Simple Planes",
     "simpleplanes.container.plane_workbench": "Plane Workbench",
@@ -85,11 +87,12 @@
     "simpleplanes:armor": "Armor",
     "simpleplanes:folding": "Folding",
     "simpleplanes:supply_crate": "Supply Crate",
+    "simpleplanes:seats": "Seats",
 
     "entity.simpleplanes.plane": "Plane",
     "entity.simpleplanes.large_plane": "Large Plane",
     "entity.simpleplanes.helicopter": "Helicopter",
-    "entity.simpleplanes.parachute": "parachute",
+    "entity.simpleplanes.parachute": "Parachute",
 
     "simpleplanes.gui.energy": "Energy: %s FE"
 }

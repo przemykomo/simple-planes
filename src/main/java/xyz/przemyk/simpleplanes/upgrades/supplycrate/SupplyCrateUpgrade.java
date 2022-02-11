@@ -93,7 +93,7 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(i);
             if (!itemStack.isEmpty()) {

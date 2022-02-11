@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "CCC",
+        "SPS"
+    ],
+    "key": {
+        "S": {
+            "tag": "forge:slimeballs"
+        },
+        "C": {
+            "tag": "minecraft:planks"
+        },
+        "P": {
+            "item": "minecraft:phantom_membrane"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:seats"
+    }
+}

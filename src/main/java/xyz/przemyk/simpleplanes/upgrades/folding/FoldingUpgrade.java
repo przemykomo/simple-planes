@@ -48,7 +48,7 @@ public class FoldingUpgrade extends Upgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(SimplePlanesItems.FOLDING.get());
     }
 }

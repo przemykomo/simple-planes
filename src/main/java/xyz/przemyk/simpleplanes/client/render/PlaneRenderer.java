@@ -84,7 +84,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             poseStack.translate(0.0D, -firstPersonYOffset, 0.0D);
         }
 
-        VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(this.getTextureLocation(planeEntity)));
+        VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         planeEntityModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
@@ -104,6 +104,10 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
     @Override
     public ResourceLocation getTextureLocation(PlaneEntity entity) {
+        return getMaterialTexture(entity);
+    }
+
+    public static ResourceLocation getMaterialTexture(PlaneEntity entity) {
         Block block = entity.getMaterial();
         if (cachedTextures.containsKey(block)) {
             return cachedTextures.get(block);

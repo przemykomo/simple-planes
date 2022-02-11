@@ -160,7 +160,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
     }
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
     }
 }

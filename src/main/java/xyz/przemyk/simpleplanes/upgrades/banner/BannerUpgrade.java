@@ -72,7 +72,7 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
-    public void dropItems() {
+    public void onRemoved() {
         planeEntity.spawnAtLocation(banner);
     }
 }
