@@ -1,6 +1,6 @@
 {
   "name": "Adding Upgrades",
-  "icon": "minecraft:chest",
+  "icon": "simpleplanes:wrench",
   "category": "simpleplanes:upgrades",
   "pages": [{
       "type": "text",
