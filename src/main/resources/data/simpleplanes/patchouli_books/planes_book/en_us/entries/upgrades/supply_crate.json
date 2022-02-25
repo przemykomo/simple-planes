@@ -5,7 +5,7 @@
     "pages": [
         {
             "type": "text",
-            "text": "press {code_for_key_to_drop_supply_crate_here}"
+            "text": "press {"keybind": "key.plane_drop_payload.desc"}"
         },
         {
           "type": "crafting",
