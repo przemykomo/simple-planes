@@ -1,5 +1,5 @@
 # simple-planes
-Planes mod for minecraft forge.
+Simple Planes mod for Minecraft Forge.
 
 https://www.curseforge.com/minecraft/mc-mods/simple-planes
 
