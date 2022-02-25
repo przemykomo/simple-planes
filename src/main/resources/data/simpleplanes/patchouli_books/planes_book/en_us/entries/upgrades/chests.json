@@ -1,0 +1,15 @@
+{
+  "name": "Adding Chests",
+  "icon": "minecraft:chest",
+  "category": "simpleplanes:upgrades",
+  "pages": [
+    {
+      "type": "text",
+      "text": "adding chests"
+    },
+    {
+      "type": "crafting",
+      "recipe": "minecraft:chest"
+    }
+  ]
+}
