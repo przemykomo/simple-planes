@@ -1,0 +1,16 @@
+{
+    "name": "Supply Crate",
+    "icon": "simpleplanes:supply_crate",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "text",
+            "text": "press "
+        },
+        {
+          "type": "crafting",
+          "recipe": "simpleplanes:supply_crate"
+          
+        }
+    ]
+}
