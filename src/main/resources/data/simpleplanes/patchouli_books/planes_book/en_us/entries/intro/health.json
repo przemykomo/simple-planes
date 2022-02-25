@@ -5,7 +5,7 @@
     "pages": [
         {
             "type": "text",
-            "text": "Planes can get damaged, look at it's health bar on the right. In order to fix the plane sit down in the plane while parked, or use $(l:misc/healing)quick fix kit$(/l)"
+            "text": "Planes can get damaged, look at it's health bar on the right. In order to fix the plane sit down in the plane while parked, or use the $(l:misc/healing)Quick Fix Kit$(/l)."
         }
     ]
 }
