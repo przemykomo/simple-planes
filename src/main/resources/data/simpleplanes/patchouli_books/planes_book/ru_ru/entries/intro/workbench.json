@@ -4,11 +4,11 @@
     "category": "simpleplanes:intro",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Аэроверстак используется в создании самолётов и вертолётов."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:plane_workbench"
         }
     ]

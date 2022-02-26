@@ -4,7 +4,7 @@
     "category": "simpleplanes:misc",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Ты можешь положить любой флаг в самолёт в качестве декорации."
         }
     ]

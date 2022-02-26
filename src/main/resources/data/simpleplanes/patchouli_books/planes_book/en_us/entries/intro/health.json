@@ -4,7 +4,7 @@
     "category": "simpleplanes:intro",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Planes can get damaged, look at it's health bar on the right. In order to fix the plane sit down in the plane while parked, or use the $(l:misc/healing)Quick Fix Kit$(/l)."
         }
     ]

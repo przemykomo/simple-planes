@@ -4,11 +4,11 @@
     "category": "simpleplanes:intro",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "It can only fit one passenger, but it needs the least amount of fuel. You need an engine to power it."
         },
         {
-            "type": "entity",
+            "type": "patchouli:entity",
             "entity": "simpleplanes:plane",
             "scale": 0.5
         },

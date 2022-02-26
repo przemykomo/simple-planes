@@ -4,8 +4,12 @@
     "category": "simpleplanes:upgrades",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "To use it just put a dispenser in the aircraft. Right click with fireworks, fire charges or arrows while sitting in the aircraft to shoot them."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "minecraft:dispenser"
         }
     ]
 }

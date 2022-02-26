@@ -4,11 +4,11 @@
     "category": "simpleplanes:engines",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Его можно зарядить используя $(l:misc/charging_station)зарядную станцию$(/l)."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:electric_engine"
         }
     ]

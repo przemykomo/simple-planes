@@ -4,11 +4,11 @@
     "category": "simpleplanes:engines",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Он питаем топливом для печи. Ты можешь положить топливо, открыт экран (по умолчанию используется клавиша X) сидя в самолёте."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:furnace_engine"
         }
     ]

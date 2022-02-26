@@ -1,0 +1,15 @@
+{
+    "name": "Chest",
+    "icon": "minecraft:chest",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Can be accessed by opening inventory while sitting inside an aircraft. $(l:https://www.curseforge.com/minecraft/mc-mods/iron-chests)Iron Chests$(/l) can be used."
+        },
+        {
+          "type": "patchouli:crafting",
+          "recipe": "minecraft:chest"
+        }
+    ]
+}

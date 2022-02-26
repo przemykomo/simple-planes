@@ -4,11 +4,11 @@
     "category": "simpleplanes:intro",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "It can fit two passengers, but needs more fuel than the smaller version. You need an engine to power it."
         },
         {
-            "type": "entity",
+            "type": "patchouli:entity",
             "entity": "simpleplanes:large_plane",
             "scale": 0.4
         },

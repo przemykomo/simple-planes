@@ -4,7 +4,7 @@
     "category": "simpleplanes:misc",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "You can put any banner on an aircraft as a decoration."
         }
     ]

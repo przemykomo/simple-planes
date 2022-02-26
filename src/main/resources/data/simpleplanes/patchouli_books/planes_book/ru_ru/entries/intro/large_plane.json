@@ -4,11 +4,11 @@
     "category": "simpleplanes:intro",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Его можно оборудовать до 2х пассажиров, но потребуется больше топлива, чем для малой версии. Тебе потребуется двигатель, чтобы привести его в действие."
         },
         {
-            "type": "entity",
+            "type": "patchouli:entity",
             "entity": "simpleplanes:large_plane",
             "scale": 0.4
         },

@@ -1,0 +1,15 @@
+{
+    "name": "Parachute",
+    "icon": "simpleplanes:parachute",
+    "category": "simpleplanes:misc",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Right click while in the air to use it."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:parachute"
+        }
+    ]
+}

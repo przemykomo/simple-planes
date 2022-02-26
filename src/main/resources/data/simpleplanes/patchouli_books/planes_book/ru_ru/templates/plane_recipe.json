@@ -1,7 +1,7 @@
 {
     "components": [
         {
-            "type": "image",
+            "type": "patchouli:image",
             "image": "simpleplanes:textures/gui/plane_workbench_book.png",
             "width": 100,
             "height": 24,
@@ -9,26 +9,26 @@
             "texture_height": 128
         },
         {
-            "type": "item",
+            "type": "patchouli:item",
             "item": "#item1",
             "x": 5,
             "y": 5
         },
         {
-            "type": "item",
+            "type": "patchouli:item",
             "item": "#item2",
             "x": 43,
             "y": 5
         },
         {
-            "type": "item",
+            "type": "patchouli:item",
             "item": "#output",
             "x": 81,
             "y": 5,
             "link_recipe": true
         },
         {
-            "type": "item",
+            "type": "patchouli:item",
             "item": "simpleplanes:plane_workbench",
             "x": 81,
             "y": 24

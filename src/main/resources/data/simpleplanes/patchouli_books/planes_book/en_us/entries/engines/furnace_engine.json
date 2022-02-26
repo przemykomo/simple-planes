@@ -4,11 +4,11 @@
     "category": "simpleplanes:engines",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "It is powered by furnace fuel. You can put fuel by opening the screen (by default using the X key) while sitting in the aircraft."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:furnace_engine"
         }
     ]

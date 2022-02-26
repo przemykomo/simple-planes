@@ -4,7 +4,7 @@
     "category": "simpleplanes:misc",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Can be used in large planes and helicopters only. Use flint and steel while flying to drop the TNT. You can also put the TNT inside an aircraft mid-flight."
         }
     ]

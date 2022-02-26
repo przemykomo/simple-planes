@@ -1,15 +1,15 @@
 {
-    "name": "Floaty Bedding",
-    "icon": "simpleplanes:floaty_bedding",
+    "name": "Seats",
+    "icon": "simpleplanes:seats",
     "category": "simpleplanes:upgrades",
     "pages": [
         {
             "type": "patchouli:text",
-            "text": "Makes aircraft float on water."
+            "text": "Provides room for more passengers."
         },
         {
             "type": "patchouli:crafting",
-            "recipe": "simpleplanes:floaty_bedding"
+            "recipe": "simpleplanes:seats"
         }
     ]
 }

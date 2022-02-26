@@ -1,15 +1,15 @@
 {
-    "name": "Floaty Bedding",
-    "icon": "simpleplanes:floaty_bedding",
+    "name": "Armor",
+    "icon": "simpleplanes:armor",
     "category": "simpleplanes:upgrades",
     "pages": [
         {
             "type": "patchouli:text",
-            "text": "Makes aircraft float on water."
+            "text": "Armor for aircraft."
         },
         {
             "type": "patchouli:crafting",
-            "recipe": "simpleplanes:floaty_bedding"
+            "recipe": "simpleplanes:armor"
         }
     ]
 }

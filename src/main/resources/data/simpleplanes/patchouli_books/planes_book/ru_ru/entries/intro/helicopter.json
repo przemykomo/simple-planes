@@ -4,11 +4,11 @@
     "category": "simpleplanes:intro",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Его можно оборудовать до 2х пассажиров (или большое улучшение вместо второго пассажира). Тебе потребуется двигатель, чтобы привести его в действие."
         },
         {
-            "type": "entity",
+            "type": "patchouli:entity",
             "entity": "simpleplanes:helicopter",
             "scale": 0.4
         },

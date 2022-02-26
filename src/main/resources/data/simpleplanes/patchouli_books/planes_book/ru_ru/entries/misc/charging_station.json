@@ -4,11 +4,11 @@
     "category": "simpleplanes:misc",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Он может заряжать электрические компоненты самолёта, расположенный над ним. Принимает энергию Forge."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:charging_station"
         }
     ]

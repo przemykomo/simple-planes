@@ -4,11 +4,11 @@
     "category": "simpleplanes:engines",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "It can be charged using the $(l:misc/charging_station)charging station$(/l)."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:electric_engine"
         }
     ]

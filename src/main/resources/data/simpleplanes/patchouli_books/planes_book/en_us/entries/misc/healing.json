@@ -4,11 +4,11 @@
     "category": "simpleplanes:misc",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Use it to quickly fix the plane."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:healing",
             "recipe2": "simpleplanes:healing_enchanted"
         }

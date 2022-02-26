@@ -4,13 +4,12 @@
     "category": "simpleplanes:upgrades",
     "pages": [
         {
-            "type": "text",
-            "text": "press {key.plane_drop_payload.desc}"
+            "type": "patchouli:text",
+            "text": "Can be filled like a chest and then dropped by using the $(k:plane_drop_payload.desc) key."
         },
         {
-          "type": "crafting",
+          "type": "patchouli:crafting",
           "recipe": "simpleplanes:supply_crate"
-          
         }
     ]
 }

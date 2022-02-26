@@ -4,11 +4,11 @@
     "category": "simpleplanes:misc",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "It can charge electric components of the aircraft when put under it. Accepts Forge Energy."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:charging_station"
         }
     ]

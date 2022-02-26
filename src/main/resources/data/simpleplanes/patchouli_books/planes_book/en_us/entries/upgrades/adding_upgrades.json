@@ -1,30 +1,11 @@
 {
-  "name": "Adding Upgrades",
-  "icon": "simpleplanes:wrench",
-  "category": "simpleplanes:upgrades",
-  "pages": [{
-      "type": "text",
-      "text": "To add an upgrade, right click while looking at the plane and holding the upgrade in your hand. Available upgrades are\n(1) Regular Vanilla Minecraft Chests, or $(l:https://www.curseforge.com/minecraft/mc-mods/iron-chests)Iron Chests$(/l)\n(2) TNT\n(3) Booster\n(4) Folding\nand (5) Seats"
-    },
-    {
-      "type": "crafting",
-      "recipe": "minecraft:chest"
-    },
-    {
-      "type": "crafting",
-      "recipe": "minecraft:tnt"
-    },
-    {
-      "type": "crafting",
-      "recipe": "simpleplanes:booster"
-    },
-    {
-      "type" "crafting"
-      "recipe": "simpleplanes:folding"
-    },
-    {
-      "type": "crafting",
-      "recipe": "simpleplanes:seats"
-    }
-  ]
+    "name": "Adding Upgrades",
+    "icon": "simpleplanes:wrench",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "To add an upgrade, right click while looking at the plane and holding the upgrade in your hand."
+        }
+    ]
 }

@@ -4,11 +4,11 @@
     "category": "simpleplanes:upgrades",
     "pages": [
         {
-            "type": "text",
+            "type": "patchouli:text",
             "text": "Right click the aircraft with a wrench to remove upgrades."
         },
         {
-            "type": "crafting",
+            "type": "patchouli:crafting",
             "recipe": "simpleplanes:wrench"
         }
     ]

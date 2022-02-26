@@ -1,0 +1,15 @@
+{
+    "name": "Folding Upgrade",
+    "icon": "simpleplanes:folding",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Makes the aircraft return to players inventory upon dismount."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:folding"
+        }
+    ]
+}
