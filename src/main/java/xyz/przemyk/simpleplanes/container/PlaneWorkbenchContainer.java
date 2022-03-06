@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.container;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,7 @@ import java.util.List;
 public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
     public static final ResourceLocation PLANE_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "plane_materials");
+    public static final TagKey<Block> PLANE_MATERIALS_TAG = BlockTags.create(PLANE_MATERIALS);
 
     private final ItemStackHandler itemHandler;
     private final ItemStackHandler resultItemHandler = new ItemStackHandler();
@@ -103,6 +105,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected void updateCraftingResult() {
         if (!this.player.level.isClientSide) {
             ServerPlayer serverPlayerEntity = (ServerPlayer) this.player;
@@ -113,11 +116,11 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
 
-            if (recipe.canCraft(ingredientStack, materialStack) && materialItem instanceof BlockItem &&
-                BlockTags.getAllTags().getTagOrEmpty(PLANE_MATERIALS).contains(((BlockItem) materialItem).getBlock())) {
+            if (recipe.canCraft(ingredientStack, materialStack) && materialItem instanceof BlockItem blockItem &&
+                blockItem.getBlock().builtInRegistryHolder().is(PLANE_MATERIALS_TAG)) {
 
                 result = recipe.result().copy();
-                Block block = ((BlockItem) materialItem).getBlock();
+                Block block = blockItem.getBlock();
                 resultItemTag.putString("material", block.getRegistryName().toString());
                 result.addTagElement("EntityTag", resultItemTag);
             }

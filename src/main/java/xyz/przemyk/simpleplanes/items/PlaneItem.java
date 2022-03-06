@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.items;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -120,13 +121,14 @@ public class PlaneItem extends Item {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void fillItemCategory(CreativeModeTab itemGroup, NonNullList<ItemStack> itemStacks) {
         if (allowdedIn(itemGroup)) {
-            BlockTags.getAllTags().getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS).getValues().forEach(block -> {
+            Registry.BLOCK.getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).forEach(blockHolder -> {
                 ItemStack itemStack = new ItemStack(this);
                 CompoundTag itemTag = new CompoundTag();
-                itemTag.putString("material", block.getRegistryName().toString());
+                itemTag.putString("material", blockHolder.value().getRegistryName().toString());
                 itemStack.addTagElement("EntityTag", itemTag);
                 itemStacks.add(itemStack);
             });

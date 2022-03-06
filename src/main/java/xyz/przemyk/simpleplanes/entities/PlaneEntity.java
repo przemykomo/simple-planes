@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -67,7 +68,7 @@ import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.MathUtil.*;
 import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "deprecation"})
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Integer> MAX_HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
@@ -900,14 +901,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         return 0.375;
     }
 
-    public static final ResourceLocation FIREPROOF_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "fireproof_materials");
+    public static final TagKey<Block> FIREPROOF_MATERIALS_TAG = BlockTags.create(new ResourceLocation(SimplePlanesMod.MODID, "fireproof_materials"));
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
         if (source.isExplosion()) {
             return false;
         }
-        if (source.isFire() && BlockTags.getAllTags().getTag(FIREPROOF_MATERIALS).contains(planksMaterial)) {
+        if (source.isFire() && planksMaterial.builtInRegistryHolder().is(FIREPROOF_MATERIALS_TAG)) {
             return true;
         }
         if (source.getDirectEntity() != null && source.getDirectEntity().isPassengerOfSameVehicle(this)) {
@@ -918,7 +919,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public boolean fireImmune() {
-        return BlockTags.NON_FLAMMABLE_WOOD.contains(planksMaterial);
+        return planksMaterial.builtInRegistryHolder().is(FIREPROOF_MATERIALS_TAG);
     }
 
     @Override
