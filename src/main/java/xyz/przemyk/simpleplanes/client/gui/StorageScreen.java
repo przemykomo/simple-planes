@@ -25,6 +25,17 @@ public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
     }
 
     @Override
+    protected void init() {
+        super.init();
+        if (leftPos < 0) {
+            leftPos = 0;
+        }
+        if (topPos < 0) {
+            topPos = 0;
+        }
+    }
+
+    @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
