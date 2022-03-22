@@ -1,6 +1,6 @@
 {
     "plane_loop": {
-        "category": "planes",
+        "category": "ambient",
         "subtitle": "simpleplanes.subtitle.plane_loop",
         "sounds": [ "simpleplanes:plane_loop" ]
     }
