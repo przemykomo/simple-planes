@@ -830,7 +830,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     private void deserializeUpgrades(CompoundTag upgradesNBT) {
         for (String key : upgradesNBT.getAllKeys()) {
             ResourceLocation resourceLocation = new ResourceLocation(key);
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(resourceLocation);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(resourceLocation);
             if (upgradeType != null) {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                 upgrade.deserializeNBT(upgradesNBT.getCompound(key));
@@ -1221,7 +1221,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     @SuppressWarnings("ConstantConditions")
     public void readUpdateUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf buffer, boolean newUpgrade) {
         if (newUpgrade) {
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
             if (upgradeType.isEngine) {
@@ -1263,7 +1263,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         int upgradesSize = additionalData.readVarInt();
         for (int i = 0; i < upgradesSize; i++) {
             ResourceLocation upgradeID = additionalData.readResourceLocation();
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.getValue(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
             if (upgradeType.isEngine) {
