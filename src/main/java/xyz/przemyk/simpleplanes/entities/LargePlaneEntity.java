@@ -1,22 +1,24 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.EntitySelector;
-import com.mojang.math.Vector3f;
 import net.minecraft.world.level.Level;
+import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
+import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
-import xyz.przemyk.simpleplanes.upgrades.tnt.TNTUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.payload.PayloadUpgrade;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,24 +52,23 @@ public class LargePlaneEntity extends PlaneEntity {
         }
         if (!hasLargeUpgrade && getPassengers().size() < 2) {
             Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getLargeUpgradeFromItem(itemStack.getItem());
-            return upgradeTypeOptional.map(upgradeType -> {
+            if (upgradeTypeOptional.map(upgradeType -> {
                 if (canAddUpgrade(upgradeType)) {
                     Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                     addUpgrade(playerEntity, itemStack, upgrade);
                     return true;
                 }
                 return false;
-            }).orElse(false);
+            }).orElse(false)) {
+                return true;
+            }
+            PayloadEntry payloadEntry = PlanePayloadReloadListener.payloadEntries.get(itemStack.getItem());
+            if (payloadEntry != null) {
+                addUpgrade(playerEntity, itemStack, new PayloadUpgrade(this, payloadEntry));
+                return true;
+            }
         }
 
-        return false;
-    }
-
-    public boolean tryToAddTNT(Player playerEntity, ItemStack itemStack) {
-        if (!hasLargeUpgrade && canAddUpgrade(SimplePlanesUpgrades.TNT.get()) && getPassengers().size() < 2) {
-            addUpgrade(playerEntity, itemStack, new TNTUpgrade(this));
-            return true;
-        }
         return false;
     }
 

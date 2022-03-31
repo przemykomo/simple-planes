@@ -35,6 +35,7 @@ public class SimplePlanesMod {
         SimplePlanesDataSerializers.init();
         SimplePlanesRecipes.init();
         PlaneNetworking.init();
+        SimplePlanesDatapack.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
@@ -71,7 +72,7 @@ public class SimplePlanesMod {
             SimplePlanesUpgrades.registerUpgradeItem(Items.RED_BANNER, SimplePlanesUpgrades.BANNER.get());
             SimplePlanesUpgrades.registerUpgradeItem(Items.BLACK_BANNER, SimplePlanesUpgrades.BANNER.get());
 
-            SimplePlanesUpgrades.registerLargeUpgradeItem(Items.TNT, SimplePlanesUpgrades.TNT.get());
+//            SimplePlanesUpgrades.registerLargeUpgradeItem(Items.TNT, SimplePlanesUpgrades.TNT.get());
             SimplePlanesUpgrades.registerLargeUpgradeItem(Items.CHEST, SimplePlanesUpgrades.CHEST.get());
             SimplePlanesUpgrades.registerLargeUpgradeItem(SimplePlanesItems.SUPPLY_CRATE.get(), SimplePlanesUpgrades.SUPPLY_CRATE.get());
 
