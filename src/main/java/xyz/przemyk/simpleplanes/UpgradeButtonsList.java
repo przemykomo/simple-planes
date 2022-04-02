@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.CRemoveUpgradePacket;
-import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 
 public class UpgradeButtonsList extends AbstractSelectionList<UpgradeButtonsList.ButtonEntry> {
 
@@ -39,7 +39,7 @@ public class UpgradeButtonsList extends AbstractSelectionList<UpgradeButtonsList
         public ButtonEntry(int x, int y, int width, int height, Component title, PlaneEntity planeEntity, ResourceLocation resourceLocation, UpgradeButtonsList list) {
             this.button = new Button(x + 4, y, width - 8, height, title, b -> {
                 planeEntity.removeUpgrade(resourceLocation);
-                PlaneNetworking.INSTANCE.sendToServer(new CRemoveUpgradePacket(resourceLocation));
+                SimplePlanesNetworking.INSTANCE.sendToServer(new CRemoveUpgradePacket(resourceLocation));
                 list.removeEntry(this);
             });
         }
