@@ -1,0 +1,6 @@
+{
+    "item": "minecraft:anvil",
+    "block": "minecraft:anvil",
+    "entity": "minecraft:falling_block",
+    "entity_nbt": "{BlockState: {Name: \"minecraft:anvil\"}}"
+}
