@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.RecordItem;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.client.MovingJukeboxSound;
+import xyz.przemyk.simpleplanes.client.MovingSound;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -50,9 +50,9 @@ public class JukeboxPacket {
             }
 
             minecraft.gui.setNowPlaying(recordItem.getDisplayName());
-            MovingJukeboxSound movingJukeboxSound = new MovingJukeboxSound(recordItem.getSound(), entity);
-            playingRecords.put(entity, movingJukeboxSound);
-            minecraft.getSoundManager().play(movingJukeboxSound);
+            MovingSound movingSound = new MovingSound(recordItem.getSound(), entity);
+            playingRecords.put(entity, movingSound);
+            minecraft.getSoundManager().play(movingSound);
         });
         ctx.setPacketHandled(true);
     }

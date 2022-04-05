@@ -5,11 +5,11 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 
-public class MovingJukeboxSound extends AbstractTickableSoundInstance {
+public class MovingSound extends AbstractTickableSoundInstance {
 
     private final Entity entity;
 
-    public MovingJukeboxSound(SoundEvent soundEvent, Entity entity) {
+    public MovingSound(SoundEvent soundEvent, Entity entity) {
         super(soundEvent, SoundSource.RECORDS);
         this.entity = entity;
     }
