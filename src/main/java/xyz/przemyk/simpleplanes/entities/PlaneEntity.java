@@ -4,6 +4,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -35,6 +36,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
@@ -45,9 +47,10 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.capability.CapClientConfigProvider;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
-import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
 import xyz.przemyk.simpleplanes.network.SUpgradeRemovedPacket;
 import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
@@ -205,8 +208,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         planksMaterial = material;
     }
 
+    public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registry.DIMENSION_TYPE_REGISTRY, new ResourceLocation(SimplePlanesMod.MODID, "blacklisted_dimensions"));
+
     public boolean isPowered() {
-        return isAlive() && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
+        return isAlive() && !level.dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
     }
 
     @Override
@@ -278,7 +283,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             engineUpgrade = (EngineUpgrade) upgrade;
         }
         if (!level.isClientSide) {
-            PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getId(), (ServerLevel) level, true));
+            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getId(), (ServerLevel) level, true));
         }
     }
 
@@ -383,7 +388,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         Entity controllingPassenger = getControllingPassenger();
         if (controllingPassenger instanceof Player playerEntity) {
-            tempMotionVars.moveForward = playerEntity.zza;
+            tempMotionVars.moveForward = getMoveForward(playerEntity);
             tempMotionVars.moveStrafing = playerEntity.xxa;
         } else {
             tempMotionVars.moveForward = 0;
@@ -487,7 +492,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (level.isClientSide && isControlledByLocalInstance()) {
             setQ_Client(q);
 
-            PlaneNetworking.INSTANCE.sendToServer(new RotationPacket(getQ()));
+            SimplePlanesNetworking.INSTANCE.sendToServer(new RotationPacket(getQ()));
         } else {
             ServerPlayer player = (ServerPlayer) getPlayer();
             if (player != null) {
@@ -514,6 +519,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         tickLerp();
     }
 
+    protected float getMoveForward(Player player) {
+        return player.zza * player.getCapability(CapClientConfigProvider.CLIENT_CONFIG_CAP).map(cap -> cap.invertedControls ? -1 : 1).orElse(1);
+    }
+
     public void tickUpgrades() {
         List<ResourceLocation> upgradesToRemove = new ArrayList<>();
         List<ResourceLocation> upgradesToUpdate = new ArrayList<>();
@@ -531,7 +540,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (tickCount % networkUpdateInterval == 0) {
             for (ResourceLocation name : upgradesToUpdate) {
-                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getId(), (ServerLevel) level));
+                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getId(), (ServerLevel) level));
             }
         }
     }
@@ -1280,7 +1289,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             upgrade.remove();
 
             if (!level.isClientSide) {
-                PlaneNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new SUpgradeRemovedPacket(upgradeID, getId()));
+                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new SUpgradeRemovedPacket(upgradeID, getId()));
             }
         }
     }

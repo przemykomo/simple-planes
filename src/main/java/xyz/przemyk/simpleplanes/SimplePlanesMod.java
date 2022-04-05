@@ -4,17 +4,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.compat.MrCrayfishGunCompat;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
-import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.*;
 
 @Mod(SimplePlanesMod.MODID)
@@ -23,9 +20,7 @@ public class SimplePlanesMod {
     public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = new DamageSource("plain_crash").bypassArmor();
 
     public SimplePlanesMod() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SimplePlanesConfig.CONFIG);
-        SimplePlanesConfig.loadConfig(SimplePlanesConfig.CONFIG, FMLPaths.CONFIGDIR.get().resolve("simpleplanes-common.toml"));
-
+        SimplePlanesConfig.init();
         SimplePlanesEntities.init();
         SimplePlanesBlocks.init();
         SimplePlanesContainers.init();
@@ -34,7 +29,9 @@ public class SimplePlanesMod {
         SimplePlanesItems.init();
         SimplePlanesDataSerializers.init();
         SimplePlanesRecipes.init();
-        PlaneNetworking.init();
+        SimplePlanesNetworking.init();
+        SimplePlanesDatapack.init();
+        SimplePlanesCapabilities.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
@@ -71,9 +68,9 @@ public class SimplePlanesMod {
             SimplePlanesUpgrades.registerUpgradeItem(Items.RED_BANNER, SimplePlanesUpgrades.BANNER.get());
             SimplePlanesUpgrades.registerUpgradeItem(Items.BLACK_BANNER, SimplePlanesUpgrades.BANNER.get());
 
-            SimplePlanesUpgrades.registerLargeUpgradeItem(Items.TNT, SimplePlanesUpgrades.TNT.get());
             SimplePlanesUpgrades.registerLargeUpgradeItem(Items.CHEST, SimplePlanesUpgrades.CHEST.get());
             SimplePlanesUpgrades.registerLargeUpgradeItem(SimplePlanesItems.SUPPLY_CRATE.get(), SimplePlanesUpgrades.SUPPLY_CRATE.get());
+            SimplePlanesUpgrades.registerLargeUpgradeItem(Items.JUKEBOX, SimplePlanesUpgrades.JUKEBOX.get());
 
             IronChestsCompat.registerUpgradeItems();
         });

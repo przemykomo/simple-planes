@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
-import xyz.przemyk.simpleplanes.network.PlaneNetworking;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 
 public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbenchContainer> {
     public static final ResourceLocation GUI = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_workbench.png");
@@ -24,10 +24,10 @@ public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbench
     protected void init() {
         super.init();
         addRenderableWidget(new ImageButton(leftPos + 122, topPos + 47, 10, 15, 176, 0, 15, GUI,
-                button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_LEFT))));
+                button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_LEFT))));
 
         addRenderableWidget(new ImageButton(leftPos + 152, topPos + 47, 10, 15, 186, 0, 15, GUI,
-                button -> PlaneNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_RIGHT))));
+                button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_RIGHT))));
     }
 
     @Override

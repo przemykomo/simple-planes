@@ -36,11 +36,13 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.capability.CapClientConfigProvider;
 import xyz.przemyk.simpleplanes.client.gui.*;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.*;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -220,12 +222,12 @@ public class ClientEventHandler {
                 }
 
                 if (planeEntity.engineUpgrade != null && mc.screen == null && mc.getOverlay() == null && openEngineInventoryKey.consumeClick() && planeEntity.engineUpgrade.canOpenGui()) {
-                    PlaneNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
                 } else if (dropPayloadKey.consumeClick()) {
                     for (Upgrade upgrade : planeEntity.upgrades.values()) {
                         if (upgrade.canBeDroppedAsPayload()) {
                             upgrade.dropAsPayload();
-                            PlaneNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
+                            SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
                             break;
                         }
                     }
@@ -233,7 +235,7 @@ public class ClientEventHandler {
 
                 boolean isBoosting = boostKey.isDown();
                 if (isBoosting != oldBoostState || Math.random() < 0.1) {
-                    PlaneNetworking.INSTANCE.sendToServer(new BoostPacket(isBoosting));
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new BoostPacket(isBoosting));
                 }
                 oldBoostState = isBoosting;
             } else {
@@ -304,8 +306,17 @@ public class ClientEventHandler {
         if (event.getScreen() instanceof InventoryScreen && player.getVehicle() instanceof LargePlaneEntity largePlaneEntity) {
             if (largePlaneEntity.hasStorageUpgrade()) {
                 event.setCanceled(true);
-                PlaneNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
+                SimplePlanesNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event) {
+        SimplePlanesNetworking.INSTANCE.sendToServer(new ClientConfigPacket(SimplePlanesConfig.INVERTED_CONTROLS.get()));
+        LocalPlayer player = event.getPlayer();
+        if (player != null) {
+            player.getCapability(CapClientConfigProvider.CLIENT_CONFIG_CAP).ifPresent(cap -> cap.invertedControls = SimplePlanesConfig.INVERTED_CONTROLS.get());
         }
     }
 }

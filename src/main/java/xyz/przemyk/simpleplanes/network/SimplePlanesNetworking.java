@@ -8,9 +8,9 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
 import java.util.Optional;
 
-public class PlaneNetworking {
+public class SimplePlanesNetworking {
 
-    private static final String PROTOCOL_VERSION = "5";
+    private static final String PROTOCOL_VERSION = "7";
     public static SimpleChannel INSTANCE;
 
     public static void init() {
@@ -102,6 +102,24 @@ public class PlaneNetworking {
                 DropPayloadPacket::new,
                 DropPayloadPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                ClientConfigPacket.class,
+                ClientConfigPacket::toBytes,
+                ClientConfigPacket::new,
+                ClientConfigPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                JukeboxPacket.class,
+                JukeboxPacket::toBytes,
+                JukeboxPacket::new,
+                JukeboxPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
     }
 }

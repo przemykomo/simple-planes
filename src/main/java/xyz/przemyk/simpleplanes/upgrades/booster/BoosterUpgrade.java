@@ -2,8 +2,10 @@ package xyz.przemyk.simpleplanes.upgrades.booster;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -18,6 +20,7 @@ import com.mojang.math.Vector3f;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.MovingSound;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -72,6 +75,9 @@ public class BoosterUpgrade extends Upgrade {
                     itemStack.shrink(1);
                 }
                 fuel = FUEL_PER_GUNPOWDER;
+                if (planeEntity.level.isClientSide) {
+                    Minecraft.getInstance().getSoundManager().play(new MovingSound(SoundEvents.FIREWORK_ROCKET_LAUNCH, planeEntity));
+                }
             }
         }
         push();

@@ -1,51 +1,48 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
-
-import java.nio.file.Path;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
 
 public class SimplePlanesConfig {
 
-    public static final String CATEGORY_GENERAL = "general";
-    public static final ForgeConfigSpec.BooleanValue THIEF;
+    public static ForgeConfigSpec.BooleanValue THIEF;
+    public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
+    public static ForgeConfigSpec.IntValue PLANE_FUEL_COST;
+    public static ForgeConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
+    public static ForgeConfigSpec.IntValue HELICOPTER_FUEL_COST;
 
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    public static ForgeConfigSpec.BooleanValue INVERTED_CONTROLS;
 
-    public static final ForgeConfigSpec CONFIG;
+    public static void init() {
+        ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
 
-    public static final ForgeConfigSpec.IntValue TURN_THRESHOLD;
+        SERVER_BUILDER.comment("Planes settings").push("general");
 
-    public static final ForgeConfigSpec.IntValue PLANE_FUEL_COST;
-    public static final ForgeConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
-    public static final ForgeConfigSpec.IntValue HELICOPTER_FUEL_COST;
-
-    static {
-        BUILDER.comment("Planes settings").push(CATEGORY_GENERAL);
-
-        TURN_THRESHOLD = BUILDER.comment("For controllers, a threshold for the joystick movement of the plane")
-            .defineInRange("turnThreshold", 20, 0, 90);
-        THIEF = BUILDER.comment("Allow stealing planes by players")
-            .define("plane_heist", true);
-
-        PLANE_FUEL_COST = BUILDER.comment("Fuel cost of a small plane")
+        TURN_THRESHOLD = SERVER_BUILDER
+                .comment("For controllers, a threshold for the joystick movement of the plane")
+                .defineInRange("turnThreshold", 20, 0, 90);
+        THIEF = SERVER_BUILDER
+                .comment("Allow stealing planes by players")
+                .define("plane_heist", true);
+        PLANE_FUEL_COST = SERVER_BUILDER
+                .comment("Fuel cost of a small plane")
                 .defineInRange("plane_fuel_cost", 3, 0, Integer.MAX_VALUE);
-        LARGE_PLANE_FUEL_COST = BUILDER.comment("Fuel cost of a large plane")
+        LARGE_PLANE_FUEL_COST = SERVER_BUILDER
+                .comment("Fuel cost of a large plane")
                 .defineInRange("large_plane_fuel_cost", 6, 0, Integer.MAX_VALUE);
-        HELICOPTER_FUEL_COST = BUILDER.comment("Fuel cost of a helicopter")
+        HELICOPTER_FUEL_COST = SERVER_BUILDER
+                .comment("Fuel cost of a helicopter")
                 .defineInRange("helicopter_fuel_cost", 6, 0, Integer.MAX_VALUE);
 
-        CONFIG = BUILDER.build();
-    }
+        SERVER_BUILDER.pop();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
 
-    public static void loadConfig(ForgeConfigSpec spec, Path path) {
-        CommentedFileConfig configData = CommentedFileConfig.builder(path)
-            .sync()
-            .autosave()
-            .writingMode(WritingMode.REPLACE)
-            .build();
-        configData.load();
-        spec.setConfig(configData);
+        ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+        CLIENT_BUILDER.comment("Planes client settings").push("general_client");
+        INVERTED_CONTROLS = CLIENT_BUILDER
+                .comment("Inverted W-S plane controls (doesn't affect helicopters)").define("inverted_controls", false);
+        CLIENT_BUILDER.pop();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
     }
 }

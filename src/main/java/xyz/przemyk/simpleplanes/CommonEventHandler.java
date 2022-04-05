@@ -22,10 +22,10 @@ public class CommonEventHandler {
             ItemStack itemStack = player.getItemInHand(event.getHand());
 
             if (!itemStack.isEmpty()) {
-                if (itemStack.getItem() == Items.TNT && entity instanceof LargePlaneEntity &&
-                        ((LargePlaneEntity) entity).tryToAddTNT(player, itemStack)) {
-                    return;
-                }
+//                if (itemStack.getItem() == Items.TNT && entity instanceof LargePlaneEntity &&
+//                        ((LargePlaneEntity) entity).tryToAddTNT(player, itemStack)) {
+//                    return;
+//                }
                 PlaneEntity planeEntity = (PlaneEntity) entity;
 
                 for (Upgrade upgrade : planeEntity.upgrades.values()) {
