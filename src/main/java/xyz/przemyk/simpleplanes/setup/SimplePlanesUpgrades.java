@@ -14,6 +14,7 @@ import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.heal.HealingUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.jukebox.JukeboxUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.payload.PayloadUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
@@ -70,4 +71,5 @@ public class SimplePlanesUpgrades {
     public static final RegistryObject<UpgradeType> PAYLOAD = UPGRADE_TYPES.register("payload", () -> new UpgradeType(PayloadUpgrade::new));
     public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(ChestUpgrade::new));
     public static final RegistryObject<UpgradeType> SUPPLY_CRATE = UPGRADE_TYPES.register("supply_crate", () -> new UpgradeType(SupplyCrateUpgrade::new));
+    public static final RegistryObject<UpgradeType> JUKEBOX = UPGRADE_TYPES.register("jukebox", () -> new UpgradeType(JukeboxUpgrade::new));
 }

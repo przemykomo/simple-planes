@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class SimplePlanesNetworking {
 
-    private static final String PROTOCOL_VERSION = "6";
+    private static final String PROTOCOL_VERSION = "7";
     public static SimpleChannel INSTANCE;
 
     public static void init() {
@@ -111,6 +111,15 @@ public class SimplePlanesNetworking {
                 ClientConfigPacket::new,
                 ClientConfigPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                JukeboxPacket.class,
+                JukeboxPacket::toBytes,
+                JukeboxPacket::new,
+                JukeboxPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
     }
 }

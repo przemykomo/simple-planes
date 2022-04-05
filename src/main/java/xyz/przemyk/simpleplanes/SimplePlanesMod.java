@@ -20,9 +20,6 @@ public class SimplePlanesMod {
     public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = new DamageSource("plain_crash").bypassArmor();
 
     public SimplePlanesMod() {
-//        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SimplePlanesConfig.CONFIG);
-//        SimplePlanesConfig.loadConfig(SimplePlanesConfig.CONFIG, FMLPaths.CONFIGDIR.get().resolve("simpleplanes-common.toml"));
-
         SimplePlanesConfig.init();
         SimplePlanesEntities.init();
         SimplePlanesBlocks.init();
@@ -73,6 +70,7 @@ public class SimplePlanesMod {
 
             SimplePlanesUpgrades.registerLargeUpgradeItem(Items.CHEST, SimplePlanesUpgrades.CHEST.get());
             SimplePlanesUpgrades.registerLargeUpgradeItem(SimplePlanesItems.SUPPLY_CRATE.get(), SimplePlanesUpgrades.SUPPLY_CRATE.get());
+            SimplePlanesUpgrades.registerLargeUpgradeItem(Items.JUKEBOX, SimplePlanesUpgrades.JUKEBOX.get());
 
             IronChestsCompat.registerUpgradeItems();
         });
