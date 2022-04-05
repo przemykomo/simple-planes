@@ -70,6 +70,7 @@ public class PayloadUpgrade extends LargeUpgrade {
         buffer.writeResourceLocation(payloadEntry.item().getRegistryName());
         buffer.writeResourceLocation(payloadEntry.renderBlock().getRegistryName());
         buffer.writeResourceLocation(payloadEntry.dropSpawnEntity().getRegistryName());
+        buffer.writeNbt(payloadEntry.compoundTag());
     }
 
     @Override
@@ -77,7 +78,8 @@ public class PayloadUpgrade extends LargeUpgrade {
         Item item = ForgeRegistries.ITEMS.getValue(buffer.readResourceLocation());
         Block renderBlock = ForgeRegistries.BLOCKS.getValue(buffer.readResourceLocation());
         EntityType<?> dropSpawnEntity = ForgeRegistries.ENTITIES.getValue(buffer.readResourceLocation());
-        payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity);
+        CompoundTag compoundTag = buffer.readNbt();
+        payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, compoundTag);
     }
 
     @Override
@@ -86,6 +88,7 @@ public class PayloadUpgrade extends LargeUpgrade {
         compoundTag.putString("item", payloadEntry.item().getRegistryName().toString());
         compoundTag.putString("block", payloadEntry.renderBlock().getRegistryName().toString());
         compoundTag.putString("entity", payloadEntry.dropSpawnEntity().getRegistryName().toString());
+        compoundTag.put("entityTag", payloadEntry.compoundTag());
         return compoundTag;
     }
 
@@ -94,7 +97,7 @@ public class PayloadUpgrade extends LargeUpgrade {
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString("item")));
         Block renderBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(nbt.getString("block")));
         EntityType<?> dropSpawnEntity = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("entity")));
-        payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity);
+        payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, nbt.getCompound("entityTag"));
     }
 
     @Override
@@ -110,6 +113,7 @@ public class PayloadUpgrade extends LargeUpgrade {
     @Override
     public void dropAsPayload() {
         Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level);
+        entity.load(payloadEntry.compoundTag());
         entity.setPos(planeEntity.position());
         entity.setDeltaMovement(planeEntity.getDeltaMovement());
         planeEntity.level.addFreshEntity(entity);
