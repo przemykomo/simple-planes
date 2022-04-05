@@ -1,0 +1,6 @@
+{
+    "item": "minecraft:dragon_egg",
+    "block": "minecraft:dragon_egg",
+    "entity": "minecraft:falling_block",
+    "entity_nbt": "{BlockState: {Name: \"minecraft:dragon_egg\"}}"
+}
