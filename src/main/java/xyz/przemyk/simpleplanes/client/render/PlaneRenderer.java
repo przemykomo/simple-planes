@@ -21,6 +21,7 @@ import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -28,16 +29,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
-    public static final int TICKS_PER_PROPELLER_ROTATION = 5;
+    public static final int TICKS_PER_PROPELLER_ROTATION = 4;
 
     protected final EntityModel<PlaneEntity> propellerModel;
     protected final EntityModel<T> planeEntityModel;
-    public static final ResourceLocation PROPELLER_TEXTURE = new ResourceLocation("textures/block/iron_block.png");
+    protected final EntityModel<PlaneEntity> planeMetalModel;
+    protected final ResourceLocation metalTexture;
+    public static final ResourceLocation PROPELLER_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_propeller.png");
 
-    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeEntityModel, EntityModel<PlaneEntity> propellerModel, float shadowSize) {
+    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeModel, EntityModel<PlaneEntity> planeMetalModel, EntityModel<PlaneEntity> propellerModel, float shadowSize, ResourceLocation metalTexture) {
         super(context);
         this.propellerModel = propellerModel;
-        this.planeEntityModel = planeEntityModel;
+        this.planeEntityModel = planeModel;
+        this.planeMetalModel = planeMetalModel;
+        this.metalTexture = metalTexture;
         this.shadowRadius = shadowSize;
     }
 
@@ -78,7 +83,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
         }
 
-        poseStack.translate(0, -0.6, 0);
+        poseStack.translate(0, -1.1, 0);
 
         if (isPlayerRidingInFirstPersonView) {
             poseStack.translate(0.0D, -firstPersonYOffset, 0.0D);
@@ -87,6 +92,10 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         planeEntityModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+
+        vertexConsumer = buffer.getBuffer(planeMetalModel.renderType(metalTexture));
+        planeMetalModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
+        planeMetalModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
