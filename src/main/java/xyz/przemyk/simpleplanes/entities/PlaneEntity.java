@@ -740,7 +740,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     protected float getGroundPitch() {
-        return 15;
+        return 5;
     }
 
     protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vec3 motion) {
@@ -907,7 +907,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public double getPassengersRidingOffset() {
-        return 0.375;
+        return 0.5;
     }
 
     public static final TagKey<Block> FIREPROOF_MATERIALS_TAG = BlockTags.create(new ResourceLocation(SimplePlanesMod.MODID, "fireproof_materials"));
@@ -988,7 +988,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         positionRiderGeneric(passenger);
 
         int index = getPassengers().indexOf(passenger);
-        if (index == 1) {
+        if (index == 0) {
+            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+        } else if (index == 1) {
             Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
             passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else if (index == 2) {

@@ -28,6 +28,7 @@ import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterModel;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PlanesModelLayers {
     public static final ModelLayerLocation PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "main");
+    public static final ModelLayerLocation PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "metal");
     public static final ModelLayerLocation LARGE_PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "main");
     public static final ModelLayerLocation HELICOPTER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "main");
     public static final ModelLayerLocation PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "propeller"), "main");
@@ -47,6 +48,7 @@ public class PlanesModelLayers {
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(PLANE_LAYER, PlaneModel::createBodyLayer);
+        event.registerLayerDefinition(PLANE_METAL_LAYER, PlaneMetalModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_PLANE_LAYER, LargePlaneModel::createBodyLayer);
         event.registerLayerDefinition(HELICOPTER_LAYER, HelicopterModel::createBodyLayer);
         event.registerLayerDefinition(PROPELLER_LAYER, PropellerModel::createBodyLayer);
@@ -68,9 +70,9 @@ public class PlanesModelLayers {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
-        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f));
-        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new LargePlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 1.0f));
-        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new HelicopterModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f));
+        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PlaneMetalModel(entityModelSet.bakeLayer(PLANE_METAL_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png")));
+        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new LargePlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new PlaneMetalModel(entityModelSet.bakeLayer(PLANE_METAL_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 1.0f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png")));
+        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new HelicopterModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new PlaneMetalModel(entityModelSet.bakeLayer(PLANE_METAL_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png")));
 
         event.registerEntityRenderer(SimplePlanesEntities.PARACHUTE.get(), context -> new ParachuteRenderer(context, new ParachuteModel(entityModelSet.bakeLayer(PlanesModelLayers.PARACHUTE_LAYER))));
     }
