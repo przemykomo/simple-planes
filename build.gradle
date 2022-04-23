@@ -114,8 +114,8 @@ dependencies {
 
     runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
-    compileOnly fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3622948')
-    compileOnly fg.deobf('curse.maven:framework-549225:3559396')
+    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3740510')
+    implementation fg.deobf('curse.maven:framework-549225:3723144')
 }
 
 jar {
