@@ -40,7 +40,9 @@ public class UpdateUpgradePacket {
     public void toBytes(FriendlyByteBuf buffer) {
         buffer.writeBoolean(newUpgrade);
         PlaneEntity planeEntity = (PlaneEntity) serverWorld.getEntity(planeEntityID);
-        planeEntity.writeUpdateUpgradePacket(upgradeID, buffer);
+        if (planeEntity != null)  {
+            planeEntity.writeUpdateUpgradePacket(upgradeID, buffer);
+        }
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
