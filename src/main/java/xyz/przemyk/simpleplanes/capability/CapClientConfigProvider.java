@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CapClientConfigProvider implements ICapabilitySerializable<CompoundTag> {
 
-    public static Capability<CapClientConfig> CLIENT_CONFIG_CAP = CapabilityManager.get(new CapabilityToken<>() {});
+    public static final Capability<CapClientConfig> CLIENT_CONFIG_CAP = CapabilityManager.get(new CapabilityToken<>() {});
     private CapClientConfig capClientConfig = null;
     private final LazyOptional<CapClientConfig> clientConfigLazyOptional = LazyOptional.of(this::createClientConfig);
 

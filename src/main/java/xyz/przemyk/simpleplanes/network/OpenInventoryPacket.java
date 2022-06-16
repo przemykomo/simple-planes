@@ -9,7 +9,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "EmptyMethod"})
 public class OpenInventoryPacket {
 
     public OpenInventoryPacket() {}
