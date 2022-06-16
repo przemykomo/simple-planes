@@ -8,7 +8,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "EmptyMethod"})
 public class OpenEngineInventoryPacket {
 
     public OpenEngineInventoryPacket() {}

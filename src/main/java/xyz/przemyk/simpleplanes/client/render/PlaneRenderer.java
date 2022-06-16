@@ -24,8 +24,6 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
 
 public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     public static final int TICKS_PER_PROPELLER_ROTATION = 5;

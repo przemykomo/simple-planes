@@ -25,7 +25,7 @@ import java.util.Objects;
 public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogManager.getLogger();
-    public static Map<Item, PayloadEntry> payloadEntries = new HashMap<>();
+    public static final Map<Item, PayloadEntry> payloadEntries = new HashMap<>();
 
     public PlanePayloadReloadListener() {
         super(GSON, "plane_payload");
