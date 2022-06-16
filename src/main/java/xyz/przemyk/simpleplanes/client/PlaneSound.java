@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -18,7 +19,7 @@ public class PlaneSound extends AbstractTickableSoundInstance {
     private int fadeOut = -1;
 
     public PlaneSound(PlaneEntity plane) {
-        super(SimplePlanesSounds.PLANE_LOOP_SOUND_EVENT.get(), SoundSource.NEUTRAL);
+        super(SimplePlanesSounds.PLANE_LOOP_SOUND_EVENT.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.plane = plane;
         this.looping = true;
         PLAYING_FOR.put(plane.getId(), this);

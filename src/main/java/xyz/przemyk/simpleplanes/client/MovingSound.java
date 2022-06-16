@@ -21,7 +21,7 @@ public class MovingSound extends AbstractTickableSoundInstance {
     private final Entity entity;
 
     public MovingSound(SoundEvent soundEvent, Entity entity) {
-        super(soundEvent, SoundSource.RECORDS);
+        super(soundEvent, SoundSource.RECORDS, SoundInstance.createUnseededRandom());
         this.entity = entity;
     }
 

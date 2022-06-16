@@ -15,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.HumanoidArm;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -141,7 +140,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent(SimplePlanesMod.MODID + ".electric_engine_container");
+        return Component.translatable(SimplePlanesMod.MODID + ".electric_engine_container");
     }
 
     @Nullable

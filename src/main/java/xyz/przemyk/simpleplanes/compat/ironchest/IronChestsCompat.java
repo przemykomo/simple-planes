@@ -24,14 +24,14 @@ public class IronChestsCompat {
     public static final String OBSIDIAN_CHEST_NAME = MODID + ":obsidian_chest";
     public static final String DIRT_CHEST_NAME = MODID + ":dirt_chest";
 
-    @ObjectHolder(IRON_CHEST_NAME) public static final Item IRON_CHEST = null;
-    @ObjectHolder(GOLD_CHEST_NAME) public static final Item GOLD_CHEST = null;
-    @ObjectHolder(DIAMOND_CHEST_NAME) public static final Item DIAMOND_CHEST = null;
-    @ObjectHolder(COPPER_CHEST_NAME) public static final Item COPPER_CHEST = null;
-    @ObjectHolder(SILVER_CHEST_NAME) public static final Item SILVER_CHEST = null;
-    @ObjectHolder(CRYSTAL_CHEST_NAME) public static final Item CRYSTAL_CHEST = null;
-    @ObjectHolder(OBSIDIAN_CHEST_NAME) public static final Item OBSIDIAN_CHEST = null;
-    @ObjectHolder(DIRT_CHEST_NAME) public static final Item DIRT_CHEST = null;
+    @ObjectHolder(registryName = "item", value = IRON_CHEST_NAME) public static final Item IRON_CHEST = null;
+    @ObjectHolder(registryName = "item", value = GOLD_CHEST_NAME) public static final Item GOLD_CHEST = null;
+    @ObjectHolder(registryName = "item", value = DIAMOND_CHEST_NAME) public static final Item DIAMOND_CHEST = null;
+    @ObjectHolder(registryName = "item", value = COPPER_CHEST_NAME) public static final Item COPPER_CHEST = null;
+    @ObjectHolder(registryName = "item", value = SILVER_CHEST_NAME) public static final Item SILVER_CHEST = null;
+    @ObjectHolder(registryName = "item", value = CRYSTAL_CHEST_NAME) public static final Item CRYSTAL_CHEST = null;
+    @ObjectHolder(registryName = "item", value = OBSIDIAN_CHEST_NAME) public static final Item OBSIDIAN_CHEST = null;
+    @ObjectHolder(registryName = "item", value = DIRT_CHEST_NAME) public static final Item DIRT_CHEST = null;
 
     public static final ResourceLocation IRON_CHEST_GUI = new ResourceLocation(MODID, "textures/gui/iron_container.png");
     public static final ResourceLocation GOLD_CHEST_GUI = new ResourceLocation(MODID, "textures/gui/gold_container.png");

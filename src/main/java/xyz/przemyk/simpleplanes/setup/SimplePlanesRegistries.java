@@ -20,6 +20,6 @@ public class SimplePlanesRegistries {
 
     @SubscribeEvent
     public static void registerRegistries(final NewRegistryEvent event) {
-        UPGRADE_TYPES = event.create(new RegistryBuilder<UpgradeType>().setName(UPGRADE_TYPES_NAME).setType(UpgradeType.class));
+        UPGRADE_TYPES = event.create(new RegistryBuilder<UpgradeType>().setName(UPGRADE_TYPES_NAME));
     }
 }

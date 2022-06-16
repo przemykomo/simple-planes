@@ -7,20 +7,19 @@ import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.CRemoveUpgradePacket;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 
 public class UpgradeButtonsList extends AbstractSelectionList<UpgradeButtonsList.ButtonEntry> {
 
-    public static final Component TITLE = new TranslatableComponent(SimplePlanesMod.MODID + ".remove_upgrades");
+    public static final Component TITLE = Component.translatable(SimplePlanesMod.MODID + ".remove_upgrades");
 
     public UpgradeButtonsList(Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int itemHeightIn, PlaneEntity planeEntity) {
         super(mcIn, widthIn, heightIn, topIn, bottomIn, itemHeightIn);
 
         for (ResourceLocation resourceLocation : planeEntity.upgrades.keySet()) {
-            addEntry(new ButtonEntry(x0 + widthIn / 2 - widthIn / 2, y0, widthIn, itemHeightIn - 4, new TranslatableComponent(resourceLocation.toString()), planeEntity, resourceLocation, this));
+            addEntry(new ButtonEntry(x0 + widthIn / 2 - widthIn / 2, y0, widthIn, itemHeightIn - 4, Component.translatable(resourceLocation.toString()), planeEntity, resourceLocation, this));
         }
     }
 

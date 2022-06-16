@@ -252,7 +252,7 @@ public class ClientEventHandler {
             if (renderInfo.isDetached()) {
                 renderInfo.move(-renderInfo.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
             } else {
-                double partialTicks = event.getPartialTicks();
+                double partialTicks = event.getPartialTick();
 
                 Quaternion q_prev = planeEntity.getQ_Prev();
                 int max = 105;

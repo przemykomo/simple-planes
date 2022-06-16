@@ -2,7 +2,6 @@ package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -23,7 +22,7 @@ import javax.annotation.Nullable;
 
 public class PlaneWorkbenchBlock extends Block implements EntityBlock {
 
-    public static final Component CONTAINER_NAME = new TranslatableComponent(SimplePlanesMod.MODID + ".container.plane_workbench");
+    public static final Component CONTAINER_NAME = Component.translatable(SimplePlanesMod.MODID + ".container.plane_workbench");
 
     public PlaneWorkbenchBlock(Properties properties) {
         super(properties);

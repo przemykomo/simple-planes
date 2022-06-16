@@ -8,7 +8,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -54,10 +54,7 @@ import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
 import xyz.przemyk.simpleplanes.network.SUpgradeRemovedPacket;
 import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.setup.*;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
@@ -69,7 +66,6 @@ import java.util.*;
 
 import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.MathUtil.*;
-import static xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers.QUATERNION_SERIALIZER;
 
 @SuppressWarnings({"ConstantConditions", "deprecation"})
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
@@ -81,7 +77,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Integer> TIME_SINCE_HIT = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> DAMAGE_TAKEN = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> PARKED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, QUATERNION_SERIALIZER);
+    public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get());
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
 
@@ -127,7 +123,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         entityData.define(HEALTH, 10);
         entityData.define(Q, Quaternion.ONE);
         entityData.define(MAX_SPEED, 0.25f);
-        entityData.define(MATERIAL, Blocks.OAK_PLANKS.getRegistryName().toString());
+        entityData.define(MATERIAL, ForgeRegistries.BLOCKS.getKey(Blocks.OAK_PLANKS).toString());
         entityData.define(ROCKING_TICKS, 0);
         entityData.define(TIME_SINCE_HIT, 0);
         entityData.define(DAMAGE_TAKEN, 0f);
@@ -204,7 +200,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @SuppressWarnings("ConstantConditions")
     public void setMaterial(Block material) {
-        entityData.set(MATERIAL, material.getRegistryName().toString());
+        entityData.set(MATERIAL, ForgeRegistries.BLOCKS.getKey(material).toString());
         planksMaterial = material;
     }
 
@@ -243,7 +239,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         if (itemStack.getItem() == SimplePlanesItems.WRENCH.get()) {
             if (!level.isClientSide) {
-                NetworkHooks.openGui((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), TextComponent.EMPTY), buf -> buf.writeVarInt(getId()));
+                NetworkHooks.openGui((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), Component.empty()), buf -> buf.writeVarInt(getId()));
                 return InteractionResult.CONSUME;
             }
             return InteractionResult.SUCCESS;
@@ -278,12 +274,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             itemStack.shrink(1);
         }
         UpgradeType upgradeType = upgrade.getType();
-        upgrades.put(upgradeType.getRegistryName(), upgrade);
+        upgrades.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), upgrade);
         if (upgradeType.isEngine) {
             engineUpgrade = (EngineUpgrade) upgrade;
         }
         if (!level.isClientSide) {
-            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(upgrade.getType().getRegistryName(), getId(), (ServerLevel) level, true));
+            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), (ServerLevel) level, true));
         }
     }
 
@@ -863,7 +859,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     private CompoundTag getUpgradesNBT() {
         CompoundTag upgradesNBT = new CompoundTag();
         for (Upgrade upgrade : upgrades.values()) {
-            upgradesNBT.put(upgrade.getType().getRegistryName().toString(), upgrade.serializeNBT());
+            upgradesNBT.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType()).toString(), upgrade.serializeNBT());
         }
         return upgradesNBT;
     }
@@ -980,7 +976,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (upgradeType.isEngine && engineUpgrade != null) {
             return false;
         }
-        return !upgrades.containsKey(upgradeType.getRegistryName());
+        return !upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType));
     }
 
     @Override
@@ -1073,7 +1069,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (isControlledByLocalInstance()) {
             lerpSteps = 0;
             lerpStepsQ = 0;
-            setPacketCoordinates(getX(), getY(), getZ());
+            syncPacketPositionCodec(getX(), getY(), getZ());
             return;
         }
 
@@ -1261,7 +1257,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         Collection<Upgrade> upgrades = this.upgrades.values();
         buffer.writeVarInt(upgrades.size());
         for (Upgrade upgrade : upgrades) {
-            ResourceLocation upgradeID = upgrade.getType().getRegistryName();
+            ResourceLocation upgradeID = SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType());
             buffer.writeResourceLocation(upgradeID);
             upgrade.writePacket(buffer);
         }

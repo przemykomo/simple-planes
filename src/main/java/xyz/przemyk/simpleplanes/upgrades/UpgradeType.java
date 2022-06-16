@@ -1,11 +1,10 @@
 package xyz.przemyk.simpleplanes.upgrades;
 
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Function;
 
-public class UpgradeType extends ForgeRegistryEntry<UpgradeType> {
+public class UpgradeType {
 
     public final Function<PlaneEntity, Upgrade> instanceSupplier;
     public final boolean isEngine;

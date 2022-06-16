@@ -22,7 +22,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -60,7 +59,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = itemStackHandler.serializeNBT();
-        nbt.putString("ChestType", chestType.getRegistryName().toString());
+        nbt.putString("ChestType", ForgeRegistries.ITEMS.getKey(chestType).toString());
         return nbt;
     }
 
@@ -73,7 +72,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public void writePacket(FriendlyByteBuf buffer) {
-        buffer.writeRegistryId(chestType);
+        buffer.writeRegistryId(ForgeRegistries.ITEMS, chestType);
     }
 
     @Override
@@ -115,12 +114,12 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent(SimplePlanesMod.MODID + ":chest");
+        return Component.translatable(SimplePlanesMod.MODID + ":chest");
     }
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventoryIn, Player playerEntity) {
-        return new StorageContainer(id, playerInventoryIn, itemStackHandler, chestType.getRegistryName().toString());
+        return new StorageContainer(id, playerInventoryIn, itemStackHandler, ForgeRegistries.ITEMS.getKey(chestType).toString());
     }
 
     @Override
@@ -134,7 +133,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     @Override
     public void onApply(ItemStack itemStack, Player playerEntity) {
         chestType = itemStack.getItem();
-        itemStackHandler.setSize(IronChestsCompat.getSize(chestType.getRegistryName().toString()));
+        itemStackHandler.setSize(IronChestsCompat.getSize(ForgeRegistries.ITEMS.getKey(chestType).toString()));
     }
 
     @Override
@@ -144,6 +143,6 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public void openStorageGui(ServerPlayer player) {
-        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(chestType.getRegistryName().toString()));
+        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(chestType).toString()));
     }
 }

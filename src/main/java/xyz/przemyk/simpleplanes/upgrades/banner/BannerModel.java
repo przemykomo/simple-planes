@@ -9,6 +9,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
@@ -52,7 +53,7 @@ public class BannerModel {
             float r = (0.05F * Mth.cos(f2 / 5)) * (float) 180;
             r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.getYRot());
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
-            List<Pair<BannerPattern, DyeColor>> list = BANNER_BLOCK_ENTITY.getPatterns();
+            List<Pair<Holder<BannerPattern>, DyeColor>> list = BANNER_BLOCK_ENTITY.getPatterns();
             BlockEntityRenderer<BannerBlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(BANNER_BLOCK_ENTITY);
             if (renderer instanceof BannerRenderer bannerRenderer) {
                 bannerRenderer.flag.xRot = (float) (Math.PI + r / 100.0f);

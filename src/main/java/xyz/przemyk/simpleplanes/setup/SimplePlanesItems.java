@@ -33,7 +33,7 @@ public class SimplePlanesItems {
         }
     };
 
-    public static List<PlaneItem> getPlaneItems(){
+    public static List<PlaneItem> getPlaneItems() {
         ArrayList<PlaneItem> planeItems = new ArrayList<>(3);
         planeItems.add(PLANE_ITEM.get());
         planeItems.add(LARGE_PLANE_ITEM.get());

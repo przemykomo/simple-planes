@@ -67,9 +67,9 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void writePacket(FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(payloadEntry.item().getRegistryName());
-        buffer.writeResourceLocation(payloadEntry.renderBlock().getRegistryName());
-        buffer.writeResourceLocation(payloadEntry.dropSpawnEntity().getRegistryName());
+        buffer.writeResourceLocation(ForgeRegistries.ITEMS.getKey(payloadEntry.item()));
+        buffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(payloadEntry.renderBlock()));
+        buffer.writeResourceLocation(ForgeRegistries.ENTITIES.getKey(payloadEntry.dropSpawnEntity()));
         buffer.writeNbt(payloadEntry.compoundTag());
     }
 
@@ -85,9 +85,9 @@ public class PayloadUpgrade extends LargeUpgrade {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag compoundTag = new CompoundTag();
-        compoundTag.putString("item", payloadEntry.item().getRegistryName().toString());
-        compoundTag.putString("block", payloadEntry.renderBlock().getRegistryName().toString());
-        compoundTag.putString("entity", payloadEntry.dropSpawnEntity().getRegistryName().toString());
+        compoundTag.putString("item", ForgeRegistries.ITEMS.getKey(payloadEntry.item()).toString());
+        compoundTag.putString("block", ForgeRegistries.BLOCKS.getKey(payloadEntry.renderBlock()).toString());
+        compoundTag.putString("entity", ForgeRegistries.ENTITIES.getKey(payloadEntry.dropSpawnEntity()).toString());
         compoundTag.put("entityTag", payloadEntry.compoundTag());
         return compoundTag;
     }

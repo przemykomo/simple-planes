@@ -9,7 +9,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EntityType;
@@ -26,6 +25,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.StorageContainer;
 import xyz.przemyk.simpleplanes.entities.ParachuteEntity;
@@ -110,12 +110,12 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent(SimplePlanesMod.MODID + ":supply_crate");
+        return Component.translatable(SimplePlanesMod.MODID + ":supply_crate");
     }
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventoryIn, Player playerEntity) {
-        return new StorageContainer(id, playerInventoryIn, itemStackHandler, Items.BARREL.getRegistryName().toString());
+        return new StorageContainer(id, playerInventoryIn, itemStackHandler, ForgeRegistries.ITEMS.getKey(Items.BARREL).toString());
     }
 
     @Override
@@ -128,7 +128,7 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public void openStorageGui(ServerPlayer player) {
-        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(Items.BARREL.getRegistryName().toString()));
+        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(Items.BARREL).toString()));
     }
 
     @Override

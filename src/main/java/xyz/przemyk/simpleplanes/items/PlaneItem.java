@@ -4,11 +4,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -54,7 +51,7 @@ public class PlaneItem extends Item {
             if (entityTag.contains("material")) {
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
                 if (block != null) {
-                    tooltip.add(new TranslatableComponent(SimplePlanesMod.MODID + ".material").append(block.getName()));
+                    tooltip.add(Component.translatable(SimplePlanesMod.MODID + ".material").append(block.getName()));
                 }
             }
             if (entityTag.contains("upgrades")) {
@@ -63,9 +60,9 @@ public class PlaneItem extends Item {
                     CompoundTag upgradeNbt = upgradesNBT.getCompound(key);
                     ResourceLocation resourceLocation = new ResourceLocation(key);
                     if (upgradeNbt.contains("desc")) {
-                        tooltip.add(new TextComponent(upgradeNbt.getString("desc")));
+                        tooltip.add(Component.literal(upgradeNbt.getString("desc")));
                     } else {
-                        tooltip.add(new TranslatableComponent("name." + resourceLocation.toString().replace(":", ".")));
+                        tooltip.add(Component.translatable("name." + resourceLocation.toString().replace(":", ".")));
                     }
                 }
             }
@@ -124,11 +121,11 @@ public class PlaneItem extends Item {
     @SuppressWarnings("deprecation")
     @Override
     public void fillItemCategory(CreativeModeTab itemGroup, NonNullList<ItemStack> itemStacks) {
-        if (allowdedIn(itemGroup)) {
+        if (allowedIn(itemGroup)) {
             Registry.BLOCK.getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).forEach(blockHolder -> {
                 ItemStack itemStack = new ItemStack(this);
                 CompoundTag itemTag = new CompoundTag();
-                itemTag.putString("material", blockHolder.value().getRegistryName().toString());
+                itemTag.putString("material", ForgeRegistries.BLOCKS.getKey(blockHolder.value()).toString());
                 itemStack.addTagElement("EntityTag", itemTag);
                 itemStacks.add(itemStack);
             });

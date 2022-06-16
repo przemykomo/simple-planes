@@ -17,7 +17,6 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.ContainerData;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -141,7 +140,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent(SimplePlanesMod.MODID + ".furnace_engine_container");
+        return Component.translatable(SimplePlanesMod.MODID + ".furnace_engine_container");
     }
 
     @Override

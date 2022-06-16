@@ -15,9 +15,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -115,7 +117,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         ResourceLocation texture;
         try {
-            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ForgeModelBakery.getInventoryVariant(Objects.requireNonNull(block.getRegistryName()).toString())).getQuads(null, Direction.SOUTH, new Random(42L), EmptyModelData.INSTANCE).get(0).getSprite().getName();
+            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ForgeModelBakery.getInventoryVariant(ForgeRegistries.BLOCKS.getKey(block).toString())).getQuads(null, Direction.SOUTH, RandomSource.create(), EmptyModelData.INSTANCE).get(0).getSprite().getName();
             texture = new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
         } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;

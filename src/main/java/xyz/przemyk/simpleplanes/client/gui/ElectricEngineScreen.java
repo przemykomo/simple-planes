@@ -8,7 +8,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -27,7 +26,7 @@ public class ElectricEngineScreen extends AbstractContainerScreen<ElectricEngine
         renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         if (isHovering(152, 7, 16, 72, mouseX, mouseY)) {
-            renderTooltip(matrixStack, new TranslatableComponent(SimplePlanesMod.MODID + ".gui.energy", getEnergy()), mouseX, mouseY);
+            renderTooltip(matrixStack, Component.translatable(SimplePlanesMod.MODID + ".gui.energy", getEnergy()), mouseX, mouseY);
         } else {
             renderTooltip(matrixStack, mouseX, mouseY);
         }

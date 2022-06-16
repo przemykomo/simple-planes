@@ -106,16 +106,16 @@ dependencies {
 //    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
 //    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
-    compileOnly fg.deobf("mezz.jei:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:${jei_version}")
+//    compileOnly fg.deobf("mezz.jei:${jei_version}:api")
+//    runtimeOnly fg.deobf("mezz.jei:${jei_version}")
 
 //    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
     runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
-    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3740510')
-    implementation fg.deobf('curse.maven:framework-549225:3723144')
+    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3830436')
+    implementation fg.deobf('curse.maven:framework-549225:3828731')
 }
 
 jar {

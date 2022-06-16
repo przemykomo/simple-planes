@@ -16,6 +16,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipe;
@@ -48,7 +49,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         this.player = playerInventory.player;
         this.itemHandler = itemHandler;
         this.usabilityTest = ContainerLevelAccess.create(player.level, blockPos);
-        this.recipeList = player.level.getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE);
+        this.recipeList = player.level.getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE.get());
         this.selectedRecipe = selectedRecipe;
 
         addSlot(new SlotItemHandler(itemHandler, 0, 28, 47));
@@ -121,7 +122,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
                 result = recipe.result().copy();
                 Block block = blockItem.getBlock();
-                resultItemTag.putString("material", block.getRegistryName().toString());
+                resultItemTag.putString("material", ForgeRegistries.BLOCKS.getKey(block).toString());
                 result.addTagElement("EntityTag", resultItemTag);
             }
 

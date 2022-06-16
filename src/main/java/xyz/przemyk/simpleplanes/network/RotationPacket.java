@@ -19,11 +19,11 @@ public class RotationPacket {
     }
 
     public RotationPacket(FriendlyByteBuf buffer) {
-        this.quaternion = SimplePlanesDataSerializers.QUATERNION_SERIALIZER.read(buffer);
+        this.quaternion = SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get().read(buffer);
     }
 
     public void toBytes(FriendlyByteBuf buffer) {
-        SimplePlanesDataSerializers.QUATERNION_SERIALIZER.write(buffer, quaternion);
+        SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get().write(buffer, quaternion);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
