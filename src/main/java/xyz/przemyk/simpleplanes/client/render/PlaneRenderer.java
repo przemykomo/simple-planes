@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -33,14 +32,15 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     protected final EntityModel<T> planeEntityModel;
     protected final EntityModel<PlaneEntity> planeMetalModel;
     protected final ResourceLocation metalTexture;
-    public static final ResourceLocation PROPELLER_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_propeller.png");
+    protected final ResourceLocation propellerTexture;
 
-    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeModel, EntityModel<PlaneEntity> planeMetalModel, EntityModel<PlaneEntity> propellerModel, float shadowSize, ResourceLocation metalTexture) {
+    public PlaneRenderer(EntityRendererProvider.Context context, EntityModel<T> planeModel, EntityModel<PlaneEntity> planeMetalModel, EntityModel<PlaneEntity> propellerModel, float shadowSize, ResourceLocation metalTexture, ResourceLocation propellerTexture) {
         super(context);
         this.propellerModel = propellerModel;
         this.planeEntityModel = planeModel;
         this.planeMetalModel = planeMetalModel;
         this.metalTexture = metalTexture;
+        this.propellerTexture = propellerTexture;
         this.shadowRadius = shadowSize;
     }
 
@@ -98,7 +98,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
 
-        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(PROPELLER_TEXTURE), false, planeEntity.isNoGravity());
+        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
 
         propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
