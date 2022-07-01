@@ -43,7 +43,6 @@ public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener
                 CompoundTag compoundTag;
                 if (jsonObject.has("entity_nbt")) {
                     String tag = GsonHelper.convertToString(jsonObject.get("entity_nbt"), "entity_nbt");
-                    System.out.println(tag);
                     compoundTag = TagParser.parseTag(tag);
                 } else {
                     compoundTag = new CompoundTag();

@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 
 public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider {
 
-    public static final int CAPACITY = 480_000;
+    public static final int CAPACITY = 1_500_000;
 
     public final EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(CAPACITY);
     public final LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
@@ -48,7 +48,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
     @Override
     public void tick() {
         if (!planeEntity.getParked()) {
-            if (energyStorage.extractEnergy(40 * planeEntity.getFuelCost(), false) > 0) {
+            if (energyStorage.extractEnergy(12 * planeEntity.getFuelCost(), false) > 0) {
                 updateClient();
             }
         }
