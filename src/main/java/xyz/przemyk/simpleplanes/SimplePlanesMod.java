@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
@@ -37,6 +38,10 @@ public class SimplePlanesMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().register(SimplePlanesConfig.class);
         ModList.get().getModContainerById("cgm").ifPresent(cgm -> MinecraftForge.EVENT_BUS.register(MrCrayfishGunCompat.class));
+    }
+
+    public static ResourceLocation texture(String filename) {
+        return new ResourceLocation(MODID, "textures/plane_upgrades/" + filename);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

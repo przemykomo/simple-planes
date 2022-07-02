@@ -27,15 +27,18 @@ public class FoldingUpgrade extends Upgrade {
         matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
 
-        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.97, 0.65);
+        if (entityType == SimplePlanesEntities.PLANE.get()) {
+            matrixStack.translate(0, 0.64375, 5.3125);
+            matrixStack.scale(0.875f, 0.875f, 0.875f);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            matrixStack.translate(0, 0, 1.1);
+            matrixStack.translate(0, 0.44375, 7.6125);
+            matrixStack.scale(0.9375f, 0.9375f, 0.9375f);
+        } else {
+            matrixStack.translate(0, -0.234375, 4.853125);
+            matrixStack.scale(0.75f, 0.75f, 0.75f);
         }
 
         matrixStack.mulPose(Vector3f.XP.rotationDegrees(-90));
-        matrixStack.translate(0, -1.9, 0.7);
-        matrixStack.scale(1.15f, 1.15f, 1.15f);
         VertexConsumer vertexconsumer = Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION.buffer(buffer, RenderType::entityCutoutNoCull);
         UpgradesModels.SHULKER_FOLDING.getLid().render(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.popPose();
