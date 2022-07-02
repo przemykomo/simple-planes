@@ -39,17 +39,17 @@ public class PlaneModel extends EntityModel<PlaneEntity> {
 
         PartDefinition cube_r1 = Body.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 143).addBox(-1.0F, -6.0F, -17.0F, 2.0F, 11.0F, 20.0F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(2.9317F, -21.2136F, 85.6735F, 0.6545F, 0.0F, 0.0F));
 
-        PartDefinition cube_r2 = Body.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(58, 79).addBox(-1.0F, 0.0F, -4.0F, 2.0F, 7.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.9317F, -12.1202F, 95.543F, -0.8116F, 0.0F, 0.0F));
+        PartDefinition cube_r2 = Body.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(58, 80).addBox(-1.0F, 0.0F, -4.0F, 2.0F, 7.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.9317F, -12.1202F, 95.543F, -0.8116F, 0.0F, 0.0F));
 
-        PartDefinition cube_r3 = Body.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 34).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 17.0F, 9.0F, new CubeDeformation(0.01F)), PartPose.offsetAndRotation(2.9317F, -27.8F, 84.401F, 0.1309F, 0.0F, 0.0F));
+        PartDefinition cube_r3 = Body.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 33).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 17.0F, 9.0F, new CubeDeformation(0.01F)), PartPose.offsetAndRotation(2.9317F, -27.8F, 84.401F, 0.1309F, 0.0F, 0.0F));
 
-        PartDefinition cube_r4 = Body.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(56, 47).addBox(-7.5995F, -1.0F, -24.4544F, 13.0F, 2.0F, 32.0F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(-6.9918F, -12.2F, 76.8741F, 0.0F, -0.4363F, -0.1745F));
+        PartDefinition cube_r4 = Body.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(137, 119).mirror().addBox(-4.5F, -1.0F, -7.5F, 9.0F, 2.0F, 15.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-9.5291F, -11.7526F, 85.001F, 0.0F, 1.5708F, -0.1745F));
 
-        PartDefinition cube_r5 = Body.addOrReplaceChild("cube_r5", CubeListBuilder.create().texOffs(114, 64).addBox(-10.0764F, -1.0F, 3.627F, 15.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-6.9918F, -12.2F, 76.8741F, 0.0F, 0.0F, -0.1745F));
+        PartDefinition cube_r5 = Body.addOrReplaceChild("cube_r5", CubeListBuilder.create().texOffs(136, 124).addBox(-4.5F, -1.0F, -7.5F, 9.0F, 2.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(15.3926F, -11.7526F, 85.001F, 0.0F, -1.5708F, 0.1745F));
 
-        PartDefinition cube_r6 = Body.addOrReplaceChild("cube_r6", CubeListBuilder.create().texOffs(136, 123).addBox(-4.9236F, -1.0F, 3.627F, 15.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(12.8553F, -12.2F, 76.8741F, 0.0F, 0.0F, 0.1745F));
+        PartDefinition cube_r6 = Body.addOrReplaceChild("cube_r6", CubeListBuilder.create().texOffs(0, 81).mirror().addBox(-6.5F, -1.0F, -16.0F, 32.0F, 2.0F, 13.0F, new CubeDeformation(-0.01F)).mirror(false), PartPose.offsetAndRotation(-8.9798F, -11.8495F, 56.1223F, -3.1416F, -1.1345F, 2.9671F));
 
-        PartDefinition cube_r7 = Body.addOrReplaceChild("cube_r7", CubeListBuilder.create().texOffs(0, 81).addBox(-5.4005F, -1.0F, -24.4544F, 13.0F, 2.0F, 32.0F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(12.8553F, -12.2F, 76.8741F, 0.0F, 0.4363F, 0.1745F));
+        PartDefinition cube_r7 = Body.addOrReplaceChild("cube_r7", CubeListBuilder.create().texOffs(0, 81).addBox(-25.5F, -1.0F, -16.0F, 32.0F, 2.0F, 13.0F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(14.8432F, -11.8495F, 56.1223F, -3.1416F, 1.1345F, -2.9671F));
 
         PartDefinition cube_r8 = Body.addOrReplaceChild("cube_r8", CubeListBuilder.create().texOffs(0, 4).addBox(-6.0F, -18.09F, 13.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 0).addBox(-7.0F, -18.09F, 12.0F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
@@ -84,7 +84,6 @@ public class PlaneModel extends EntityModel<PlaneEntity> {
         PartDefinition cube_r20 = Body.addOrReplaceChild("cube_r20", CubeListBuilder.create().texOffs(56, 55).addBox(-3.0F, -1.0F, -3.0F, 7.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-3.1996F, -13.3603F, 4.901F, 0.0F, 0.0F, -0.7854F));
 
         PartDefinition cube_r21 = Body.addOrReplaceChild("cube_r21", CubeListBuilder.create().texOffs(0, 79).addBox(-4.0F, -1.0F, -3.0F, 7.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(9.0631F, -13.3603F, 4.901F, 0.0F, 0.0F, 0.7854F));
-
 
         return LayerDefinition.create(meshdefinition, 16, 16);
     }
