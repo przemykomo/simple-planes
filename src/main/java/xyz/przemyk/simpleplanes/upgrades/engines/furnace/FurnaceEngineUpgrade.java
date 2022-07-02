@@ -1,32 +1,35 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.inventory.ContainerData;
-import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
-import xyz.przemyk.simpleplanes.client.ClientUtil;
+import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -38,6 +41,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider {
+
+    public static final ResourceLocation TEXTURE_HELI = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/furnace_engine_heli.png");
+    public static final ResourceLocation TEXTURE_LARGE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/furnace_engine_large.png");
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler();
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
@@ -76,21 +82,14 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        matrixStack.pushPose();
         EntityType<?> entityType = planeEntity.getType();
-
-        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.8, 0.65);
-        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            matrixStack.translate(0, 0, 1.1);
+        if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE_LARGE), false, false);
+            UpgradesModels.LARGE_FURNACE_ENGINE.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+        } else {
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE_HELI), false, false);
+            UpgradesModels.HELI_FURNACE_ENGINE.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
         }
-
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
-        matrixStack.translate(-0.4, -1, 0.3);
-        matrixStack.scale(0.82f, 0.82f, 0.82f);
-        ClientUtil.renderItemModelAsBlock(matrixStack, Minecraft.getInstance(), buffer, packedLight, SimplePlanesItems.FURNACE_ENGINE.get());
-
-        matrixStack.popPose();
     }
 
     @Override
@@ -141,7 +140,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
 
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent(SimplePlanesMod.MODID + ".furnace_engine_container");
+        return Component.translatable(SimplePlanesMod.MODID + ".furnace_engine_container");
     }
 
     @Override
