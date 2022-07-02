@@ -81,18 +81,6 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
     }
 
     @Override
-    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        EntityType<?> entityType = planeEntity.getType();
-        if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE_LARGE), false, false);
-            UpgradesModels.LARGE_FURNACE_ENGINE.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
-        } else {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE_HELI), false, false);
-            UpgradesModels.HELI_FURNACE_ENGINE.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
-        }
-    }
-
-    @Override
     public void invalidateCaps() {
         super.invalidateCaps();
         itemHandlerLazyOptional.invalidate();

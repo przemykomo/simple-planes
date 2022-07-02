@@ -5,40 +5,32 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class ShooterModel extends EntityModel<PlaneEntity> {
 
-    private final ModelPart shooter;
+    private final ModelPart Shooter;
+
+    public ShooterModel(ModelPart root) {
+        this.Shooter = root.getChild("Shooter");
+    }
 
     public static LayerDefinition createBodyLayer() {
-        MeshDefinition meshDefinition = new MeshDefinition();
-        PartDefinition root = meshDefinition.getRoot();
-        root.addOrReplaceChild("shooter", CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, -12.0F, 16.0F, 16.0F, 16.0F), PartPose.offset(0, 17, 0));
-        return LayerDefinition.create(meshDefinition, 64, 64);
-    }
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
 
-    public ShooterModel(ModelPart part) {
-        shooter = part.getChild("shooter");
+        PartDefinition Shooter = partdefinition.addOrReplaceChild("Shooter", CubeListBuilder.create().texOffs(0, 16).addBox(4.5F, -17.5F, -15.0F, 3.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 0).addBox(-7.5F, -17.5F, -15.0F, 3.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+        return LayerDefinition.create(meshdefinition, 32, 32);
     }
 
     @Override
-    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        Shooter.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
 
     @Override
-    public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        matrixStack.pushPose();
-        matrixStack.scale(0.5f, 0.5f, 0.5f);
-        matrixStack.translate(-2, -0.35, -0.75);
-        shooter.render(matrixStack, buffer, packedLight, packedOverlay);
-        matrixStack.translate(3, 0, 0);
-
-        shooter.render(matrixStack, buffer, packedLight, packedOverlay);
-        matrixStack.popPose();
-
-    }
+    public void setupAnim(PlaneEntity p_102618_, float p_102619_, float p_102620_, float p_102621_, float p_102622_, float p_102623_) {}
 }
