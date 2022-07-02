@@ -19,6 +19,10 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorModel;
 import xyz.przemyk.simpleplanes.upgrades.armor.LargeArmorModel;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
+import xyz.przemyk.simpleplanes.upgrades.engines.electric.HeliElectricEngineModel;
+import xyz.przemyk.simpleplanes.upgrades.engines.electric.LargeElectricEngineModel;
+import xyz.przemyk.simpleplanes.upgrades.engines.furnace.HeliFurnaceEngineModel;
+import xyz.przemyk.simpleplanes.upgrades.engines.furnace.LargeFurnaceEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.HelicopterFloatingModel;
 import xyz.przemyk.simpleplanes.upgrades.floating.LargeFloatingModel;
@@ -35,7 +39,6 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation LARGE_PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "metal");
     public static final ModelLayerLocation LARGE_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "propeller");
 
-
     public static final ModelLayerLocation HELICOPTER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "main");
     public static final ModelLayerLocation HELICOPTER_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "metal");
     public static final ModelLayerLocation HELICOPTER_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "propeller");
@@ -50,6 +53,12 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "main");
     public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_armor"), "main");
     public static final ModelLayerLocation SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "main");
+//    public static final ModelLayerLocation FURNACE_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), "main");
+    public static final ModelLayerLocation LARGE_FURNACE_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), "large");
+    public static final ModelLayerLocation HELI_FURNACE_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), "heli");
+
+    public static final ModelLayerLocation LARGE_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "large");
+    public static final ModelLayerLocation HELI_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "heli");
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -76,6 +85,12 @@ public class PlanesModelLayers {
 
         event.registerLayerDefinition(ARMOR, ArmorModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_ARMOR, LargeArmorModel::createBodyLayer);
+
+        event.registerLayerDefinition(LARGE_FURNACE_ENGINE, LargeFurnaceEngineModel::createBodyLayer);
+        event.registerLayerDefinition(HELI_FURNACE_ENGINE, HeliFurnaceEngineModel::createBodyLayer);
+
+        event.registerLayerDefinition(LARGE_ELECTRIC_ENGINE, LargeElectricEngineModel::createBodyLayer);
+        event.registerLayerDefinition(HELI_ELECTRIC_ENGINE, HeliElectricEngineModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -100,5 +115,9 @@ public class PlanesModelLayers {
         UpgradesModels.LARGE_ARMOR = new LargeArmorModel(entityModelSet.bakeLayer(LARGE_ARMOR));
         UpgradesModels.SHULKER_FOLDING = new ShulkerModel<>(entityModelSet.bakeLayer(ModelLayers.SHULKER));
         UpgradesModels.SEATS = new SeatsUpgradeModel(entityModelSet.bakeLayer(SEATS));
+        UpgradesModels.LARGE_FURNACE_ENGINE = new LargeFurnaceEngineModel(entityModelSet.bakeLayer(LARGE_FURNACE_ENGINE));
+        UpgradesModels.HELI_FURNACE_ENGINE = new HeliFurnaceEngineModel(entityModelSet.bakeLayer(HELI_FURNACE_ENGINE));
+        UpgradesModels.LARGE_ELECTRIC_ENGINE = new LargeElectricEngineModel(entityModelSet.bakeLayer(LARGE_ELECTRIC_ENGINE));
+        UpgradesModels.HELI_ELECTRIC_ENGINE = new HeliElectricEngineModel(entityModelSet.bakeLayer(HELI_ELECTRIC_ENGINE));
     }
 }
