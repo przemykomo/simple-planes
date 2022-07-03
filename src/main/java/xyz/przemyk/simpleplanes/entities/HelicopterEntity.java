@@ -114,8 +114,32 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected Vector3f getSecondPassengerPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getPassengersRidingOffset() + getEntityYOffset(passenger)), -0.8f);
+    public void positionRider(Entity passenger) {
+        positionRiderGeneric(passenger);
+        int index = getPassengers().indexOf(passenger);
+
+        if (index == 0) {
+            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 0.5f));
+            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+        } else {
+            if (hasLargeUpgrade) {
+                index++;
+            }
+            switch (index) {
+                case 1 -> {
+                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -0.5f));
+                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                }
+                case 2 -> {
+                    Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset() - 0.4f), 0));
+                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                }
+                case 3 -> {
+                    Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) - 0.4f, 0));
+                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                }
+            }
+        }
     }
 
     @Override

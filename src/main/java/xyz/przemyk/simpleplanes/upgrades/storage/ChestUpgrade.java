@@ -98,10 +98,9 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
         EntityType<?> entityType = planeEntity.getType();
 
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, 0, -0.3);
-        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            matrixStack.translate(0, 0, 0.1);
+            matrixStack.translate(0, -0.1, -1.4);
         }
+
         matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
 
         matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));

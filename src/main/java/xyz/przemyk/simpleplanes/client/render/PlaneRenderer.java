@@ -15,15 +15,18 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import xyz.przemyk.simpleplanes.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     public static final int TICKS_PER_PROPELLER_ROTATION = 4;
@@ -53,7 +56,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         poseStack.pushPose();
         poseStack.translate(0.0D, 0.375D, 0.0D);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
-        poseStack.translate(0, -0.5, 0);
+
         poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
 
         double firstPersonYOffset = -0.7D;
@@ -64,6 +67,14 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
         poseStack.mulPose(q);
+        EntityType<?> entityType = planeEntity.getType();
+        if (entityType == SimplePlanesEntities.PLANE.get()) {
+            poseStack.translate(0, -0.5, -0.5);
+        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
+            poseStack.translate(0, -0.3, -1);
+        } else {
+            poseStack.translate(0, 0, 0.9);
+        }
 
         float rockingAngle = planeEntity.getRockingAngle(partialTicks);
         if (!Mth.equal(rockingAngle, 0.0F)) {

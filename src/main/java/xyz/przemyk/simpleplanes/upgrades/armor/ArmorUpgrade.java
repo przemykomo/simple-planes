@@ -45,7 +45,7 @@ public class ArmorUpgrade extends Upgrade {
         }
     }
 
-    @Override
+    @Override //TODO: fix payload being invisible through the glass
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
         EntityType<?> entityType = planeEntity.getType();
         UpgradesModels.ModelEntry modelEntry = UpgradesModels.MODEL_ENTRIES.get(getType());

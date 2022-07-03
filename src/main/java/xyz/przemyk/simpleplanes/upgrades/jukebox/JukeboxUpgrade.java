@@ -69,8 +69,8 @@ public class JukeboxUpgrade extends LargeUpgrade {
         EntityType<?> entityType = planeEntity.getType();
 
         if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, 0, -0.15);
-        } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
+            matrixStack.translate(0, -0.1, -1.28);
+        } else {
             matrixStack.translate(0, 0, 0.1);
         }
 
@@ -89,7 +89,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void onRemoved() {
+    public void onRemoved() { //TODO: stop music on removed and give players drops to inventory on wrench use
         planeEntity.spawnAtLocation(Items.JUKEBOX);
         planeEntity.spawnAtLocation(record);
     }
