@@ -39,9 +39,6 @@ import javax.annotation.Nullable;
 
 public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider {
 
-    public static final ResourceLocation TEXTURE_HELI = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/electric_engine_heli.png");
-    public static final ResourceLocation TEXTURE_LARGE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/electric_engine_large.png");
-
     public static final int CAPACITY = 1_500_000;
 
     public final EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(CAPACITY);
