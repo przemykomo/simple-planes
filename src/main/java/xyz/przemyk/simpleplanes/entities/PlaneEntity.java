@@ -985,13 +985,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         int index = getPassengers().indexOf(passenger);
         if (index == 0) {
-            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 0));
             passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else if (index == 1) {
-            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1.3f));
             passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else if (index == 2) {
-            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -0.5f));
+            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1.3f));
             passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         }
     }
