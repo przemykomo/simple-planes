@@ -35,13 +35,13 @@ public class BannerModel {
             EntityType<?> entityType = planeEntity.getType();
             if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
                 matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
-                matrixStackIn.translate(-3, -1.8, 0.025);
+                matrixStackIn.translate(-4, -1.25, 0.025);
             } else {
-                matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(90));
+                matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(98));
                 matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
-                matrixStackIn.translate(0.6, 1.25, 0.05);
+                matrixStackIn.translate(1, 3.62, 0.05);
                 if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-                    matrixStackIn.translate(0, 1.1, 0);
+                    matrixStackIn.translate(0.395, 1.92, 0);
                 }
             }
 
