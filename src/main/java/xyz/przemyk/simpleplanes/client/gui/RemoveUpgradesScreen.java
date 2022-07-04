@@ -5,7 +5,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
-import xyz.przemyk.simpleplanes.UpgradeButtonsList;
+import xyz.przemyk.simpleplanes.client.UpgradeButtonsList;
 import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 

@@ -95,5 +95,7 @@
     "entity.simpleplanes.helicopter": "Helicopter",
     "entity.simpleplanes.parachute": "Parachute",
 
-    "simpleplanes.gui.energy": "Energy: %s FE"
+    "simpleplanes.gui.energy": "Energy: %s FE",
+
+    "simpleplanes.engine_desc": "Press %s when in an aircraft"
 }
