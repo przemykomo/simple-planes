@@ -55,4 +55,12 @@ public class MovingSound extends AbstractTickableSoundInstance {
     public static void play(SoundEvent event, Entity entity) {
         Minecraft.getInstance().getSoundManager().play(new MovingSound(event, entity));
     }
+
+    public static void remove(Entity entity) {
+        SoundInstance soundInstance = playingRecords.get(entity);
+        if (soundInstance != null) {
+            Minecraft.getInstance().getSoundManager().stop(soundInstance);
+            playingRecords.remove(entity);
+        }
+    }
 }
