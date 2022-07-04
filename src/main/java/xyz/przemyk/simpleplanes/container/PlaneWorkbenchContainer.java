@@ -99,7 +99,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     public void onCrafting() {
         if (!player.level.isClientSide) {
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
-            itemHandler.extractItem(0, recipe.ingredient().getItems()[0].getCount(), false);
+            itemHandler.extractItem(0, recipe.ingredientAmount(), false);
             itemHandler.extractItem(1, recipe.materialAmount(), false);
             updateCraftingResult();
         }
