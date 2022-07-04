@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes;
+package xyz.przemyk.simpleplanes.misc;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
