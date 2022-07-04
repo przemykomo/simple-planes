@@ -19,6 +19,7 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
+import xyz.przemyk.simpleplanes.client.MovingSound;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.JukeboxPacket;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
@@ -90,8 +91,11 @@ public class JukeboxUpgrade extends LargeUpgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void onRemoved() { //TODO: stop music on removed and give players drops to inventory on wrench use
+    public void onRemoved() {
         planeEntity.spawnAtLocation(Items.JUKEBOX);
         planeEntity.spawnAtLocation(record);
+        if (planeEntity.level.isClientSide) {
+            MovingSound.remove(planeEntity);
+        }
     }
 }
