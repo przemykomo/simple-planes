@@ -23,23 +23,23 @@ public class LargePropellerModel extends EntityModel<PlaneEntity> {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition IronPropeller = partdefinition.addOrReplaceChild("IronPropeller", CubeListBuilder.create().texOffs(22, 20).addBox(-0.4787F, -1.25F, 49.5F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
-				.texOffs(22, 20).addBox(-0.4759F, -0.8454F, 49.5F, 1.0F, 2.0F, 5.0F, new CubeDeformation(0.001F))
-				.texOffs(17, 13).addBox(0.229F, -0.5463F, 49.502F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
-				.texOffs(17, 13).addBox(-1.1835F, -0.5491F, 49.502F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
-				.texOffs(7, 25).addBox(0.6F, -0.5F, 52.7F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.1F))
-				.texOffs(0, 6).addBox(2.5F, -1.5F, 52.7F, 10.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(27.0F, -5.0F, 0.0F));
+		PartDefinition IronPropeller = partdefinition.addOrReplaceChild("IronPropeller", CubeListBuilder.create().texOffs(22, 20).addBox(-0.4787F, -1.25F, 7.5F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(22, 20).addBox(-0.4759F, -0.8454F, 7.5F, 1.0F, 2.0F, 5.0F, new CubeDeformation(0.001F))
+				.texOffs(17, 13).addBox(0.229F, -0.5463F, 7.502F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(17, 13).addBox(-1.1835F, -0.5491F, 7.502F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
+				.texOffs(7, 25).addBox(0.6F, -0.5F, 10.7F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.1F))
+				.texOffs(0, 6).addBox(2.5F, -1.5F, 10.7F, 10.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(27.0F, -5.0F, 42.0F));
 
 		PartDefinition octagon_r1 = IronPropeller.addOrReplaceChild("octagon_r1", CubeListBuilder.create().texOffs(0, 0).addBox(2.5725F, -1.4743F, 0.1F, 10.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(21, 11).addBox(0.6725F, -0.4743F, 0.1F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(0.0585F, -0.05F, 52.6F, 0.0F, 0.0F, 2.0944F));
+				.texOffs(21, 11).addBox(0.6725F, -0.4743F, 0.1F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(0.0585F, -0.05F, 10.6F, 0.0F, 0.0F, 2.0944F));
 
 		PartDefinition octagon_r2 = IronPropeller.addOrReplaceChild("octagon_r2", CubeListBuilder.create().texOffs(0, 3).addBox(2.4859F, -1.5757F, 0.1F, 10.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-				.texOffs(21, 8).addBox(0.5859F, -0.5757F, 0.1F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(0.0585F, -0.05F, 52.6F, 0.0F, 0.0F, -2.0944F));
+				.texOffs(21, 8).addBox(0.5859F, -0.5757F, 0.1F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(0.0585F, -0.05F, 10.6F, 0.0F, 0.0F, -2.0944F));
 
 		PartDefinition octagon_r3 = IronPropeller.addOrReplaceChild("octagon_r3", CubeListBuilder.create().texOffs(0, 18).addBox(-1.2306F, -0.5251F, -3.099F, 1.0F, 1.0F, 5.0F, new CubeDeformation(-0.001F))
 				.texOffs(0, 18).addBox(0.1768F, -0.5223F, -3.099F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.003F))
 				.texOffs(0, 24).addBox(-0.5283F, -1.2314F, -3.097F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 24).addBox(-0.5255F, 0.184F, -3.097F, 1.0F, 1.0F, 5.0F, new CubeDeformation(-0.003F)), PartPose.offsetAndRotation(0.0585F, -0.05F, 52.6F, 0.0F, 0.0F, -0.7854F));
+				.texOffs(0, 24).addBox(-0.5255F, 0.184F, -3.097F, 1.0F, 1.0F, 5.0F, new CubeDeformation(-0.003F)), PartPose.offsetAndRotation(0.0585F, -0.05F, 10.6F, 0.0F, 0.0F, -0.7854F));
 
 		PartDefinition bone = partdefinition.addOrReplaceChild("bone", CubeListBuilder.create().texOffs(22, 20).mirror().addBox(-0.5213F, -1.25F, -2.5F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false)
 				.texOffs(17, 13).mirror().addBox(-1.229F, -0.5463F, -2.498F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false)

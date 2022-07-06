@@ -1,9 +1,6 @@
 {
-    "parent": "minecraft:block/orientable_with_bottom",
+    "parent": "item/generated",
     "textures": {
-        "top": "simpleplanes:block/furnace_engine_top",
-        "front": "simpleplanes:block/furnace_engine_front",
-        "bottom": "simpleplanes:block/furnace_engine_bottom",
-        "side": "simpleplanes:block/furnace_engine_side"
+        "layer0": "simpleplanes:item/furnace_engine"
     }
 }
