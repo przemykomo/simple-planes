@@ -34,13 +34,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
-import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.capability.CapClientConfigProvider;
 import xyz.przemyk.simpleplanes.client.gui.*;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
@@ -155,14 +155,14 @@ public class ClientEventHandler {
                 matrixStack.translate(0.0D, firstPersonYOffset, 0.0D);
             }
 
-            matrixStack.translate(0, 0.7, 0);
+            matrixStack.translate(0, 0.35, 0);
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
             quaternion.set(quaternion.i(), -quaternion.j(), -quaternion.k(), quaternion.r());
             matrixStack.mulPose(quaternion);
             float rotationYaw = MathUtil.lerpAngle(event.getPartialTick(), entity.yRotO, entity.getYRot());
 
             matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationYaw));
-            matrixStack.translate(0, -0.7, 0);
+            matrixStack.translate(0, -0.35, 0);
             if (isPlayerRidingInFirstPersonView) {
                 matrixStack.translate(0.0D, -firstPersonYOffset, 0.0D);
             }
@@ -246,11 +246,11 @@ public class ClientEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
-        Camera renderInfo = event.getCamera();
-        Entity entity = renderInfo.getEntity();
+        Camera camera = event.getCamera();
+        Entity entity = camera.getEntity();
         if (entity instanceof LocalPlayer playerEntity && entity.getVehicle() instanceof PlaneEntity planeEntity) {
-            if (renderInfo.isDetached()) {
-                renderInfo.move(-renderInfo.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
+            if (camera.isDetached()) {
+                camera.move(-camera.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
             } else {
                 double partialTicks = event.getPartialTick();
 

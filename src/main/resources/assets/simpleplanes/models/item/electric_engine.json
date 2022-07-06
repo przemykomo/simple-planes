@@ -1,9 +1,6 @@
 {
-    "parent": "minecraft:block/orientable_with_bottom",
+    "parent": "item/generated",
     "textures": {
-        "top": "simpleplanes:block/electric_engine_top",
-        "front": "simpleplanes:block/electric_engine_front",
-        "bottom": "simpleplanes:block/electric_engine_bottom",
-        "side": "simpleplanes:block/electric_engine_side"
+        "layer0": "simpleplanes:item/electric_engine"
     }
 }

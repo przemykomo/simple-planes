@@ -10,9 +10,11 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 public class LargePlaneMetalModel extends EntityModel<PlaneEntity> {
 	private final ModelPart Parts;
+	private final ModelPart bb_main;
 
 	public LargePlaneMetalModel(ModelPart root) {
 		this.Parts = root.getChild("Parts");
+		this.bb_main = root.getChild("bb_main");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -140,6 +142,7 @@ public class LargePlaneMetalModel extends EntityModel<PlaneEntity> {
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		Parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
