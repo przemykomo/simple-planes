@@ -15,6 +15,8 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
+import java.util.Random;
+
 public class ShooterUpgrade extends Upgrade {
 
     private boolean shootSide = false;

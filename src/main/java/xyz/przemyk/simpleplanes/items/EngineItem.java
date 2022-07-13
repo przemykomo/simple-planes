@@ -1,6 +1,8 @@
 package xyz.przemyk.simpleplanes.items;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.KeybindComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -17,6 +19,6 @@ public class EngineItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
-        list.add(Component.translatable(SimplePlanesMod.MODID + ".engine_desc", Component.keybind("key.plane_engine_open.desc")));
+        list.add(new TranslatableComponent(SimplePlanesMod.MODID + ".engine_desc", new KeybindComponent("key.plane_engine_open.desc")));
     }
 }

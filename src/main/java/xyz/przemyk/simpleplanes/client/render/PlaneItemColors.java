@@ -12,6 +12,7 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class PlaneItemColors {
     public static final HashMap<Block, Integer> cachedColors = new HashMap<>();

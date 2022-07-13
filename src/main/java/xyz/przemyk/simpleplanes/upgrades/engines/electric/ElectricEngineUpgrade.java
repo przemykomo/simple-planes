@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.HumanoidArm;
@@ -115,7 +116,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable(SimplePlanesMod.MODID + ".electric_engine_container");
+        return new TranslatableComponent(SimplePlanesMod.MODID + ".electric_engine_container");
     }
 
     @Nullable
