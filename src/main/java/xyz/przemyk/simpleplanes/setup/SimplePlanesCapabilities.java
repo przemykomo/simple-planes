@@ -32,7 +32,7 @@ public class SimplePlanesCapabilities {
     public static void onPlayerCloned(PlayerEvent.Clone event) {
         if (event.isWasDeath()) {
             event.getOriginal().getCapability(CapClientConfigProvider.CLIENT_CONFIG_CAP).ifPresent(oldCap ->
-                    event.getPlayer().getCapability(CapClientConfigProvider.CLIENT_CONFIG_CAP).ifPresent(newCap ->
+                    event.getEntity().getCapability(CapClientConfigProvider.CLIENT_CONFIG_CAP).ifPresent(newCap ->
                             newCap.copyFrom(oldCap)));
         }
     }

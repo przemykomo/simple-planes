@@ -1,20 +1,13 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -28,11 +21,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.client.ClientEventHandler;
-import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
+import xyz.przemyk.simpleplanes.client.ClientUtil;
 import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
@@ -41,9 +32,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider {
-
-    public static final ResourceLocation TEXTURE_HELI = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/furnace_engine_heli.png");
-    public static final ResourceLocation TEXTURE_LARGE = new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/furnace_engine_large.png");
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler();
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
@@ -65,8 +53,8 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
             if (itemBurnTime > 0) {
                 burnTimeTotal = itemBurnTime;
                 burnTime = itemBurnTime;
-                if (itemStack.hasContainerItem()) {
-                    itemStackHandler.setStackInSlot(0, itemStack.getContainerItem());
+                if (itemStack.hasCraftingRemainingItem()) {
+                    itemStackHandler.setStackInSlot(0, itemStack.getCraftingRemainingItem());
                 } else {
                     itemStackHandler.extractItem(0, 1, false);
                 }
@@ -123,7 +111,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
 
     @Override
     public void openGui(ServerPlayer playerEntity) {
-        NetworkHooks.openGui(playerEntity, this);
+        NetworkHooks.openScreen(playerEntity, this);
     }
 
     @Override
@@ -172,9 +160,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
         int i = scaledWidth / 2;
         Minecraft mc = Minecraft.getInstance();
         if (side == HumanoidArm.LEFT) {
-            ClientEventHandler.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
+            ClientUtil.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
         } else {
-            ClientEventHandler.blit(matrixStack, -90, i + 91, scaledHeight - 40, 0, 44, 22, 40);
+            ClientUtil.blit(matrixStack, -90, i + 91, scaledHeight - 40, 0, 44, 22, 40);
         }
 
         if (burnTime > 0) {
@@ -182,10 +170,10 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
             int burnLeftScaled = burnTime * 13 / burnTimeTotal2;
             if (side == HumanoidArm.LEFT) {
                 // render on left side
-                ClientEventHandler.blit(matrixStack, -90, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+                ClientUtil.blit(matrixStack, -90, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
             } else {
                 // render on right side
-                ClientEventHandler.blit(matrixStack, -90, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+                ClientUtil.blit(matrixStack, -90, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
             }
         }
 
@@ -193,9 +181,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
         if (!fuelStack.isEmpty()) {
             int i2 = scaledHeight - 16 - 3;
             if (side == HumanoidArm.LEFT) {
-                ClientEventHandler.renderHotbarItem(matrixStack, i - 91 - 26, i2, partialTicks, fuelStack, mc);
+                ClientUtil.renderHotbarItem(matrixStack, i - 91 - 26, i2, partialTicks, fuelStack, mc);
             } else {
-                ClientEventHandler.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, fuelStack, mc);
+                ClientUtil.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, fuelStack, mc);
             }
         }
     }

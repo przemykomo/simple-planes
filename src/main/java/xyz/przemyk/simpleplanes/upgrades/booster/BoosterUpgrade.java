@@ -59,10 +59,10 @@ public class BoosterUpgrade extends Upgrade {
 
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        ItemStack itemStack = event.getPlayer().getItemInHand(event.getHand());
+        ItemStack itemStack = event.getEntity().getItemInHand(event.getHand());
         if (fuel <= 0) {
             if (itemStack.getItem().equals(Items.GUNPOWDER)) {
-                if (!event.getPlayer().isCreative()) {
+                if (!event.getEntity().isCreative()) {
                     itemStack.shrink(1);
                 }
                 fuel = FUEL_PER_GUNPOWDER;

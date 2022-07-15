@@ -2,14 +2,14 @@ package xyz.przemyk.simpleplanes.client.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class PlaneItemColors {
                 }
 
                 try {
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getModel(ForgeModelBakery.getInventoryVariant(ForgeRegistries.BLOCKS.getKey(block).toString())).getQuads(null, Direction.SOUTH, RandomSource.create(), EmptyModelData.INSTANCE).get(0).getSprite();
+                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(ForgeRegistries.BLOCKS.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).get(0).getSprite();
 
                     int g = 0;
                     int b = 0;
@@ -64,7 +64,7 @@ public class PlaneItemColors {
                     if (redo < 0) {
                         redo = 0xffffff - redo;
                     }
-//                        r_b
+
                     cachedColors.put(block, redo);
                     return redo;
 

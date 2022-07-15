@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import xyz.przemyk.simpleplanes.client.render.models.ParachuteModel;
 import xyz.przemyk.simpleplanes.entities.ParachuteEntity;
 
@@ -38,7 +38,7 @@ public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
             poseStack.pushPose();
             poseStack.translate(-0.5, 0, -0.5);
             BlockState state = Blocks.BARREL.defaultBlockState();
-            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, poseStack, buffer, packetLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, poseStack, buffer, packetLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
             poseStack.popPose();
             poseStack.scale(-1.0f, -1.0f, 1.0f);
             poseStack.translate(0, -2.0, 0);

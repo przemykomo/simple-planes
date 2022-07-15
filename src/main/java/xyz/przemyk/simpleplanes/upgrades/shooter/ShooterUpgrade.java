@@ -28,11 +28,11 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         ItemStack itemStack = player.getItemInHand(event.getHand());
         Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1 + planeEntity.getDeltaMovement().length())));
         Vec3 motion = new Vec3(motion1);
-        Level world = event.getWorld();
+        Level world = event.getLevel();
         RandomSource random = world.random;
 
         Vector3f pos = planeEntity.transformPos(new Vector3f(shootSide ? 0.8f : -0.8f, 0.8f, 0.8f));

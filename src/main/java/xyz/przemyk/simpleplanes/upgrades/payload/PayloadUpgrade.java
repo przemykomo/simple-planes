@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
@@ -39,9 +39,9 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        ItemStack itemStack = event.getPlayer().getItemInHand(event.getHand());
+        ItemStack itemStack = event.getEntity().getItemInHand(event.getHand());
         if (itemStack.getItem() == Items.FLINT_AND_STEEL) {
-            itemStack.hurtAndBreak(1, event.getPlayer(), playerEntity -> playerEntity.broadcastBreakEvent(event.getHand()));
+            itemStack.hurtAndBreak(1, event.getEntity(), playerEntity -> playerEntity.broadcastBreakEvent(event.getHand()));
             dropAsPayload();
         }
     }
@@ -61,7 +61,7 @@ public class PayloadUpgrade extends LargeUpgrade {
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = payloadEntry.renderBlock().defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
         matrixStack.popPose();
     }
 
@@ -69,7 +69,7 @@ public class PayloadUpgrade extends LargeUpgrade {
     public void writePacket(FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(ForgeRegistries.ITEMS.getKey(payloadEntry.item()));
         buffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(payloadEntry.renderBlock()));
-        buffer.writeResourceLocation(ForgeRegistries.ENTITIES.getKey(payloadEntry.dropSpawnEntity()));
+        buffer.writeResourceLocation(ForgeRegistries.ENTITY_TYPES.getKey(payloadEntry.dropSpawnEntity()));
         buffer.writeNbt(payloadEntry.compoundTag());
     }
 
@@ -77,7 +77,7 @@ public class PayloadUpgrade extends LargeUpgrade {
     public void readPacket(FriendlyByteBuf buffer) {
         Item item = ForgeRegistries.ITEMS.getValue(buffer.readResourceLocation());
         Block renderBlock = ForgeRegistries.BLOCKS.getValue(buffer.readResourceLocation());
-        EntityType<?> dropSpawnEntity = ForgeRegistries.ENTITIES.getValue(buffer.readResourceLocation());
+        EntityType<?> dropSpawnEntity = ForgeRegistries.ENTITY_TYPES.getValue(buffer.readResourceLocation());
         CompoundTag compoundTag = buffer.readNbt();
         payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, compoundTag);
     }
@@ -87,7 +87,7 @@ public class PayloadUpgrade extends LargeUpgrade {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putString("item", ForgeRegistries.ITEMS.getKey(payloadEntry.item()).toString());
         compoundTag.putString("block", ForgeRegistries.BLOCKS.getKey(payloadEntry.renderBlock()).toString());
-        compoundTag.putString("entity", ForgeRegistries.ENTITIES.getKey(payloadEntry.dropSpawnEntity()).toString());
+        compoundTag.putString("entity", ForgeRegistries.ENTITY_TYPES.getKey(payloadEntry.dropSpawnEntity()).toString());
         compoundTag.put("entityTag", payloadEntry.compoundTag());
         return compoundTag;
     }
@@ -96,7 +96,7 @@ public class PayloadUpgrade extends LargeUpgrade {
     public void deserializeNBT(CompoundTag nbt) {
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString("item")));
         Block renderBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(nbt.getString("block")));
-        EntityType<?> dropSpawnEntity = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("entity")));
+        EntityType<?> dropSpawnEntity = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(nbt.getString("entity")));
         payloadEntry = new PayloadEntry(item, renderBlock, dropSpawnEntity, nbt.getCompound("entityTag"));
     }
 

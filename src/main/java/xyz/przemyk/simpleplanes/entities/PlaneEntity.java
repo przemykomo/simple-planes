@@ -39,9 +39,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -66,6 +68,8 @@ import java.util.*;
 
 import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.misc.MathUtil.*;
+
+import xyz.przemyk.simpleplanes.misc.MathUtil.EulerAngles;
 
 @SuppressWarnings({"ConstantConditions", "deprecation"})
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
@@ -239,7 +243,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         if (itemStack.getItem() == SimplePlanesItems.WRENCH.get()) {
             if (!level.isClientSide) {
-                NetworkHooks.openGui((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), Component.empty()), buf -> buf.writeVarInt(getId()));
+                NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), Component.empty()), buf -> buf.writeVarInt(getId()));
                 return InteractionResult.CONSUME;
             }
             return InteractionResult.SUCCESS;
@@ -870,8 +874,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public boolean canBeRiddenInWater(Entity rider) {
-        return upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId());
+    public boolean canBeRiddenUnderFluidType(FluidType type, Entity rider) {
+        if (type == ForgeMod.WATER_TYPE.get() && upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId())) {
+            return true;
+        }
+
+        return super.canBeRiddenUnderFluidType(type, rider);
     }
 
     @Override

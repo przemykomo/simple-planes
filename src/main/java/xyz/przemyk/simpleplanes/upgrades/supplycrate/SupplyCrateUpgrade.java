@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -78,11 +78,11 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = Blocks.BARREL.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
         matrixStack.scale(0.875f, 0.875f, 0.875f);
         matrixStack.translate(0.0625f, 0.25f, 0.0625f);
         state = Blocks.WHITE_WOOL.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
         matrixStack.popPose();
     }
 
@@ -128,7 +128,7 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public void openStorageGui(ServerPlayer player) {
-        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(Items.BARREL).toString()));
+        NetworkHooks.openScreen(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(Items.BARREL).toString()));
     }
 
     @Override

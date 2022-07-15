@@ -1,28 +1,28 @@
 package xyz.przemyk.simpleplanes.upgrades.storage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
-import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -107,7 +107,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
         matrixStack.scale(0.82f, 0.82f, 0.82f);
 
         BlockState state = chestType instanceof BlockItem ? ((BlockItem) chestType).getBlock().defaultBlockState() : Blocks.CHEST.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
         matrixStack.popPose();
     }
 
@@ -142,6 +142,6 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public void openStorageGui(ServerPlayer player) {
-        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(chestType).toString()));
+        NetworkHooks.openScreen(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(chestType).toString()));
     }
 }

@@ -10,6 +10,8 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
 import java.util.List;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class EngineItem extends Item {
     public EngineItem(Properties properties) {
         super(properties);

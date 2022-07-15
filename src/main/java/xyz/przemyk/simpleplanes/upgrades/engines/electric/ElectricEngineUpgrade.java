@@ -16,9 +16,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.network.NetworkHooks;
+import xyz.przemyk.simpleplanes.client.ClientUtil;
 import xyz.przemyk.simpleplanes.misc.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -57,9 +57,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
     public void renderPowerHUD(PoseStack matrixStack, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
         if (side == HumanoidArm.LEFT) {
-            ClientEventHandler.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
+            ClientUtil.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
         } else {
-            ClientEventHandler.blit(matrixStack, -90, i + 91, scaledHeight - 22, 38, 44, 22, 21);
+            ClientUtil.blit(matrixStack, -90, i + 91, scaledHeight - 22, 38, 44, 22, 21);
         }
 
         int energy = energyStorage.getEnergyStored();
@@ -67,9 +67,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
         if (energy > 0) {
             int energyScaled = energy * 15 / CAPACITY;
             if (side == HumanoidArm.LEFT) {
-                ClientEventHandler.blit(matrixStack, -90, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                ClientUtil.blit(matrixStack, -90, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
             } else {
-                ClientEventHandler.blit(matrixStack, -90, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                ClientUtil.blit(matrixStack, -90, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
             }
         }
     }
@@ -110,7 +110,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public void openGui(ServerPlayer playerEntity) {
-        NetworkHooks.openGui(playerEntity, this, buffer -> buffer.writeVarInt(planeEntity.getId()));
+        NetworkHooks.openScreen(playerEntity, this, buffer -> buffer.writeVarInt(planeEntity.getId()));
     }
 
     @Override

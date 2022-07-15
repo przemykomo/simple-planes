@@ -12,14 +12,14 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -134,7 +134,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         ResourceLocation texture;
         try {
-            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ForgeModelBakery.getInventoryVariant(ForgeRegistries.BLOCKS.getKey(block).toString())).getQuads(null, Direction.SOUTH, RandomSource.create(), EmptyModelData.INSTANCE).get(0).getSprite().getName();
+            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(ForgeRegistries.BLOCKS.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).get(0).getSprite().getName();
             texture = new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
         } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;

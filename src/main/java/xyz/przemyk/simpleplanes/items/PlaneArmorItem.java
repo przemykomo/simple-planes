@@ -15,6 +15,7 @@ public class PlaneArmorItem extends Item {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int getEnchantmentValue() {
         return 9;

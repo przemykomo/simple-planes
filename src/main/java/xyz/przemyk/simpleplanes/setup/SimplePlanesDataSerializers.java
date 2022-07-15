@@ -11,7 +11,7 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
 @SuppressWarnings("unused")
 public class SimplePlanesDataSerializers {
-    public static final DeferredRegister<EntityDataSerializer<?>> DATA_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.DATA_SERIALIZERS, SimplePlanesMod.MODID);
+    public static final DeferredRegister<EntityDataSerializer<?>> DATA_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, SimplePlanesMod.MODID);
 
     public static void init() {
         DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());

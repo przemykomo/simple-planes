@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public class ChargingStationBlock extends Block implements EntityBlock {
 
     public ChargingStationBlock(Properties properties) {

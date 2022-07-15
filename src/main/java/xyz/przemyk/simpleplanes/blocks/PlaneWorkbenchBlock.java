@@ -20,6 +20,8 @@ import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public class PlaneWorkbenchBlock extends Block implements EntityBlock {
 
     public static final Component CONTAINER_NAME = Component.translatable(SimplePlanesMod.MODID + ".container.plane_workbench");
@@ -36,7 +38,7 @@ public class PlaneWorkbenchBlock extends Block implements EntityBlock {
         } else {
             PlaneWorkbenchBlockEntity planeWorkbenchBlockEntity = (PlaneWorkbenchBlockEntity) level.getBlockEntity(blockPos);
             if (planeWorkbenchBlockEntity != null) {
-                NetworkHooks.openGui((ServerPlayer) playerIn, new SimpleMenuProvider((id, inventory, player) ->
+                NetworkHooks.openScreen((ServerPlayer) playerIn, new SimpleMenuProvider((id, inventory, player) ->
                         new PlaneWorkbenchContainer(id, inventory, blockPos, planeWorkbenchBlockEntity.itemStackHandler, planeWorkbenchBlockEntity.selectedRecipe), CONTAINER_NAME));
             }
             return InteractionResult.CONSUME;

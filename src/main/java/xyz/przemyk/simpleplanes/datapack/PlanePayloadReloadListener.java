@@ -39,7 +39,7 @@ public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener
                 JsonObject jsonObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
                 Item item = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(new ResourceLocation(jsonObject.get("item").getAsString())), "missing item");
                 Block renderBlock = Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((jsonObject.get("block").getAsString()))), "missing block");
-                EntityType<?> dropSpawnEntity = Objects.requireNonNull(ForgeRegistries.ENTITIES.getValue(new ResourceLocation(jsonObject.get("entity").getAsString())), "missing entity");
+                EntityType<?> dropSpawnEntity = Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(jsonObject.get("entity").getAsString())), "missing entity");
                 CompoundTag compoundTag;
                 if (jsonObject.has("entity_nbt")) {
                     String tag = GsonHelper.convertToString(jsonObject.get("entity_nbt"), "entity_nbt");

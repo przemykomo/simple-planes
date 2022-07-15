@@ -10,7 +10,7 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.*;
 
 public class SimplePlanesContainers {
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, SimplePlanesMod.MODID);
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, SimplePlanesMod.MODID);
 
     public static void init() {
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());

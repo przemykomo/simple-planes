@@ -8,13 +8,10 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.item.ItemColors;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -23,13 +20,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.client.gui.OverlayRegistry;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -57,28 +53,35 @@ public class ClientEventHandler {
     public static KeyMapping dropPayloadKey;
 
     static {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::planeColor);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientEventHandler::reloadTextures);
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(ClientEventHandler::planeColor);
+        eventBus.addListener(ClientEventHandler::reloadTextures);
+        eventBus.addListener(ClientEventHandler::registerKeyBindings);
+        eventBus.addListener(ClientEventHandler::registerHUDOverlay);
     }
 
     public static void clientSetup() {
-        boostKey = new KeyMapping("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
-        openEngineInventoryKey = new KeyMapping("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
-        dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
-        ClientRegistry.registerKeyBinding(boostKey);
-        ClientRegistry.registerKeyBinding(openEngineInventoryKey);
-        ClientRegistry.registerKeyBinding(dropPayloadKey);
-
         MenuScreens.register(SimplePlanesContainers.PLANE_WORKBENCH.get(), PlaneWorkbenchScreen::new);
         MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
         MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
         MenuScreens.register(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
         MenuScreens.register(SimplePlanesContainers.ELECTRIC_ENGINE.get(), ElectricEngineScreen::new);
+    }
 
-        OverlayRegistry.registerOverlayTop("Plane HUD", (gui, matrixStack, partialTicks, screenWidth, screenHeight) -> {
+    public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
+        boostKey = new KeyMapping("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
+        openEngineInventoryKey = new KeyMapping("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
+        dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
+        event.register(boostKey);
+        event.register(openEngineInventoryKey);
+        event.register(dropPayloadKey);
+    }
+
+    public static void registerHUDOverlay(RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll("plane_hud", (gui, matrixStack, partialTicks, screenWidth, screenHeight) -> {
             Minecraft mc = Minecraft.getInstance();
 
-            if (mc.gui instanceof ForgeIngameGui forgeIngameGui) {
+            if (mc.gui instanceof ForgeGui forgeGui) {
                 int scaledWidth = mc.getWindow().getGuiScaledWidth();
                 int scaledHeight = mc.getWindow().getGuiScaledHeight();
 
@@ -101,7 +104,7 @@ public class ClientEventHandler {
                     int max_row_size = 5;
 
                     for (int heart = 0; hearts > 0; heart += max_row_size) {
-                        int top = scaledHeight - forgeIngameGui.right_height;
+                        int top = scaledHeight - forgeGui.rightHeight;
 
                         int rowCount = Math.min(hearts, max_row_size);
                         hearts -= rowCount;
@@ -110,13 +113,13 @@ public class ClientEventHandler {
                             int x = left_align - i * 16 - 16;
                             int vOffset = 35;
                             if (i + heart + 10 < health)
-                                blit(matrixStack, 0, x, top, GOLD, vOffset, 16, 9);
+                                ClientUtil.blit(matrixStack, 0, x, top, GOLD, vOffset, 16, 9);
                             else if (i + heart < health)
-                                blit(matrixStack, 0, x, top, FULL, vOffset, 16, 9);
+                                ClientUtil.blit(matrixStack, 0, x, top, FULL, vOffset, 16, 9);
                             else
-                                blit(matrixStack, 0, x, top, EMPTY, vOffset, 16, 9);
+                                ClientUtil.blit(matrixStack, 0, x, top, EMPTY, vOffset, 16, 9);
                         }
-                        forgeIngameGui.right_height += 10;
+                        forgeGui.rightHeight += 10;
                     }
 
                     if (planeEntity.engineUpgrade != null) {
@@ -129,16 +132,16 @@ public class ClientEventHandler {
         });
     }
 
-    private static boolean playerRotationNeedToPop = false;
-
-    public static void planeColor(ColorHandlerEvent.Item event) {
-        ItemColors itemColors = event.getItemColors();
-        SimplePlanesItems.getPlaneItems().forEach(item -> itemColors.register(PlaneItemColors::getColor, item));
+    public static void planeColor(RegisterColorHandlersEvent.Item event) {
+        SimplePlanesItems.getPlaneItems().forEach(item -> event.register(PlaneItemColors::getColor, item));
     }
 
     public static void reloadTextures(TextureStitchEvent.Post event) {
         PlaneItemColors.clearCache();
     }
+
+
+    private static boolean playerRotationNeedToPop = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
@@ -245,7 +248,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
+    public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
         Camera camera = event.getCamera();
         Entity entity = camera.getEntity();
         if (entity instanceof LocalPlayer playerEntity && entity.getVehicle() instanceof PlaneEntity planeEntity) {
@@ -275,33 +278,8 @@ public class ClientEventHandler {
         }
     }
 
-    public static void renderHotbarItem(PoseStack matrixStack, int x, int y, float partialTicks, ItemStack stack, Minecraft mc) {
-        ItemRenderer itemRenderer = mc.getItemRenderer();
-        if (!stack.isEmpty()) {
-            float f = (float) stack.getUseDuration() - partialTicks;
-            if (f > 0.0F) {
-                matrixStack.pushPose();
-                float f1 = 1.0F + f / 5.0F;
-                matrixStack.translate((float) (x + 8), (float) (y + 12), 0.0F);
-                matrixStack.scale(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
-                matrixStack.translate((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
-            }
-
-            itemRenderer.renderAndDecorateItem(stack, x, y);
-            if (f > 0.0F) {
-                matrixStack.popPose();
-            }
-
-            itemRenderer.renderGuiItemDecorations(mc.font, stack, x, y);
-        }
-    }
-
-    public static void blit(PoseStack matrixStack, int blitOffset, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
-        GuiComponent.blit(matrixStack, x, y, blitOffset, (float) uOffset, (float) vOffset, uWidth, vHeight, 256, 256);
-    }
-
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void planeInventory(ScreenOpenEvent event) {
+    public static void planeInventory(ScreenEvent.Opening event) {
         final LocalPlayer player = Minecraft.getInstance().player;
         if (event.getScreen() instanceof InventoryScreen && player.getVehicle() instanceof LargePlaneEntity largePlaneEntity) {
             if (largePlaneEntity.hasStorageUpgrade()) {
@@ -312,7 +290,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event) {
+    public static void onPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
         SimplePlanesNetworking.INSTANCE.sendToServer(new ClientConfigPacket(SimplePlanesConfig.INVERTED_CONTROLS.get()));
         LocalPlayer player = event.getPlayer();
         if (player != null) {

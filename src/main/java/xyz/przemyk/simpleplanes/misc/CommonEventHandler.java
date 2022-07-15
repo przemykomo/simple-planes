@@ -14,7 +14,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void interact(PlayerInteractEvent.RightClickItem event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         Entity entity = player.getRootVehicle();
         if (entity instanceof PlaneEntity) {
             ItemStack itemStack = player.getItemInHand(event.getHand());

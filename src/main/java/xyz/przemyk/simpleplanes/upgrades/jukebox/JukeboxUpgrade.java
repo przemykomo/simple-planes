@@ -15,7 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -48,7 +48,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
         if (!planeEntity.level.isClientSide) {
-            Player player = event.getPlayer();
+            Player player = event.getEntity();
             ItemStack itemStack = player.getItemInHand(event.getHand());
             if (itemStack.getItem() instanceof RecordItem newRecordItem && newRecordItem != record.getItem()) {
                 ItemStack oldRecord = record;
@@ -80,7 +80,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = Blocks.JUKEBOX.defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
         matrixStack.popPose();
     }
 

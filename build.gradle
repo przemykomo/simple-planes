@@ -90,7 +90,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven { name = "Progwml6 maven"; url = "https://dvs1.progwml6.com/files/maven/" } //JEI & Iron chest
-    maven { name = "ModMaven";       url = "https://modmaven.k-4u.nl" }               // JEI fallback
+    maven { name = "ModMaven";       url = "https://modmaven.dev" }               // JEI fallback
     maven { name = "blamejared";     url = "https://maven.blamejared.com" }           // Patchouli
     maven {
         url "https://cursemaven.com"
@@ -106,16 +106,18 @@ dependencies {
 //    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
 //    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
-//    compileOnly fg.deobf("mezz.jei:${jei_version}:api")
-//    runtimeOnly fg.deobf("mezz.jei:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    // at runtime, use the full JEI jar for Forge
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
 //    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
-    runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
+//    runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
-    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3830436')
-    implementation fg.deobf('curse.maven:framework-549225:3828731')
+    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3874034')
+    implementation fg.deobf('curse.maven:framework-549225:3873800')
 }
 
 jar {
