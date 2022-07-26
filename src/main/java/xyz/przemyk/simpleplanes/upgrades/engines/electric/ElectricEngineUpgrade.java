@@ -22,9 +22,11 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.solarpanel.SolarPanelUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -136,6 +138,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public void onRemoved() {
+        if(planeEntity.upgrades.containsKey(SimplePlanesUpgrades.SOLAR_PANEL.getId())) {
+            planeEntity.removeUpgrade(SimplePlanesUpgrades.SOLAR_PANEL.getId());
+        }
         planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
     }
 }
