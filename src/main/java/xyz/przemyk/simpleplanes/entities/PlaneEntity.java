@@ -62,6 +62,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.engines.electric.ElectricEngineUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -978,6 +979,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {
         if (upgradeType.isEngine && engineUpgrade != null) {
+            return false;
+        }
+        if (upgradeType == SimplePlanesUpgrades.SOLAR_PANEL.get() && (engineUpgrade == null || !(engineUpgrade instanceof ElectricEngineUpgrade) || this instanceof HelicopterEntity)) {
             return false;
         }
         return !upgrades.containsKey(upgradeType.getRegistryName());
