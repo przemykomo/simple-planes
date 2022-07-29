@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "ibi",
+    "iii"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "b": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "result": {
+    "item": "simpleplanes:solar_panel",
+    "count": 1
+  }
+}
