@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 public class SolarPanelUpgrade extends Upgrade {
 
     private final short MAX_PER_TICK;
-    private int count = 0;
 
     public SolarPanelUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SOLAR_PANEL.get(), planeEntity);
@@ -35,22 +34,14 @@ public class SolarPanelUpgrade extends Upgrade {
 
     @Override
     public void tick() {
-        // ToDo: balancing and recipe for Solar Panel
-        count++;
-        if(count<30) return;
-
         PlaneEntity entity = getPlaneEntity();
         Level world = entity.getLevel();
-        float brightness = 0.0F;
         if(canSeeSun(world, entity.getOnPos().above())) {
-            brightness = MAX_PER_TICK * getSunBrightness(entity.getLevel(), 1.0F); // 0.2 -> 1.0
-            if(world.isRaining() || world.isThundering()) brightness *= 0.2;
+            float brightness = MAX_PER_TICK * getSunBrightness(entity.getLevel(), 1.0F);
+            if(entity.engineUpgrade instanceof ElectricEngineUpgrade engine) {
+                engine.energyStorage.receiveEnergy((int) brightness, false);
+            }
         }
-        if(entity.engineUpgrade instanceof ElectricEngineUpgrade engine) {
-            engine.energyStorage.receiveEnergy((int) brightness, false);
-            updateClient();
-        }
-        count = 0;
     }
 
     @Override
@@ -92,7 +83,7 @@ public class SolarPanelUpgrade extends Upgrade {
         f1 = 1.0F - f1;
         f1 = (float) (f1 * (1.0D - world.getRainLevel(partialTicks) * 5.0F / 16.0D));
         f1 = (float) (f1 * (1.0D - world.getThunderLevel(partialTicks) * 5.0F / 16.0D));
-        return f1 * 0.8F + 0.2F;
+        return f1 * 0.8F;
     }
 
 }

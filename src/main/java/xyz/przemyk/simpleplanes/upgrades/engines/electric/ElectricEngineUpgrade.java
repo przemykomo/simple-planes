@@ -138,9 +138,6 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public void onRemoved() {
-        if(planeEntity.upgrades.containsKey(SimplePlanesUpgrades.SOLAR_PANEL.getId())) {
-            planeEntity.removeUpgrade(SimplePlanesUpgrades.SOLAR_PANEL.getId());
-        }
         planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
     }
 }
