@@ -28,17 +28,20 @@ public class SolarPanelUpgrade extends Upgrade {
 
     public SolarPanelUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SOLAR_PANEL.get(), planeEntity);
-        if(planeEntity instanceof LargePlaneEntity) MAX_PER_TICK = 10;
-        else MAX_PER_TICK = 5;
+        if (planeEntity instanceof LargePlaneEntity) {
+            MAX_PER_TICK = 10;
+        } else {
+            MAX_PER_TICK = 5;
+        }
     }
 
     @Override
     public void tick() {
         PlaneEntity entity = getPlaneEntity();
         Level world = entity.getLevel();
-        if(canSeeSun(world, entity.getOnPos().above())) {
+        if (canSeeSun(world, entity.getOnPos().above())) {
             float brightness = MAX_PER_TICK * getSunBrightness(entity.getLevel(), 1.0F);
-            if(entity.engineUpgrade instanceof ElectricEngineUpgrade engine) {
+            if (entity.engineUpgrade instanceof ElectricEngineUpgrade engine) {
                 engine.energyStorage.receiveEnergy((int) brightness, false);
             }
         }
@@ -75,7 +78,7 @@ public class SolarPanelUpgrade extends Upgrade {
     private static boolean canSeeSun(@Nullable Level level, BlockPos pos) {
         return level != null && level.dimensionType().hasSkyLight() && level.getSkyDarken() < 4 && level.canSeeSky(pos);
     }
-
+    
     public static float getSunBrightness(Level world, float partialTicks) {
         float f = world.getTimeOfDay(partialTicks);
         float f1 = 1.0F - (Mth.cos(f * ((float) Math.PI * 2F)) * 2.0F + 0.2F);

@@ -1,16 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "iii",
-    "ibi",
-    "iii"
+    "GGG",
+    "QDQ",
+    "WWW"
   ],
   "key": {
-    "i": {
-      "item": "minecraft:iron_ingot"
+    "Q": {
+      "tag": "forge:gems/quartz"
     },
-    "b": {
-      "item": "minecraft:redstone_block"
+    "G": {
+      "tag": "forge:glass/colorless"
+    },
+    "W": {
+      "tag": "forge:gems/lapis"
+    },
+    "D": {
+      "item": "minecraft:daylight_detector"
     }
   },
   "result": {

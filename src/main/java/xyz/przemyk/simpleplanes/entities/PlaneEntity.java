@@ -981,10 +981,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (upgradeType.isEngine && engineUpgrade != null) {
             return false;
         }
-//        if (upgradeType == SimplePlanesUpgrades.SOLAR_PANEL.get() && (engineUpgrade == null || !(engineUpgrade instanceof ElectricEngineUpgrade) || this instanceof HelicopterEntity)) {
-//            return false;
-//        }
-        if(upgradeType == SimplePlanesUpgrades.SOLAR_PANEL.get() && this instanceof HelicopterEntity) return false;
         return !upgrades.containsKey(upgradeType.getRegistryName());
     }
 
