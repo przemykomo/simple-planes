@@ -1,0 +1,15 @@
+{
+  "name": "Solar Panel",
+  "icon": "simpleplanes:solar_panel",
+  "category": "simpleplanes:upgrades",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Solar panel for plane and large plane. Refills RF/FE while the sun is out!"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simpleplanes:solar_panel"
+    }
+  ]
+}

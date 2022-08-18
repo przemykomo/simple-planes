@@ -62,6 +62,7 @@ import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.engines.electric.ElectricEngineUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

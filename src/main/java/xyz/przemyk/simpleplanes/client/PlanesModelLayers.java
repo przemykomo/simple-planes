@@ -36,6 +36,8 @@ import xyz.przemyk.simpleplanes.upgrades.seats.*;
 import xyz.przemyk.simpleplanes.upgrades.shooter.HeliShooterModel;
 import xyz.przemyk.simpleplanes.upgrades.shooter.LargeShooterModel;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterModel;
+import xyz.przemyk.simpleplanes.upgrades.solarpanel.LargeSolarPanelModel;
+import xyz.przemyk.simpleplanes.upgrades.solarpanel.SolarPanelModel;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PlanesModelLayers {
@@ -77,6 +79,10 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "large");
     public static final ModelLayerLocation HELI_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "heli");
 
+    public static final ModelLayerLocation SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "main");
+    public static final ModelLayerLocation LARGE_SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "large");
+
+
     public static final ModelLayerLocation SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "main");
     public static final ModelLayerLocation LARGE_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "large");
     public static final ModelLayerLocation HELI_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "heli");
@@ -98,8 +104,6 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(HELICOPTER_PROPELLER_LAYER, HelicopterPropellerModel::createBodyLayer);
 
         event.registerLayerDefinition(PARACHUTE_LAYER, ParachuteModel::createBodyLayer);
-
-
 
         event.registerLayerDefinition(FURNACE_ENGINE, FurnaceEngineModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_FURNACE_ENGINE, LargeFurnaceEngineModel::createBodyLayer);
@@ -124,6 +128,9 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(ARMOR, ArmorModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_ARMOR, LargeArmorModel::createBodyLayer);
         event.registerLayerDefinition(HELI_ARMOR, HeliArmorModel::createBodyLayer);
+
+        event.registerLayerDefinition(SOLAR_PANEL, SolarPanelModel::createBodyLayer);
+        event.registerLayerDefinition(LARGE_SOLAR_PANEL, LargeSolarPanelModel::createBodyLayer);
 
         event.registerLayerDefinition(SEATS, SeatsModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_SEATS, LargeSeatsModel::createBodyLayer);
@@ -176,6 +183,11 @@ public class PlanesModelLayers {
                 new ArmorModel(entityModelSet.bakeLayer(ARMOR)), SimplePlanesMod.texture("armor.png"),
                 new LargeArmorModel(entityModelSet.bakeLayer(LARGE_ARMOR)), SimplePlanesMod.texture("armor_large.png"),
                 new HeliArmorModel(entityModelSet.bakeLayer(HELI_ARMOR)), SimplePlanesMod.texture("armor_heli.png")));
+
+        UpgradesModels.MODEL_ENTRIES.put(SimplePlanesUpgrades.SOLAR_PANEL.get(), new UpgradesModels.ModelEntry(
+                new SolarPanelModel(entityModelSet.bakeLayer(SOLAR_PANEL)), SimplePlanesMod.texture("solar_panel.png"),
+                new LargeSolarPanelModel(entityModelSet.bakeLayer(LARGE_SOLAR_PANEL)), SimplePlanesMod.texture("solar_panel_large.png"),
+                null, null));
 
         UpgradesModels.SEATS = new SeatsModel(entityModelSet.bakeLayer(SEATS));
         UpgradesModels.LARGE_SEATS = new LargeSeatsModel(entityModelSet.bakeLayer(LARGE_SEATS));
