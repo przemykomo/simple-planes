@@ -69,8 +69,6 @@ import java.util.*;
 import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.misc.MathUtil.*;
 
-import xyz.przemyk.simpleplanes.misc.MathUtil.EulerAngles;
-
 @SuppressWarnings({"ConstantConditions", "deprecation"})
 public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Integer> MAX_HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
