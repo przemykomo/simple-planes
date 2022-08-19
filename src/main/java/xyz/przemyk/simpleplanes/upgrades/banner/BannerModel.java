@@ -49,9 +49,9 @@ public class BannerModel {
             matrixStackIn.scale(0.6f, -0.6f, -0.6f);
             final BannerItem item = (BannerItem) banner.getItem();
             BANNER_BLOCK_ENTITY.fromItem(banner, item.getColor());
-            final float f2 = partialTicks + planeEntity.tickCount;
-            float r = (0.05F * Mth.cos(f2 / 5)) * (float) 180;
-            r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.getYRot());
+            final float tickCountWithPartial = partialTicks + planeEntity.tickCount;
+            float r = (0.05F * Mth.cos(tickCountWithPartial / 5)) * (float) 180;
+//            r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.getYRot());
             r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
             List<Pair<Holder<BannerPattern>, DyeColor>> list = BANNER_BLOCK_ENTITY.getPatterns();
             BlockEntityRenderer<BannerBlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(BANNER_BLOCK_ENTITY);
