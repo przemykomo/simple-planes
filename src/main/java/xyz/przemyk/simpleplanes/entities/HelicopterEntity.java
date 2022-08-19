@@ -12,6 +12,8 @@ import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
 
@@ -153,5 +155,13 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected Item getItem() {
         return SimplePlanesItems.HELICOPTER_ITEM.get();
+    }
+
+    @Override
+    public boolean canAddUpgrade(UpgradeType upgradeType) {
+        if (upgradeType == SimplePlanesUpgrades.SOLAR_PANEL.get()) {
+            return false;
+        }
+        return super.canAddUpgrade(upgradeType);
     }
 }
