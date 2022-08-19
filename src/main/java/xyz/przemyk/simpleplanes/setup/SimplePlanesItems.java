@@ -48,6 +48,7 @@ public class SimplePlanesItems {
     public static final RegistryObject<Item> BOOSTER = ITEMS.register("booster", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> HEALING = ITEMS.register("healing", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> ARMOR = ITEMS.register("armor", () -> new PlaneArmorItem(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> SOLAR_PANEL = ITEMS.register("solar_panel", () -> new Item(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> FOLDING = ITEMS.register("folding", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> SUPPLY_CRATE = ITEMS.register("supply_crate", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> SEATS = ITEMS.register("seats", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));

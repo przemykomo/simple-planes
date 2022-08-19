@@ -4,6 +4,7 @@
     "item.simpleplanes.electric_engine": "Electric Engine",
     "item.simpleplanes.furnace_engine": "Furnace Engine",
     "item.simpleplanes.armor": "Plane Armor",
+    "item.simpleplanes.solar_panel": "Solar Panel",
     "item.simpleplanes.propeller": "Propeller",
     "item.simpleplanes.booster": "Rocket Booster",
     "item.simpleplanes.floaty_bedding": "Floaty Bedding",
@@ -33,6 +34,7 @@
     "name.simpleplanes.armor": "Plane Armor",
     "name.simpleplanes.supply_crate": "Supply Crate",
     "name.simpleplanes.seats": "Seats",
+    "name.simpleplanes.solar_panel": "Solar Panel",
 
     "itemGroup.simpleplanes": "Simple Planes",
     "simpleplanes.container.plane_workbench": "Plane Workbench",
@@ -85,6 +87,7 @@
     "simpleplanes:banner": "Banner",
     "simpleplanes:chest": "Chest",
     "simpleplanes:armor": "Armor",
+    "simpleplanes:solar_panel": "Solar Panel",
     "simpleplanes:folding": "Folding",
     "simpleplanes:supply_crate": "Supply Crate",
     "simpleplanes:seats": "Seats",
