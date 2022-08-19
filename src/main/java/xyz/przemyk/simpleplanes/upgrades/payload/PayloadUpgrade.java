@@ -48,21 +48,23 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        matrixStack.pushPose();
-        EntityType<?> entityType = planeEntity.getType();
+        if (payloadEntry != null) {
+            matrixStack.pushPose();
+            EntityType<?> entityType = planeEntity.getType();
 
-        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.1, -1.28);
-        } else {
-            matrixStack.translate(0, 0, 0.1);
+            if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
+                matrixStack.translate(0, -0.1, -1.28);
+            } else {
+                matrixStack.translate(0, 0, 0.1);
+            }
+
+            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+            matrixStack.translate(-0.4, -1, 0.3);
+            matrixStack.scale(0.82f, 0.82f, 0.82f);
+            BlockState state = payloadEntry.renderBlock().defaultBlockState();
+            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
+            matrixStack.popPose();
         }
-
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
-        matrixStack.translate(-0.4, -1, 0.3);
-        matrixStack.scale(0.82f, 0.82f, 0.82f);
-        BlockState state = payloadEntry.renderBlock().defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
-        matrixStack.popPose();
     }
 
     @Override
