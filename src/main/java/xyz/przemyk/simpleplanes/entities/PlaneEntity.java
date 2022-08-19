@@ -595,44 +595,15 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             return;
         }
 
-        float f1 = 1f;
         double turn;
-        float moveStrafing = tempMotionVars.moveStrafing;
-
-        int yawdiff = 3;
-        float roll = rotationRoll;
-        if (degreesDifferenceAbs(getXRot(), 0) < 45) {
-            for (int i = 0; i < 360; i += 180) {
-                if (Mth.degreesDifferenceAbs(rotationRoll, i) < 80) {
-                    roll = lerpAngle(0.1f * f1, rotationRoll, i);
-                    break;
-                }
-            }
-        }
 
         if (getOnGround() || isOnWater()) {
-            turn = moveStrafing > 0 ? yawdiff : moveStrafing == 0 ? 0 : -yawdiff;
-            rotationRoll = roll;
-        } else if (degreesDifferenceAbs(rotationRoll, 0) > 30) {
-            turn = moveStrafing > 0 ? -yawdiff : moveStrafing == 0 ? 0 : yawdiff;
-            rotationRoll = roll;
+            turn = tempMotionVars.moveStrafing > 0 ? 3 : tempMotionVars.moveStrafing == 0 ? 0 : -3;
+            rotationRoll = lerpAngle(0.1f, rotationRoll, 0);
+
         } else {
-            if (moveStrafing == 0) {
-                rotationRoll = lerpAngle180(0.2f, rotationRoll, 0);
-            } else if (moveStrafing > 0) {
-                rotationRoll = Math.min(rotationRoll + f1, 15);
-            } else if (moveStrafing < 0) {
-                rotationRoll = Math.max(rotationRoll - f1, -15);
-            }
-            final double rollOld = toEulerAngles(getQ()).roll;
-            if (degreesDifferenceAbs(rollOld, 0) < 90) {
-                turn = Mth.clamp(rollOld * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
-            } else {
-                turn = Mth.clamp((180 - rollOld) * tempMotionVars.yawMultiplayer, -yawdiff, yawdiff);
-            }
-            if (moveStrafing == 0) {
-                turn = 0;
-            }
+            turn = tempMotionVars.moveStrafing > 0 ? 3 : tempMotionVars.moveStrafing == 0 ? 0 : -3;
+            rotationRoll = lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 20);
         }
 
         setYRot((float) (getYRot() - turn));
