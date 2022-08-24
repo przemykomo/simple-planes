@@ -19,6 +19,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
@@ -204,23 +205,7 @@ public class ClientEventHandler {
         if ((event.phase == Phase.END) && (player instanceof LocalPlayer)) {
             if (player.getVehicle() instanceof PlaneEntity planeEntity) {
                 Minecraft mc = Minecraft.getInstance();
-                if (mc.options.cameraType == CameraType.FIRST_PERSON) {
-                    float yawDiff = planeEntity.getYRot() - planeEntity.yRotO;
-                    player.setYRot(player.getYRot() + yawDiff);
-                    float relativePlayerYaw = Mth.wrapDegrees(player.getYRot() - planeEntity.getYRot());
-                    float clampedRelativePlayerYaw = Mth.clamp(relativePlayerYaw, -105.0F, 105.0F);
-
-                    float diff = (clampedRelativePlayerYaw - relativePlayerYaw);
-                    player.yRotO += diff;
-                    player.setYRot(player.getYRot() + diff);
-                    player.setYHeadRot(player.getYRot());
-
-                    relativePlayerYaw = Mth.wrapDegrees(player.getXRot() - 0);
-                    clampedRelativePlayerYaw = Mth.clamp(relativePlayerYaw, -50, 50);
-                    float perc = (clampedRelativePlayerYaw - relativePlayerYaw) * 0.5f;
-                    player.xRotO += perc;
-                    player.setXRot(player.getXRot() + perc);
-                } else {
+                if (mc.options.cameraType != CameraType.FIRST_PERSON) {
                     planeEntity.applyYawToEntity(player);
                 }
 
@@ -250,30 +235,43 @@ public class ClientEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
         Camera camera = event.getCamera();
-        Entity entity = camera.getEntity();
-        if (entity instanceof LocalPlayer playerEntity && entity.getVehicle() instanceof PlaneEntity planeEntity) {
+        Entity player = camera.getEntity();
+        if (player.getVehicle() instanceof PlaneEntity planeEntity) {
             if (camera.isDetached()) {
                 camera.move(-camera.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
             } else {
+                //TODO: MathUtil.lerpQ?
                 double partialTicks = event.getPartialTick();
 
-                Quaternion q_prev = planeEntity.getQ_Prev();
-                int max = 105;
-                float diff = (float) Mth.clamp(MathUtil.wrapSubtractDegrees(planeEntity.yRotO, playerEntity.yRotO), -max, max);
-                float pitch = Mth.clamp(event.getPitch(), -45, 45);
-                q_prev.mul(Vector3f.YP.rotationDegrees(diff));
-                q_prev.mul(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.EulerAngles angles_prev = MathUtil.toEulerAngles(q_prev);
+                Quaternion qPrev = planeEntity.getQ_Prev();
+                Quaternion qNow = planeEntity.getQ_Client();
 
-                Quaternion q_client = planeEntity.getQ_Client();
-                diff = (float) Mth.clamp(MathUtil.wrapSubtractDegrees(planeEntity.getYRot(), playerEntity.getYRot()), -max, max);
-                q_client.mul(Vector3f.YP.rotationDegrees(diff));
-                q_client.mul(Vector3f.XP.rotationDegrees(pitch));
-                MathUtil.EulerAngles angles = MathUtil.toEulerAngles(q_client);
+                //TODO: prev and now vectors should use prev and now pos respectively
+                Vector3f playerEyesRelativeToPlane = new Vector3f((float) (player.getX() - planeEntity.getX()),
+                        (float) (player.getY() - planeEntity.getY() + Player.DEFAULT_EYE_HEIGHT - 0.075f),
+                        (float) (player.getZ() - planeEntity.getZ()));
 
-                event.setPitch(-(float) MathUtil.lerpAngle180(partialTicks, angles_prev.pitch, angles.pitch));
-                event.setYaw((float) MathUtil.lerpAngle(partialTicks, angles_prev.yaw, angles.yaw));
-                event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, angles_prev.roll, angles.roll));
+                Vector3f rotationPrev = new Vector3f(playerEyesRelativeToPlane.x(), playerEyesRelativeToPlane.y(), playerEyesRelativeToPlane.z());
+                rotationPrev.transform(qPrev);
+
+                Vector3f rotationNow = new Vector3f(playerEyesRelativeToPlane.x(), playerEyesRelativeToPlane.y(), playerEyesRelativeToPlane.z());
+                rotationNow.transform(qNow);
+
+                camera.setPosition(new Vec3(Mth.lerp(partialTicks, player.xo - rotationPrev.x(), player.getX() - rotationNow.x()),
+                        Mth.lerp(partialTicks, player.yo + rotationPrev.y(), player.getY() + rotationNow.y()) + 0.43f,
+                        Mth.lerp(partialTicks, player.zo + rotationPrev.z(), player.getZ() + rotationNow.z())));
+
+                qPrev.mul(Vector3f.YP.rotationDegrees(player.yRotO));
+                qPrev.mul(Vector3f.XP.rotationDegrees(event.getPitch()));
+                MathUtil.EulerAngles eulerAnglesPrev = MathUtil.toEulerAngles(qPrev);
+
+                qNow.mul(Vector3f.YP.rotationDegrees(player.getYRot()));
+                qNow.mul(Vector3f.XP.rotationDegrees(event.getPitch()));
+                MathUtil.EulerAngles eulerAnglesNow = MathUtil.toEulerAngles(qNow);
+
+                event.setPitch(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.pitch, eulerAnglesNow.pitch));
+                event.setYaw((float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.yaw, eulerAnglesNow.yaw));
+                event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.roll, eulerAnglesNow.roll));
             }
         }
     }

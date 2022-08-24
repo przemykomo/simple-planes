@@ -97,7 +97,7 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected void tickRotation(TempMotionVars tempMotionVars) {
+    protected void tickRoll(TempMotionVars tempMotionVars) {
         if (getHealth() <= 0) {
             setYRot(getYRot() + (getId() % 2 == 0 ? 16.0f : -16.0f));
             return;

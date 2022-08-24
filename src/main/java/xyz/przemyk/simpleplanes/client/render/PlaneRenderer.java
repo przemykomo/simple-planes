@@ -60,12 +60,12 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
 
-        double firstPersonYOffset = -0.7D;
+//        double firstPersonYOffset = -0.7D;
         boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.hasPassenger(Minecraft.getInstance().player)
             && (Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON;
-        if (isPlayerRidingInFirstPersonView) {
-            poseStack.translate(0.0D, firstPersonYOffset, 0.0D);
-        }
+//        if (isPlayerRidingInFirstPersonView) {
+//            poseStack.translate(0.0D, firstPersonYOffset, 0.0D);
+//        }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
         poseStack.mulPose(q);
         EntityType<?> entityType = planeEntity.getType();
@@ -95,9 +95,9 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         poseStack.translate(0, -1.1, 0);
 
-        if (isPlayerRidingInFirstPersonView) {
-            poseStack.translate(0.0D, -firstPersonYOffset, 0.0D);
-        }
+//        if (isPlayerRidingInFirstPersonView) {
+//            poseStack.translate(0.0D, -firstPersonYOffset, 0.0D);
+//        }
 
         VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);

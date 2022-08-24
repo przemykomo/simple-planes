@@ -89,7 +89,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public float rotationRoll;
     public float prevRotationRoll;
-    //smooth rotation
     private float deltaRotation;
     private float deltaRotationLeft;
     private int deltaRotationTicks;
@@ -438,7 +437,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         tickMotion(tempMotionVars);
 
         //roll + yaw
-        tickRotation(tempMotionVars);
+        tickRoll(tempMotionVars);
 
         tickUpgrades();
 
@@ -538,6 +537,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (tickCount % networkUpdateInterval == 0) {
             for (ResourceLocation name : upgradesToUpdate) {
+                // TODO: set updateClient to false
                 SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getId(), (ServerLevel) level));
             }
         }
@@ -589,21 +589,59 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    protected void tickRotation(TempMotionVars tempMotionVars) {
+    protected float pitchSpeed = 0;
+
+    protected void tickPitch(TempMotionVars tempMotionVars) {
+        float pitch;
+        if (getHealth() <= 0) {
+            pitch = 10.0f;
+        } else {
+            if (tempMotionVars.moveForward > 0.0f) {
+                pitchSpeed += 0.5f;
+            } else if (tempMotionVars.moveForward < 0.0f) {
+                pitchSpeed -= 0.5f;
+            } else {
+                if (pitchSpeed < 0) {
+                    pitchSpeed += 0.5f;
+                } else if (pitchSpeed > 0) {
+                    pitchSpeed -= 0.5f;
+                }
+            }
+            pitchSpeed = Mth.clamp(pitchSpeed, -5.0f, 5.0f);
+            pitch = pitchSpeed;
+        }
+        setXRot(getXRot() + pitch);
+    }
+
+    protected float rollSpeed = 0;
+
+    protected void tickRoll(TempMotionVars tempMotionVars) {
         if (getHealth() <= 0) {
             rotationRoll += getId() % 2 == 0 ? 10.0f : -10.0f;
             return;
         }
 
-        double turn;
+        double turn = 0;
 
         if (getOnGround() || isOnWater()) {
             turn = tempMotionVars.moveStrafing > 0 ? 3 : tempMotionVars.moveStrafing == 0 ? 0 : -3;
             rotationRoll = lerpAngle(0.1f, rotationRoll, 0);
 
         } else {
-            turn = tempMotionVars.moveStrafing > 0 ? 3 : tempMotionVars.moveStrafing == 0 ? 0 : -3;
-            rotationRoll = lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 20);
+            if (tempMotionVars.moveStrafing > 0.0f) {
+                rollSpeed += 0.5f;
+            } else if (tempMotionVars.moveStrafing < 0.0f) {
+                rollSpeed -= 0.5f;
+            } else {
+                if (rollSpeed < 0) {
+                    rollSpeed += 0.5f;
+                } else if (rollSpeed > 0) {
+                    rollSpeed -= 0.5f;
+                }
+            }
+
+            rollSpeed = Mth.clamp(rollSpeed, -5.0f, 5.0f);
+            rotationRoll += rollSpeed;
         }
 
         setYRot((float) (getYRot() - turn));
@@ -644,22 +682,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     protected Vector3f getTickPush(TempMotionVars tempMotionVars) {
         return transformPos(new Vector3f(0, 0, tempMotionVars.push));
-    }
-
-    protected void tickPitch(TempMotionVars tempMotionVars) {
-        float pitch = 0f;
-        if (getHealth() <= 0) {
-            pitch = 10.0f;
-        } else {
-            if (tempMotionVars.moveForward > 0.0F) {
-                pitch = 1.3f;
-            } else {
-                if (tempMotionVars.moveForward < 0.0F) {
-                    pitch = -1.3f;
-                }
-            }
-        }
-        setXRot(getXRot() + pitch);
     }
 
     protected boolean tickOnGround(TempMotionVars tempMotionVars) {
@@ -734,9 +756,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (getHealth() <= 0) {
             lift = 0;
         }
-        double cosRoll = (1 + 4 * Math.max(Math.cos(Math.toRadians(degreesDifferenceAbs(rotationRoll, 0))), 0)) / 5;
-        lift *= cosRoll;
-        d *= cosRoll;
+//        double cosRoll = (1 + 4 * Math.max(Math.cos(Math.toRadians(degreesDifferenceAbs(rotationRoll, 0))), 0)) / 5;
+//        lift *= cosRoll;
+//        d *= cosRoll;
 
         setDeltaMovement(rotationToVector(lerpAngle180(0.1f, yaw, getYRot()),
                 lerpAngle180(tempMotionVars.pitchToMotion * d, pitch, getXRot()) + lift,
@@ -982,24 +1004,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    /**
-     * Applies this boat's yaw to the given entity. Used to update the orientation of its passenger.
-     */
     public void applyYawToEntity(Entity entityToUpdate) {
         entityToUpdate.setYHeadRot(entityToUpdate.getYHeadRot() + deltaRotation);
 
         entityToUpdate.yRotO += deltaRotation;
 
         entityToUpdate.setYBodyRot(getYRot());
-
-        float f = wrapDegrees(entityToUpdate.yRotO - getYRot());
-        float f1 = Mth.clamp(f, -105.0F, 105.0F);
-
-        float perc = deltaRotationTicks > 0 ? 1f / deltaRotationTicks : 1f;
-        float diff = (f1 - f) * perc;
-
-        entityToUpdate.setYRot(entityToUpdate.getYRot() + diff);
-        entityToUpdate.yRotO += diff;
 
         entityToUpdate.setYHeadRot(entityToUpdate.getYRot());
     }

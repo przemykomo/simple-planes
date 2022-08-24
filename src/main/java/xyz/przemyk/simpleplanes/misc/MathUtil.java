@@ -76,7 +76,7 @@ public class MathUtil {
 
         // pitch (z-axis rotation)
         double sinp = 2 * (q.r() * q.i() - q.j() * q.k());
-        if (Math.abs(sinp) >= 0.98) {
+        if (Math.abs(sinp) >= 0.999) {
             angles.pitch = -Math.toDegrees(Math.signum(sinp) * Math.PI / 2); // use 90 degrees if out of range
         } else {
             angles.pitch = -Math.toDegrees(Math.asin(sinp));
