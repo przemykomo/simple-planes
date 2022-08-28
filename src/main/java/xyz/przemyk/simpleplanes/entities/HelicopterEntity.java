@@ -103,15 +103,15 @@ public class HelicopterEntity extends LargePlaneEntity {
             return;
         }
 
-        int yawDiff = 2;
         if (!tempMotionVars.passengerPressingSpace) {
-            float turn = tempMotionVars.moveStrafing > 0 ? yawDiff : tempMotionVars.moveStrafing == 0 ? 0 : -yawDiff;
-            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
-            setYRot(getYRot() - turn);
+            setYRot(getYRot() - tempMotionVars.moveStrafing * 2);
+            if (tempMotionVars.moveForward > 0) {
+                rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 30);
+            } else {
+                rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
+            }
         } else {
-            int rollDiff = 15;
-            float turn = tempMotionVars.moveStrafing > 0 ? rollDiff : tempMotionVars.moveStrafing == 0 ? 0 : -rollDiff;
-            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, turn);
+            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 15);
         }
     }
 
