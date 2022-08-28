@@ -52,14 +52,12 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.capability.CapClientConfigProvider;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
-import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
-import xyz.przemyk.simpleplanes.network.RotationPacket;
-import xyz.przemyk.simpleplanes.network.SUpgradeRemovedPacket;
-import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
+import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.*;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
 import javax.annotation.Nonnull;
@@ -80,6 +78,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Float> DAMAGE_TAKEN = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> PARKED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get());
+    public static final EntityDataAccessor<Integer> THROTTLE = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
+    public static final int MAX_THROTTLE = 5;
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
 
@@ -129,6 +129,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         entityData.define(TIME_SINCE_HIT, 0);
         entityData.define(DAMAGE_TAKEN, 0f);
         entityData.define(PARKED, true);
+        entityData.define(THROTTLE, 0);
     }
 
     public float getMaxSpeed() {
@@ -416,6 +417,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             PlaneSound.tryToPlay(this);
         }
 
+        tempMotionVars.push = 0.00625f * getThrottle();
+
         //motion and rotation interpolation + lift.
         if (getDeltaMovement().length() > 0.05) {
             q = tickRotateMotion(tempMotionVars, q, getDeltaMovement());
@@ -426,9 +429,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             doPitch = tickOnGround(tempMotionVars);
         } else {
             onGroundTicks--;
-            if (!tempMotionVars.passengerPressingSpace) {
-                tempMotionVars.push = tempMotionVars.passiveEnginePush;
-            }
+//            if (!tempMotionVars.passengerPressingSpace) {
+////                tempMotionVars.push = tempMotionVars.passiveEnginePush;
+//            }
         }
         if (doPitch) {
             tickPitch(tempMotionVars);
@@ -719,8 +722,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (tempMotionVars.moveForward < 0) {
             tempMotionVars.push = -tempMotionVars.groundPush;
+        } else if (tempMotionVars.moveForward > 0 && tempMotionVars.push < tempMotionVars.groundPush) {
+            tempMotionVars.push = tempMotionVars.groundPush;
         }
-        if (!isPowered() || tempMotionVars.moveForward == 0) {
+        if (!isPowered()/* || tempMotionVars.moveForward == 0 */) {
             tempMotionVars.push = 0;
         }
         float f;
@@ -1282,6 +1287,25 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     private static final TempMotionVars TEMP_MOTION_VARS = new TempMotionVars();
 
+    public void changeThrottle(ChangeThrottlePacket.Type type) {
+        int throttle = getThrottle();
+        if (type == ChangeThrottlePacket.Type.UP) {
+            if (throttle < MAX_THROTTLE || (upgrades.containsKey(SimplePlanesUpgrades.BOOSTER.getId()) && throttle < BoosterUpgrade.MAX_THROTTLE)) {
+                setThrottle(throttle + 1);
+            }
+        } else if (throttle > 0) {
+            setThrottle(throttle - 1);
+        }
+    }
+
+    public int getThrottle() {
+        return entityData.get(THROTTLE);
+    }
+
+    public void setThrottle(int value) {
+        entityData.set(THROTTLE, value);
+    }
+
     protected static class TempMotionVars {
         public float moveForward;
         public double turnThreshold;
@@ -1320,7 +1344,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             drag = 0.001;
             dragMul = 0.0005;
             dragQuad = 0.001;
-            push = 0.06f;
+            push = 0.0f;
             groundPush = 0.01f;
             passiveEnginePush = 0.025f;
             motionToRotation = 0.05f;

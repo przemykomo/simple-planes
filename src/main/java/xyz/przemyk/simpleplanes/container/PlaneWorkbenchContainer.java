@@ -70,7 +70,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         updateCraftingResult();
     }
 
-    public void cycleItems(CycleItemsPacket.TYPE type) {
+    public void cycleItems(CycleItemsPacket.Type type) {
         int prevSelectedRecipe = selectedRecipe.get();
         ItemStack ingredient = itemHandler.getStackInSlot(0);
         ItemStack material = itemHandler.getStackInSlot(1);

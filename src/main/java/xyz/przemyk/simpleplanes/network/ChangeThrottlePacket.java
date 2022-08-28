@@ -1,21 +1,22 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Supplier;
 
-public class CycleItemsPacket {
+public class ChangeThrottlePacket {
 
     private final Type type;
 
-    public CycleItemsPacket(Type type) {
+    public ChangeThrottlePacket(Type type) {
         this.type = type;
     }
 
-    public CycleItemsPacket(FriendlyByteBuf buffer) {
+    public ChangeThrottlePacket(FriendlyByteBuf buffer) {
         this.type = Type.values()[buffer.readByte()];
     }
 
@@ -27,15 +28,15 @@ public class CycleItemsPacket {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
             ServerPlayer sender = ctx.getSender();
-            if (sender.containerMenu instanceof PlaneWorkbenchContainer workbenchContainer) {
-                workbenchContainer.cycleItems(type);
+            if (sender != null && sender.getVehicle() instanceof PlaneEntity planeEntity) {
+                planeEntity.changeThrottle(type);
             }
         });
         ctx.setPacketHandled(true);
     }
 
     public enum Type {
-        CRAFTING_LEFT,
-        CRAFTING_RIGHT
+        UP,
+        DOWN
     }
 }

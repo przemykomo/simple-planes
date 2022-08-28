@@ -44,6 +44,8 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
+import java.awt.*;
+
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
 
@@ -52,6 +54,8 @@ public class ClientEventHandler {
     public static KeyMapping boostKey;
     public static KeyMapping openEngineInventoryKey;
     public static KeyMapping dropPayloadKey;
+    public static KeyMapping throttleUp;
+    public static KeyMapping throttleDown;
 
     static {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -73,9 +77,13 @@ public class ClientEventHandler {
         boostKey = new KeyMapping("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         openEngineInventoryKey = new KeyMapping("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
         dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
+        throttleUp = new KeyMapping("key.plane_throttle_up.desc", GLFW.GLFW_KEY_UP, "key.simpleplanes.category");
+        throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, "key.simpleplanes.category");
         event.register(boostKey);
         event.register(openEngineInventoryKey);
         event.register(dropPayloadKey);
+        event.register(throttleUp);
+        event.register(throttleDown);
     }
 
     public static void registerHUDOverlay(RegisterGuiOverlaysEvent event) {
@@ -128,6 +136,9 @@ public class ClientEventHandler {
                         HumanoidArm primaryHand = mc.player.getMainArm();
                         planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, partialTicks);
                     }
+
+
+                    ForgeGui.drawString(matrixStack, Minecraft.getInstance().font, "Throttle: " + planeEntity.getThrottle(), 50, 50, Color.CYAN.getRGB());
                 }
             }
         });
@@ -210,6 +221,12 @@ public class ClientEventHandler {
                             break;
                         }
                     }
+                }
+
+                if (throttleUp.consumeClick()) {
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Type.UP));
+                } else if (throttleDown.consumeClick()) {
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Type.DOWN));
                 }
 
                 boolean isBoosting = boostKey.isDown();

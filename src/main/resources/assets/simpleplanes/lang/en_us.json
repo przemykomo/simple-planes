@@ -100,5 +100,7 @@
 
     "simpleplanes.gui.energy": "Energy: %s FE",
 
-    "simpleplanes.engine_desc": "Press %s when in an aircraft"
+    "simpleplanes.engine_desc": "Press %s when in an aircraft",
+    "key.plane_throttle_up.desc": "Throttle Up",
+    "key.plane_throttle_down.desc": "Throttle Down"
 }
