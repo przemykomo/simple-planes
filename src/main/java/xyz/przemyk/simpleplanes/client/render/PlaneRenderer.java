@@ -77,6 +77,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             poseStack.translate(0, 0, 0.9);
         }
 
+        //TODO: make rocking less noticeable
         float rockingAngle = planeEntity.getRockingAngle(partialTicks);
         if (!Mth.equal(rockingAngle, 0.0F)) {
             poseStack.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));

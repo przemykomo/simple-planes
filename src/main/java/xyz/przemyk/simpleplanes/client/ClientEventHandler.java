@@ -152,24 +152,15 @@ public class ClientEventHandler {
             PoseStack matrixStack = event.getPoseStack();
             matrixStack.pushPose();
             playerRotationNeedToPop = true;
-            double firstPersonYOffset = 0.7D;
-            boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.hasPassenger(Minecraft.getInstance().player)
-                && (Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON;
-            if (isPlayerRidingInFirstPersonView) {
-                matrixStack.translate(0.0D, firstPersonYOffset, 0.0D);
-            }
 
-            matrixStack.translate(0, 0.35, 0);
+            matrixStack.translate(0, 0.375, 0);
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
             quaternion.set(quaternion.i(), -quaternion.j(), -quaternion.k(), quaternion.r());
             matrixStack.mulPose(quaternion);
             float rotationYaw = MathUtil.lerpAngle(event.getPartialTick(), entity.yRotO, entity.getYRot());
 
             matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationYaw));
-            matrixStack.translate(0, -0.35, 0);
-            if (isPlayerRidingInFirstPersonView) {
-                matrixStack.translate(0.0D, -firstPersonYOffset, 0.0D);
-            }
+            matrixStack.translate(0, -0.375, 0);
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
                 livingEntity.yHeadRot = planeEntity.getYRot() * 2 - livingEntity.yHeadRot;
             }
@@ -240,26 +231,23 @@ public class ClientEventHandler {
             if (camera.isDetached()) {
                 camera.move(-camera.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
             } else {
-                //TODO: MathUtil.lerpQ?
+                float heightDiff = 0;
+                if (planeEntity instanceof LargePlaneEntity) {
+                    heightDiff = -0.1f;
+                }
+
                 double partialTicks = event.getPartialTick();
 
                 Quaternion qPrev = planeEntity.getQ_Prev();
                 Quaternion qNow = planeEntity.getQ_Client();
 
-                //TODO: prev and now vectors should use prev and now pos respectively
-                Vector3f playerEyesRelativeToPlane = new Vector3f((float) (player.getX() - planeEntity.getX()),
-                        (float) (player.getY() - planeEntity.getY() + Player.DEFAULT_EYE_HEIGHT - 0.075f),
-                        (float) (player.getZ() - planeEntity.getZ()));
-
-                Vector3f rotationPrev = new Vector3f(playerEyesRelativeToPlane.x(), playerEyesRelativeToPlane.y(), playerEyesRelativeToPlane.z());
-                rotationPrev.transform(qPrev);
-
-                Vector3f rotationNow = new Vector3f(playerEyesRelativeToPlane.x(), playerEyesRelativeToPlane.y(), playerEyesRelativeToPlane.z());
-                rotationNow.transform(qNow);
-
-                camera.setPosition(new Vec3(Mth.lerp(partialTicks, player.xo - rotationPrev.x(), player.getX() - rotationNow.x()),
-                        Mth.lerp(partialTicks, player.yo + rotationPrev.y(), player.getY() + rotationNow.y()) + 0.43f,
-                        Mth.lerp(partialTicks, player.zo + rotationPrev.z(), player.getZ() + rotationNow.z())));
+                Vector3f eyePrev = new Vector3f(0, Player.DEFAULT_EYE_HEIGHT + heightDiff, 0);
+                Vector3f eyeNow = eyePrev.copy();
+                eyePrev.transform(qPrev);
+                eyeNow.transform(qNow);
+                camera.setPosition(new Vec3(Mth.lerp(partialTicks, player.xo - eyePrev.x(), player.getX() - eyeNow.x()),
+                        Mth.lerp(partialTicks, player.yo + eyePrev.y(), player.getY() + eyeNow.y()) + 0.375,
+                        Mth.lerp(partialTicks, player.zo + eyePrev.z(), player.getZ() + eyeNow.z())));
 
                 qPrev.mul(Vector3f.YP.rotationDegrees(player.yRotO));
                 qPrev.mul(Vector3f.XP.rotationDegrees(event.getPitch()));
