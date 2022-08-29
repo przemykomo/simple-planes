@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
-    public static final int TICKS_PER_PROPELLER_ROTATION = 4; //TODO: Change it with engine throttle
 
     protected final EntityModel<PlaneEntity> propellerModel;
     protected final EntityModel<T> planeEntityModel;

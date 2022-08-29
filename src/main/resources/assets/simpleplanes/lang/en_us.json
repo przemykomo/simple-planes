@@ -102,5 +102,7 @@
 
     "simpleplanes.engine_desc": "Press %s when in an aircraft",
     "key.plane_throttle_up.desc": "Throttle Up",
-    "key.plane_throttle_down.desc": "Throttle Down"
+    "key.plane_throttle_down.desc": "Throttle Down",
+    "key.plane_pitch_up.desc": "Plane Pitch Up",
+    "key.plane_pitch_down.desc": "Plane Pitch Down"
 }

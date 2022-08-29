@@ -47,11 +47,10 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.capability.CapClientConfigProvider;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
+import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.*;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -68,7 +67,7 @@ import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.misc.MathUtil.*;
 
 @SuppressWarnings({"ConstantConditions", "deprecation"})
-public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { //TODO: rebindable W/S keys
+public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Integer> MAX_HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> MAX_SPEED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
@@ -79,6 +78,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
     public static final EntityDataAccessor<Boolean> PARKED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get());
     public static final EntityDataAccessor<Integer> THROTTLE = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Byte> PITCH_UP = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BYTE);
     public static final int MAX_THROTTLE = 5;
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
@@ -133,6 +133,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
         entityData.define(DAMAGE_TAKEN, 0f);
         entityData.define(PARKED, true);
         entityData.define(THROTTLE, 0);
+        entityData.define(PITCH_UP, (byte) 0);
     }
 
     public float getMaxSpeed() {
@@ -404,9 +405,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
             setSprinting(false);
         }
         tempMotionVars.turnThreshold = SimplePlanesConfig.TURN_THRESHOLD.get() / 100d;
-        if (Math.abs(tempMotionVars.moveForward) < tempMotionVars.turnThreshold) {
-            tempMotionVars.moveForward = 0;
-        }
+//        if (Math.abs(tempMotionVars.moveForward) < tempMotionVars.turnThreshold) {
+//            tempMotionVars.moveForward = 0;
+//        }
         if (Math.abs(tempMotionVars.moveStrafing) < tempMotionVars.turnThreshold) {
             tempMotionVars.moveStrafing = 0;
         }
@@ -465,7 +466,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
             double speedBefore = Math.sqrt(getHorizontalDistanceSqr(getDeltaMovement()));
             boolean onGroundOld = onGround;
             Vec3 motion = getDeltaMovement();
-            if (motion.lengthSqr() > 0.25 || tempMotionVars.moveForward != 0) {
+            if (motion.lengthSqr() > 0.25 || getPitchUp() != 0) {
                 onGround = true;
             }
             move(MoverType.SELF, motion);
@@ -530,7 +531,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
     }
 
     protected float getMoveForward(Player player) {
-        return player.zza * player.getCapability(CapClientConfigProvider.CLIENT_CONFIG_CAP).map(cap -> cap.invertedControls ? -1 : 1).orElse(1);
+        return player.zza;
     }
 
     public void tickUpgrades() {
@@ -560,7 +561,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
         return SimplePlanesConfig.PLANE_FUEL_COST.get();
     }
 
-    private boolean updateParkedState(TempMotionVars tempMotionVars) {
+    private boolean updateParkedState(TempMotionVars tempMotionVars) { //TODO: remove parked state entirely perhaps?
         Vec3 oldMotion = getDeltaMovement();
         final boolean parked = (isOnWater() || isOnGround()) &&
                 (oldMotion.length() < 0.1) &&
@@ -568,7 +569,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
                 (tempMotionVars.moveStrafing == 0) &&
                 (notMovingTime > 20) &&
                 (onGround || isOnWater()) &&
-                (tempMotionVars.moveForward == 0);
+                (getPitchUp() == 0);
         setParked(parked);
         return parked;
     }
@@ -609,9 +610,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
         if (getHealth() <= 0) {
             pitch = 10.0f;
         } else {
-            if (tempMotionVars.moveForward > 0.0f) {
+            if (getPitchUp() > 0) {
                 pitchSpeed += 0.5f;
-            } else if (tempMotionVars.moveForward < 0.0f) {
+            } else if (getPitchUp() < 0) {
                 pitchSpeed -= 0.5f;
             } else {
                 if (pitchSpeed < 0) {
@@ -716,7 +717,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
             onGroundTicks--;
         }
         float pitch = getGroundPitch();
-        if ((isPowered() && tempMotionVars.moveForward > 0.0F) || isOnWater()) {
+        if ((isPowered() && getPitchUp() > 0) || isOnWater()) {
             pitch = 0;
         } else if (getDeltaMovement().length() > tempMotionVars.takeOffSpeed) {
             pitch /= 2;
@@ -731,9 +732,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
             speedingUp = false;
             //                push = 0;
         }
-        if (tempMotionVars.moveForward < 0) {
+        if (getPitchUp() < 0) {
             tempMotionVars.push = -tempMotionVars.groundPush;
-        } else if (tempMotionVars.moveForward > 0 && tempMotionVars.push < tempMotionVars.groundPush) {
+        } else if (getPitchUp() > 0 && tempMotionVars.push < tempMotionVars.groundPush) {
             tempMotionVars.push = tempMotionVars.groundPush;
         }
         if (!isPowered()/* || tempMotionVars.moveForward == 0 */) {
@@ -1317,8 +1318,16 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { 
         entityData.set(THROTTLE, value);
     }
 
+    public byte getPitchUp() {
+        return entityData.get(PITCH_UP);
+    }
+
+    public void setPitchUp(byte pitchUp) {
+        entityData.set(PITCH_UP, pitchUp);
+    }
+
     protected static class TempMotionVars {
-        public float moveForward;
+        public float moveForward; //TODO: move to HelicopterEntity?
         public double turnThreshold;
         public float moveStrafing;
         public boolean passengerPressingSpace;

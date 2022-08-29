@@ -106,15 +106,6 @@ public class SimplePlanesNetworking {
 
         INSTANCE.registerMessage(
                 ++id,
-                ClientConfigPacket.class,
-                ClientConfigPacket::toBytes,
-                ClientConfigPacket::new,
-                ClientConfigPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
-        );
-
-        INSTANCE.registerMessage(
-                ++id,
                 JukeboxPacket.class,
                 JukeboxPacket::toBytes,
                 JukeboxPacket::new,
@@ -128,6 +119,15 @@ public class SimplePlanesNetworking {
                 ChangeThrottlePacket::toBytes,
                 ChangeThrottlePacket::new,
                 ChangeThrottlePacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                PitchPacket.class,
+                PitchPacket::toBytes,
+                PitchPacket::new,
+                PitchPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
     }

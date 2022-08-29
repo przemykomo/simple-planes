@@ -32,20 +32,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.capability.CapClientConfigProvider;
 import xyz.przemyk.simpleplanes.client.gui.*;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
-
-import java.awt.*;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
@@ -57,6 +53,8 @@ public class ClientEventHandler {
     public static KeyMapping dropPayloadKey;
     public static KeyMapping throttleUp;
     public static KeyMapping throttleDown;
+    public static KeyMapping pitchUp;
+    public static KeyMapping pitchDown;
 
     static {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -80,11 +78,15 @@ public class ClientEventHandler {
         dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
         throttleUp = new KeyMapping("key.plane_throttle_up.desc", GLFW.GLFW_KEY_UP, "key.simpleplanes.category");
         throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, "key.simpleplanes.category");
+        pitchUp = new KeyMapping("key.plane_pitch_up.desc", GLFW.GLFW_KEY_W, "key.simpleplanes.category");
+        pitchDown = new KeyMapping("key.plane_pitch_down.desc", GLFW.GLFW_KEY_S, "key.simpleplanes.category");
         event.register(boostKey);
         event.register(openEngineInventoryKey);
         event.register(dropPayloadKey);
         event.register(throttleUp);
         event.register(throttleDown);
+        event.register(pitchUp);
+        event.register(pitchDown);
     }
 
     public static void registerHUDOverlay(RegisterGuiOverlaysEvent event) {
@@ -138,7 +140,6 @@ public class ClientEventHandler {
                         int throttleScaled = throttle * 28 / BoosterUpgrade.MAX_THROTTLE;
                         ClientUtil.blit(matrixStack, -90, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled);
                     }
-//                    ForgeGui.drawString(matrixStack, Minecraft.getInstance().font, "Throttle: " + planeEntity.getThrottle(), 50, 50, Color.CYAN.getRGB());
 
                     if (planeEntity.engineUpgrade != null) {
                         ItemStack offhandStack = mc.player.getOffhandItem();
@@ -206,6 +207,8 @@ public class ClientEventHandler {
     }
 
     private static boolean oldBoostState = false;
+    private static boolean oldPitchUpState = false;
+    private static boolean oldPitchDownState = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onClientPlayerTick(PlayerTickEvent event) {
@@ -236,12 +239,23 @@ public class ClientEventHandler {
                 }
 
                 boolean isBoosting = boostKey.isDown();
-                if (isBoosting != oldBoostState || Math.random() < 0.1) {
+                boolean isPitchUp = pitchUp.isDown();
+                boolean isPitchDown = pitchDown.isDown();
+                if (isBoosting != oldBoostState || Math.random() < 0.1) { //TODO: remove random I guess?
                     SimplePlanesNetworking.INSTANCE.sendToServer(new BoostPacket(isBoosting));
                 }
+
+                if (isPitchUp != oldPitchUpState || isPitchDown != oldPitchDownState) {
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new PitchPacket((byte) Boolean.compare(isPitchUp, isPitchDown)));
+                }
+
                 oldBoostState = isBoosting;
+                oldPitchUpState = isPitchUp;
+                oldPitchDownState = isPitchDown;
             } else {
                 oldBoostState = false;
+                oldPitchUpState = false;
+                oldPitchDownState = false;
             }
         }
     }
@@ -295,15 +309,6 @@ public class ClientEventHandler {
                 event.setCanceled(true);
                 SimplePlanesNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
-        SimplePlanesNetworking.INSTANCE.sendToServer(new ClientConfigPacket(SimplePlanesConfig.INVERTED_CONTROLS.get()));
-        LocalPlayer player = event.getPlayer();
-        if (player != null) {
-            player.getCapability(CapClientConfigProvider.CLIENT_CONFIG_CAP).ifPresent(cap -> cap.invertedControls = SimplePlanesConfig.INVERTED_CONTROLS.get());
         }
     }
 }

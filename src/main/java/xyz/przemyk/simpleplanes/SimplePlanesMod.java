@@ -32,7 +32,6 @@ public class SimplePlanesMod {
         SimplePlanesRecipes.init();
         SimplePlanesNetworking.init();
         SimplePlanesDatapack.init();
-        SimplePlanesCapabilities.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);

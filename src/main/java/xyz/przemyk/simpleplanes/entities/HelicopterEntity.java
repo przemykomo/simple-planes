@@ -22,11 +22,6 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected float getMoveForward(Player player) {
-        return player.zza;
-    }
-
-    @Override
     protected TempMotionVars getMotionVars() {
         TempMotionVars motionTempMotionVars = super.getMotionVars();
         motionTempMotionVars.passiveEnginePush = 0.028f;

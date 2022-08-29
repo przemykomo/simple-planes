@@ -11,8 +11,6 @@ public class SimplePlanesConfig {
     public static ForgeConfigSpec.IntValue PLANE_FUEL_COST;
     public static ForgeConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
     public static ForgeConfigSpec.IntValue HELICOPTER_FUEL_COST;
-
-    public static ForgeConfigSpec.BooleanValue INVERTED_CONTROLS; //TODO: bindable W/S keys instead of this
     public static ForgeConfigSpec.DoubleValue PLANE_CAMERA_DISTANCE_MULTIPLIER;
     public static ForgeConfigSpec.DoubleValue LARGE_PLANE_CAMERA_DISTANCE_MULTIPLIER;
     public static ForgeConfigSpec.DoubleValue HELI_CAMERA_DISTANCE_MULTIPLIER;
@@ -43,8 +41,6 @@ public class SimplePlanesConfig {
 
         ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
         CLIENT_BUILDER.comment("Planes client settings").push("general_client");
-        INVERTED_CONTROLS = CLIENT_BUILDER
-                .comment("Inverted W-S plane controls (doesn't affect helicopters)").define("inverted_controls", false);
         PLANE_CAMERA_DISTANCE_MULTIPLIER = CLIENT_BUILDER
                 .comment("Third person camera zoom on a plane").defineInRange("plane_camera_distance_multiplier", 1.0, 1.0, 2.0);
         LARGE_PLANE_CAMERA_DISTANCE_MULTIPLIER = CLIENT_BUILDER
