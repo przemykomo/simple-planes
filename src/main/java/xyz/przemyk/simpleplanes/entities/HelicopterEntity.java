@@ -49,6 +49,10 @@ public class HelicopterEntity extends LargePlaneEntity {
         if (tempMotionVars.moveForward > 0 && isPowered() && !tempMotionVars.passengerPressingSpace) {
             tempMotionVars.push *= 1.5;
         }
+
+        if (isPowered() && tempMotionVars.passengerPressingSpace) {
+            tempMotionVars.push += 0.01 * getThrottle();
+        }
         return transformPos(new Vector3f(0, tempMotionVars.push, 0));
     }
 
