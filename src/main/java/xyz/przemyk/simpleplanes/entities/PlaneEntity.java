@@ -68,7 +68,7 @@ import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.misc.MathUtil.*;
 
 @SuppressWarnings({"ConstantConditions", "deprecation"})
-public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
+public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData { //TODO: rebindable W/S keys
     public static final EntityDataAccessor<Integer> MAX_HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> MAX_SPEED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
@@ -1220,7 +1220,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public double getCameraDistanceMultiplayer() {
-        return 1;
+        return SimplePlanesConfig.PLANE_CAMERA_DISTANCE_MULTIPLIER.get();
     }
 
     public void writeUpdateUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf buffer) {

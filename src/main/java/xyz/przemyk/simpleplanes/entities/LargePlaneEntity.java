@@ -134,7 +134,7 @@ public class LargePlaneEntity extends PlaneEntity {
 
     @Override
     public double getCameraDistanceMultiplayer() {
-        return 1.2;
+        return SimplePlanesConfig.LARGE_PLANE_CAMERA_DISTANCE_MULTIPLIER.get();
     }
 
     @Override

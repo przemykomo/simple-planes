@@ -16,7 +16,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
-
+//TODO: disable rotations while on ground
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
     }
@@ -167,5 +167,10 @@ public class HelicopterEntity extends LargePlaneEntity {
             return false;
         }
         return super.canAddUpgrade(upgradeType);
+    }
+
+    @Override
+    public double getCameraDistanceMultiplayer() {
+        return SimplePlanesConfig.HELI_CAMERA_DISTANCE_MULTIPLIER.get();
     }
 }
