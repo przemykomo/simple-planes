@@ -43,6 +43,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 
 import java.awt.*;
 
@@ -131,14 +132,19 @@ public class ClientEventHandler {
                         forgeGui.rightHeight += 10;
                     }
 
+                    ClientUtil.blit(matrixStack, -90, scaledWidth - 24, scaledHeight - 42, 0, 84, 22, 40);
+                    int throttle = planeEntity.getThrottle();
+                    if (throttle > 0) {
+                        int throttleScaled = throttle * 28 / BoosterUpgrade.MAX_THROTTLE;
+                        ClientUtil.blit(matrixStack, -90, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled);
+                    }
+//                    ForgeGui.drawString(matrixStack, Minecraft.getInstance().font, "Throttle: " + planeEntity.getThrottle(), 50, 50, Color.CYAN.getRGB());
+
                     if (planeEntity.engineUpgrade != null) {
                         ItemStack offhandStack = mc.player.getOffhandItem();
                         HumanoidArm primaryHand = mc.player.getMainArm();
                         planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, partialTicks);
                     }
-
-
-                    ForgeGui.drawString(matrixStack, Minecraft.getInstance().font, "Throttle: " + planeEntity.getThrottle(), 50, 50, Color.CYAN.getRGB());
                 }
             }
         });

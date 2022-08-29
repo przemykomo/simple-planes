@@ -657,7 +657,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         motion = getDeltaMovement();
         double speed = motion.length();
-        speed -= speed * speed * tempMotionVars.dragQuad + speed * tempMotionVars.dragMul + tempMotionVars.drag;
+        double brakesMul = getThrottle() == 0 ? 5.0 : 1.0;
+        speed -= (speed * speed * tempMotionVars.dragQuad + speed * tempMotionVars.dragMul + tempMotionVars.drag) * brakesMul;
         speed = Math.max(speed, 0);
         if (speed > tempMotionVars.maxSpeed) {
             speed = Mth.lerp(0.2, speed, tempMotionVars.maxSpeed);
