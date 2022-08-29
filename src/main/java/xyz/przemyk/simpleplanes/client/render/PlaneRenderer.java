@@ -49,7 +49,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     public static float getPropellerRotation(PlaneEntity entity, float partialTicks) {
-        return ((entity.tickCount + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+        return Mth.lerp(partialTicks, entity.propellerRotationOld, entity.propellerRotationNew);
     }
 
     @Override

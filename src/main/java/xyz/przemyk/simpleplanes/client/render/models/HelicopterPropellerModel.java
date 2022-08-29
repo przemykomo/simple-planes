@@ -50,15 +50,10 @@ public class HelicopterPropellerModel extends EntityModel<PlaneEntity> {
 
     @Override
     public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (entity.isPowered() && !entity.getParked()) {
-            bone_propeller.yRot =
-                getPropellerRotation(entity, limbSwing);
-            bone_propeller2.xRot =
-                getPropellerRotation(entity, limbSwing);
-        } else {
-            bone_propeller.yRot = 0;
-            bone_propeller2.xRot = 0;
-        }
+        bone_propeller.yRot =
+            getPropellerRotation(entity, limbSwing);
+        bone_propeller2.xRot =
+            getPropellerRotation(entity, limbSwing);
     }
 
     @Override

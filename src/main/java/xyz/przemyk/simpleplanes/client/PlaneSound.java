@@ -55,7 +55,7 @@ public class PlaneSound extends AbstractTickableSoundInstance {
         x = plane.getX();
         y = plane.getY();
         z = plane.getZ();
-        if (fadeOut < 0 && (!(plane.isPowered() && !plane.getParked()) || plane.getThrottle() == 0)) {
+        if (fadeOut < 0 && (!plane.isPowered() || plane.getThrottle() == 0)) {
             fadeOut = 0;
             synchronized (PLAYING_FOR) {
                 PLAYING_FOR.remove(plane.getId());

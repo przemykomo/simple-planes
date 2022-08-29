@@ -115,7 +115,7 @@ public class HelicopterEntity extends LargePlaneEntity {
                 rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
             }
         } else {
-            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 15);
+            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 70);
         }
     }
 

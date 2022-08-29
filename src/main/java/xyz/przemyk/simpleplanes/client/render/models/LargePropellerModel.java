@@ -70,12 +70,7 @@ public class LargePropellerModel extends EntityModel<PlaneEntity> {
 
 	@Override
 	public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		if (entity.isPowered() && !entity.getParked()) {
-			IronPropeller.zRot = getPropellerRotation(entity, limbSwing);
-			bone.zRot = -IronPropeller.zRot;
-		} else {
-			IronPropeller.zRot = 0;
-			bone.zRot = 0;
-		}
+		IronPropeller.zRot = getPropellerRotation(entity, limbSwing);
+		bone.zRot = -IronPropeller.zRot;
 	}
 }

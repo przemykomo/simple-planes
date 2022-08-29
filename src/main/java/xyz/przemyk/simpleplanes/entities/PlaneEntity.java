@@ -100,6 +100,9 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     private final int networkUpdateInterval;
 
+    public float propellerRotationOld;
+    public float propellerRotationNew;
+
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, Level worldIn) {
         this(entityTypeIn, worldIn, Blocks.OAK_PLANKS);
     }
@@ -363,6 +366,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         yRotO = getYRot();
         xRotO = getXRot();
         prevRotationRoll = rotationRoll;
+        if (level.isClientSide) {
+            propellerRotationOld = propellerRotationNew;
+            if (isPowered()) {
+                int throttle = getThrottle();
+                propellerRotationNew += throttle * 0.1;
+            }
+        }
 
         if (level.isClientSide && getHealth() <= 0) {
             level.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, true, getX(), getY(), getZ(), 0.0, 0.005, 0.0);
@@ -412,8 +422,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         Vec3 oldMotion = getDeltaMovement();
 
-        boolean parked = updateParkedState(tempMotionVars);
-        if (level.isClientSide && isPowered() && !parked && getThrottle() > 0) {
+        updateParkedState(tempMotionVars);
+        if (level.isClientSide && isPowered() && getThrottle() > 0) {
             PlaneSound.tryToPlay(this);
         }
 
