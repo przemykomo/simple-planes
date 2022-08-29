@@ -413,7 +413,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         Vec3 oldMotion = getDeltaMovement();
 
         boolean parked = updateParkedState(tempMotionVars);
-        if (level.isClientSide && isPowered() && !parked) {
+        if (level.isClientSide && isPowered() && !parked && getThrottle() > 0) {
             PlaneSound.tryToPlay(this);
         }
 
