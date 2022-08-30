@@ -5,7 +5,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -16,7 +15,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
-//TODO: disable rotations while on ground
+
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
     }
@@ -32,11 +31,6 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected void tickMotion(TempMotionVars tempMotionVars) {
-        super.tickMotion(tempMotionVars);
-    }
-
-    @Override
     protected Vector3f getTickPush(TempMotionVars tempMotionVars) {
         if (tempMotionVars.moveForward < 0 && isPowered() && !tempMotionVars.passengerPressingSpace) {
             tempMotionVars.push *= 0.2;
@@ -45,21 +39,22 @@ public class HelicopterEntity extends LargePlaneEntity {
             tempMotionVars.push *= 1.5;
         }
 
-        if (isPowered() && tempMotionVars.passengerPressingSpace) {
+        if (isPowered() && tempMotionVars.passengerPressingSpace && tempMotionVars.moveForward >= 0) {
             tempMotionVars.push += 0.01 * getThrottle();
         }
         return transformPos(new Vector3f(0, tempMotionVars.push, 0));
     }
 
+    @Override
     protected void tickPitch(TempMotionVars tempMotionVars) {
         if (getHealth() <= 0) {
             setXRot(-2);
             setDeltaMovement(getDeltaMovement().add(0, -0.04, 0));
-        } else {
-            if (tempMotionVars.moveForward > 0.0F) {
+        } else if (!onGround) {
+            if (tempMotionVars.moveForward > 0) {
                 setXRot(Math.max(getXRot() - 1, -20));
             } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerPressingSpace) {
-                setXRot(Math.min(getXRot() + 1, 10));
+                setXRot(Math.min(getXRot() + 1, 20));
             } else {
                 setXRot(MathUtil.lerpAngle(0.2f, getXRot(), 0));
                 double drag = 0.999;
@@ -104,13 +99,13 @@ public class HelicopterEntity extends LargePlaneEntity {
 
         if (!tempMotionVars.passengerPressingSpace) {
             setYRot(getYRot() - tempMotionVars.moveStrafing * 2);
-            if (tempMotionVars.moveForward > 0) {
+            if (tempMotionVars.moveForward > 0 && !onGround) {
                 rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 30);
             } else {
                 rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
             }
-        } else {
-            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 70);
+        } else if (!onGround) {
+            rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 50);
         }
     }
 
