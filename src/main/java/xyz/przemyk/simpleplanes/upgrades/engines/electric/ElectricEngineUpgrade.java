@@ -41,7 +41,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public void tick() {
-        if (!planeEntity.getParked()) {
+        if (planeEntity.getThrottle() > 0) {
             if (energyStorage.extractEnergy(12 * planeEntity.getFuelCost(), false) > 0) {
                 updateClient();
             }
@@ -50,7 +50,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public boolean isPowered() {
-        return energyStorage.getEnergyStored() > 0;
+        return energyStorage.getEnergyStored() > 12 * planeEntity.getFuelCost();
     }
 
     @Override

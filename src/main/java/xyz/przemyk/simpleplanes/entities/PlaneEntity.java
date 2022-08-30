@@ -75,7 +75,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Integer> ROCKING_TICKS = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> TIME_SINCE_HIT = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> DAMAGE_TAKEN = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Boolean> PARKED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get());
     public static final EntityDataAccessor<Integer> THROTTLE = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Byte> PITCH_UP = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BYTE);
@@ -131,7 +130,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         entityData.define(ROCKING_TICKS, 0);
         entityData.define(TIME_SINCE_HIT, 0);
         entityData.define(DAMAGE_TAKEN, 0f);
-        entityData.define(PARKED, true);
         entityData.define(THROTTLE, 0);
         entityData.define(PITCH_UP, (byte) 0);
     }
@@ -182,15 +180,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public int getMaxHealth() {
         return entityData.get(MAX_HEALTH);
-    }
-
-    public void setParked(Boolean val) {
-        entityData.set(PARKED, val);
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean getParked() {
-        return entityData.get(PARKED);
     }
 
     @Override
@@ -423,7 +412,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         Vec3 oldMotion = getDeltaMovement();
 
-        updateParkedState(tempMotionVars);
         if (level.isClientSide && isPowered() && getThrottle() > 0) {
             PlaneSound.tryToPlay(this);
         }
@@ -559,19 +547,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public int getFuelCost() {
         return SimplePlanesConfig.PLANE_FUEL_COST.get();
-    }
-
-    private boolean updateParkedState(TempMotionVars tempMotionVars) { //TODO: remove parked state entirely perhaps?
-        Vec3 oldMotion = getDeltaMovement();
-        final boolean parked = (isOnWater() || isOnGround()) &&
-                (oldMotion.length() < 0.1) &&
-                (!tempMotionVars.passengerPressingSpace) &&
-                (tempMotionVars.moveStrafing == 0) &&
-                (notMovingTime > 20) &&
-                (onGround || isOnWater()) &&
-                (getPitchUp() == 0);
-        setParked(parked);
-        return parked;
     }
 
     protected TempMotionVars getMotionVars() {
@@ -737,7 +712,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         } else if (getPitchUp() > 0 && tempMotionVars.push < tempMotionVars.groundPush) {
             tempMotionVars.push = tempMotionVars.groundPush;
         }
-        if (!isPowered()/* || tempMotionVars.moveForward == 0 */) {
+        if (!isPowered()) {
             tempMotionVars.push = 0;
         }
         float f;

@@ -47,7 +47,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
         if (burnTime > 0) {
             burnTime -= planeEntity.getFuelCost();
             updateClient();
-        } else {
+        } else if (planeEntity.getThrottle() > 0) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(0);
             int itemBurnTime = ForgeHooks.getBurnTime(itemStack, null);
             if (itemBurnTime > 0) {
