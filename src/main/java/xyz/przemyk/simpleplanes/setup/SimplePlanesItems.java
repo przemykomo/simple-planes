@@ -49,6 +49,7 @@ public class SimplePlanesItems {
     public static final RegistryObject<Item> FOLDING = ITEMS.register("folding", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> SUPPLY_CRATE = ITEMS.register("supply_crate", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> SEATS = ITEMS.register("seats", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final RegistryObject<Item> SHOOTER = ITEMS.register("shooter", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
 
     public static final RegistryObject<Item> ELECTRIC_ENGINE = ITEMS.register("electric_engine", () -> new EngineItem(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new EngineItem(new Item.Properties().tab(ITEM_GROUP)));

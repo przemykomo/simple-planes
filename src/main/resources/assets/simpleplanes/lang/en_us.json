@@ -13,6 +13,7 @@
     "item.simpleplanes.folding": "Folding Upgrade",
     "item.simpleplanes.supply_crate": "Supply Crate",
     "item.simpleplanes.seats": "Seats Upgrade",
+    "item.simpleplanes.shooter": "Shooter Upgrade",
 
     "block.simpleplanes.charger_block": "FE charging station",
     "block.simpleplanes.fueling_block": "plane fueling station",
@@ -104,5 +105,6 @@
     "key.plane_throttle_up.desc": "Throttle Up",
     "key.plane_throttle_down.desc": "Throttle Down",
     "key.plane_pitch_up.desc": "Plane Pitch Up",
-    "key.plane_pitch_down.desc": "Plane Pitch Down"
+    "key.plane_pitch_down.desc": "Plane Pitch Down",
+    "key.plane_inventory_open.desc": "Open Plane Inventory"
 }

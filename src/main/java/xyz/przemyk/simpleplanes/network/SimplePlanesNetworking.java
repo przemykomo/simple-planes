@@ -61,10 +61,10 @@ public class SimplePlanesNetworking {
 
         INSTANCE.registerMessage(
                 ++id,
-                OpenEngineInventoryPacket.class,
-                OpenEngineInventoryPacket::toBytes,
-                OpenEngineInventoryPacket::new,
-                OpenEngineInventoryPacket::handle,
+                OpenPlaneInventoryPacket.class,
+                OpenPlaneInventoryPacket::toBytes,
+                OpenPlaneInventoryPacket::new,
+                OpenPlaneInventoryPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
 

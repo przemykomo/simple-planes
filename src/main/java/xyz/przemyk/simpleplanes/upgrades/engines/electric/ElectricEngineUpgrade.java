@@ -17,6 +17,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.client.ClientUtil;
+import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.misc.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
@@ -136,5 +137,23 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
     @Override
     public void onRemoved() {
         planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
+    }
+
+    @Override
+    public void renderScreen(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
+        if (planeInventoryScreen.isHovering(152, 7, 16, 72, mouseX, mouseY)) {
+            planeInventoryScreen.renderTooltip(poseStack, Component.translatable(SimplePlanesMod.MODID + ".gui.energy", energyStorage.getEnergyStored()), mouseX, mouseY);
+        }
+    }
+
+    @Override
+    public void renderScreenBg(PoseStack poseStack, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
+        screen.blit(poseStack, screen.getGuiLeft() + 152, screen.getGuiTop() + 7, 176, 0, 16, 72);
+
+        int energy = energyStorage.getEnergyStored();
+        if (energy > 0) {
+            int energyScaled = energy * 71 / CAPACITY;
+            screen.blit(poseStack, screen.getGuiLeft() + 152, screen.getGuiTop() + 78 - energyScaled, 192, 71 - energyScaled, 16, energyScaled + 1);
+        }
     }
 }

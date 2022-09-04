@@ -59,12 +59,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
 
-//        double firstPersonYOffset = -0.7D;
-        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.hasPassenger(Minecraft.getInstance().player)
-            && (Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON;
-//        if (isPlayerRidingInFirstPersonView) {
-//            poseStack.translate(0.0D, firstPersonYOffset, 0.0D);
-//        }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
         poseStack.mulPose(q);
         EntityType<?> entityType = planeEntity.getType();
@@ -77,27 +71,25 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         }
 
         //TODO: make rocking less noticeable
-        float rockingAngle = planeEntity.getRockingAngle(partialTicks);
-        if (!Mth.equal(rockingAngle, 0.0F)) {
-            poseStack.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
-        }
-        float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
-        float f1 = planeEntity.getDamageTaken() - partialTicks;
-        if (f1 < 0.1F) {
-            f1 = 0.1F;
-        }
+//        float rockingAngle = planeEntity.getRockingAngle(partialTicks);
+//        if (!Mth.equal(rockingAngle, 0.0F)) {
+//            poseStack.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
+//        }
+//        float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
+//
+//        if (f > 0.0F) {
+//            float angle = Mth.clamp(f/ 200.0F, -30, 30);
+//            f = planeEntity.tickCount + partialTicks;
+//            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
+//        }
 
-        if (f > 0.0F) {
-            float angle = Mth.clamp(f * f1 / 200.0F, -30, 30);
-            f = planeEntity.tickCount + partialTicks;
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
+        int timeSinceHit = planeEntity.getTimeSinceHit();
+        if (timeSinceHit > 0) {
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin((planeEntity.tickCount + partialTicks) * 0.6f)
+                    * Mth.sin((timeSinceHit - partialTicks) * Mth.PI / 19.0f) * 20.0f));
         }
 
         poseStack.translate(0, -1.1, 0);
-
-//        if (isPlayerRidingInFirstPersonView) {
-//            poseStack.translate(0.0D, -firstPersonYOffset, 0.0D);
-//        }
 
         VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);

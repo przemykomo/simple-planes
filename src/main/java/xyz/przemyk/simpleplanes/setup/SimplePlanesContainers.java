@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import ca.weblite.objc.Proxy;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -22,4 +23,5 @@ public class SimplePlanesContainers {
 
     public static final RegistryObject<MenuType<FurnaceEngineContainer>> FURNACE_ENGINE = CONTAINERS.register("furnace_engine", () -> new MenuType<>(FurnaceEngineContainer::new));
     public static final RegistryObject<MenuType<ElectricEngineContainer>> ELECTRIC_ENGINE = CONTAINERS.register("electric_engine", () -> IForgeMenuType.create(ElectricEngineContainer::new));
+    public static final RegistryObject<MenuType<PlaneInventoryContainer>> PLANE_INVENTORY = CONTAINERS.register("plane_inventory", () -> IForgeMenuType.create(PlaneInventoryContainer::new));
 }

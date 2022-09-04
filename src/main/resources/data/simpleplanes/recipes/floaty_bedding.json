@@ -1,15 +1,19 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "SSS",
-        "CCC"
+        "III",
+        "CSC",
+        "III"
     ],
     "key": {
         "S": {
             "tag": "forge:slimeballs"
         },
         "C": {
-            "item": "minecraft:white_carpet"
+            "tag": "minecraft:wool"
+        },
+        "I": {
+            "tag": "forge:ingots/iron"
         }
     },
     "result": {

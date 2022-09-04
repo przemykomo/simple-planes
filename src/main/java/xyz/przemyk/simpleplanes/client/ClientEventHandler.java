@@ -49,7 +49,7 @@ public class ClientEventHandler {
     public static final ResourceLocation HUD_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
     public static KeyMapping boostKey;
-    public static KeyMapping openEngineInventoryKey;
+    public static KeyMapping openPlaneInventoryKey;
     public static KeyMapping dropPayloadKey;
     public static KeyMapping throttleUp;
     public static KeyMapping throttleDown;
@@ -70,18 +70,19 @@ public class ClientEventHandler {
         MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
         MenuScreens.register(SimplePlanesContainers.FURNACE_ENGINE.get(), FurnaceEngineScreen::new);
         MenuScreens.register(SimplePlanesContainers.ELECTRIC_ENGINE.get(), ElectricEngineScreen::new);
+        MenuScreens.register(SimplePlanesContainers.PLANE_INVENTORY.get(), PlaneInventoryScreen::new);
     }
 
     public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
         boostKey = new KeyMapping("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
-        openEngineInventoryKey = new KeyMapping("key.plane_engine_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
+        openPlaneInventoryKey = new KeyMapping("key.plane_inventory_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
         dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
         throttleUp = new KeyMapping("key.plane_throttle_up.desc", GLFW.GLFW_KEY_UP, "key.simpleplanes.category");
         throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, "key.simpleplanes.category");
         pitchUp = new KeyMapping("key.plane_pitch_up.desc", GLFW.GLFW_KEY_W, "key.simpleplanes.category");
         pitchDown = new KeyMapping("key.plane_pitch_down.desc", GLFW.GLFW_KEY_S, "key.simpleplanes.category");
         event.register(boostKey);
-        event.register(openEngineInventoryKey);
+        event.register(openPlaneInventoryKey);
         event.register(dropPayloadKey);
         event.register(throttleUp);
         event.register(throttleDown);
@@ -220,8 +221,8 @@ public class ClientEventHandler {
                     planeEntity.applyYawToEntity(player);
                 }
 
-                if (planeEntity.engineUpgrade != null && mc.screen == null && mc.getOverlay() == null && openEngineInventoryKey.consumeClick() && planeEntity.engineUpgrade.canOpenGui()) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new OpenEngineInventoryPacket());
+                if (mc.screen == null && mc.getOverlay() == null && openPlaneInventoryKey.consumeClick()) {
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new OpenPlaneInventoryPacket());
                 } else if (dropPayloadKey.consumeClick()) {
                     for (Upgrade upgrade : planeEntity.upgrades.values()) {
                         if (upgrade.canBeDroppedAsPayload()) {
@@ -260,6 +261,7 @@ public class ClientEventHandler {
         }
     }
 
+    //TODO: make it so player rotation variables correspond to what he is actually looking at, so that guns etc. shoot in the right direction
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
         Camera camera = event.getCamera();

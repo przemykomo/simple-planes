@@ -368,6 +368,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             level.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, true, getX(), getY(), getZ(), 0.0, 0.005, 0.0);
         }
 
+        if (level.isClientSide && getTimeSinceHit() > 0) {
+            setTimeSinceHit(getTimeSinceHit() - 1);
+        }
+
         if (level.isClientSide && !isControlledByLocalInstance()) {
             tickLerp();
             setDeltaMovement(Vec3.ZERO);
@@ -500,9 +504,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (damageTimeout > 0) {
             --damageTimeout;
-        }
-        if (level.isClientSide && getTimeSinceHit() > 0) {
-            setTimeSinceHit(getTimeSinceHit() - 1);
         }
         if (getDamageTaken() > 0.0F) {
             setDamageTaken(getDamageTaken() - 1.0F);
