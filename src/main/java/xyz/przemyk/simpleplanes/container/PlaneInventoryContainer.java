@@ -11,27 +11,25 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-import java.util.Optional;
-
 public class PlaneInventoryContainer extends AbstractContainerMenu {
 
     public PlaneEntity planeEntity;
 
     public PlaneInventoryContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory);
+        super(SimplePlanesContainers.PLANE_INVENTORY.get(), id);
         if (Minecraft.getInstance().level.getEntity(buffer.readVarInt()) instanceof PlaneEntity planeEntity) {
             this.planeEntity = planeEntity;
         }
+        initSlotsUpgrades(playerInventory);
     }
 
     public PlaneInventoryContainer(int id, Inventory playerInventory, PlaneEntity planeEntity) {
-        this(id, playerInventory);
+        super(SimplePlanesContainers.PLANE_INVENTORY.get(), id);
         this.planeEntity = planeEntity;
+        initSlotsUpgrades(playerInventory);
     }
 
-    private PlaneInventoryContainer(int id, Inventory playerInventory) {
-        super(SimplePlanesContainers.PLANE_INVENTORY.get(), id);
-
+    private void initSlotsUpgrades(Inventory playerInventory) {
         if (planeEntity != null) {
             for (Upgrade upgrade : planeEntity.upgrades.values()) {
                 upgrade.addContainerData(this::addSlot, this::addDataSlot);

@@ -5,24 +5,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.NetworkHooks;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.ClientUtil;
-import xyz.przemyk.simpleplanes.container.FurnaceEngineContainer;
+import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
+import xyz.przemyk.simpleplanes.container.FuelSlot;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -30,8 +24,9 @@ import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
-public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider {
+public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler();
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
@@ -104,42 +99,6 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
         burnTimeTotal = buffer.readVarInt();
     }
 
-    @Override
-    public boolean canOpenGui() {
-        return true;
-    }
-
-    @Override
-    public void openGui(ServerPlayer playerEntity) {
-        NetworkHooks.openScreen(playerEntity, this);
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return Component.translatable(SimplePlanesMod.MODID + ".furnace_engine_container");
-    }
-
-    @Override
-    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-        return new FurnaceEngineContainer(id, playerInventory, itemStackHandler, new ContainerData() {
-            @Override
-            public int get(int index) {
-                if (index == 0) {
-                    return burnTime;
-                }
-                return burnTimeTotal;
-            }
-
-            @Override
-            public void set(int index, int value) {}
-
-            @Override
-            public int getCount() {
-                return 2;
-            }
-        });
-    }
-
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -185,6 +144,21 @@ public class FurnaceEngineUpgrade extends EngineUpgrade implements MenuProvider 
             } else {
                 ClientUtil.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, fuelStack, mc);
             }
+        }
+    }
+
+    @Override
+    public void addContainerData(Function<Slot, Slot> addSlot, Function<DataSlot, DataSlot> addDataSlot) {
+        addSlot.apply(new FuelSlot(itemStackHandler, 0, 152, 62));
+    }
+
+    @Override
+    public void renderScreenBg(PoseStack poseStack, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
+        screen.blit(poseStack, screen.getGuiLeft() + 151, screen.getGuiTop() + 44, 208, 0, 18, 35);
+
+        if (burnTime > 0) {
+            int burnLeftScaled = burnTime * 13 / (burnTimeTotal == 0 ? 200 : burnTimeTotal);
+            screen.blit(poseStack, screen.getGuiLeft() + 152, screen.getGuiTop() + 57 - burnLeftScaled, 208, 47 - burnLeftScaled, 14, burnLeftScaled + 1);
         }
     }
 }

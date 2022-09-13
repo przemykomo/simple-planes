@@ -5,22 +5,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.client.ClientUtil;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.misc.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -29,7 +22,7 @@ import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider {
+public class ElectricEngineUpgrade extends EngineUpgrade {
 
     public static final int CAPACITY = 1_500_000;
 
@@ -102,27 +95,6 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
     @Override
     public void readPacket(FriendlyByteBuf buffer) {
         energyStorage.setEnergy(buffer.readVarInt());
-    }
-
-    @Override
-    public boolean canOpenGui() {
-        return true;
-    }
-
-    @Override
-    public void openGui(ServerPlayer playerEntity) {
-        NetworkHooks.openScreen(playerEntity, this, buffer -> buffer.writeVarInt(planeEntity.getId()));
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return Component.translatable(SimplePlanesMod.MODID + ".electric_engine_container");
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-        return new ElectricEngineContainer(id, playerInventory, planeEntity.getId());
     }
 
     @Nonnull

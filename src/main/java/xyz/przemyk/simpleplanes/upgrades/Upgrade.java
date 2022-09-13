@@ -129,5 +129,5 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
 
     public void renderScreen(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {}
 
-    public void renderScreenBg(PoseStack poseStack, int x, int y, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {}
+    public void renderScreenBg(PoseStack poseStack, int x, int y, float partialTicks, PlaneInventoryScreen screen) {}
 }
