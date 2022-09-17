@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -21,8 +20,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.registries.ForgeRegistries;
-import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -70,23 +69,12 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             poseStack.translate(0, 0, 0.9);
         }
 
-        //TODO: make rocking less noticeable
-//        float rockingAngle = planeEntity.getRockingAngle(partialTicks);
-//        if (!Mth.equal(rockingAngle, 0.0F)) {
-//            poseStack.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
-//        }
-//        float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
-//
-//        if (f > 0.0F) {
-//            float angle = Mth.clamp(f/ 200.0F, -30, 30);
-//            f = planeEntity.tickCount + partialTicks;
-//            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
-//        }
+        float timeSinceHitWithPartial = (float) planeEntity.getTimeSinceHit() - partialTicks;
 
-        int timeSinceHit = planeEntity.getTimeSinceHit();
-        if (timeSinceHit > 0) {
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin((planeEntity.tickCount + partialTicks) * 0.6f)
-                    * Mth.sin((timeSinceHit - partialTicks) * Mth.PI / 19.0f) * 20.0f));
+        if (timeSinceHitWithPartial > 0.0F) {
+            float angle = Mth.clamp(timeSinceHitWithPartial / 10.0F, -30, 30);
+            timeSinceHitWithPartial = planeEntity.tickCount + partialTicks;
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(timeSinceHitWithPartial) * angle));
         }
 
         poseStack.translate(0, -1.1, 0);
@@ -106,10 +94,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
 
-        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
-
-        propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.pushPose();
         poseStack.popPose();
         poseStack.popPose();

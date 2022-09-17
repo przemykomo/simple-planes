@@ -73,7 +73,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> MAX_SPEED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<String> MATERIAL = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<Integer> ROCKING_TICKS = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> TIME_SINCE_HIT = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> DAMAGE_TAKEN = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get());
@@ -128,7 +127,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         entityData.define(Q, Quaternion.ONE);
         entityData.define(MAX_SPEED, 0.25f);
         entityData.define(MATERIAL, ForgeRegistries.BLOCKS.getKey(Blocks.OAK_PLANKS).toString());
-        entityData.define(ROCKING_TICKS, 0);
         entityData.define(TIME_SINCE_HIT, 0);
         entityData.define(DAMAGE_TAKEN, 0f);
         entityData.define(THROTTLE, 0);
@@ -455,7 +453,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (onGroundTicks > -50 && oldMotion.length() < 0.002 && getDeltaMovement().length() < 0.002) {
             setDeltaMovement(Vec3.ZERO);
         }
-        updateRocking();
         reapplyPosition();
 
         if (!onGround || getHorizontalDistanceSqr(getDeltaMovement()) > (double) 1.0E-5F || (tickCount + getId()) % 4 == 0) {
@@ -536,6 +533,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 upgradesToRemove.add(rl);
             } else if (upgrade.updateClient && !level.isClientSide) {
                 upgradesToUpdate.add(rl);
+                upgrade.updateClient = false;
             }
         });
 
@@ -544,7 +542,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
         if (tickCount % networkUpdateInterval == 0) {
             for (ResourceLocation name : upgradesToUpdate) {
-                // TODO: set updateClient to false
                 SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getId(), (ServerLevel) level));
             }
         }
@@ -1119,57 +1116,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             return (Player) getControllingPassenger();
         }
         return null;
-    }
-
-    private boolean rocking;
-    private float rockingIntensity;
-    private float rockingAngle;
-    private float prevRockingAngle;
-
-    private void setRockingTicks(int rockingTicks) {
-        entityData.set(ROCKING_TICKS, rockingTicks);
-    }
-
-    private int getRockingTicks() {
-        return entityData.get(ROCKING_TICKS);
-    }
-
-    private void updateRocking() {
-        if (level.isClientSide) {
-            int i = getRockingTicks();
-            if (i > 0) {
-                rockingIntensity += 0.05F;
-            } else {
-                rockingIntensity -= 0.1F;
-            }
-
-            rockingIntensity = Mth.clamp(rockingIntensity, 0.0F, 1.0F);
-            prevRockingAngle = rockingAngle;
-            rockingAngle = 10.0F * (float) Math.sin(0.5F * (float) level.getGameTime()) * rockingIntensity;
-        } else {
-            if (!rocking) {
-                setRockingTicks(0);
-            }
-
-            int k = getRockingTicks();
-            if (k > 0) {
-                --k;
-                setRockingTicks(k);
-                int j = 60 - k - 1;
-                if (j > 0 && k == 0) {
-                    setRockingTicks(0);
-                    Vec3 vector3d = getDeltaMovement();
-                    setDeltaMovement(vector3d.x, hasPassenger(entity -> entity instanceof Player) ? 2.7D : 0.6D, vector3d.z);
-                }
-
-                rocking = false;
-            }
-        }
-
-    }
-
-    public float getRockingAngle(float partialTicks) {
-        return Mth.lerp(partialTicks, prevRockingAngle, rockingAngle);
     }
 
     /**
