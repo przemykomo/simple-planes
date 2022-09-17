@@ -10,15 +10,17 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 
 import java.util.List;
 
-import net.minecraft.world.item.Item.Properties;
+public class DescriptionItem extends Item {
 
-public class EngineItem extends Item {
-    public EngineItem(Properties properties) {
+    private final Component component;
+
+    public DescriptionItem(Properties properties, Component component) {
         super(properties);
+        this.component = component;
     }
 
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
-        list.add(Component.translatable(SimplePlanesMod.MODID + ".engine_desc", Component.keybind("key.plane_engine_open.desc")));
+        list.add(component);
     }
 }

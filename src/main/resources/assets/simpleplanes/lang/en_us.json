@@ -42,9 +42,6 @@
     "death.attack.plane_crash": "%1$s died in a plane crash",
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",
     "helicopter.onboard": "Press %2$s to TakeOff | Press %1$s to Dismount",
-    "key.simpleplanes.category": "Simple Planes",
-    "key.plane_engine_open.desc": "Open Plane Engine Screen",
-    "key.plane_drop_payload.desc": "Drop Payload",
 
     "item.simpleplanes.plane": "Plane",
     "item.simpleplanes.large_plane": "Large Plane",
@@ -100,7 +97,10 @@
 
     "simpleplanes.gui.energy": "Energy: %s FE",
 
-    "simpleplanes.engine_desc": "Press %s when in an aircraft",
+    "simpleplanes.press_key": "Press %s when in an aircraft",
+    "simpleplanes.shooter_desc": "Press %s for inventory, %s to shoot",
+    "key.simpleplanes.category": "Simple Planes",
+    "key.plane_drop_payload.desc": "Drop Payload",
     "key.plane_throttle_up.desc": "Throttle Up",
     "key.plane_throttle_down.desc": "Throttle Down",
     "key.plane_pitch_up.desc": "Plane Pitch Up",
