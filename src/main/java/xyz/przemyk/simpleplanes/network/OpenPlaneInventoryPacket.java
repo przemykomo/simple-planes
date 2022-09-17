@@ -1,22 +1,18 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings({"unused", "EmptyMethod"})
+@SuppressWarnings("unused")
 public class OpenPlaneInventoryPacket {
-
-    public static final Component CONTAINER_NAME = Component.translatable(SimplePlanesMod.MODID + ".container.plane_inventory");
 
     public OpenPlaneInventoryPacket() {}
     public OpenPlaneInventoryPacket(FriendlyByteBuf buffer) {}
