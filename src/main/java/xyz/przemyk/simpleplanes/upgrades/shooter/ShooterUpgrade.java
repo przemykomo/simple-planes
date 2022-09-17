@@ -42,12 +42,10 @@ public class ShooterUpgrade extends Upgrade {
         super(SimplePlanesUpgrades.SHOOTER.get(), planeEntity);
     }
 
-    @Override
-    public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        Player player = event.getEntity();
+    public void use(Player player) {
         Vector3f motion1 = planeEntity.transformPos(new Vector3f(0, 0, (float) (1 + planeEntity.getDeltaMovement().length())));
         Vec3 motion = new Vec3(motion1);
-        Level level = event.getLevel();
+        Level level = player.level;
         RandomSource random = level.random;
 
         Vector3f pos = planeEntity.transformPos(new Vector3f(0.0f, 0.8f, 0.8f));
