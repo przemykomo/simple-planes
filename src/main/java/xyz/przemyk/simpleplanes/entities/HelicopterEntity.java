@@ -2,6 +2,9 @@ package xyz.przemyk.simpleplanes.entities;
 
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
@@ -16,8 +19,16 @@ import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 public class HelicopterEntity extends LargePlaneEntity {
 
+    public static final EntityDataAccessor<Boolean> MOVE_UP = SynchedEntityData.defineId(HelicopterEntity.class, EntityDataSerializers.BOOLEAN);
+
     public HelicopterEntity(EntityType<? extends HelicopterEntity> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(MOVE_UP, false);
     }
 
     @Override
@@ -32,14 +43,14 @@ public class HelicopterEntity extends LargePlaneEntity {
 
     @Override
     protected Vector3f getTickPush(TempMotionVars tempMotionVars) {
-        if (tempMotionVars.moveForward < 0 && isPowered() && !tempMotionVars.passengerPressingSpace) {
+        if (tempMotionVars.moveForward < 0 && isPowered() && !entityData.get(MOVE_UP)) {
             tempMotionVars.push *= 0.2;
         }
-        if (tempMotionVars.moveForward > 0 && isPowered() && !tempMotionVars.passengerPressingSpace) {
+        if (tempMotionVars.moveForward > 0 && isPowered() && !entityData.get(MOVE_UP)) {
             tempMotionVars.push *= 1.5;
         }
 
-        if (isPowered() && tempMotionVars.passengerPressingSpace && tempMotionVars.moveForward >= 0) {
+        if (isPowered() && entityData.get(MOVE_UP) && tempMotionVars.moveForward >= 0) {
             tempMotionVars.push += 0.01 * getThrottle();
         }
         return transformPos(new Vector3f(0, tempMotionVars.push, 0));
@@ -53,7 +64,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         } else if (!onGround) {
             if (tempMotionVars.moveForward > 0) {
                 setXRot(Math.max(getXRot() - 1, -20));
-            } else if (tempMotionVars.moveForward < 0 && tempMotionVars.passengerPressingSpace) {
+            } else if (tempMotionVars.moveForward < 0 && entityData.get(MOVE_UP)) {
                 setXRot(Math.min(getXRot() + 1, 20));
             } else {
                 setXRot(MathUtil.lerpAngle(0.2f, getXRot(), 0));
@@ -67,7 +78,7 @@ public class HelicopterEntity extends LargePlaneEntity {
     protected boolean tickOnGround(TempMotionVars tempMotionVars) {
         float push = tempMotionVars.push;
         super.tickOnGround(tempMotionVars);
-        if (tempMotionVars.passengerPressingSpace) {
+        if (entityData.get(MOVE_UP)) {
             tempMotionVars.push = push;
         } else {
             tempMotionVars.push = 0;
@@ -97,7 +108,7 @@ public class HelicopterEntity extends LargePlaneEntity {
             return;
         }
 
-        if (!tempMotionVars.passengerPressingSpace) {
+        if (!entityData.get(MOVE_UP)) {
             setYRot(getYRot() - tempMotionVars.moveStrafing * 2);
             if (tempMotionVars.moveForward > 0 && !onGround) {
                 rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 30);
@@ -162,5 +173,9 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     public double getCameraDistanceMultiplayer() {
         return SimplePlanesConfig.HELI_CAMERA_DISTANCE_MULTIPLIER.get();
+    }
+
+    public void setMoveUp(boolean up) {
+        entityData.set(MOVE_UP, up);
     }
 }

@@ -34,10 +34,10 @@ public class SimplePlanesNetworking {
 
         INSTANCE.registerMessage(
                 ++id,
-                BoostPacket.class,
-                BoostPacket::toBytes,
-                BoostPacket::new,
-                BoostPacket::handle,
+                MoveHeliUpPacket.class,
+                MoveHeliUpPacket::toBytes,
+                MoveHeliUpPacket::new,
+                MoveHeliUpPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
 

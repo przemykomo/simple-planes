@@ -32,7 +32,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.client.gui.*;
+import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
+import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
+import xyz.przemyk.simpleplanes.client.gui.RemoveUpgradesScreen;
+import xyz.przemyk.simpleplanes.client.gui.StorageScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -48,7 +51,7 @@ public class ClientEventHandler {
 
     public static final ResourceLocation HUD_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
-    public static KeyMapping boostKey;
+    public static KeyMapping moveHeliUpKey;
     public static KeyMapping openPlaneInventoryKey;
     public static KeyMapping dropPayloadKey;
     public static KeyMapping throttleUp;
@@ -72,14 +75,14 @@ public class ClientEventHandler {
     }
 
     public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
-        boostKey = new KeyMapping("key.plane_boost.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
+        moveHeliUpKey = new KeyMapping("key.move_heli_up.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
         openPlaneInventoryKey = new KeyMapping("key.plane_inventory_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
         dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
         throttleUp = new KeyMapping("key.plane_throttle_up.desc", GLFW.GLFW_KEY_UP, "key.simpleplanes.category");
         throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, "key.simpleplanes.category");
         pitchUp = new KeyMapping("key.plane_pitch_up.desc", GLFW.GLFW_KEY_W, "key.simpleplanes.category");
         pitchDown = new KeyMapping("key.plane_pitch_down.desc", GLFW.GLFW_KEY_S, "key.simpleplanes.category");
-        event.register(boostKey);
+        event.register(moveHeliUpKey);
         event.register(openPlaneInventoryKey);
         event.register(dropPayloadKey);
         event.register(throttleUp);
@@ -158,7 +161,6 @@ public class ClientEventHandler {
         PlaneItemColors.clearCache();
     }
 
-
     private static boolean playerRotationNeedToPop = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -205,7 +207,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static boolean oldBoostState = false;
+    private static boolean oldMoveHeliUpState = false;
     private static boolean oldPitchUpState = false;
     private static boolean oldPitchDownState = false;
 
@@ -237,22 +239,22 @@ public class ClientEventHandler {
                     SimplePlanesNetworking.INSTANCE.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Type.DOWN));
                 }
 
-                boolean isBoosting = boostKey.isDown();
+                boolean isMoveHeliUp = moveHeliUpKey.isDown();
                 boolean isPitchUp = pitchUp.isDown();
                 boolean isPitchDown = pitchDown.isDown();
-                if (isBoosting != oldBoostState || Math.random() < 0.1) { //TODO: remove random I guess?
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new BoostPacket(isBoosting));
+                if (isMoveHeliUp != oldMoveHeliUpState) {
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new MoveHeliUpPacket(isMoveHeliUp));
                 }
 
                 if (isPitchUp != oldPitchUpState || isPitchDown != oldPitchDownState) {
                     SimplePlanesNetworking.INSTANCE.sendToServer(new PitchPacket((byte) Boolean.compare(isPitchUp, isPitchDown)));
                 }
 
-                oldBoostState = isBoosting;
+                oldMoveHeliUpState = isMoveHeliUp;
                 oldPitchUpState = isPitchUp;
                 oldPitchDownState = isPitchDown;
             } else {
-                oldBoostState = false;
+                oldMoveHeliUpState = false;
                 oldPitchUpState = false;
                 oldPitchDownState = false;
             }

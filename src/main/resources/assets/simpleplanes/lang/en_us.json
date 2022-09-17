@@ -43,7 +43,6 @@
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",
     "helicopter.onboard": "Press %2$s to TakeOff | Press %1$s to Dismount",
     "key.simpleplanes.category": "Simple Planes",
-    "key.plane_boost.desc": "Plane Boost Key",
     "key.plane_engine_open.desc": "Open Plane Engine Screen",
     "key.plane_drop_payload.desc": "Drop Payload",
 
@@ -106,5 +105,6 @@
     "key.plane_throttle_down.desc": "Throttle Down",
     "key.plane_pitch_up.desc": "Plane Pitch Up",
     "key.plane_pitch_down.desc": "Plane Pitch Down",
-    "key.plane_inventory_open.desc": "Open Plane Inventory"
+    "key.plane_inventory_open.desc": "Open Plane Inventory",
+    "key.move_heli_up.desc": "Move Helicopter Up"
 }

@@ -398,13 +398,11 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             setSprinting(false);
         }
         tempMotionVars.turnThreshold = SimplePlanesConfig.TURN_THRESHOLD.get() / 100d;
-//        if (Math.abs(tempMotionVars.moveForward) < tempMotionVars.turnThreshold) {
-//            tempMotionVars.moveForward = 0;
-//        }
+
         if (Math.abs(tempMotionVars.moveStrafing) < tempMotionVars.turnThreshold) {
             tempMotionVars.moveStrafing = 0;
         }
-        tempMotionVars.passengerPressingSpace = isSprinting();
+
         Quaternion q;
         if (level.isClientSide) {
             q = getQ_Client();
@@ -432,9 +430,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             doPitch = tickOnGround(tempMotionVars);
         } else {
             onGroundTicks--;
-//            if (!tempMotionVars.passengerPressingSpace) {
-////                tempMotionVars.push = tempMotionVars.passiveEnginePush;
-//            }
         }
         if (doPitch) {
             tickPitch(tempMotionVars);
@@ -1306,7 +1301,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         public float moveForward; //TODO: move to HelicopterEntity?
         public double turnThreshold;
         public float moveStrafing;
-        public boolean passengerPressingSpace;
         double maxSpeed;
         double maxPushSpeed;
         double takeOffSpeed;
@@ -1331,7 +1325,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             moveForward = 0;
             turnThreshold = 0;
             moveStrafing = 0;
-            passengerPressingSpace = false;
             maxSpeed = 3;
             takeOffSpeed = 0.3;
             maxLift = 2;
