@@ -95,6 +95,10 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         planeEntityModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
+        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
+        propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
+        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+
         vertexConsumer = buffer.getBuffer(planeMetalModel.renderType(metalTexture));
         planeMetalModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         planeMetalModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

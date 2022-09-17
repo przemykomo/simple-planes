@@ -18,6 +18,7 @@ import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorModel;
+import xyz.przemyk.simpleplanes.upgrades.armor.ArmorWindowModel;
 import xyz.przemyk.simpleplanes.upgrades.armor.HeliArmorModel;
 import xyz.przemyk.simpleplanes.upgrades.armor.LargeArmorModel;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
@@ -78,6 +79,7 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "main");
     public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "large");
     public static final ModelLayerLocation HELI_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "heli");
+    public static final ModelLayerLocation ARMOR_WINDOW = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "window");
 
     public static final ModelLayerLocation SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "main");
     public static final ModelLayerLocation LARGE_SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "large");
@@ -129,6 +131,7 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(ARMOR, ArmorModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_ARMOR, LargeArmorModel::createBodyLayer);
         event.registerLayerDefinition(HELI_ARMOR, HeliArmorModel::createBodyLayer);
+        event.registerLayerDefinition(ARMOR_WINDOW, ArmorWindowModel::createBodyLayer);
 
         event.registerLayerDefinition(SOLAR_PANEL, SolarPanelModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_SOLAR_PANEL, LargeSolarPanelModel::createBodyLayer);
@@ -195,5 +198,6 @@ public class PlanesModelLayers {
         UpgradesModels.HELI_SEATS = new HeliSeatsModel(entityModelSet.bakeLayer(HELI_SEATS));
         UpgradesModels.WOODEN_SEATS = new WoodenSeatsModel(entityModelSet.bakeLayer(WOODEN_SEATS));
         UpgradesModels.WOODEN_HELI_SEATS = new WoodenHeliSeatsModel(entityModelSet.bakeLayer(WOODEN_HELI_SEATS));
+        UpgradesModels.ARMOR_WINDOW = new ArmorWindowModel(entityModelSet.bakeLayer(ARMOR_WINDOW));
     }
 }

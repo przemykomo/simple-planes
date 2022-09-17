@@ -30,9 +30,8 @@ public class ArmorModel extends EntityModel<PlaneEntity> {
 				.texOffs(0, 0).addBox(-9.7F, -13.0F, -10.5F, 1.0F, 8.0F, 7.0F, new CubeDeformation(0.0F))
 				.texOffs(0, 0).addBox(-9.7F, -15.0F, -3.5F, 1.0F, 10.0F, 24.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition cube_r1 = bb_main.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 16).addBox(-10.25F, -4.0F, 4.4F, 9.0F, 6.0F, 0.0F, new CubeDeformation(0.0F))
-				.texOffs(17, 0).addBox(-1.25F, -4.4F, 4.0F, 1.0F, 8.0F, 2.0F, new CubeDeformation(0.0F))
-				.texOffs(44, 0).addBox(-11.25F, -4.4F, 4.0F, 1.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.7F, -20.0F, -10.5F, -0.2618F, 0.0F, 0.0F));
+		PartDefinition cube_r1 = bb_main.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(17, 0).addBox(-1.2F, -4.4F, 4.0F, 1.0F, 8.0F, 2.0F, new CubeDeformation(0.0F))
+			.texOffs(44, 0).addBox(-11.2F, -4.4F, 4.0F, 1.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.65F, -20.0F, -10.5F, -0.2618F, 0.0F, 0.0F));
 
 		PartDefinition cube_r2 = bb_main.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(48, 56).addBox(-0.9F, -5.0F, 12.0F, 1.0F, 12.0F, 12.0F, new CubeDeformation(0.0F))
 				.texOffs(54, 0).addBox(-0.9F, -9.0F, 1.0F, 1.0F, 16.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-8.7F, -6.0F, 21.5F, 0.0F, 0.1309F, 0.0F));
