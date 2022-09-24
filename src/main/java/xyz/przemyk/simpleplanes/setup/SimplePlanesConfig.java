@@ -16,28 +16,28 @@ public class SimplePlanesConfig {
     public static ForgeConfigSpec.DoubleValue HELI_CAMERA_DISTANCE_MULTIPLIER;
 
     public static void init() {
-        ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
+        ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 
-        SERVER_BUILDER.comment("Planes settings").push("general");
+        COMMON_BUILDER.comment("Planes settings").push("general");
 
-        TURN_THRESHOLD = SERVER_BUILDER
+        TURN_THRESHOLD = COMMON_BUILDER
                 .comment("For controllers, a threshold for the joystick movement of the plane")
                 .defineInRange("turnThreshold", 20, 0, 90);
-        THIEF = SERVER_BUILDER
+        THIEF = COMMON_BUILDER
                 .comment("Allow stealing planes by players")
                 .define("plane_heist", true);
-        PLANE_FUEL_COST = SERVER_BUILDER
+        PLANE_FUEL_COST = COMMON_BUILDER
                 .comment("Fuel cost of a small plane")
                 .defineInRange("plane_fuel_cost", 3, 0, Integer.MAX_VALUE);
-        LARGE_PLANE_FUEL_COST = SERVER_BUILDER
+        LARGE_PLANE_FUEL_COST = COMMON_BUILDER
                 .comment("Fuel cost of a large plane")
                 .defineInRange("large_plane_fuel_cost", 6, 0, Integer.MAX_VALUE);
-        HELICOPTER_FUEL_COST = SERVER_BUILDER
+        HELICOPTER_FUEL_COST = COMMON_BUILDER
                 .comment("Fuel cost of a helicopter")
                 .defineInRange("helicopter_fuel_cost", 6, 0, Integer.MAX_VALUE);
 
-        SERVER_BUILDER.pop();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
+        COMMON_BUILDER.pop();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
 
         ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
         CLIENT_BUILDER.comment("Planes client settings").push("general_client");
