@@ -94,8 +94,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
 
-        poseStack.pushPose();
-        poseStack.popPose();
         poseStack.popPose();
 
         super.render(planeEntity, 0, partialTicks, poseStack, buffer, packedLight);
