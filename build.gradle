@@ -118,6 +118,9 @@ dependencies {
 
     implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3874034')
     implementation fg.deobf('curse.maven:framework-549225:3873800')
+
+    implementation fg.deobf('curse.maven:immersive-engineering-231951:3963698')
+    implementation fg.deobf('curse.maven:the-one-probe-245211:3965693')
 }
 
 jar {

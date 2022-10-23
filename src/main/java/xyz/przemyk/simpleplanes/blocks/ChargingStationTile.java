@@ -1,15 +1,15 @@
 package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import xyz.przemyk.simpleplanes.misc.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
@@ -28,7 +28,7 @@ public class ChargingStationTile extends BlockEntity {
 
     public static void tick(ChargingStationTile blockEntity) {
         for (Entity entity : blockEntity.level.getEntities(null, new AABB(blockEntity.worldPosition.above()))) {
-            entity.getCapability(CapabilityEnergy.ENERGY, Direction.DOWN).ifPresent(entityEnergy ->
+            entity.getCapability(ForgeCapabilities.ENERGY, Direction.DOWN).ifPresent(entityEnergy ->
                     blockEntity.energyStorage.extractEnergy(entityEnergy.receiveEnergy(blockEntity.energyStorage.extractEnergy(1000, true), false), false));
         }
     }
@@ -53,7 +53,7 @@ public class ChargingStationTile extends BlockEntity {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityEnergy.ENERGY) {
+        if (cap == ForgeCapabilities.ENERGY) {
             return energyStorageLazyOptional.cast();
         }
         return super.getCapability(cap, side);

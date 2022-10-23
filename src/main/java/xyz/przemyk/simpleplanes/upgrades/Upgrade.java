@@ -23,6 +23,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 
 import java.util.function.Function;
 
+@SuppressWarnings("UnstableApiUsage")
 public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INBTSerializable<CompoundTag> {
 
     private final UpgradeType type;
