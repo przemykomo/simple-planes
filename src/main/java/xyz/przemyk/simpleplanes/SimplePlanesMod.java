@@ -12,6 +12,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.compat.MrCrayfishGunCompat;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
+import xyz.przemyk.simpleplanes.compat.quark.QuarkCompat;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.*;
 
@@ -77,6 +78,7 @@ public class SimplePlanesMod {
             SimplePlanesUpgrades.registerLargeUpgradeItem(Items.JUKEBOX, SimplePlanesUpgrades.JUKEBOX.get());
 
             IronChestsCompat.registerUpgradeItems();
+            QuarkCompat.registerUpgradeItems();
         });
     }
 

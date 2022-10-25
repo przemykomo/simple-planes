@@ -121,6 +121,9 @@ dependencies {
 
     implementation fg.deobf('curse.maven:immersive-engineering-231951:3963698')
     implementation fg.deobf('curse.maven:the-one-probe-245211:3965693')
+
+    implementation fg.deobf('curse.maven:autoreglib-250363:3857246')
+    implementation fg.deobf('curse.maven:quark-243121:3961436')
 }
 
 jar {
