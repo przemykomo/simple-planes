@@ -114,11 +114,13 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void dropAsPayload() {
-        Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level);
-        entity.load(payloadEntry.compoundTag());
-        entity.setPos(planeEntity.position());
-        entity.setDeltaMovement(planeEntity.getDeltaMovement());
-        planeEntity.level.addFreshEntity(entity);
+        if (payloadEntry != null) {
+            Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level);
+            entity.load(payloadEntry.compoundTag());
+            entity.setPos(planeEntity.position());
+            entity.setDeltaMovement(planeEntity.getDeltaMovement());
+            planeEntity.level.addFreshEntity(entity);
+        }
         remove();
     }
 }
