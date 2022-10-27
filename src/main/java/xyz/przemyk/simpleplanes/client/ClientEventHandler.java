@@ -161,8 +161,6 @@ public class ClientEventHandler {
         PlaneItemColors.clearCache();
     }
 
-    private static boolean playerRotationNeedToPop = false;
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
         LivingEntity livingEntity = event.getEntity();
@@ -170,7 +168,6 @@ public class ClientEventHandler {
         if (entity instanceof PlaneEntity planeEntity) {
             PoseStack matrixStack = event.getPoseStack();
             matrixStack.pushPose();
-            playerRotationNeedToPop = true;
 
             matrixStack.translate(0, 0.375, 0);
             Quaternion quaternion = MathUtil.lerpQ(event.getPartialTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
@@ -180,7 +177,8 @@ public class ClientEventHandler {
 
             matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationYaw));
             matrixStack.translate(0, -0.375, 0);
-            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
+
+            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) { //TODO: Do I actually need this?
                 livingEntity.yHeadRot = planeEntity.getYRot() * 2 - livingEntity.yHeadRot;
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
@@ -192,17 +190,16 @@ public class ClientEventHandler {
     @SuppressWarnings("rawtypes")
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPost(RenderLivingEvent.Post event) {
-        if (playerRotationNeedToPop) {
-            playerRotationNeedToPop = false;
+        LivingEntity livingEntity = event.getEntity();
+        Entity entity = livingEntity.getRootVehicle();
+        if (entity instanceof PlaneEntity planeEntity) {
             event.getPoseStack().popPose();
-            Entity entity = event.getEntity().getRootVehicle();
-            PlaneEntity planeEntity = (PlaneEntity) entity;
 
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
-                event.getEntity().yHeadRot = planeEntity.getYRot() * 2 - event.getEntity().yHeadRot;
+                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - event.getEntity().yHeadRot;
             }
             if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
-                event.getEntity().yHeadRotO = planeEntity.yRotO * 2 - event.getEntity().yHeadRotO;
+                livingEntity.yHeadRotO = planeEntity.yRotO * 2 - event.getEntity().yHeadRotO;
             }
         }
     }
