@@ -74,19 +74,20 @@ public class MrCrayfishGunCompat {
             projectile.setDeltaMovement(motion.x * speed, motion.y * speed, motion.z * speed);
             level.addFreshEntity(projectile);
 
-            ResourceLocation fireSound = gun.getSounds().getFire();
-
-            if (fireSound != null) {
-                double posX = player.getX();
-                double posY = player.getY();
-                double posZ = player.getZ();
-                float volume = 1.0f;
-                float pitch = 0.9F + level.random.nextFloat() * 0.2F;
-                double radius = Config.SERVER.gunShotMaxDistance.get();
-                boolean muzzle = gun.getDisplay().getFlash() != null;
-                MessageGunSound messageSound = new MessageGunSound(fireSound, SoundSource.PLAYERS, (float) posX, (float) posY, (float) posZ, volume, pitch, player.getId(), muzzle, false);
-                PacketDistributor.TargetPoint targetPoint = new PacketDistributor.TargetPoint(posX, posY, posZ, radius, player.level.dimension());
-                PacketHandler.getPlayChannel().send(PacketDistributor.NEAR.with(() -> targetPoint), messageSound);
+            if (!level.isClientSide) {
+                ResourceLocation fireSound = gun.getSounds().getFire();
+                if (fireSound != null) {
+                    double posX = player.getX();
+                    double posY = player.getY();
+                    double posZ = player.getZ();
+                    float volume = 1.0f;
+                    float pitch = 0.9F + level.random.nextFloat() * 0.2F;
+                    double radius = Config.SERVER.gunShotMaxDistance.get();
+                    boolean muzzle = gun.getDisplay().getFlash() != null;
+                    MessageGunSound messageSound = new MessageGunSound(fireSound, SoundSource.PLAYERS, (float) posX, (float) posY, (float) posZ, volume, pitch, player.getId(), muzzle, false);
+                    PacketDistributor.TargetPoint targetPoint = new PacketDistributor.TargetPoint(posX, posY, posZ, radius, player.level.dimension());
+                    PacketHandler.getPlayChannel().send(PacketDistributor.NEAR.with(() -> targetPoint), messageSound);
+                }
             }
 
             if (!player.isCreative()) {
