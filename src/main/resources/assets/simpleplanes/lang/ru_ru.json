@@ -19,7 +19,7 @@
     "description.simpleplanes.healing": "Почини свой самолет быстрее",
     "description.simpleplanes.mana_upgrade": "Превращает ваш самолет в живой деревянный самолет",
     "description.simpleplanes.cloud": "Щелкните правой кнопкой мыши киркой над уровнем облаков, чтобы получить Облако",
-    "itemGroup.simpleplanes": "Simple Самолет",
+    "itemGroup.simpleplanes": "Простые самолёты",
     "death.attack.plane_crash": "%1$s Погибать в крушении самолета",
     "plane.onboard": "Нажать %2$s to Boost | Нажать %1$s to Dismount",
     "helicopter.onboard": "Нажать %2$s to TakeOff | Нажать %1$s to Демонтировать",
