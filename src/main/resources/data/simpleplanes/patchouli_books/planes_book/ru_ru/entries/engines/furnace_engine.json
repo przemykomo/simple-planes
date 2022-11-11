@@ -1,0 +1,15 @@
+{
+    "name": "Печной двигатель",
+    "icon": "simpleplanes:furnace_engine",
+    "category": "simpleplanes:engines",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Он питаем топливом для печи. Ты можешь положить топливо, открыт экран (по умолчанию используется клавиша X) сидя в самолёте."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:furnace_engine"
+        }
+    ]
+}
