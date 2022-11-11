@@ -1,0 +1,7 @@
+{
+    "name": "Аэроруководство",
+    "landing_text": "Simple Planes позволит тебе создавать Самолёты и Вертолёты с предполагаемыми улучшениями. Здесь ты сможешь найти информацию об этом моде.",
+    "version": 1,
+    "creative_tab": "simpleplanes",
+    "model": "simpleplanes:plane_book"
+}
