@@ -1,0 +1,15 @@
+{
+    "name": "Удаление улучшений",
+    "icon": "simpleplanes:wrench",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Пкм гаечным ключом по самолёту, чтобы удалить улучшения."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:wrench"
+        }
+    ]
+}
