@@ -1,0 +1,11 @@
+{
+    "name": "Флаги",
+    "icon": "minecraft:cyan_banner",
+    "category": "simpleplanes:misc",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Ты можешь положить любой флаг в самолёт в качестве декорации."
+        }
+    ]
+}
