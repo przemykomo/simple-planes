@@ -96,6 +96,7 @@
     "entity.simpleplanes.parachute": "Parachute",
 
     "simpleplanes.gui.energy": "Energy: %s FE",
+    "simpleplanes.gui.fluid": "%s: %s mb",
 
     "simpleplanes.press_key": "Press %s when in an aircraft",
     "simpleplanes.shooter_desc": "Press %s for inventory, %s to shoot",
