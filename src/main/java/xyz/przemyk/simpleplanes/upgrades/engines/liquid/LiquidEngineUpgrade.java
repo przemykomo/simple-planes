@@ -27,19 +27,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
+import xyz.przemyk.simpleplanes.datapack.PlaneLiquidFuelReloadListener;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
 import java.util.function.Function;
 
-public class LiquidEngineUpgrade extends EngineUpgrade { //TODO make it use up the fuel
+public class LiquidEngineUpgrade extends EngineUpgrade {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(2);
-    public final FluidTank fluidTank = new FluidTank(4000); //TODO capacity config
+    public final FluidTank fluidTank = new FluidTank(SimplePlanesConfig.LIQUID_ENGINE_CAPACITY.get(), fluidStack ->
+            PlaneLiquidFuelReloadListener.fuelMap.containsKey(fluidStack.getFluid().getFluidType()));
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
     public final LazyOptional<FluidTank> fluidTankLazyOptional = LazyOptional.of(() -> fluidTank);
+
+    public int burnTime;
 
     public LiquidEngineUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.LIQUID_ENGINE.get(), planeEntity);
@@ -47,6 +52,17 @@ public class LiquidEngineUpgrade extends EngineUpgrade { //TODO make it use up t
 
     @Override
     public void tick() {
+        if (burnTime > 0) {
+            burnTime -= planeEntity.getFuelCost();
+            updateClient();
+        } else if (planeEntity.getThrottle() > 0 && !fluidTank.isEmpty()) {
+            burnTime = PlaneLiquidFuelReloadListener.fuelMap.get(fluidTank.getFluid().getFluid().getFluidType());
+            if (burnTime > 0) {
+                fluidTank.drain(1, IFluidHandler.FluidAction.EXECUTE);
+                updateClient();
+            }
+        }
+
         if (itemStackHandler.getStackInSlot(1).isEmpty()) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(0);
             itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(fluidHandlerItem -> {
@@ -87,6 +103,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade { //TODO make it use up t
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.put("items", itemStackHandler.serializeNBT());
         compoundTag.put("fluid", fluidTank.writeToNBT(new CompoundTag()));
+        compoundTag.putInt("burnTime", burnTime);
         return compoundTag;
     }
 
@@ -94,6 +111,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade { //TODO make it use up t
     public void deserializeNBT(CompoundTag nbt) {
         itemStackHandler.deserializeNBT(nbt.getCompound("items"));
         fluidTank.readFromNBT(nbt.getCompound("fluid"));
+        burnTime = nbt.getInt("burnTime");
     }
 
     @Override
@@ -101,6 +119,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade { //TODO make it use up t
         buffer.writeItem(itemStackHandler.getStackInSlot(0));
         buffer.writeItem(itemStackHandler.getStackInSlot(1));
         buffer.writeFluidStack((fluidTank.getFluid()));
+        buffer.writeVarInt(burnTime);
     }
 
     @Override
@@ -108,6 +127,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade { //TODO make it use up t
         itemStackHandler.setStackInSlot(0, buffer.readItem());
         itemStackHandler.setStackInSlot(1, buffer.readItem());
         fluidTank.setFluid(buffer.readFluidStack());
+        burnTime = buffer.readVarInt();
     }
 
     @Override
