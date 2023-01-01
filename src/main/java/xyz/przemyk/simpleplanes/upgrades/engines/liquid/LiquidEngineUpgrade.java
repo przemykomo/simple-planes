@@ -81,7 +81,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
+        planeEntity.spawnAtLocation(SimplePlanesItems.LIQUID_ENGINE.get());
         planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
         planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(1));
     }
