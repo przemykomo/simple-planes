@@ -526,23 +526,25 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public void tickUpgrades() {
         List<ResourceLocation> upgradesToRemove = new ArrayList<>();
-        List<ResourceLocation> upgradesToUpdate = new ArrayList<>();
         upgrades.forEach((rl, upgrade) -> {
             upgrade.tick();
             if (upgrade.removed) {
                 upgradesToRemove.add(rl);
-            } else if (upgrade.updateClient && !level.isClientSide) {
-                upgradesToUpdate.add(rl);
-                upgrade.updateClient = false;
             }
         });
 
         for (ResourceLocation name : upgradesToRemove) {
             upgrades.remove(name);
         }
-        if (tickCount % networkUpdateInterval == 0) {
-            for (ResourceLocation name : upgradesToUpdate) {
-                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(name, getId(), (ServerLevel) level));
+
+        if (!level.isClientSide) {
+            if (tickCount % networkUpdateInterval == 0) {
+                upgrades.forEach((rl, upgrade) -> {
+                    if (upgrade.updateClient) {
+                        SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(rl, getId(), (ServerLevel) level));
+                        upgrade.updateClient = false;
+                    }
+                });
             }
         }
     }
