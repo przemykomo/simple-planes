@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.client.MovingSound;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.JukeboxPacket;
@@ -59,7 +60,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
                     player.addItem(oldRecord);
                 }
                 player.awardStat(Stats.PLAY_RECORD);
-                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> planeEntity), new JukeboxPacket(planeEntity.getId(), newRecordItem.getRegistryName()));
+                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> planeEntity), new JukeboxPacket(planeEntity.getId(), ForgeRegistries.ITEMS.getKey(newRecordItem)));
             }
         }
     }

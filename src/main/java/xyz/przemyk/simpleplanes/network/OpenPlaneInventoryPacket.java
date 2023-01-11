@@ -1,18 +1,21 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkHooks;
+import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import java.util.function.Supplier;
 
-@SuppressWarnings({"unused", "EmptyMethod"})
-public class OpenEngineInventoryPacket {
+@SuppressWarnings("unused")
+public class OpenPlaneInventoryPacket {
 
-    public OpenEngineInventoryPacket() {}
-    public OpenEngineInventoryPacket(FriendlyByteBuf buffer) {}
+    public OpenPlaneInventoryPacket() {}
+    public OpenPlaneInventoryPacket(FriendlyByteBuf buffer) {}
     public void toBytes(FriendlyByteBuf buffer) {}
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {
@@ -22,9 +25,8 @@ public class OpenEngineInventoryPacket {
             if (sender != null) {
                 Entity entity = sender.getVehicle();
                 if (entity instanceof PlaneEntity planeEntity) {
-                    if (planeEntity.engineUpgrade != null) {
-                        planeEntity.engineUpgrade.openGui(sender);
-                    }
+                    NetworkHooks.openGui(sender, new SimpleMenuProvider((id, inventory, player) ->
+                            new PlaneInventoryContainer(id, inventory, planeEntity), planeEntity.getName()), buffer -> buffer.writeVarInt(planeEntity.getId()));
                 }
             }
         });

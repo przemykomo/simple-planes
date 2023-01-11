@@ -8,7 +8,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -128,7 +127,7 @@ public class PlaneItem extends Item {
             Registry.BLOCK.getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).forEach(blockHolder -> {
                 ItemStack itemStack = new ItemStack(this);
                 CompoundTag itemTag = new CompoundTag();
-                itemTag.putString("material", blockHolder.value().getRegistryName().toString());
+                itemTag.putString("material", ForgeRegistries.BLOCKS.getKey(blockHolder.value()).toString());
                 itemStack.addTagElement("EntityTag", itemTag);
                 itemStacks.add(itemStack);
             });

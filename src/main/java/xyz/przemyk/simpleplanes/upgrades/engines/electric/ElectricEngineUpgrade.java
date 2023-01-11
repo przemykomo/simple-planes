@@ -4,34 +4,25 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.network.NetworkHooks;
-import xyz.przemyk.simpleplanes.misc.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.client.ClientEventHandler;
-import xyz.przemyk.simpleplanes.container.ElectricEngineContainer;
+import xyz.przemyk.simpleplanes.client.ClientUtil;
+import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.misc.EnergyStorageWithSet;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
-import xyz.przemyk.simpleplanes.upgrades.solarpanel.SolarPanelUpgrade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider {
+public class ElectricEngineUpgrade extends EngineUpgrade {
 
     public static final int CAPACITY = 1_500_000;
 
@@ -44,7 +35,7 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public void tick() {
-        if (!planeEntity.getParked()) {
+        if (planeEntity.getThrottle() > 0) {
             if (energyStorage.extractEnergy(12 * planeEntity.getFuelCost(), false) > 0) {
                 updateClient();
             }
@@ -53,16 +44,16 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
 
     @Override
     public boolean isPowered() {
-        return energyStorage.getEnergyStored() > 0;
+        return energyStorage.getEnergyStored() > 12 * planeEntity.getFuelCost();
     }
 
     @Override
     public void renderPowerHUD(PoseStack matrixStack, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
         if (side == HumanoidArm.LEFT) {
-            ClientEventHandler.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
+            ClientUtil.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
         } else {
-            ClientEventHandler.blit(matrixStack, -90, i + 91, scaledHeight - 22, 38, 44, 22, 21);
+            ClientUtil.blit(matrixStack, -90, i + 91, scaledHeight - 22, 38, 44, 22, 21);
         }
 
         int energy = energyStorage.getEnergyStored();
@@ -70,9 +61,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
         if (energy > 0) {
             int energyScaled = energy * 15 / CAPACITY;
             if (side == HumanoidArm.LEFT) {
-                ClientEventHandler.blit(matrixStack, -90, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                ClientUtil.blit(matrixStack, -90, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
             } else {
-                ClientEventHandler.blit(matrixStack, -90, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                ClientUtil.blit(matrixStack, -90, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
             }
         }
     }
@@ -106,27 +97,6 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
         energyStorage.setEnergy(buffer.readVarInt());
     }
 
-    @Override
-    public boolean canOpenGui() {
-        return true;
-    }
-
-    @Override
-    public void openGui(ServerPlayer playerEntity) {
-        NetworkHooks.openGui(playerEntity, this, buffer -> buffer.writeVarInt(planeEntity.getId()));
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return new TranslatableComponent(SimplePlanesMod.MODID + ".electric_engine_container");
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-        return new ElectricEngineContainer(id, playerInventory, planeEntity.getId());
-    }
-
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -139,5 +109,23 @@ public class ElectricEngineUpgrade extends EngineUpgrade implements MenuProvider
     @Override
     public void onRemoved() {
         planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
+    }
+
+    @Override
+    public void renderScreen(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
+        if (planeInventoryScreen.isHovering(152, 7, 16, 72, mouseX, mouseY)) {
+            planeInventoryScreen.renderTooltip(poseStack, new TranslatableComponent(SimplePlanesMod.MODID + ".gui.energy", energyStorage.getEnergyStored()), mouseX, mouseY);
+        }
+    }
+
+    @Override
+    public void renderScreenBg(PoseStack poseStack, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
+        screen.blit(poseStack, screen.getGuiLeft() + 152, screen.getGuiTop() + 7, 176, 0, 16, 72);
+
+        int energy = energyStorage.getEnergyStored();
+        if (energy > 0) {
+            int energyScaled = energy * 71 / CAPACITY;
+            screen.blit(poseStack, screen.getGuiLeft() + 152, screen.getGuiTop() + 78 - energyScaled, 192, 71 - energyScaled, 16, energyScaled + 1);
+        }
     }
 }

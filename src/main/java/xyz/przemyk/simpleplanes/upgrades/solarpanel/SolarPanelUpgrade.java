@@ -78,7 +78,7 @@ public class SolarPanelUpgrade extends Upgrade {
     private static boolean canSeeSun(@Nullable Level level, BlockPos pos) {
         return level != null && level.dimensionType().hasSkyLight() && level.getSkyDarken() < 4 && level.canSeeSky(pos);
     }
-    
+
     public static float getSunBrightness(Level world, float partialTicks) {
         float f = world.getTimeOfDay(partialTicks);
         float f1 = 1.0F - (Mth.cos(f * ((float) Math.PI * 2F)) * 2.0F + 0.2F);

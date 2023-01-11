@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.compat.jei;
 
-import com.google.common.collect.Streams;
 import mezz.jei.api.constants.ModIds;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -8,12 +7,13 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipe;
@@ -23,26 +23,32 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+@SuppressWarnings("removal")
 public class PlaneWorkbenchRecipeCategory implements IRecipeCategory<PlaneWorkbenchRecipe> {
 
-    public static final ResourceLocation ID = new ResourceLocation(SimplePlanesMod.MODID, "plane_workbench");
+    public static final RecipeType<PlaneWorkbenchRecipe> RECIPE_TYPE = RecipeType.create(SimplePlanesMod.MODID, "plane_workbench", PlaneWorkbenchRecipe.class);
 
     private final IDrawable background;
     private final IDrawable icon;
 
     public PlaneWorkbenchRecipeCategory(IGuiHelper guiHelper) {
         background = guiHelper.createDrawable(new ResourceLocation(ModIds.JEI_ID, "textures/gui/gui_vanilla.png"), 0, 168, 125, 18);
-        icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(SimplePlanesItems.PLANE_WORKBENCH.get()));
+        icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(SimplePlanesItems.PLANE_WORKBENCH.get()));
     }
 
     @Override
     public ResourceLocation getUid() {
-        return ID;
+        return RECIPE_TYPE.getUid();
     }
 
     @Override
     public Class<? extends PlaneWorkbenchRecipe> getRecipeClass() {
         return PlaneWorkbenchRecipe.class;
+    }
+
+    @Override
+    public RecipeType<PlaneWorkbenchRecipe> getRecipeType() {
+        return RECIPE_TYPE;
     }
 
     @Override
@@ -60,14 +66,14 @@ public class PlaneWorkbenchRecipeCategory implements IRecipeCategory<PlaneWorkbe
         return icon;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PlaneWorkbenchRecipe recipe, IFocusGroup focuses) {
-        Stream<ItemStack> materialStackStream = Streams.stream(Registry.BLOCK.getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG)).map(blockHolder ->
-                new ItemStack(blockHolder.value(), recipe.materialAmount())
+        Stream<ItemStack> materialStackStream = ForgeRegistries.BLOCKS.tags().getTag(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).stream().map(block ->
+                new ItemStack(block, recipe.materialAmount())
         );
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(Ingredient.of(Arrays.stream(recipe.ingredient().getItems()).map(itemStack -> new ItemStack(itemStack.getItem(), recipe.ingredientAmount()))));
         builder.addSlot(RecipeIngredientRole.INPUT, 50, 1).addIngredients(Ingredient.of(materialStackStream));
         builder.addSlot(RecipeIngredientRole.OUTPUT, 108, 1).addItemStack(recipe.result());
     }
+
 }

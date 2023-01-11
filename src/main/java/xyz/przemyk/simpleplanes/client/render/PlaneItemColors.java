@@ -64,7 +64,7 @@ public class PlaneItemColors {
                     if (redo < 0) {
                         redo = 0xffffff - redo;
                     }
-//                        r_b
+
                     cachedColors.put(block, redo);
                     return redo;
 

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class SimplePlanesNetworking {
 
-    private static final String PROTOCOL_VERSION = "7";
+    private static final String PROTOCOL_VERSION = "8";
     public static SimpleChannel INSTANCE;
 
     public static void init() {
@@ -34,10 +34,10 @@ public class SimplePlanesNetworking {
 
         INSTANCE.registerMessage(
                 ++id,
-                BoostPacket.class,
-                BoostPacket::toBytes,
-                BoostPacket::new,
-                BoostPacket::handle,
+                MoveHeliUpPacket.class,
+                MoveHeliUpPacket::toBytes,
+                MoveHeliUpPacket::new,
+                MoveHeliUpPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
 
@@ -61,10 +61,10 @@ public class SimplePlanesNetworking {
 
         INSTANCE.registerMessage(
                 ++id,
-                OpenEngineInventoryPacket.class,
-                OpenEngineInventoryPacket::toBytes,
-                OpenEngineInventoryPacket::new,
-                OpenEngineInventoryPacket::handle,
+                OpenPlaneInventoryPacket.class,
+                OpenPlaneInventoryPacket::toBytes,
+                OpenPlaneInventoryPacket::new,
+                OpenPlaneInventoryPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
 
@@ -106,20 +106,29 @@ public class SimplePlanesNetworking {
 
         INSTANCE.registerMessage(
                 ++id,
-                ClientConfigPacket.class,
-                ClientConfigPacket::toBytes,
-                ClientConfigPacket::new,
-                ClientConfigPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
-        );
-
-        INSTANCE.registerMessage(
-                ++id,
                 JukeboxPacket.class,
                 JukeboxPacket::toBytes,
                 JukeboxPacket::new,
                 JukeboxPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                ChangeThrottlePacket.class,
+                ChangeThrottlePacket::toBytes,
+                ChangeThrottlePacket::new,
+                ChangeThrottlePacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
+
+        INSTANCE.registerMessage(
+                ++id,
+                PitchPacket.class,
+                PitchPacket::toBytes,
+                PitchPacket::new,
+                PitchPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
     }
 }

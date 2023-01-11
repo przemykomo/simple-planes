@@ -1,28 +1,28 @@
 package xyz.przemyk.simpleplanes.upgrades.storage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -60,7 +60,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = itemStackHandler.serializeNBT();
-        nbt.putString("ChestType", chestType.getRegistryName().toString());
+        nbt.putString("ChestType", ForgeRegistries.ITEMS.getKey(chestType).toString());
         return nbt;
     }
 
@@ -119,7 +119,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventoryIn, Player playerEntity) {
-        return new StorageContainer(id, playerInventoryIn, itemStackHandler, chestType.getRegistryName().toString());
+        return new StorageContainer(id, playerInventoryIn, itemStackHandler, ForgeRegistries.ITEMS.getKey(chestType).toString());
     }
 
     @Override
@@ -133,7 +133,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     @Override
     public void onApply(ItemStack itemStack, Player playerEntity) {
         chestType = itemStack.getItem();
-        itemStackHandler.setSize(IronChestsCompat.getSize(chestType.getRegistryName().toString()));
+        itemStackHandler.setSize(IronChestsCompat.getSize(ForgeRegistries.ITEMS.getKey(chestType).toString()));
     }
 
     @Override
@@ -143,6 +143,6 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public void openStorageGui(ServerPlayer player) {
-        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(chestType.getRegistryName().toString()));
+        NetworkHooks.openGui(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(chestType).toString()));
     }
 }

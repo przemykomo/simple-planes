@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.network;
 
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import com.mojang.math.Quaternion;
@@ -10,6 +11,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
 
 import java.util.function.Supplier;
 
+@SuppressWarnings("unchecked")
 public class RotationPacket {
 
     private final Quaternion quaternion;
@@ -19,11 +21,11 @@ public class RotationPacket {
     }
 
     public RotationPacket(FriendlyByteBuf buffer) {
-        this.quaternion = SimplePlanesDataSerializers.QUATERNION_SERIALIZER.read(buffer);
+        this.quaternion = ((EntityDataSerializer<Quaternion>) SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get().getSerializer()).read(buffer);
     }
 
     public void toBytes(FriendlyByteBuf buffer) {
-        SimplePlanesDataSerializers.QUATERNION_SERIALIZER.write(buffer, quaternion);
+        ((EntityDataSerializer<Quaternion>) SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get().getSerializer()).write(buffer, quaternion);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctxSup) {

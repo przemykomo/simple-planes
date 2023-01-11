@@ -16,6 +16,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipe;
@@ -69,7 +70,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         updateCraftingResult();
     }
 
-    public void cycleItems(CycleItemsPacket.TYPE type) {
+    public void cycleItems(CycleItemsPacket.Type type) {
         int prevSelectedRecipe = selectedRecipe.get();
         ItemStack ingredient = itemHandler.getStackInSlot(0);
         ItemStack material = itemHandler.getStackInSlot(1);
@@ -121,7 +122,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
                 result = recipe.result().copy();
                 Block block = blockItem.getBlock();
-                resultItemTag.putString("material", block.getRegistryName().toString());
+                resultItemTag.putString("material", ForgeRegistries.BLOCKS.getKey(block).toString());
                 result.addTagElement("EntityTag", resultItemTag);
             }
 

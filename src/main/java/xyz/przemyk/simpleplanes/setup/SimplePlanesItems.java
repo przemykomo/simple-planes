@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.network.chat.KeybindComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -10,7 +12,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.items.EngineItem;
+import xyz.przemyk.simpleplanes.items.DescriptionItem;
 import xyz.przemyk.simpleplanes.items.ParachuteItem;
 import xyz.przemyk.simpleplanes.items.PlaneArmorItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
@@ -34,7 +36,7 @@ public class SimplePlanesItems {
         }
     };
 
-    public static List<PlaneItem> getPlaneItems(){
+    public static List<PlaneItem> getPlaneItems() {
         ArrayList<PlaneItem> planeItems = new ArrayList<>(3);
         planeItems.add(PLANE_ITEM.get());
         planeItems.add(LARGE_PLANE_ITEM.get());
@@ -52,9 +54,11 @@ public class SimplePlanesItems {
     public static final RegistryObject<Item> FOLDING = ITEMS.register("folding", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> SUPPLY_CRATE = ITEMS.register("supply_crate", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<Item> SEATS = ITEMS.register("seats", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final RegistryObject<Item> SHOOTER = ITEMS.register("shooter", () -> new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), new TranslatableComponent(SimplePlanesMod.MODID + ".shooter_desc", new KeybindComponent("key.plane_inventory_open.desc"), new KeybindComponent("key.attack"))));
 
-    public static final RegistryObject<Item> ELECTRIC_ENGINE = ITEMS.register("electric_engine", () -> new EngineItem(new Item.Properties().tab(ITEM_GROUP)));
-    public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new EngineItem(new Item.Properties().tab(ITEM_GROUP)));
+    public static final RegistryObject<Item> ELECTRIC_ENGINE = ITEMS.register("electric_engine", () -> new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), new TranslatableComponent(SimplePlanesMod.MODID + ".press_key", new KeybindComponent("key.plane_inventory_open.desc"))));
+    public static final RegistryObject<Item> FURNACE_ENGINE = ITEMS.register("furnace_engine", () -> new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), new TranslatableComponent(SimplePlanesMod.MODID + ".press_key", new KeybindComponent("key.plane_inventory_open.desc"))));
+    public static final RegistryObject<Item> LIQUID_ENGINE = ITEMS.register("liquid_engine", () -> new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), new TranslatableComponent(SimplePlanesMod.MODID + ".press_key", new KeybindComponent("key.plane_inventory_open.desc"))));
 
     public static final RegistryObject<Item> WRENCH = ITEMS.register("wrench", () -> new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final RegistryObject<BlockItem> PLANE_WORKBENCH = ITEMS.register("plane_workbench", () -> new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK.get(), new Item.Properties().tab(ITEM_GROUP)));

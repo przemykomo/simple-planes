@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,25 +11,24 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import xyz.przemyk.simpleplanes.misc.MathUtil;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
 public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
-    public static final int TICKS_PER_PROPELLER_ROTATION = 4;
 
     protected final EntityModel<PlaneEntity> propellerModel;
     protected final EntityModel<T> planeEntityModel;
@@ -49,7 +47,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     public static float getPropellerRotation(PlaneEntity entity, float partialTicks) {
-        return ((entity.tickCount + partialTicks) % TICKS_PER_PROPELLER_ROTATION) / (float) (TICKS_PER_PROPELLER_ROTATION / 10.0f * Math.PI);
+        return Mth.lerp(partialTicks, entity.propellerRotationOld, entity.propellerRotationNew);
     }
 
     @Override
@@ -60,12 +58,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
 
-        double firstPersonYOffset = -0.7D;
-        boolean isPlayerRidingInFirstPersonView = Minecraft.getInstance().player != null && planeEntity.hasPassenger(Minecraft.getInstance().player)
-            && (Minecraft.getInstance()).options.cameraType == CameraType.FIRST_PERSON;
-        if (isPlayerRidingInFirstPersonView) {
-            poseStack.translate(0.0D, firstPersonYOffset, 0.0D);
-        }
         Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
         poseStack.mulPose(q);
         EntityType<?> entityType = planeEntity.getType();
@@ -77,31 +69,23 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             poseStack.translate(0, 0, 0.9);
         }
 
-        float rockingAngle = planeEntity.getRockingAngle(partialTicks);
-        if (!Mth.equal(rockingAngle, 0.0F)) {
-            poseStack.mulPose(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), rockingAngle, true));
-        }
-        float f = (float) planeEntity.getTimeSinceHit() - partialTicks;
-        float f1 = planeEntity.getDamageTaken() - partialTicks;
-        if (f1 < 0.1F) {
-            f1 = 0.1F;
-        }
+        float timeSinceHitWithPartial = (float) planeEntity.getTimeSinceHit() - partialTicks;
 
-        if (f > 0.0F) {
-            float angle = Mth.clamp(f * f1 / 200.0F, -30, 30);
-            f = planeEntity.tickCount + partialTicks;
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(f) * angle));
+        if (timeSinceHitWithPartial > 0.0F) {
+            float angle = Mth.clamp(timeSinceHitWithPartial / 10.0F, -30, 30);
+            timeSinceHitWithPartial = planeEntity.tickCount + partialTicks;
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(timeSinceHitWithPartial) * angle));
         }
 
         poseStack.translate(0, -1.1, 0);
 
-        if (isPlayerRidingInFirstPersonView) {
-            poseStack.translate(0.0D, -firstPersonYOffset, 0.0D);
-        }
-
         VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         planeEntityModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+
+        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
+        propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
+        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
         vertexConsumer = buffer.getBuffer(planeMetalModel.renderType(metalTexture));
         planeMetalModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
@@ -110,12 +94,6 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
 
-        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
-
-        propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        poseStack.pushPose();
-        poseStack.popPose();
         poseStack.popPose();
 
         super.render(planeEntity, 0, partialTicks, poseStack, buffer, packedLight);
@@ -134,7 +112,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         ResourceLocation texture;
         try {
-            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(ForgeModelBakery.getInventoryVariant(Objects.requireNonNull(block.getRegistryName()).toString())).getQuads(null, Direction.SOUTH, new Random(42L), EmptyModelData.INSTANCE).get(0).getSprite().getName();
+            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(ForgeRegistries.BLOCKS.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, new Random(42), EmptyModelData.INSTANCE).get(0).getSprite().getName();
             texture = new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
         } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;

@@ -90,7 +90,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven { name = "Progwml6 maven"; url = "https://dvs1.progwml6.com/files/maven/" } //JEI & Iron chest
-    maven { name = "ModMaven";       url = "https://modmaven.k-4u.nl" }               // JEI fallback
+    maven { name = "ModMaven";       url = "https://modmaven.dev" }               // JEI fallback
     maven { name = "blamejared";     url = "https://maven.blamejared.com" }           // Patchouli
     maven {
         url "https://cursemaven.com"
@@ -112,10 +112,16 @@ dependencies {
 //    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 //    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
-    runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
+//    runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
-    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:3740510')
-    implementation fg.deobf('curse.maven:framework-549225:3723144')
+    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:4325680')
+    implementation fg.deobf('curse.maven:framework-549225:4287475')
+
+    implementation fg.deobf('curse.maven:immersive-engineering-231951:4193165')
+    implementation fg.deobf('curse.maven:the-one-probe-245211:3965688')
+
+    implementation fg.deobf('curse.maven:autoreglib-250363:3642382')
+    implementation fg.deobf('curse.maven:quark-243121:3840125')
 }
 
 jar {

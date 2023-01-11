@@ -48,28 +48,30 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
-        matrixStack.pushPose();
-        EntityType<?> entityType = planeEntity.getType();
+        if (payloadEntry != null) {
+            matrixStack.pushPose();
+            EntityType<?> entityType = planeEntity.getType();
 
-        if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-            matrixStack.translate(0, -0.1, -1.28);
-        } else {
-            matrixStack.translate(0, 0, 0.1);
+            if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
+                matrixStack.translate(0, -0.1, -1.28);
+            } else {
+                matrixStack.translate(0, 0, 0.1);
+            }
+
+            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+            matrixStack.translate(-0.4, -1, 0.3);
+            matrixStack.scale(0.82f, 0.82f, 0.82f);
+            BlockState state = payloadEntry.renderBlock().defaultBlockState();
+            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+            matrixStack.popPose();
         }
-
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
-        matrixStack.translate(-0.4, -1, 0.3);
-        matrixStack.scale(0.82f, 0.82f, 0.82f);
-        BlockState state = payloadEntry.renderBlock().defaultBlockState();
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-        matrixStack.popPose();
     }
 
     @Override
     public void writePacket(FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(payloadEntry.item().getRegistryName());
-        buffer.writeResourceLocation(payloadEntry.renderBlock().getRegistryName());
-        buffer.writeResourceLocation(payloadEntry.dropSpawnEntity().getRegistryName());
+        buffer.writeResourceLocation(ForgeRegistries.ITEMS.getKey(payloadEntry.item()));
+        buffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(payloadEntry.renderBlock()));
+        buffer.writeResourceLocation(ForgeRegistries.ENTITIES.getKey(payloadEntry.dropSpawnEntity()));
         buffer.writeNbt(payloadEntry.compoundTag());
     }
 
@@ -85,9 +87,9 @@ public class PayloadUpgrade extends LargeUpgrade {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag compoundTag = new CompoundTag();
-        compoundTag.putString("item", payloadEntry.item().getRegistryName().toString());
-        compoundTag.putString("block", payloadEntry.renderBlock().getRegistryName().toString());
-        compoundTag.putString("entity", payloadEntry.dropSpawnEntity().getRegistryName().toString());
+        compoundTag.putString("item", ForgeRegistries.ITEMS.getKey(payloadEntry.item()).toString());
+        compoundTag.putString("block", ForgeRegistries.BLOCKS.getKey(payloadEntry.renderBlock()).toString());
+        compoundTag.putString("entity", ForgeRegistries.ENTITIES.getKey(payloadEntry.dropSpawnEntity()).toString());
         compoundTag.put("entityTag", payloadEntry.compoundTag());
         return compoundTag;
     }
@@ -112,11 +114,13 @@ public class PayloadUpgrade extends LargeUpgrade {
 
     @Override
     public void dropAsPayload() {
-        Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level);
-        entity.load(payloadEntry.compoundTag());
-        entity.setPos(planeEntity.position());
-        entity.setDeltaMovement(planeEntity.getDeltaMovement());
-        planeEntity.level.addFreshEntity(entity);
+        if (payloadEntry != null) {
+            Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level);
+            entity.load(payloadEntry.compoundTag());
+            entity.setPos(planeEntity.position());
+            entity.setDeltaMovement(planeEntity.getDeltaMovement());
+            planeEntity.level.addFreshEntity(entity);
+        }
         remove();
     }
 }

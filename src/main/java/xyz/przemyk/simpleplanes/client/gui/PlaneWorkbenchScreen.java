@@ -24,10 +24,10 @@ public class PlaneWorkbenchScreen extends AbstractContainerScreen<PlaneWorkbench
     protected void init() {
         super.init();
         addRenderableWidget(new ImageButton(leftPos + 122, topPos + 47, 10, 15, 176, 0, 15, GUI,
-                button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_LEFT))));
+                button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.Type.CRAFTING_LEFT))));
 
         addRenderableWidget(new ImageButton(leftPos + 152, topPos + 47, 10, 15, 186, 0, 15, GUI,
-                button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.TYPE.CRAFTING_RIGHT))));
+                button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CycleItemsPacket(CycleItemsPacket.Type.CRAFTING_RIGHT))));
     }
 
     @Override

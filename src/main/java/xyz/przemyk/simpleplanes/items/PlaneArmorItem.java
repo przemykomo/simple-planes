@@ -6,6 +6,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 public class PlaneArmorItem extends Item {
+
     public PlaneArmorItem(Properties properties) {
         super(properties);
     }

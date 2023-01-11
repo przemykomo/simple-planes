@@ -3,9 +3,9 @@ package xyz.przemyk.simpleplanes.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesSounds;
+import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +41,12 @@ public class PlaneSound extends AbstractTickableSoundInstance {
 
     @Override
     public float getPitch() {
-        return (float) Mth.clamp(0.9f + plane.getDeltaMovement().length() / 3f, 0.9f, 1.3f);
+        return (((float) plane.getThrottle()) / BoosterUpgrade.MAX_THROTTLE) * 0.7f + 0.6f;
+    }
+
+    @Override
+    public float getVolume() {
+        return super.getVolume();
     }
 
     @Override
@@ -49,7 +54,7 @@ public class PlaneSound extends AbstractTickableSoundInstance {
         x = plane.getX();
         y = plane.getY();
         z = plane.getZ();
-        if (fadeOut < 0 && !(plane.isPowered() && !plane.getParked())) {
+        if (fadeOut < 0 && (!plane.isPowered() || plane.getThrottle() == 0)) {
             fadeOut = 0;
             synchronized (PLAYING_FOR) {
                 PLAYING_FOR.remove(plane.getId());

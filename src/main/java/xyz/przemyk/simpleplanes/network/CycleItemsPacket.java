@@ -9,14 +9,14 @@ import java.util.function.Supplier;
 
 public class CycleItemsPacket {
 
-    private final TYPE type;
+    private final Type type;
 
-    public CycleItemsPacket(TYPE type) {
+    public CycleItemsPacket(Type type) {
         this.type = type;
     }
 
     public CycleItemsPacket(FriendlyByteBuf buffer) {
-        this.type = TYPE.values()[buffer.readByte()];
+        this.type = Type.values()[buffer.readByte()];
     }
 
     public void toBytes(FriendlyByteBuf buffer) {
@@ -34,7 +34,7 @@ public class CycleItemsPacket {
         ctx.setPacketHandled(true);
     }
 
-    public enum TYPE {
+    public enum Type {
         CRAFTING_LEFT,
         CRAFTING_RIGHT
     }

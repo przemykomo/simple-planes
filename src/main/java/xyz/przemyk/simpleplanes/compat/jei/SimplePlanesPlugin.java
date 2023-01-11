@@ -29,21 +29,21 @@ public class SimplePlanesPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE), PlaneWorkbenchRecipeCategory.ID);
+        registration.addRecipes(PlaneWorkbenchRecipeCategory.RECIPE_TYPE, Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE));
     }
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-        registration.addRecipeTransferHandler(PlaneWorkbenchContainer.class, PlaneWorkbenchRecipeCategory.ID, 0, 2, 3, 36);
+        registration.addRecipeTransferHandler(PlaneWorkbenchContainer.class, PlaneWorkbenchRecipeCategory.RECIPE_TYPE, 0, 2, 3, 36);
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(SimplePlanesItems.PLANE_WORKBENCH.get()), PlaneWorkbenchRecipeCategory.ID);
+        registration.addRecipeCatalyst(new ItemStack(SimplePlanesItems.PLANE_WORKBENCH.get()), PlaneWorkbenchRecipeCategory.RECIPE_TYPE);
     }
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(PlaneWorkbenchScreen.class, 102, 48, 22, 15, PlaneWorkbenchRecipeCategory.ID);
+        registration.addRecipeClickArea(PlaneWorkbenchScreen.class, 102, 48, 22, 15, PlaneWorkbenchRecipeCategory.RECIPE_TYPE);
     }
 }
