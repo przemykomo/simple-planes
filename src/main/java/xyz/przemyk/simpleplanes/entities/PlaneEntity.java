@@ -585,6 +585,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
+    protected float getRotationSpeedMultiplier() {
+        return 1.0f;
+    }
+
     protected float pitchSpeed = 0;
 
     protected void tickPitch(TempMotionVars tempMotionVars) {
@@ -593,17 +597,17 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             pitch = 10.0f;
         } else {
             if (getPitchUp() > 0) {
-                pitchSpeed += 0.5f;
+                pitchSpeed += 0.5f * getRotationSpeedMultiplier();
             } else if (getPitchUp() < 0) {
-                pitchSpeed -= 0.5f;
+                pitchSpeed -= 0.5f * getRotationSpeedMultiplier();
             } else {
                 if (pitchSpeed < 0) {
-                    pitchSpeed += 0.5f;
+                    pitchSpeed += 0.5f * getRotationSpeedMultiplier();
                 } else if (pitchSpeed > 0) {
-                    pitchSpeed -= 0.5f;
+                    pitchSpeed -= 0.5f * getRotationSpeedMultiplier();
                 }
             }
-            pitchSpeed = Mth.clamp(pitchSpeed, -5.0f, 5.0f);
+            pitchSpeed = Mth.clamp(pitchSpeed, -5.0f * getRotationSpeedMultiplier(), 5.0f * getRotationSpeedMultiplier());
             pitch = pitchSpeed;
         }
         setXRot(getXRot() + pitch);
@@ -617,17 +621,17 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             yaw = 10.0f;
         } else {
             if (getYawRight() > 0) {
-                yawSpeed += 0.5f;
+                yawSpeed += 0.5f * getRotationSpeedMultiplier();
             } else if (getYawRight() < 0) {
-                yawSpeed -= 0.5f;
+                yawSpeed -= 0.5f * getRotationSpeedMultiplier();
             } else {
                 if (yawSpeed < 0) {
-                    yawSpeed += 0.5f;
+                    yawSpeed += 0.5f * getRotationSpeedMultiplier();
                 } else if (yawSpeed > 0) {
-                    yawSpeed -= 0.5f;
+                    yawSpeed -= 0.5f * getRotationSpeedMultiplier();
                 }
             }
-            yawSpeed = Mth.clamp(yawSpeed, -2.5f, 2.5f);
+            yawSpeed = Mth.clamp(yawSpeed, -2.5f * getRotationSpeedMultiplier(), 2.5f * getRotationSpeedMultiplier());
             yaw = yawSpeed;
         }
         setYRot(getYRot() + yaw);
@@ -890,11 +894,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public boolean canBeRiddenUnderFluidType(FluidType type, Entity rider) {
-        if (type == ForgeMod.WATER_TYPE.get() && upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId())) {
-            return true;
-        }
-
-        return false;
+        return type == ForgeMod.WATER_TYPE.get() && upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId());
     }
 
     @Override
