@@ -627,7 +627,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                     yawSpeed -= 0.5f;
                 }
             }
-            yawSpeed = Mth.clamp(yawSpeed, -5.0f, 5.0f);
+            yawSpeed = Mth.clamp(yawSpeed, -2.5f, 2.5f);
             yaw = yawSpeed;
         }
         setYRot(getYRot() + yaw);
