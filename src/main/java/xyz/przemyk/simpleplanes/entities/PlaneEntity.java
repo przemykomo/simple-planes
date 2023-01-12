@@ -894,7 +894,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             return true;
         }
 
-        return super.canBeRiddenUnderFluidType(type, rider);
+        return false;
     }
 
     @Override
@@ -967,7 +967,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource p_146830_) {
-        if (isVehicle()) {
+        if (degreesDifferenceAbs(rotationRoll, 0) > 45) {
             crash(fallDistance * damageMultiplier);
         }
         return false;
