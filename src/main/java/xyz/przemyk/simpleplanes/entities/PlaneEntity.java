@@ -78,6 +78,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final EntityDataAccessor<Quaternion> Q = SynchedEntityData.defineId(PlaneEntity.class, (EntityDataSerializer<Quaternion>) SimplePlanesDataSerializers.QUATERNION_SERIALIZER_ENTRY.get().getSerializer());
     public static final EntityDataAccessor<Integer> THROTTLE = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Byte> PITCH_UP = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<Byte> YAW_RIGHT = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.BYTE);
     public static final int MAX_THROTTLE = 5;
     public Quaternion Q_Client = new Quaternion(Quaternion.ONE);
     public Quaternion Q_Prev = new Quaternion(Quaternion.ONE);
@@ -131,6 +132,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         entityData.define(DAMAGE_TAKEN, 0f);
         entityData.define(THROTTLE, 0);
         entityData.define(PITCH_UP, (byte) 0);
+        entityData.define(YAW_RIGHT, (byte) 0);
     }
 
     public float getMaxSpeed() {
@@ -442,9 +444,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             tickPitch(tempMotionVars);
         }
 
+        tickYaw();
+
         tickMotion(tempMotionVars);
 
-        //roll + yaw
         tickRoll(tempMotionVars);
 
         tickUpgrades();
@@ -582,6 +585,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
+    protected float getRotationSpeedMultiplier() {
+        return 1.0f;
+    }
+
     protected float pitchSpeed = 0;
 
     protected void tickPitch(TempMotionVars tempMotionVars) {
@@ -590,24 +597,49 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             pitch = 10.0f;
         } else {
             if (getPitchUp() > 0) {
-                pitchSpeed += 0.5f;
+                pitchSpeed += 0.5f * getRotationSpeedMultiplier();
             } else if (getPitchUp() < 0) {
-                pitchSpeed -= 0.5f;
+                pitchSpeed -= 0.5f * getRotationSpeedMultiplier();
             } else {
                 if (pitchSpeed < 0) {
-                    pitchSpeed += 0.5f;
+                    pitchSpeed += 0.5f * getRotationSpeedMultiplier();
                 } else if (pitchSpeed > 0) {
-                    pitchSpeed -= 0.5f;
+                    pitchSpeed -= 0.5f * getRotationSpeedMultiplier();
                 }
             }
-            pitchSpeed = Mth.clamp(pitchSpeed, -5.0f, 5.0f);
+            pitchSpeed = Mth.clamp(pitchSpeed, -5.0f * getRotationSpeedMultiplier(), 5.0f * getRotationSpeedMultiplier());
             pitch = pitchSpeed;
         }
         setXRot(getXRot() + pitch);
     }
 
+    protected float yawSpeed = 0;
+
+    protected void tickYaw() {
+        float yaw;
+        if (getHealth() <= 0) {
+            yaw = 10.0f;
+        } else {
+            if (getYawRight() > 0) {
+                yawSpeed += 0.5f * getRotationSpeedMultiplier();
+            } else if (getYawRight() < 0) {
+                yawSpeed -= 0.5f * getRotationSpeedMultiplier();
+            } else {
+                if (yawSpeed < 0) {
+                    yawSpeed += 0.5f * getRotationSpeedMultiplier();
+                } else if (yawSpeed > 0) {
+                    yawSpeed -= 0.5f * getRotationSpeedMultiplier();
+                }
+            }
+            yawSpeed = Mth.clamp(yawSpeed, -2.5f * getRotationSpeedMultiplier(), 2.5f * getRotationSpeedMultiplier());
+            yaw = yawSpeed;
+        }
+        setYRot(getYRot() + yaw);
+    }
+
     protected float rollSpeed = 0;
 
+    // Tick roll if in the air, yaw if on ground
     protected void tickRoll(TempMotionVars tempMotionVars) {
         if (getHealth() <= 0) {
             rotationRoll += getId() % 2 == 0 ? 10.0f : -10.0f;
@@ -935,7 +967,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public boolean causeFallDamage(float fallDistance, float damageMultiplier, DamageSource p_146830_) {
-        if (isVehicle()) {
+        if (degreesDifferenceAbs(rotationRoll, 0) > 45) {
             crash(fallDistance * damageMultiplier);
         }
         return false;
@@ -1023,6 +1055,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
                 }
             }
         }
+
+        if (getPassengers().size() == 0) {
+            setThrottle((byte) 0);
+            setPitchUp((byte) 0);
+            setYawRight((byte) 0);
+        }
+
         return super.getDismountLocationForPassenger(livingEntity);
     }
 
@@ -1248,6 +1287,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public void setPitchUp(byte pitchUp) {
         entityData.set(PITCH_UP, pitchUp);
+    }
+
+    public byte getYawRight() {
+        return entityData.get(YAW_RIGHT);
+    }
+
+    public void setYawRight(byte yawRight) {
+        entityData.set(YAW_RIGHT, yawRight);
     }
 
     protected static class TempMotionVars {

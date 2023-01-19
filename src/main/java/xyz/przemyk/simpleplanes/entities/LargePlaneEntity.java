@@ -153,4 +153,9 @@ public class LargePlaneEntity extends PlaneEntity {
 
         return false;
     }
+
+    @Override
+    protected float getRotationSpeedMultiplier() {
+        return 0.5f;
+    }
 }

@@ -61,6 +61,8 @@ public class ClientEventHandler {
     public static KeyMapping throttleDown;
     public static KeyMapping pitchUp;
     public static KeyMapping pitchDown;
+    public static KeyMapping yawRight;
+    public static KeyMapping yawLeft;
 
     static {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -81,6 +83,8 @@ public class ClientEventHandler {
         throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, "key.simpleplanes.category");
         pitchUp = new KeyMapping("key.plane_pitch_up.desc", GLFW.GLFW_KEY_W, "key.simpleplanes.category");
         pitchDown = new KeyMapping("key.plane_pitch_down.desc", GLFW.GLFW_KEY_S, "key.simpleplanes.category");
+        yawRight = new KeyMapping("key.plane_yaw_right.desc", GLFW.GLFW_KEY_RIGHT, "key.simpleplanes.category");
+        yawLeft = new KeyMapping("key.plane_yaw_left.desc", GLFW.GLFW_KEY_LEFT, "key.simpleplanes.category");
         ClientRegistry.registerKeyBinding(moveHeliUpKey);
         ClientRegistry.registerKeyBinding(openPlaneInventoryKey);
         ClientRegistry.registerKeyBinding(dropPayloadKey);
@@ -88,6 +92,8 @@ public class ClientEventHandler {
         ClientRegistry.registerKeyBinding(throttleDown);
         ClientRegistry.registerKeyBinding(pitchUp);
         ClientRegistry.registerKeyBinding(pitchDown);
+        ClientRegistry.registerKeyBinding(yawRight);
+        ClientRegistry.registerKeyBinding(yawLeft);
 
         OverlayRegistry.registerOverlayTop("plane_hud", (gui, matrixStack, partialTicks, screenWidth, screenHeight) -> {
             Minecraft mc = Minecraft.getInstance();
@@ -205,6 +211,8 @@ public class ClientEventHandler {
     private static boolean oldMoveHeliUpState = false;
     private static boolean oldPitchUpState = false;
     private static boolean oldPitchDownState = false;
+    private static boolean oldYawRightState = false;
+    private static boolean oldYawLeftState = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onClientPlayerTick(PlayerTickEvent event) {
@@ -237,6 +245,9 @@ public class ClientEventHandler {
                 boolean isMoveHeliUp = moveHeliUpKey.isDown();
                 boolean isPitchUp = pitchUp.isDown();
                 boolean isPitchDown = pitchDown.isDown();
+                boolean isYawRight = yawRight.isDown();
+                boolean isYawLeft = yawLeft.isDown();
+
                 if (isMoveHeliUp != oldMoveHeliUpState) {
                     SimplePlanesNetworking.INSTANCE.sendToServer(new MoveHeliUpPacket(isMoveHeliUp));
                 }
@@ -245,13 +256,21 @@ public class ClientEventHandler {
                     SimplePlanesNetworking.INSTANCE.sendToServer(new PitchPacket((byte) Boolean.compare(isPitchUp, isPitchDown)));
                 }
 
+                if (isYawRight != oldYawRightState || isYawLeft != oldYawLeftState) {
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new YawPacket((byte) Boolean.compare(isYawRight, isYawLeft)));
+                }
+
                 oldMoveHeliUpState = isMoveHeliUp;
                 oldPitchUpState = isPitchUp;
                 oldPitchDownState = isPitchDown;
+                oldYawRightState = isYawRight;
+                oldYawLeftState = isYawLeft;
             } else {
                 oldMoveHeliUpState = false;
                 oldPitchUpState = false;
                 oldPitchDownState = false;
+                oldYawRightState = false;
+                oldYawLeftState = false;
             }
         }
     }

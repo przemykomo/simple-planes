@@ -75,6 +75,9 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
+    protected void tickYaw() {}
+
+    @Override
     protected boolean tickOnGround(TempMotionVars tempMotionVars) {
         float push = tempMotionVars.push;
         super.tickOnGround(tempMotionVars);
