@@ -1,26 +1,32 @@
 package xyz.przemyk.simpleplanes;
 
 import net.fabricmc.api.ModInitializer;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+import net.minecraft.world.damagesource.DamageSource;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
+import xyz.przemyk.simpleplanes.setup.*;
 
 public class SimplePlanesMod implements ModInitializer {
 	public static final String MODID = "simpleplanes";
-//	public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = new DamageSource("plain_crash").bypassArmor();
+	public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = new PlaneCrashDamageSource("plain_crash");
+    public static class PlaneCrashDamageSource extends DamageSource {
+        public PlaneCrashDamageSource(String string) {
+            super(string);
+            bypassArmor();
+        }
+    }
 
     @Override
     public void onInitialize() {
 //        SimplePlanesConfig.init();
-//        SimplePlanesEntities.init();
+        SimplePlanesEntities.init();
         SimplePlanesBlocks.init();
         SimplePlanesContainers.init();
 //        SimplePlanesUpgrades.init();
 //        SimplePlanesSounds.init();
         SimplePlanesItems.init();
-//        SimplePlanesDataSerializers.init();
+        SimplePlanesDataSerializers.init();
 //        SimplePlanesRecipes.init();
-//        SimplePlanesNetworking.init();
+        SimplePlanesNetworking.registerC2SPackets();
 //        SimplePlanesDatapack.init();
 
 //        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);

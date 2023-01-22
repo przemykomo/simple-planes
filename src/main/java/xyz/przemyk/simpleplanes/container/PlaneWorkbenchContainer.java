@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 
@@ -57,12 +58,13 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         updateCraftingResult();
     }
 
-//    public void cycleItems(CycleItemsPacket.Type type) {
+    public void cycleItems(CycleItemsPacket.Type type) {
+        System.out.println("cycle items packet " + type);
 //        int prevSelectedRecipe = selectedRecipe.get();
 //        ItemStack ingredient = itemHandler.getItem(0);
 //        ItemStack material = itemHandler.getItem(1);
 //        switch (type) {
-//            case CRAFTING_LEFT:
+//            case CRAFTING_LEFT -> {
 //                do {
 //                    if (selectedRecipe.get() == 0) {
 //                        selectedRecipe.set(recipeList.size() - 1);
@@ -70,8 +72,8 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 //                        selectedRecipe.set(selectedRecipe.get() - 1);
 //                    }
 //                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
-//                break;
-//            case CRAFTING_RIGHT:
+//            }
+//            case CRAFTING_RIGHT -> {
 //                do {
 //                    if (selectedRecipe.get() == recipeList.size() - 1) {
 //                        selectedRecipe.set(0);
@@ -79,10 +81,11 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 //                        selectedRecipe.set(selectedRecipe.get() + 1);
 //                    }
 //                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
+//            }
 //        }
 //
 //        updateCraftingResult();
-//    }
+    }
 
     public void onCrafting() {
 //        if (!player.level.isClientSide) {

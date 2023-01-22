@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.MenuScreens;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 
 @Environment(EnvType.CLIENT)
@@ -24,10 +25,14 @@ public class ClientEventHandler implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        SimplePlanesNetworking.registerS2CPackets();
         MenuScreens.register(SimplePlanesContainers.PLANE_WORKBENCH, PlaneWorkbenchScreen::new);
 //        MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
 //        MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
 //        MenuScreens.register(SimplePlanesContainers.PLANE_INVENTORY.get(), PlaneInventoryScreen::new);
+
+        PlanesModelLayers.registerRenderers();
+        PlanesModelLayers.registerLayers();
     }
 
 //

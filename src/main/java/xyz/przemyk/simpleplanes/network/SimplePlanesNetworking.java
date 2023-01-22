@@ -1,19 +1,18 @@
-//package xyz.przemyk.simpleplanes.network;
+package xyz.przemyk.simpleplanes.network;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+
+public class SimplePlanesNetworking {
+
+    public static void registerS2CPackets() {
+        
+    }
+
+    public static void registerC2SPackets() {
+        ServerPlayNetworking.registerGlobalReceiver(CycleItemsPacket.ID, CycleItemsPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(RotationPacket.ID, RotationPacket::receive);
+
 //
-//import net.minecraft.resources.ResourceLocation;
-//import net.minecraftforge.network.NetworkDirection;
-//import net.minecraftforge.network.NetworkRegistry;
-//import net.minecraftforge.network.simple.SimpleChannel;
-//import xyz.przemyk.simpleplanes.SimplePlanesMod;
-//
-//import java.util.Optional;
-//
-//public class SimplePlanesNetworking {
-//
-//    private static final String PROTOCOL_VERSION = "9";
-//    public static SimpleChannel INSTANCE;
-//
-//    public static void init() {
 //        INSTANCE = NetworkRegistry.newSimpleChannel(
 //                new ResourceLocation(SimplePlanesMod.MODID, "main"),
 //                () -> PROTOCOL_VERSION,
@@ -139,5 +138,5 @@
 //                YawPacket::handle,
 //                Optional.of(NetworkDirection.PLAY_TO_SERVER)
 //        );
-//    }
-//}
+    }
+}

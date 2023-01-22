@@ -1,54 +1,21 @@
-//package xyz.przemyk.simpleplanes.client;
-//
-//import net.minecraft.client.Minecraft;
-//import net.minecraft.client.model.ShulkerModel;
-//import net.minecraft.client.model.geom.EntityModelSet;
-//import net.minecraft.client.model.geom.ModelLayerLocation;
-//import net.minecraft.client.model.geom.ModelLayers;
-//import net.minecraft.resources.ResourceLocation;
-//import net.minecraftforge.api.distmarker.Dist;
-//import net.minecraftforge.client.event.EntityRenderersEvent;
-//import net.minecraftforge.eventbus.api.SubscribeEvent;
-//import net.minecraftforge.fml.common.Mod;
-//import xyz.przemyk.simpleplanes.SimplePlanesMod;
-//import xyz.przemyk.simpleplanes.client.render.ParachuteRenderer;
-//import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
-//import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
-//import xyz.przemyk.simpleplanes.client.render.models.*;
-//import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
-//import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-//import xyz.przemyk.simpleplanes.upgrades.armor.ArmorModel;
-//import xyz.przemyk.simpleplanes.upgrades.armor.ArmorWindowModel;
-//import xyz.przemyk.simpleplanes.upgrades.armor.HeliArmorModel;
-//import xyz.przemyk.simpleplanes.upgrades.armor.LargeArmorModel;
-//import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
-//import xyz.przemyk.simpleplanes.upgrades.booster.HeliBoosterModel;
-//import xyz.przemyk.simpleplanes.upgrades.booster.LargeBoosterModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.electric.ElectricEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.electric.HeliElectricEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.electric.LargeElectricEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.furnace.HeliFurnaceEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.furnace.LargeFurnaceEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.liquid.HeliLiquidEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.liquid.LargeLiquidEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.engines.liquid.LiquidEngineModel;
-//import xyz.przemyk.simpleplanes.upgrades.floating.FloatingModel;
-//import xyz.przemyk.simpleplanes.upgrades.floating.HeliFloatingModel;
-//import xyz.przemyk.simpleplanes.upgrades.floating.LargeFloatingModel;
-//import xyz.przemyk.simpleplanes.upgrades.seats.*;
-//import xyz.przemyk.simpleplanes.upgrades.shooter.HeliShooterModel;
-//import xyz.przemyk.simpleplanes.upgrades.shooter.LargeShooterModel;
-//import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterModel;
-//import xyz.przemyk.simpleplanes.upgrades.solarpanel.LargeSolarPanelModel;
-//import xyz.przemyk.simpleplanes.upgrades.solarpanel.SolarPanelModel;
-//
-//@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-//public class PlanesModelLayers {
-//    public static final ModelLayerLocation PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "main");
-//    public static final ModelLayerLocation PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "metal");
-//    public static final ModelLayerLocation PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "propeller");
-//
+package xyz.przemyk.simpleplanes.client;
+
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.resources.ResourceLocation;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
+import xyz.przemyk.simpleplanes.client.render.models.*;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+
+public class PlanesModelLayers {
+    public static final ModelLayerLocation PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "main");
+    public static final ModelLayerLocation PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "metal");
+    public static final ModelLayerLocation PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "propeller");
+
 //    public static final ModelLayerLocation LARGE_PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "main");
 //    public static final ModelLayerLocation LARGE_PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "metal");
 //    public static final ModelLayerLocation LARGE_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "propeller");
@@ -96,12 +63,11 @@
 //    public static final ModelLayerLocation HELI_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "heli");
 //    public static final ModelLayerLocation WOODEN_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "wooden");
 //    public static final ModelLayerLocation WOODEN_HELI_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "wooden_heli");
-//
-//    @SubscribeEvent
-//    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
-//        event.registerLayerDefinition(PLANE_LAYER, PlaneModel::createBodyLayer);
-//        event.registerLayerDefinition(PLANE_METAL_LAYER, PlaneMetalModel::createBodyLayer);
-//        event.registerLayerDefinition(PROPELLER_LAYER, PropellerModel::createBodyLayer);
+
+    public static void registerLayers() {
+        EntityModelLayerRegistry.registerModelLayer(PLANE_LAYER, PlaneModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(PLANE_METAL_LAYER, PlaneMetalModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(PROPELLER_LAYER, PropellerModel::createBodyLayer);
 //
 //        event.registerLayerDefinition(LARGE_PLANE_LAYER, LargePlaneModel::createBodyLayer);
 //        event.registerLayerDefinition(LARGE_PLANE_METAL_LAYER, LargePlaneMetalModel::createBodyLayer);
@@ -152,18 +118,16 @@
 //        event.registerLayerDefinition(HELI_SEATS, HeliSeatsModel::createBodyLayer);
 //        event.registerLayerDefinition(WOODEN_SEATS, WoodenSeatsModel::createBodyLayer);
 //        event.registerLayerDefinition(WOODEN_HELI_SEATS, WoodenHeliSeatsModel::createBodyLayer);
-//    }
-//
-//    @SubscribeEvent
-//    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-//        EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
-//        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PlaneMetalModel(entityModelSet.bakeLayer(PLANE_METAL_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_propeller.png")));
+    }
+
+    public static void registerRenderers() {
+        EntityRendererRegistry.register(SimplePlanesEntities.PLANE, context -> new PlaneRenderer<>(context, new PlaneModel(context.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PlaneMetalModel(context.bakeLayer(PLANE_METAL_LAYER)), new PropellerModel(context.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_propeller.png")));
 //        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new LargePlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new LargePlaneMetalModel(entityModelSet.bakeLayer(LARGE_PLANE_METAL_LAYER)), new LargePropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PROPELLER_LAYER)), 1.0f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/large_plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_large_propeller.png")));
 //        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new HelicopterModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterMetalModel(entityModelSet.bakeLayer(HELICOPTER_METAL_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/helicopter_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_helicopter_propeller.png")));
 //
 //        event.registerEntityRenderer(SimplePlanesEntities.PARACHUTE.get(), context -> new ParachuteRenderer(context, new ParachuteModel(entityModelSet.bakeLayer(PlanesModelLayers.PARACHUTE_LAYER))));
-//    }
-//
+    }
+
 //    @SubscribeEvent
 //    public static void bakeModelLayers(EntityRenderersEvent.AddLayers event) {
 //        EntityModelSet entityModelSet = event.getEntityModels();
@@ -216,4 +180,4 @@
 //        UpgradesModels.WOODEN_HELI_SEATS = new WoodenHeliSeatsModel(entityModelSet.bakeLayer(WOODEN_HELI_SEATS));
 //        UpgradesModels.ARMOR_WINDOW = new ArmorWindowModel(entityModelSet.bakeLayer(ARMOR_WINDOW));
 //    }
-//}
+}
