@@ -1,0 +1,8 @@
+{
+    "parent": "minecraft:block/cube_bottom_top",
+    "textures": {
+        "top": "simpleplanes:block/charging_station_top",
+        "bottom": "simpleplanes:block/charging_station_bottom",
+        "side": "simpleplanes:block/charging_station_side"
+    }
+}

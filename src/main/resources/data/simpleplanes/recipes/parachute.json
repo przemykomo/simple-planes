@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "www",
+        "s s",
+        " s "
+    ],
+    "key": {
+        "w": {
+            "tag": "minecraft:wool"
+        },
+        "s": {
+            "tag": "forge:string"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:parachute"
+    }
+}

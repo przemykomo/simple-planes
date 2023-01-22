@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "III",
+        "CSC",
+        "III"
+    ],
+    "key": {
+        "S": {
+            "tag": "forge:slimeballs"
+        },
+        "C": {
+            "tag": "minecraft:wool"
+        },
+        "I": {
+            "tag": "forge:ingots/iron"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:floaty_bedding"
+    }
+}

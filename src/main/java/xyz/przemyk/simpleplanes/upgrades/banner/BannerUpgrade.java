@@ -1,80 +1,78 @@
-package xyz.przemyk.simpleplanes.upgrades.banner;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import xyz.przemyk.simpleplanes.MathUtil;
-import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-
-
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BannerBlockEntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-
-
-public class BannerUpgrade extends Upgrade {
-    public ItemStack banner;
-    public float rotation, prevRotation;
-
-    public BannerUpgrade(PlaneEntity planeEntity) {
-        super(SimplePlanesUpgrades.BANNER, planeEntity);
-        banner = Items.WHITE_BANNER.getDefaultStack();
-        prevRotation = planeEntity.prevYaw;
-        rotation = planeEntity.prevYaw;
-    }
-
-    @Override
-    public boolean tick() {
-        prevRotation = rotation;
-        rotation = MathUtil.lerpAngle(0.05f, rotation, planeEntity.prevYaw);
-        return super.tick();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag compoundNBT = new CompoundTag();
-        compoundNBT.put("banner", banner.getTag());
-        return compoundNBT;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        final Tag banner = nbt.get("banner");
-        if (banner instanceof CompoundTag)
-            this.banner = ItemStack.fromTag((CompoundTag) banner);
-    }
-
-    @Override
-    public CompoundTag serializeNBTData() {
-        return serializeNBT();
-    }
-
-    @Override
-    public void deserializeNBTData(CompoundTag nbt) {
-        deserializeNBT(nbt);
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, VertexConsumerProvider buffer, int packedLight, float partialticks) {
-        BannerModel.renderBanner(this, partialticks, matrixStack, buffer, banner, packedLight, BannerBlockEntityRenderer.createBanner());
-    }
-
-    @Override
-    public ItemStack getDrop() {
-        return banner;
-    }
-
-    @Override
-    public void onApply(ItemStack itemStack, PlayerEntity playerEntity) {
-        if (itemStack.getItem() instanceof BannerItem) {
-            banner = itemStack.copy();
-            banner.setCount(1);
-            planeEntity.upgradeChanged();
-        }
-    }
-}
+//package xyz.przemyk.simpleplanes.upgrades.banner;
+//
+//import com.mojang.blaze3d.vertex.PoseStack;
+//import net.minecraft.client.renderer.MultiBufferSource;
+//import net.minecraft.nbt.CompoundTag;
+//import net.minecraft.nbt.Tag;
+//import net.minecraft.network.FriendlyByteBuf;
+//import net.minecraft.world.entity.player.Player;
+//import net.minecraft.world.item.BannerItem;
+//import net.minecraft.world.item.ItemStack;
+//import net.minecraft.world.item.Items;
+//import xyz.przemyk.simpleplanes.misc.MathUtil;
+//import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+//import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+//import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+//
+//public class BannerUpgrade extends Upgrade {
+//
+//    public ItemStack banner;
+//    public float rotation, prevRotation;
+//
+//    public BannerUpgrade(PlaneEntity planeEntity) {
+//        super(SimplePlanesUpgrades.BANNER.get(), planeEntity);
+//        banner = Items.WHITE_BANNER.getDefaultInstance();
+//        prevRotation = planeEntity.yRotO;
+//        rotation = planeEntity.yRotO;
+//    }
+//
+//    @Override
+//    public void tick() {
+//        prevRotation = rotation;
+//        rotation = MathUtil.lerpAngle(0.05f, rotation, planeEntity.yRotO);
+//    }
+//
+//    @Override
+//    public CompoundTag serializeNBT() {
+//        CompoundTag compoundNBT = new CompoundTag();
+//        compoundNBT.put("banner", banner.serializeNBT());
+//        return compoundNBT;
+//    }
+//
+//    @Override
+//    public void deserializeNBT(CompoundTag nbt) {
+//        final Tag banner = nbt.get("banner");
+//        if (banner instanceof CompoundTag) {
+//            this.banner = ItemStack.of((CompoundTag) banner);
+//        }
+//    }
+//
+//    @Override
+//    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {
+//        BannerModel.renderBanner(this, partialTicks, matrixStack, buffer, banner, packedLight);
+//    }
+//
+//    @Override
+//    public void onApply(ItemStack itemStack, Player playerEntity) {
+//        if (itemStack.getItem() instanceof BannerItem) {
+//            banner = itemStack.copy();
+//            banner.setCount(1);
+//            updateClient();
+//        }
+//    }
+//
+//    @Override
+//    public void writePacket(FriendlyByteBuf buffer) {
+//        buffer.writeItem(banner);
+//    }
+//
+//    @Override
+//    public void readPacket(FriendlyByteBuf buffer) {
+//        banner = buffer.readItem();
+//    }
+//
+//    @Override
+//    public void onRemoved() {
+//        planeEntity.spawnAtLocation(banner);
+//    }
+//}

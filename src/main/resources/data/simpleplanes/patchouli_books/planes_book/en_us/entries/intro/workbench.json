@@ -1,0 +1,15 @@
+{
+    "name": "Plane Workbench",
+    "icon": "simpleplanes:plane_workbench",
+    "category": "simpleplanes:intro",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "The plane workbench is used to create planes and helicopters."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:plane_workbench"
+        }
+    ]
+}

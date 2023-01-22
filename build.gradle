@@ -1,175 +1,78 @@
 plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
     id 'maven-publish'
 }
-//repositories {
-//    maven {
-//        url = "https://www.cursemaven.com"
-//    }
-//    maven { url 'https://jitpack.io' }
-//
-//}
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
+
 repositories {
-    mavenCentral()
-    mavenLocal()
-    maven {
-        url 'http://maven.fabricmc.net/'
-        name 'Fabric'
-    }
-    maven {
-        name = 'JitPack'
-        url = 'https://jitpack.io'
-    }
-
-    flatDir {
-        dirs 'deps'
-    }
-    maven {
-        name = "Cotton"
-        url = uri("http://server.bbkr.space:8081/artifactory/libs-release")
-    }
-
-    jcenter()
+    // Add repositories to retrieve artifacts from in here.
+    // You should only use this when depending on other mods because
+    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // for more information about repositories.
 }
 
-
-
-
 dependencies {
-    // Minecraft
-    minecraft "com.mojang:minecraft:${minecraft_version}"
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    //mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Yarn
-    mappings "net.fabricmc:yarn:${yarn_mappings}:v2"
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // Fabric Loader
-    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+    // Uncomment the following line to enable the deprecated Fabric API modules.
+    // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
-    // Fabric API
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}") {
-//        exclude(module: "fabric-dimensions")
-        exclude(module: "fabric-biome")
-        exclude(module: "fabric-biome-api-v1")
-        exclude module: "fabric-biome-api-v1"
-        exclude module: "fabric-biome"
-
-    }
-
-    // ClotConfig
-    modApi("me.shedaniel.cloth:config-2:${clothconfig_version}") {
-        exclude module: 'fabric-api'
-    }
-    include("me.shedaniel.cloth:config-2:${clothconfig_version}") {
-        exclude module: 'fabric-api'
-    }
-    modApi("me.shedaniel.cloth.api:cloth-client-events-v0:${cloth_client_events_v0_version}") {
-        transitive(false)
-        exclude module: 'fabric-api'
-    }
-
-    // AutoConfig
-    modApi("me.sargunvohra.mcmods:autoconfig1u:${autoconfig_version}") {
-        exclude module: "net.fabricmc.fabric-api"
-    }
-    include("me.sargunvohra.mcmods:autoconfig1u:${autoconfig_version}") {
-        exclude module: "net.fabricmc.fabric-api"
-    }
-
-    // ModMenu
-    modApi("io.github.prospector:modmenu:${modmenu_version}") {
-    exclude module: "fabric-loader"
-        exclude module: "net.fabricmc.fabric-api"
-        exclude module: 'fabric-api'
-        transitive(false)
-    }
-    // loads faster
-    modRuntime("com.github.SuperCoder7979:databreaker:0.2.6") {
-        exclude module: "fabric-loader"
-        exclude module: "net.fabricmc.fabric-api"
-    }
-    // cotton
-    modImplementation("io.github.cottonmc:LibCD:${libcd}") {
-        exclude module: "Jankson"
-        exclude module: "nbt-crafting"
-    }
-    // libcd
-    modImplementation("io.github.cottonmc:LibCD:${libcd}") {
-        exclude module: "Jankson"
-        exclude module: "nbt-crafting"
-    }
-    include("io.github.cottonmc:LibCD:${libcd}"){
-        exclude module: 'fabric-api'
-    }
-
-
-    compile 'org.jetbrains:annotations:16.0.2'
-    testImplementation 'com.google.code.findbugs:jsr305:3.0.2'
-
-
+    // modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 }
 
 processResources {
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
 }
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+tasks.withType(JavaCompile).configureEach {
+    // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+    it.options.release = 17
 }
 
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
-    from sourceSets.main.allSource
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
 }
 
 jar {
-    from "LICENSE"
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
+    }
 }
 
 // configure the maven publication
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
 
-    // select the repositories you want to publish to
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // uncomment to publish to the local maven
-        // mavenLocal()
-    }
-}
-
-task printClasspath {
-    doLast {
-        print configurations.runtimeClasspath.getFiles().stream().map { it.toString() }.collect(java.util.stream.Collectors.joining(","))
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
     }
 }

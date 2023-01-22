@@ -1,0 +1,11 @@
+{
+    "name": "Adding Upgrades",
+    "icon": "simpleplanes:wrench",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "To add an upgrade, right click while looking at the plane and holding the upgrade in your hand."
+        }
+    ]
+}

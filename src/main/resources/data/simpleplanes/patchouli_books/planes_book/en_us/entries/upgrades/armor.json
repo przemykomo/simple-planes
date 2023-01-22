@@ -1,0 +1,15 @@
+{
+    "name": "Armor",
+    "icon": "simpleplanes:armor",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Armor for aircraft."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:armor"
+        }
+    ]
+}

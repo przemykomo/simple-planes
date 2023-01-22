@@ -1,132 +1,161 @@
-package xyz.przemyk.simpleplanes.entities;
-
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
-import xyz.przemyk.simpleplanes.PlaneMaterial;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
-
-import java.util.List;
-
-public class LargePlaneEntity extends PlaneEntity {
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn) {
-        super(entityTypeIn, worldIn);
-    }
-
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material) {
-        super(entityTypeIn, worldIn, material);
-    }
-
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, World worldIn, PlaneMaterial material, double x, double y, double z) {
-        super(entityTypeIn, worldIn, material, x, y, z);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        List<Entity> list = this.world.getOtherEntities(this, this.getBoundingBox().expand(0.2F, -0.01F, 0.2F), EntityPredicates.canBePushedBy(this));
-        for (Entity entity : list) {
-            if (!this.world.isClient && !(this.getPrimaryPassenger() instanceof PlayerEntity) &&
-                !entity.hasPassenger(this) &&
-                !entity.hasVehicle() && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-                entity.startRiding(this);
-            }
-        }
-    }
-
-    @Override
-    protected float getGroundPitch() {
-        return 10;
-    }
-
-    @Override
-    protected boolean canAddPassenger(Entity passenger) {
-        if (getPassengerList().size() > 1 || passenger.getVehicle() == this) {
-            return false;
-        }
-        if (passenger instanceof PlaneEntity) {
-            return false;
-        }
-
-        if (getPassengerList().size() == 1) {
-            for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade.getType().occupyBackSeat) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public void updatePassengerPosition(Entity passenger) {
-        List<Entity> passengers = getPassengerList();
-        if (passengers.size() > 1) {
-            super.updatePassengerPosition(passenger);
-            if (passengers.indexOf(passenger) != 0) {
-                updatePassengerTwo(passenger);
-            }
-        } else {
-            super.updatePassengerPosition(passenger);
-        }
-    }
-
-    public void updatePassengerTwo(Entity passenger) {
-        Vector3f pos = transformPos(getPassengerTwoPos(passenger));
-        passenger.updatePosition(this.getX() + pos.getX(), this.getY() + pos.getY(), this.getZ() + pos.getZ());
-    }
-
-    protected Vector3f getPassengerTwoPos(Entity passenger) {
-        return new Vector3f(0, (float) (super.getMountedHeightOffset() + passenger.getHeightOffset()), -1);
-    }
-
-    @Override
-    protected Item getItem() {
-        return Registry.ITEM.get(new Identifier(SimplePlanesMod.MODID, getMaterial().name + "_large_plane"));
-    }
-
-    @Override
-    public double getCameraDistanceMultiplayer() {
-        return 1.2;
-    }
-
-    @Override
-    protected void spawnSmokeParticles(int fuel) {
-        spawnParticle(ParticleTypes.SMOKE, new Vector3f(0, 0.8f, -2), 0);
-        if (fuel > 4 && fuel < 100) {
-            spawnParticle(ParticleTypes.LARGE_SMOKE, new Vector3f(0, 0.8f, -2), 5);
-        }
-    }
-
-    @Override
-    public boolean canAddUpgrade(UpgradeType upgradeType) {
-        if (upgradeType.occupyBackSeat) {
-            if (getPassengerList().size() > 1) {
-                return false;
-            }
-            for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade.getType().occupyBackSeat) {
-                    return false;
-                }
-            }
-        }
-        return !upgrades.containsKey(upgradeType.getRegistryName()) && upgradeType.isPlaneApplicable(this);
-    }
-
-    @Override
-    public boolean isLarge() {
-        return true;
-    }
-}
+//package xyz.przemyk.simpleplanes.entities;
+//
+//import com.mojang.math.Vector3f;
+//import net.minecraft.world.entity.Entity;
+//import net.minecraft.world.entity.EntitySelector;
+//import net.minecraft.world.entity.EntityType;
+//import net.minecraft.world.entity.LivingEntity;
+//import net.minecraft.world.entity.npc.Villager;
+//import net.minecraft.world.entity.player.Player;
+//import net.minecraft.world.item.Item;
+//import net.minecraft.world.item.ItemStack;
+//import net.minecraft.world.level.Level;
+//import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
+//import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
+//import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
+//import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+//import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+//import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
+//import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+//import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+//import xyz.przemyk.simpleplanes.upgrades.payload.PayloadUpgrade;
+//
+//import java.util.List;
+//import java.util.Optional;
+//
+//public class LargePlaneEntity extends PlaneEntity {
+//
+//    public boolean hasLargeUpgrade = false;
+//
+//    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, Level worldIn) {
+//        super(entityTypeIn, worldIn);
+//    }
+//
+//    @Override
+//    public void tick() {
+//        super.tick();
+//
+//        List<Entity> list = level.getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
+//        for (Entity entity : list) {
+//            if (!level.isClientSide && !(getControllingPassenger() instanceof Player) &&
+//                !entity.hasPassenger(this) &&
+//                !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof Player)) {
+//                entity.startRiding(this);
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public boolean tryToAddUpgrade(Player playerEntity, ItemStack itemStack) {
+//        if (super.tryToAddUpgrade(playerEntity, itemStack)) {
+//            return true;
+//        }
+//        if (!hasLargeUpgrade && getPassengers().size() < 2) {
+//            Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getLargeUpgradeFromItem(itemStack.getItem());
+//            if (upgradeTypeOptional.map(upgradeType -> {
+//                if (canAddUpgrade(upgradeType)) {
+//                    Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
+//                    addUpgrade(playerEntity, itemStack, upgrade);
+//                    return true;
+//                }
+//                return false;
+//            }).orElse(false)) {
+//                return true;
+//            }
+//            PayloadEntry payloadEntry = PlanePayloadReloadListener.payloadEntries.get(itemStack.getItem());
+//            if (payloadEntry != null) {
+//                addUpgrade(playerEntity, itemStack, new PayloadUpgrade(this, payloadEntry));
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
+//
+//    @Override
+//    protected float getGroundPitch() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public int getFuelCost() {
+//        return SimplePlanesConfig.LARGE_PLANE_FUEL_COST.get();
+//    }
+//
+//    @Override
+//    protected boolean canAddPassenger(Entity passenger) {
+//        List<Entity> passengers = getPassengers();
+//        if (passenger.getVehicle() == this || passenger instanceof PlaneEntity) {
+//            return false;
+//        }
+//        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+//            return passengers.size() <= 1 && (passengers.size() == 0 || !hasLargeUpgrade);
+//        } else {
+//            return hasLargeUpgrade ? passengers.size() < 3 : passengers.size() < 4;
+//        }
+//    }
+//
+//    @Override
+//    public void positionRider(Entity passenger) {
+//        positionRiderGeneric(passenger);
+//        int index = getPassengers().indexOf(passenger);
+//
+//        if (index == 0) {
+////            passenger.setPos(passenger.getX(), getY() + getPassengersRidingOffset() + getEntityYOffset(passenger), passenger.getZ());
+//            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 1));
+//            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+//        } else {
+//            if (hasLargeUpgrade) {
+//                index++;
+//            }
+//            switch (index) {
+//                case 1 -> {
+//                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), 0));
+//                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+//                }
+//                case 2 -> {
+//                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -1));
+//                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+//                }
+//                case 3 -> {
+//                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -1.8f));
+//                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+//                }
+//            }
+//        }
+//    }
+//
+//    public double getEntityYOffset(Entity passenger) {
+//        if (passenger instanceof Villager) {
+//            return ((Villager) passenger).isBaby() ? -0.1 : -0.3D;
+//        }
+//        return passenger.getMyRidingOffset();
+//    }
+//
+//    @Override
+//    public double getCameraDistanceMultiplayer() {
+//        return SimplePlanesConfig.LARGE_PLANE_CAMERA_DISTANCE_MULTIPLIER.get();
+//    }
+//
+//    @Override
+//    protected Item getItem() {
+//        return SimplePlanesItems.LARGE_PLANE_ITEM.get();
+//    }
+//
+//    public boolean hasStorageUpgrade() {
+//        if (hasLargeUpgrade) {
+//            for (Upgrade upgrade : upgrades.values()) {
+//                if (upgrade instanceof LargeUpgrade largeUpgrade) {
+//                    return largeUpgrade.hasStorage();
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
+//
+//    @Override
+//    protected float getRotationSpeedMultiplier() {
+//        return 0.5f;
+//    }
+//}

@@ -1,46 +1,41 @@
 {
-  "schemaVersion": 1,
-  "id": "simpleplanes",
-  "version": "${version}",
+    "schemaVersion": 1,
+    "id": "simpleplanes",
+    "version": "${version}",
 
-  "name": "simpleplanes",
-  "description": "Adds flying planes.",
-  "authors": [
-    "przemyk",
-    "adoxentor"
-  ],
-  "contact": {
-    "homepage": "https://przemyk.xyz/mods/simple-planes/index.html",
-    "sources": "https://github.com/przemykomo/simple-planes",
-    "issues": "https://github.com/przemykomo/simple-planes/issues"
-  },
-  "license": "GNU General Public License",
-  "icon": "assets/simpleplanes/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "xyz.przemyk.simpleplanes.SimplePlanesMod"
+    "name": "Example Mod",
+    "description": "This is an example description! Tell everyone what your mod is about!",
+    "authors": [
+        "Me!"
     ],
-    "client": [
-      "xyz.przemyk.simpleplanes.ModEntryClient"
+    "contact": {
+        "homepage": "https://fabricmc.net/",
+        "sources": "https://github.com/FabricMC/fabric-example-mod"
+    },
+
+    "license": "CC0-1.0",
+    "icon": "assets/modid/icon.png",
+
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "xyz.przemyk.simpleplanes.SimplePlanesMod"
+        ],
+        "client": [
+            "xyz.przemyk.simpleplanes.client.ClientEventHandler"
+        ]
+    },
+    "mixins": [
+        "modid.mixins.json"
     ],
-    "server": [
-    ],
-    "modmenu": [
-      "xyz.przemyk.simpleplanes.integration.ModMenuIntegration"
-    ],
-    "mm:early_risers": [
-    ]
-  },
-  "mixins": [
-    "simpleplanes.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": ">=1.16.3"
-  },
-  "suggests": {
-    "flamingo": "*"
-  }
+
+    "depends": {
+        "fabricloader": ">=0.14.6",
+        "fabric": "*",
+        "minecraft": "~1.19",
+        "java": ">=17"
+    },
+    "suggests": {
+        "another-mod": "*"
+    }
 }

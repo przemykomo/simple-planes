@@ -1,0 +1,15 @@
+{
+    "name": "Supply Crate",
+    "icon": "simpleplanes:supply_crate",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Can be filled like a chest and then dropped by using the $(k:plane_drop_payload.desc) key."
+        },
+        {
+          "type": "patchouli:crafting",
+          "recipe": "simpleplanes:supply_crate"
+        }
+    ]
+}

@@ -1,18 +1,19 @@
-package xyz.przemyk.simpleplanes.setup;
-
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
-
-public class SimplePlanesSounds {
-
-    public static SoundEvent PLANE_LOOP;
-
-    public static void init(){
-        Identifier plane_Loop_id = new Identifier(SimplePlanesMod.MODID, "plane_loop");
-        SoundEvent plane_loop = new SoundEvent(plane_Loop_id);
-        PLANE_LOOP = Registry.register(Registry.SOUND_EVENT, plane_Loop_id, plane_loop);
-
-    }
-}
+//package xyz.przemyk.simpleplanes.setup;
+//
+//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.sounds.SoundEvent;
+//import net.minecraftforge.registries.RegistryObject;
+//import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+//import net.minecraftforge.registries.DeferredRegister;
+//import net.minecraftforge.registries.ForgeRegistries;
+//import xyz.przemyk.simpleplanes.SimplePlanesMod;
+//
+//public class SimplePlanesSounds {
+//    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, SimplePlanesMod.MODID);
+//
+//    public static void init() {
+//        SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+//    }
+//
+//    public static final RegistryObject<SoundEvent> PLANE_LOOP_SOUND_EVENT = SOUND_EVENTS.register("plane_loop", () -> new SoundEvent(new ResourceLocation(SimplePlanesMod.MODID, "plane_loop")));
+//}

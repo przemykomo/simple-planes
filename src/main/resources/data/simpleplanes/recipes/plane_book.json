@@ -1,0 +1,30 @@
+{
+    "type": "forge:conditional",
+    "recipes": [
+        {
+            "conditions": [
+                {
+                    "type": "forge:mod_loaded",
+                    "modid": "patchouli"
+                }
+            ],
+            "recipe": {
+                "type": "minecraft:crafting_shapeless",
+                "ingredients": [
+                    {
+                        "item": "minecraft:book"
+                    },
+                    {
+                        "tag": "minecraft:planks"
+                    }
+                ],
+                "result": {
+                    "item": "patchouli:guide_book",
+                    "nbt": {
+                        "patchouli:book": "simpleplanes:planes_book"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "###",
+        "/G/",
+        "R#R"
+    ],
+    "key": {
+        "#": {
+            "tag": "forge:ingots/copper"
+        },
+        "/": {
+            "tag": "forge:rods/blaze"
+        },
+        "G": {
+            "item": "simpleplanes:propeller"
+        },
+        "R": {
+            "tag": "forge:storage_blocks/redstone"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:electric_engine"
+    }
+}

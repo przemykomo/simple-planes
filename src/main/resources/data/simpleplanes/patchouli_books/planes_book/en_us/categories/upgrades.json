@@ -1,0 +1,6 @@
+{
+    "name": "Upgrades",
+    "description": "There are several upgrades which you can put on a plane/helicopter by right clicking.",
+    "icon": "simpleplanes:booster",
+    "sortnum": 2
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Seats",
+    "icon": "simpleplanes:seats",
+    "category": "simpleplanes:upgrades",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Provides room for more passengers."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:seats"
+        }
+    ]
+}

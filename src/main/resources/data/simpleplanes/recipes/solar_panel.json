@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "GGG",
+        "QDQ",
+        "WWW"
+    ],
+    "key": {
+        "Q": {
+            "tag": "forge:gems/quartz"
+        },
+        "G": {
+            "tag": "forge:glass/colorless"
+        },
+        "W": {
+            "tag": "forge:gems/lapis"
+        },
+        "D": {
+            "item": "minecraft:daylight_detector"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:solar_panel",
+        "count": 1
+    }
+}

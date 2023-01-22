@@ -1,49 +1,46 @@
-package xyz.przemyk.simpleplanes.setup;
-
-import net.minecraft.entity.data.TrackedDataHandler;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.math.Quaternion;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import net.minecraft.util.registry.Registry;
-
-@SuppressWarnings("unused")
-public class SimplePlanesDataSerializers {
-//    private static final DeferredRegister<> DATA_SERIALIZERS = DeferredRegister
-//        .create(ForgeRegistries.DATA_SERIALIZERS, SimplePlanesMod.MODID);
+//package xyz.przemyk.simpleplanes.setup;
 //
-    public static void init() {
-        TrackedDataHandlerRegistry.register(QUATERNION_SERIALIZER);
-    }
-
-    public static final TrackedDataHandler<Quaternion> QUATERNION_SERIALIZER = new TrackedDataHandler<Quaternion>() {
-
-        @Override
-        public void write(PacketByteBuf buf, Quaternion q) {
-            buf.writeFloat(q.getX());
-            buf.writeFloat(q.getY());
-            buf.writeFloat(q.getZ());
-            buf.writeFloat(q.getW());
-        }
-
-        @Override
-        public Quaternion read(PacketByteBuf buf) {
-            try {
-                return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
-            } catch (IndexOutOfBoundsException e) {
-                // This function would throw anyway, might as well wrap the error with more relevant info
-                throw new RuntimeException("packet buffer does not contain enough data to construct plane's Quaternion", e);
-            }
-        }
-
-        @Override
-        public Quaternion copy(Quaternion q) {
-            return new Quaternion(q);
-        }
-    };
-
-//    public static final RegistryObject<DataSerializerEntry> QUAT_SERIALIZER = DATA_SERIALIZERS
-//        .register("quaternion", () -> new DataSerializerEntry(QUATERNION_SERIALIZER));
-
-
-}
+//import net.minecraft.network.FriendlyByteBuf;
+//import net.minecraft.network.syncher.EntityDataSerializer;
+//import com.mojang.math.Quaternion;
+//import net.minecraftforge.registries.RegistryObject;
+//import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+//import net.minecraftforge.registries.DeferredRegister;
+//import net.minecraftforge.registries.ForgeRegistries;
+//import xyz.przemyk.simpleplanes.SimplePlanesMod;
+//
+//@SuppressWarnings("unused")
+//public class SimplePlanesDataSerializers {
+//    public static final DeferredRegister<EntityDataSerializer<?>> DATA_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, SimplePlanesMod.MODID);
+//
+//    public static void init() {
+//        DATA_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+//    }
+//
+//    public static final RegistryObject<EntityDataSerializer<Quaternion>> QUATERNION_SERIALIZER_ENTRY = DATA_SERIALIZERS
+//        .register("quaternion", () -> new EntityDataSerializer<>() {
+//
+//            @Override
+//            public void write(FriendlyByteBuf buf, Quaternion q) {
+//                buf.writeFloat(q.i());
+//                buf.writeFloat(q.j());
+//                buf.writeFloat(q.k());
+//                buf.writeFloat(q.r());
+//            }
+//
+//            @Override
+//            public Quaternion read(FriendlyByteBuf buf) {
+//                try {
+//                    return new Quaternion(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
+//                } catch (IndexOutOfBoundsException e) {
+//                    // This function would throw anyway, might as well wrap the error with more relevant info
+//                    throw new RuntimeException("packet buffer does not contain enough data to construct plane's Quaternion", e);
+//                }
+//            }
+//
+//            @Override
+//            public Quaternion copy(Quaternion q) {
+//                return new Quaternion(q);
+//            }
+//        });
+//}

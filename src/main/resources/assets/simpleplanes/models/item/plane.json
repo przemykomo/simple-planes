@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "simpleplanes:item/plane",
+        "layer1": "simpleplanes:item/plane_overlay"
+    }
+}

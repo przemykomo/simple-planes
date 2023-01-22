@@ -1,0 +1,16 @@
+{
+    "name": "Quick Fix Kit",
+    "icon": "simpleplanes:healing",
+    "category": "simpleplanes:misc",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "Use it to quickly fix the plane."
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "simpleplanes:healing",
+            "recipe2": "simpleplanes:healing_enchanted"
+        }
+    ]
+}

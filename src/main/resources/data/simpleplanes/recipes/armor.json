@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "i i",
+        "bib",
+        "ibi"
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "b": {
+            "item": "minecraft:iron_block"
+        }
+    },
+    "result": {
+        "item": "simpleplanes:armor",
+        "count": 1
+    }
+}

@@ -1,65 +1,53 @@
-package xyz.przemyk.simpleplanes.upgrades.floating;// Made with Blockbench 3.5.2
-// Exported for Minecraft version 1.15
-// Paste this class into your mod and generate all required imports
-
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.util.math.MatrixStack;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
-
-@SuppressWarnings("FieldCanBeLocal")
-public class LargeFloatingModel extends EntityModel<LargePlaneEntity> {
-    public static final LargeFloatingModel INSTANCE = new LargeFloatingModel();
-
-    private final ModelPart Body;
-    private final ModelPart balloon;
-    private final ModelPart wing_left;
-    private final ModelPart wing_left2;
-
-    public LargeFloatingModel() {
-        textureWidth = 256;
-        textureHeight = 256;
-
-        Body = new ModelPart(this);
-        Body.setPivot(0.0F, 17.0F, 0.0F);
-        setRotationAngle(Body, 0.0F, 0.0F, 0.0F);
-
-        balloon = new ModelPart(this);
-        balloon.setPivot(0.0F, 0.0F, 0.0F);
-        Body.addChild(balloon);
-        balloon.setTextureOffset(0, 0).addCuboid(-8.0F, 0.0F, -17.0F, 16.0F, 1.0F, 54.0F, 0.0F, false);
-        balloon.setTextureOffset(0, 3).addCuboid(-9.0F, -1.0F, 37.0F, 18.0F, 2.0F, 1.0F, 0.0F, false);
-        balloon.setTextureOffset(0, 0).addCuboid(-9.0F, -1.0F, -18.0F, 18.0F, 2.0F, 1.0F, 0.0F, false);
-        balloon.setTextureOffset(56, 57).addCuboid(8.0F, -1.0F, -17.0F, 1.0F, 2.0F, 54.0F, 0.0F, false);
-        balloon.setTextureOffset(0, 55).addCuboid(-9.0F, -1.0F, -17.0F, 1.0F, 2.0F, 54.0F, 0.0F, false);
-
-        wing_left = new ModelPart(this);
-        wing_left.setPivot(0.0F, 0.0F, 0.0F);
-        balloon.addChild(wing_left);
-        setRotationAngle(wing_left, 0.0F, 0.0F, -0.0873F);
-        wing_left.setTextureOffset(86, 10).addCuboid(9.0F, 0.0F, -15.0F, 30.0F, 1.0F, 9.0F, 0.0F, false);
-
-        wing_left2 = new ModelPart(this);
-        wing_left2.setPivot(0.0F, 0.0F, 0.0F);
-        balloon.addChild(wing_left2);
-        setRotationAngle(wing_left2, 0.0F, 0.0F, 0.0873F);
-        wing_left2.setTextureOffset(86, 0).addCuboid(-39.0F, 0.0F, -15.0F, 30.0F, 1.0F, 9.0F, 0.0F, false);
-    }
-
-    @Override
-    public void setAngles(LargePlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        //previously the render function, render code was moved to a method below
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        Body.render(matrixStack, buffer, packedLight, packedOverlay);
-    }
-
-    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
-        modelRenderer.pitch = x;
-        modelRenderer.yaw = y;
-        modelRenderer.roll = z;
-    }
-}
+//package xyz.przemyk.simpleplanes.upgrades.floating;
+//
+//import com.mojang.blaze3d.vertex.PoseStack;
+//import com.mojang.blaze3d.vertex.VertexConsumer;
+//import net.minecraft.client.model.EntityModel;
+//import net.minecraft.client.model.geom.ModelPart;
+//import net.minecraft.client.model.geom.PartPose;
+//import net.minecraft.client.model.geom.builders.*;
+//import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+//
+//public class LargeFloatingModel extends EntityModel<PlaneEntity> {
+//
+//    private final ModelPart Pontoon;
+//
+//    public static LayerDefinition createBodyLayer() {
+//        MeshDefinition meshdefinition = new MeshDefinition();
+//        PartDefinition partdefinition = meshdefinition.getRoot();
+//
+//        PartDefinition Pontoon = partdefinition.addOrReplaceChild("Pontoon", CubeListBuilder.create().texOffs(0, 73).addBox(17.0F, -6.8F, -2.0F, 8.0F, 10.0F, 63.0F, new CubeDeformation(0.0F))
+//                .texOffs(0, 21).addBox(17.0F, -3.8F, 61.0F, 8.0F, 3.0F, 18.0F, new CubeDeformation(-0.02F))
+//                .texOffs(124, 4).addBox(17.0F, -6.8F, 60.2F, 8.0F, 3.0F, 29.0F, new CubeDeformation(0.001F))
+//                .texOffs(0, 0).addBox(-25.0F, -6.8F, -2.0F, 8.0F, 10.0F, 63.0F, new CubeDeformation(0.0F))
+//                .texOffs(113, 117).addBox(-25.0F, -6.8F, 60.2F, 8.0F, 3.0F, 29.0F, new CubeDeformation(0.001F))
+//                .texOffs(0, 0).addBox(-25.0F, -3.8F, 61.0F, 8.0F, 3.0F, 18.0F, new CubeDeformation(-0.02F)), PartPose.offset(0.0F, 26.0F, 0.0F));
+//
+//        PartDefinition cube_r1 = Pontoon.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, 1.0F, -2.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F))
+//                .texOffs(8, 0).addBox(-39.0F, 1.0F, -2.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(19.0F, -17.0F, 33.0F, 0.2007F, 0.0F, 0.0F));
+//
+//        PartDefinition octagon_r1 = Pontoon.addOrReplaceChild("octagon_r1", CubeListBuilder.create().texOffs(0, 42).addBox(-1.0F, -1.0F, -17.0F, 2.0F, 2.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-19.95F, -1.536F, 11.0F, 0.0F, -1.5708F, -0.3927F));
+//
+//        PartDefinition octagon_r2 = Pontoon.addOrReplaceChild("octagon_r2", CubeListBuilder.create().texOffs(0, 73).addBox(-1.0F, -1.0F, -17.0F, 2.0F, 2.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(19.95F, -1.536F, 11.0F, 0.0F, 1.5708F, 0.3927F));
+//
+//        PartDefinition cube_r2 = Pontoon.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(79, 0).addBox(-25.0F, -4.0F, -19.0F, 8.0F, 4.0F, 29.0F, new CubeDeformation(-0.01F))
+//                .texOffs(79, 73).addBox(17.0F, -4.0F, -19.0F, 8.0F, 4.0F, 29.0F, new CubeDeformation(-0.01F)), PartPose.offsetAndRotation(0.0F, 0.0641F, 79.7394F, 0.1658F, 0.0F, 0.0F));
+//
+//        PartDefinition cube_r3 = Pontoon.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(22, 42).addBox(-4.0F, -3.0F, -4.0F, 8.0F, 7.0F, 7.0F, new CubeDeformation(0.01F))
+//                .texOffs(22, 73).addBox(38.0F, -3.0F, -4.0F, 8.0F, 7.0F, 7.0F, new CubeDeformation(0.01F)), PartPose.offsetAndRotation(-21.0F, -2.5F, -2.0F, 0.7854F, 0.0F, 0.0F));
+//
+//        return LayerDefinition.create(meshdefinition, 256, 256);
+//    }
+//
+//    public LargeFloatingModel(ModelPart root) {
+//        this.Pontoon = root.getChild("Pontoon");
+//    }
+//
+//    @Override
+//    public void setupAnim(PlaneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+//
+//    @Override
+//    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+//        Pontoon.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+//    }
+//}

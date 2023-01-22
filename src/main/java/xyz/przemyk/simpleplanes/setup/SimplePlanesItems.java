@@ -1,81 +1,57 @@
 package xyz.przemyk.simpleplanes.setup;
 
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.*;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
-import xyz.przemyk.simpleplanes.entities.MegaPlaneEntity;
-import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.items.InformationItem;
-import xyz.przemyk.simpleplanes.items.PlaneItem;
-import xyz.przemyk.simpleplanes.upgrades.cloud.CloudBlock;
+import xyz.przemyk.simpleplanes.items.DescriptionItem;
 
-import static xyz.przemyk.simpleplanes.SimplePlanesMod.MODID;
-
-//@ObjectHolder(SimplePlanesMod.MODID)
 @SuppressWarnings("unused")
 public class SimplePlanesItems {
 
-
     public static void init() {
-        for (String name :
-            SimplePlanesMaterials.MATERIALS) {
-            String s = name.split("_")[0];
-            Item.Settings group;
-            if (SimplePlanesMod.CONFIG.getConfig().DISABLED_MODS.contains(s)) {
-                group = new Item.Settings();
-            } else {
-                group = new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP);
-            }
-            register(name + "_plane", new PlaneItem(group, world -> new PlaneEntity(SimplePlanesEntities.PLANE, world, SimplePlanesMaterials.getMaterial(name))));
-            register(name + "_large_plane", new PlaneItem(group, world -> new LargePlaneEntity(SimplePlanesEntities.LARGE_PLANE, world, SimplePlanesMaterials.getMaterial(name))));
-            register(name + "_helicopter", new PlaneItem(group, world -> new HelicopterEntity(SimplePlanesEntities.HELICOPTER, world, SimplePlanesMaterials.getMaterial(name))));
-            register(name + "_mega_plane", new PlaneItem(group, world -> new MegaPlaneEntity(SimplePlanesEntities.MEGA_PLANE, world, SimplePlanesMaterials.getMaterial(name))));
-        }
+//        register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final ItemGroup SIMPLE_PLANES_ITEM_GROUP = FabricItemGroupBuilder.build(
-        new Identifier(MODID, "general"),
-        () -> new ItemStack(Registry.ITEM.get(new Identifier(MODID, "oak_plane"))));
+    public static final CreativeModeTab ITEM_GROUP = FabricItemGroupBuilder.build(new ResourceLocation(SimplePlanesMod.MODID, "item_tab"), () -> new ItemStack(Items.APPLE));
 
-    public static final Item PROPELLER = register("propeller", new Item(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP)));
-    public static final Item FURNACE_ENGINE = register("furnace_engine", new Item(new Item.Settings().group(SIMPLE_PLANES_ITEM_GROUP)));
+//    public static List<PlaneItem> getPlaneItems() {
+//        ArrayList<PlaneItem> planeItems = new ArrayList<>(3);
+////        planeItems.add(PLANE_ITEM);
+////        planeItems.add(LARGE_PLANE_ITEM);
+////        planeItems.add(HELICOPTER_ITEM);
+//        return planeItems;
+//    }
 
-    public static final Item SPRAYER = register("sprayer", new InformationItem(new TranslatableText("description.simpleplanes.sprayer")));
-    public static final Item BOOSTER = register("booster", new InformationItem(new TranslatableText("description.simpleplanes.booster")));
-    public static final Item FLOATY_BEDDING = register("floaty_bedding", new InformationItem(new TranslatableText("description.simpleplanes.floaty_bedding")));
-    public static final Item SHOOTER = register("shooter", new InformationItem(new TranslatableText("description.simpleplanes.shooter")));
-    public static final Item FOLDING = register("folding", new InformationItem(new TranslatableText("description.simpleplanes.folding")));
-    public static final Item HEALING = register("healing", new InformationItem(new TranslatableText("description.simpleplanes.healing")));
-    public static final Item CLOUD = register("cloud", new InformationItem(new TranslatableText("description.simpleplanes.cloud")) {
-        @Override
-        public TypedActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
-            ItemStack itemstack = playerIn.getStackInHand(handIn);
-            playerIn.setCurrentHand(handIn);
-            CloudBlock.placeCloud(playerIn.getBlockPos(), worldIn);
-            return TypedActionResult.consume(itemstack);
-        }
+    public static final Item PROPELLER = register("propeller", new Item(new Item.Properties().tab(ITEM_GROUP)));
 
-        @Override
-        public ActionResult useOnBlock(ItemUsageContext context) {
-            CloudBlock.placeCloud(context.getBlockPos(), context.getWorld());
-            return ActionResult.CONSUME;
-        }
-    });
-//    public static final Item CHARGER_BLOCK = register("charger_block", new BlockItem(SimplePlanesBlocks.CHARGER_BLOCK, (new Item.Settings()).group(SIMPLE_PLANES_ITEM_GROUP)));
-//    public static final Item FUELING_BLOCK = register("fueling_block", new BlockItem(SimplePlanesBlocks.FUELING_BLOCK, (new Item.Settings()).group(SIMPLE_PLANES_ITEM_GROUP)));
+    public static final Item FLOATY_BEDDING = register("floaty_bedding", new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final Item BOOSTER = register("booster", new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final Item HEALING = register("healing", new Item(new Item.Properties().tab(ITEM_GROUP)));
+//    public static final Item ARMOR = register("armor", new PlaneArmorItem(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
+    public static final Item SOLAR_PANEL = register("solar_panel", new Item(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
+    public static final Item FOLDING = register("folding", new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final Item SUPPLY_CRATE = register("supply_crate", new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final Item SEATS = register("seats", new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final Item SHOOTER = register("shooter", new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), Component.translatable(SimplePlanesMod.MODID + ".shooter_desc", Component.keybind("key.plane_inventory_open.desc"), Component.keybind("key.attack"))));
 
-    private static Item register(String id, Item item) {
-        return Registry.register(Registry.ITEM, new Identifier(MODID, id), item);
+    public static final Item ELECTRIC_ENGINE = register("electric_engine", new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
+    public static final Item FURNACE_ENGINE = register("furnace_engine", new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
+    public static final Item LIQUID_ENGINE = register("liquid_engine", new DescriptionItem(new Item.Properties().tab(ITEM_GROUP), Component.translatable(SimplePlanesMod.MODID + ".press_key", Component.keybind("key.plane_inventory_open.desc"))));
+
+    public static final Item WRENCH = register("wrench", new Item(new Item.Properties().tab(ITEM_GROUP)));
+    public static final BlockItem PLANE_WORKBENCH = register("plane_workbench", new BlockItem(SimplePlanesBlocks.PLANE_WORKBENCH_BLOCK, new Item.Properties().tab(ITEM_GROUP)));
+    public static final BlockItem CHARGING_STATION = register("charging_station", new BlockItem(SimplePlanesBlocks.CHARGING_STATION_BLOCK, new Item.Properties().tab(ITEM_GROUP)));
+
+//    public static final PlaneItem PLANE_ITEM = register("plane", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.PLANE));
+//    public static final PlaneItem LARGE_PLANE_ITEM = register("large_plane", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
+//    public static final PlaneItem HELICOPTER_ITEM = register("helicopter", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.HELICOPTER));
+//
+//    public static final ParachuteItem PARACHUTE_ITEM = register("parachute", new ParachuteItem(new Item.Properties().tab(ITEM_GROUP)));
+
+    private static <T extends Item> T register(String id, T item) {
+        return Registry.register(Registry.ITEM, new ResourceLocation(SimplePlanesMod.MODID, id), item);
     }
-
 }
