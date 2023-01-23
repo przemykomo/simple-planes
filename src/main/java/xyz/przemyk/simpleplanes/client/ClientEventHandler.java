@@ -12,19 +12,23 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
+import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
@@ -264,46 +268,43 @@ public class ClientEventHandler implements ClientModInitializer {
     }
 //
 //    //TODO: make it so player rotation variables correspond to what he is actually looking at, so that guns etc. shoot in the right direction
-//    @SubscribeEvent(priority = EventPriority.LOWEST)
-//    public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
-//        Camera camera = event.getCamera();
-//        Entity player = camera.getEntity();
-//        if (player.getVehicle() instanceof PlaneEntity planeEntity) {
-//            if (camera.isDetached()) {
-//                camera.move(-camera.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
-//            } else {
-//                float heightDiff = 0;
-//                if (planeEntity instanceof LargePlaneEntity) {
-//                    heightDiff = -0.1f;
-//                }
-//
-//                double partialTicks = event.getPartialTick();
-//
-//                Quaternion qPrev = planeEntity.getQ_Prev();
-//                Quaternion qNow = planeEntity.getQ_Client();
-//
-//                Vector3f eyePrev = new Vector3f(0, Player.DEFAULT_EYE_HEIGHT + heightDiff, 0);
-//                Vector3f eyeNow = eyePrev.copy();
-//                eyePrev.transform(qPrev);
-//                eyeNow.transform(qNow);
-//                camera.setPosition(new Vec3(Mth.lerp(partialTicks, player.xo - eyePrev.x(), player.getX() - eyeNow.x()),
-//                        Mth.lerp(partialTicks, player.yo + eyePrev.y(), player.getY() + eyeNow.y()) + 0.375,
-//                        Mth.lerp(partialTicks, player.zo + eyePrev.z(), player.getZ() + eyeNow.z())));
-//
-//                qPrev.mul(Vector3f.YP.rotationDegrees(player.yRotO));
-//                qPrev.mul(Vector3f.XP.rotationDegrees(event.getPitch()));
-//                MathUtil.EulerAngles eulerAnglesPrev = MathUtil.toEulerAngles(qPrev);
-//
-//                qNow.mul(Vector3f.YP.rotationDegrees(player.getYRot()));
-//                qNow.mul(Vector3f.XP.rotationDegrees(event.getPitch()));
-//                MathUtil.EulerAngles eulerAnglesNow = MathUtil.toEulerAngles(qNow);
-//
-//                event.setPitch(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.pitch, eulerAnglesNow.pitch));
-//                event.setYaw((float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.yaw, eulerAnglesNow.yaw));
-//                event.setRoll(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.roll, eulerAnglesNow.roll));
-//            }
-//        }
-//    }
+
+    public static void onCameraSetup(Camera camera, float partialTicks, PoseStack poseStack) {
+        Entity player = camera.getEntity();
+        if (player.getVehicle() instanceof PlaneEntity planeEntity) {
+            if (camera.isDetached()) {
+                camera.move(-camera.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
+            } else {
+                float heightDiff = 0;
+                if (planeEntity instanceof LargePlaneEntity) {
+                    heightDiff = -0.1f;
+                }
+
+                Quaternion qPrev = planeEntity.getQ_Prev();
+                Quaternion qNow = planeEntity.getQ_Client();
+
+                Vector3f eyePrev = new Vector3f(0, Player.DEFAULT_EYE_HEIGHT + heightDiff, 0);
+                Vector3f eyeNow = eyePrev.copy();
+                eyePrev.transform(qPrev);
+                eyeNow.transform(qNow);
+                camera.setPosition(new Vec3(Mth.lerp(partialTicks, player.xo - eyePrev.x(), player.getX() - eyeNow.x()),
+                        Mth.lerp(partialTicks, player.yo + eyePrev.y(), player.getY() + eyeNow.y()) + 0.375,
+                        Mth.lerp(partialTicks, player.zo + eyePrev.z(), player.getZ() + eyeNow.z())));
+
+                qPrev.mul(Vector3f.YP.rotationDegrees(player.yRotO));
+                qPrev.mul(Vector3f.XP.rotationDegrees(camera.getXRot()));
+                MathUtil.EulerAngles eulerAnglesPrev = MathUtil.toEulerAngles(qPrev);
+
+                qNow.mul(Vector3f.YP.rotationDegrees(player.getYRot()));
+                qNow.mul(Vector3f.XP.rotationDegrees(camera.getXRot()));
+                MathUtil.EulerAngles eulerAnglesNow = MathUtil.toEulerAngles(qNow);
+
+                camera.yRot = (float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.yaw, eulerAnglesNow.yaw);
+                camera.xRot = -(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.pitch, eulerAnglesNow.pitch);
+                poseStack.mulPose(Vector3f.ZP.rotationDegrees(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.roll, eulerAnglesNow.roll)));
+            }
+        }
+    }
 //
 //    @SubscribeEvent(priority = EventPriority.HIGH)
 //    public static void planeInventory(ScreenEvent.Opening event) {

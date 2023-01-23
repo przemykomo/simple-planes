@@ -7,3 +7,9 @@ accessible field net/minecraft/client/renderer/texture/TextureAtlasSprite animat
 accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture getFrameX (I)I
 accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture getFrameY (I)I
 accessible field net/minecraft/client/renderer/texture/TextureAtlasSprite mainImage [Lcom/mojang/blaze3d/platform/NativeImage;
+accessible method net/minecraft/client/Camera setRotation (FF)V
+accessible method net/minecraft/client/Camera setPosition (Lnet/minecraft/world/phys/Vec3;)V
+accessible method net/minecraft/client/Camera move (DDD)V
+accessible method net/minecraft/client/Camera getMaxZoom (D)D
+accessible field net/minecraft/client/Camera yRot F
+accessible field net/minecraft/client/Camera xRot F
