@@ -1,23 +1,34 @@
 package xyz.przemyk.simpleplanes.container;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
+import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipe;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesRecipes;
+
+import java.util.List;
 
 public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
     public static final ResourceLocation PLANE_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "plane_materials");
-//    public static final TagKey<Block> PLANE_MATERIALS_TAG = BlockTags.create(PLANE_MATERIALS);
+    public static final TagKey<Block> PLANE_MATERIALS_TAG = TagKey.create(Registry.BLOCK_REGISTRY, PLANE_MATERIALS);
 
     private final Container itemHandler;
     private final SimpleContainer resultItemHandler = new SimpleContainer(1);
@@ -26,7 +37,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     private final DataSlot selectedRecipe;
 
     private final CompoundTag resultItemTag = new CompoundTag();
-//    private final List<PlaneWorkbenchRecipe> recipeList;
+    private final List<PlaneWorkbenchRecipe> recipeList;
 
     public PlaneWorkbenchContainer(int id, Inventory playerInventory) {
         this(id, playerInventory, BlockPos.ZERO, new SimpleContainer(2), DataSlot.standalone());
@@ -37,7 +48,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         this.player = playerInventory.player;
         this.itemHandler = itemHandler;
         this.usabilityTest = ContainerLevelAccess.create(player.level, blockPos);
-//        this.recipeList = player.level.getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE.get());
+        this.recipeList = player.level.getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE);
         this.selectedRecipe = selectedRecipe;
 
         addSlot(new Slot(itemHandler, 0, 28, 47));
@@ -59,66 +70,65 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     }
 
     public void cycleItems(CycleItemsPacket.Type type) {
-        System.out.println("cycle items packet " + type);
-//        int prevSelectedRecipe = selectedRecipe.get();
-//        ItemStack ingredient = itemHandler.getItem(0);
-//        ItemStack material = itemHandler.getItem(1);
-//        switch (type) {
-//            case CRAFTING_LEFT -> {
-//                do {
-//                    if (selectedRecipe.get() == 0) {
-//                        selectedRecipe.set(recipeList.size() - 1);
-//                    } else {
-//                        selectedRecipe.set(selectedRecipe.get() - 1);
-//                    }
-//                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
-//            }
-//            case CRAFTING_RIGHT -> {
-//                do {
-//                    if (selectedRecipe.get() == recipeList.size() - 1) {
-//                        selectedRecipe.set(0);
-//                    } else {
-//                        selectedRecipe.set(selectedRecipe.get() + 1);
-//                    }
-//                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
-//            }
-//        }
-//
-//        updateCraftingResult();
+        int prevSelectedRecipe = selectedRecipe.get();
+        ItemStack ingredient = itemHandler.getItem(0);
+        ItemStack material = itemHandler.getItem(1);
+        switch (type) {
+            case CRAFTING_LEFT -> {
+                do {
+                    if (selectedRecipe.get() == 0) {
+                        selectedRecipe.set(recipeList.size() - 1);
+                    } else {
+                        selectedRecipe.set(selectedRecipe.get() - 1);
+                    }
+                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
+            }
+            case CRAFTING_RIGHT -> {
+                do {
+                    if (selectedRecipe.get() == recipeList.size() - 1) {
+                        selectedRecipe.set(0);
+                    } else {
+                        selectedRecipe.set(selectedRecipe.get() + 1);
+                    }
+                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
+            }
+        }
+
+        updateCraftingResult();
     }
 
     public void onCrafting() {
-//        if (!player.level.isClientSide) {
-//            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
-//            itemHandler.extractItem(0, recipe.ingredientAmount(), false);
-//            itemHandler.extractItem(1, recipe.materialAmount(), false);
-//            updateCraftingResult();
-//        }
+        if (!player.level.isClientSide) {
+            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
+            itemHandler.removeItem(0, recipe.ingredientAmount());
+            itemHandler.removeItem(1, recipe.materialAmount());
+            updateCraftingResult();
+        }
     }
 
     @SuppressWarnings("deprecation")
     protected void updateCraftingResult() {
-//        if (!this.player.level.isClientSide) {
-//            ServerPlayer serverPlayerEntity = (ServerPlayer) this.player;
-//            ItemStack result = ItemStack.EMPTY;
-//            ItemStack ingredientStack = itemHandler.getItem(0);
-//            ItemStack materialStack = itemHandler.getItem(1);
-//            Item materialItem = materialStack.getItem();
-//
-//            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
-//
-//            if (recipe.canCraft(ingredientStack, materialStack) && materialItem instanceof BlockItem blockItem &&
-//                blockItem.getBlock().builtInRegistryHolder().is(PLANE_MATERIALS_TAG)) {
-//
-//                result = recipe.result().copy();
-//                Block block = blockItem.getBlock();
-//                resultItemTag.putString("material", ForgeRegistries.BLOCKS.getKey(block).toString());
-//                result.addTagElement("EntityTag", resultItemTag);
-//            }
-//
-//            resultItemHandler.setItem(0, result);
-//            serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(containerId, 0, 2, result));
-//        }
+        if (!this.player.level.isClientSide) {
+            ServerPlayer serverPlayerEntity = (ServerPlayer) this.player;
+            ItemStack result = ItemStack.EMPTY;
+            ItemStack ingredientStack = itemHandler.getItem(0);
+            ItemStack materialStack = itemHandler.getItem(1);
+            Item materialItem = materialStack.getItem();
+
+            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
+
+            if (recipe.canCraft(ingredientStack, materialStack) && materialItem instanceof BlockItem blockItem &&
+                blockItem.getBlock().builtInRegistryHolder().is(PLANE_MATERIALS_TAG)) {
+
+                result = recipe.result().copy();
+                Block block = blockItem.getBlock();
+                resultItemTag.putString("material", Registry.BLOCK.getKey(block).toString());
+                result.addTagElement("EntityTag", resultItemTag);
+            }
+
+            resultItemHandler.setItem(0, result);
+            serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(containerId, 0, 2, result));
+        }
     }
 
     @Override

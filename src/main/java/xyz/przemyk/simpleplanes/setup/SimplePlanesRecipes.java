@@ -1,26 +1,16 @@
-//package xyz.przemyk.simpleplanes.setup;
-//
-//import net.minecraft.resources.ResourceLocation;
-//import net.minecraft.world.item.crafting.RecipeSerializer;
-//import net.minecraft.world.item.crafting.RecipeType;
-//import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-//import net.minecraftforge.registries.DeferredRegister;
-//import net.minecraftforge.registries.ForgeRegistries;
-//import net.minecraftforge.registries.RegistryObject;
-//import xyz.przemyk.simpleplanes.SimplePlanesMod;
-//import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipe;
-//import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipeSerializer;
-//
-//public class SimplePlanesRecipes {
-//
-//    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, SimplePlanesMod.MODID);
-//    public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, SimplePlanesMod.MODID);
-//
-//    public static void init() {
-//        RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-//        RECIPE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
-//    }
-//
-//    public static final RegistryObject<RecipeSerializer<?>> PLANE_WORKBENCH_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("plane_workbench", PlaneWorkbenchRecipeSerializer::new);
-//    public static final RegistryObject<RecipeType<PlaneWorkbenchRecipe>> PLANE_WORKBENCH_RECIPE_TYPE = RECIPE_TYPES.register("plane_workbench", () -> RecipeType.simple(new ResourceLocation(SimplePlanesMod.MODID, "plane_workbench")));
-//}
+package xyz.przemyk.simpleplanes.setup;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipe;
+import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipeSerializer;
+
+public class SimplePlanesRecipes {
+    public static void init() {}
+
+    public static final RecipeSerializer<?> PLANE_WORKBENCH_RECIPE_SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(SimplePlanesMod.MODID, "plane_workbench"), new PlaneWorkbenchRecipeSerializer());
+    public static final RecipeType<PlaneWorkbenchRecipe> PLANE_WORKBENCH_RECIPE_TYPE = RecipeType.register(SimplePlanesMod.MODID + ":plane_workbench");
+}

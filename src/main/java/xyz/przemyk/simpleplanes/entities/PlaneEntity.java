@@ -38,7 +38,6 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.ChangeThrottlePacket;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
-import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
@@ -1065,7 +1064,7 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
     }
 
     protected Item getItem() {
-        return SimplePlanesItems.PROPELLER; //todo
+        return SimplePlanesItems.PLANE_ITEM;
     }
 
     private int lerpSteps;

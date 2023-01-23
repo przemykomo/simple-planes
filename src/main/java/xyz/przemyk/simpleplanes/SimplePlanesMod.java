@@ -25,7 +25,7 @@ public class SimplePlanesMod implements ModInitializer {
 //        SimplePlanesSounds.init();
         SimplePlanesItems.init();
         SimplePlanesDataSerializers.init();
-//        SimplePlanesRecipes.init();
+        SimplePlanesRecipes.init();
         SimplePlanesNetworking.registerC2SPackets();
 //        SimplePlanesDatapack.init();
 

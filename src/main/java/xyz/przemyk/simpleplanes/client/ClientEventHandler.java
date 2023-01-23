@@ -8,6 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
@@ -19,12 +20,14 @@ import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
+import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.ChangeThrottlePacket;
 import xyz.przemyk.simpleplanes.network.PitchPacket;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.network.YawPacket;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 
 @Environment(EnvType.CLIENT)
@@ -56,7 +59,14 @@ public class ClientEventHandler implements ClientModInitializer {
         registerKeyBindings();
         ClientTickEvents.END_CLIENT_TICK.register(ClientEventHandler::onClientPlayerTick);
         HudRenderCallback.EVENT.register(ClientEventHandler::renderHUDOverlay);
+        SimplePlanesItems.getPlaneItems().forEach(item -> {
+            ColorProviderRegistry.ITEM.register(PlaneItemColors::getColor, item);
+        });
     }
+
+//    public static void planeColor(RegisterColorHandlersEvent.Item event) {
+//        SimplePlanesItems.getPlaneItems().forEach(item -> event.register(PlaneItemColors::getColor, item));
+//    }
 
 //
 //    static {
@@ -144,10 +154,6 @@ public class ClientEventHandler implements ClientModInitializer {
 //                }
         }
     }
-//
-//    public static void planeColor(RegisterColorHandlersEvent.Item event) {
-//        SimplePlanesItems.getPlaneItems().forEach(item -> event.register(PlaneItemColors::getColor, item));
-//    }
 //
 //    public static void reloadTextures(TextureStitchEvent.Post event) {
 //        PlaneItemColors.clearCache();
