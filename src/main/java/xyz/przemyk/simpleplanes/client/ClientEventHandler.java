@@ -3,6 +3,8 @@ package xyz.przemyk.simpleplanes.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,12 +18,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -156,49 +161,43 @@ public class ClientEventHandler implements ClientModInitializer {
 //        PlaneItemColors.clearCache();
 //    }
 //
-//    @SubscribeEvent(priority = EventPriority.LOWEST)
-//    public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
-//        LivingEntity livingEntity = event.getEntity();
-//        Entity entity = livingEntity.getRootVehicle();
-//        if (entity instanceof PlaneEntity planeEntity) {
-//            PoseStack matrixStack = event.getPoseStack();
-//            matrixStack.pushPose();
-//
-//            matrixStack.translate(0, 0.375, 0);
-//            Quaternion quaternion = MathUtil.lerpQ(event.getPartialTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-//            quaternion.set(quaternion.i(), -quaternion.j(), -quaternion.k(), quaternion.r());
-//            matrixStack.mulPose(quaternion);
-//            float rotationYaw = MathUtil.lerpAngle(event.getPartialTick(), entity.yRotO, entity.getYRot());
-//
-//            matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationYaw));
-//            matrixStack.translate(0, -0.375, 0);
-//
-//            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) { //TODO: Do I actually need this?
-//                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - livingEntity.yHeadRot;
-//            }
-//            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
-//                livingEntity.yHeadRotO = planeEntity.yRotO * 2 - livingEntity.yHeadRotO;
-//            }
-//        }
-//    }
-//
-//    @SuppressWarnings("rawtypes")
-//    @SubscribeEvent(priority = EventPriority.LOWEST)
-//    public static void onRenderPost(RenderLivingEvent.Post event) {
-//        LivingEntity livingEntity = event.getEntity();
-//        Entity entity = livingEntity.getRootVehicle();
-//        if (entity instanceof PlaneEntity planeEntity) {
-//            event.getPoseStack().popPose();
-//
-//            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
-//                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - event.getEntity().yHeadRot;
-//            }
-//            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
-//                livingEntity.yHeadRotO = planeEntity.yRotO * 2 - event.getEntity().yHeadRotO;
-//            }
-//        }
-//    }
-//
+    public static void onRenderPre(LivingEntity livingEntity, float partialTicks, PoseStack matrixStack) {
+        Entity entity = livingEntity.getRootVehicle();
+        if (entity instanceof PlaneEntity planeEntity) {
+            matrixStack.pushPose();
+
+            matrixStack.translate(0, 0.375, 0);
+            Quaternion quaternion = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
+            quaternion.set(quaternion.i(), -quaternion.j(), -quaternion.k(), quaternion.r());
+            matrixStack.mulPose(quaternion);
+            float rotationYaw = MathUtil.lerpAngle(partialTicks, entity.yRotO, entity.getYRot());
+
+            matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationYaw));
+            matrixStack.translate(0, -0.375, 0);
+
+            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) { //TODO: Do I actually need this?
+                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - livingEntity.yHeadRot;
+            }
+            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
+                livingEntity.yHeadRotO = planeEntity.yRotO * 2 - livingEntity.yHeadRotO;
+            }
+        }
+    }
+
+    public static void onRenderPost(LivingEntity livingEntity, PoseStack matrixStack) {
+        Entity entity = livingEntity.getRootVehicle();
+        if (entity instanceof PlaneEntity planeEntity) {
+            matrixStack.popPose();
+
+            if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) {
+                livingEntity.yHeadRot = planeEntity.getYRot() * 2 - livingEntity.yHeadRot;
+            }
+            if (MathUtil.degreesDifferenceAbs(planeEntity.prevRotationRoll, 0) > 90) {
+                livingEntity.yHeadRotO = planeEntity.yRotO * 2 - livingEntity.yHeadRotO;
+            }
+        }
+    }
+
     private static boolean oldMoveHeliUpState = false;
     private static boolean oldPitchUpState = false;
     private static boolean oldPitchDownState = false;
@@ -231,8 +230,8 @@ public class ClientEventHandler implements ClientModInitializer {
                 ChangeThrottlePacket.send(ChangeThrottlePacket.Type.DOWN);
             }
 
-            boolean isMoveHeliUp = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), moveHeliUpKey.key.getValue());
             // fabric doesn't seem to support conflicting key bindings
+            boolean isMoveHeliUp = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), moveHeliUpKey.key.getValue());
             boolean isPitchUp = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), pitchUp.key.getValue());
             boolean isPitchDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), pitchDown.key.getValue());
             boolean isYawRight = yawRight.isDown();

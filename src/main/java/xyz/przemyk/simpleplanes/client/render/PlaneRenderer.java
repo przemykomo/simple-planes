@@ -61,8 +61,8 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         EntityType<?> entityType = planeEntity.getType();
         if (entityType == SimplePlanesEntities.PLANE) {
             poseStack.translate(0, -0.5, -0.5);
-//        } else if (entityType == SimplePlanesEntities.LARGE_PLANE) {
-//            poseStack.translate(0, -0.3, -1);
+        } else if (entityType == SimplePlanesEntities.LARGE_PLANE) {
+            poseStack.translate(0, -0.3, -1);
         } else {
             poseStack.translate(0, 0, 0.9);
         }
