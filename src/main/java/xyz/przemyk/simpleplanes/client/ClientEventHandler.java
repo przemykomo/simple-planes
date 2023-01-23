@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.ClientModInitializer;
@@ -228,8 +229,9 @@ public class ClientEventHandler implements ClientModInitializer {
             }
 
             boolean isMoveHeliUp = moveHeliUpKey.isDown();
-            boolean isPitchUp = pitchUp.isDown();
-            boolean isPitchDown = pitchDown.isDown();
+            // fabric doesn't seem to support conflicting key bindings
+            boolean isPitchUp = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), pitchUp.key.getValue());
+            boolean isPitchDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), pitchDown.key.getValue());
             boolean isYawRight = yawRight.isDown();
             boolean isYawLeft = yawLeft.isDown();
 
