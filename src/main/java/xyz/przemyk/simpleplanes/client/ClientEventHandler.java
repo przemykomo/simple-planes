@@ -21,11 +21,14 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
@@ -57,7 +60,7 @@ public class ClientEventHandler implements ClientModInitializer {
         MenuScreens.register(SimplePlanesContainers.PLANE_WORKBENCH, PlaneWorkbenchScreen::new);
 //        MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
 //        MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
-//        MenuScreens.register(SimplePlanesContainers.PLANE_INVENTORY.get(), PlaneInventoryScreen::new);
+        MenuScreens.register(SimplePlanesContainers.PLANE_INVENTORY, PlaneInventoryScreen::new);
 
         PlanesModelLayers.registerRenderers();
         PlanesModelLayers.registerLayers();
@@ -129,7 +132,7 @@ public class ClientEventHandler implements ClientModInitializer {
             int max_row_size = 5;
 
             for (int heart = 0; hearts > 0; heart += max_row_size) {
-                int top = scaledHeight - 39;
+                int top = scaledHeight - 49;
 
                 int rowCount = Math.min(hearts, max_row_size);
                 hearts -= rowCount;
@@ -153,11 +156,11 @@ public class ClientEventHandler implements ClientModInitializer {
                 ClientUtil.blit(matrixStack, -90, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled);
             }
 
-//                if (planeEntity.engineUpgrade != null) {
-//                    ItemStack offhandStack = mc.player.getOffhandItem();
-//                    HumanoidArm primaryHand = mc.player.getMainArm();
-//                    planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, partialTicks);
-//                }
+                if (planeEntity.engineUpgrade != null) {
+                    ItemStack offhandStack = mc.player.getOffhandItem();
+                    HumanoidArm primaryHand = mc.player.getMainArm();
+                    planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, partialTicks);
+                }
         }
     }
 //
@@ -217,7 +220,7 @@ public class ClientEventHandler implements ClientModInitializer {
             }
 
             if (mc.screen == null && mc.getOverlay() == null && openPlaneInventoryKey.consumeClick()) {
-//                SimplePlanesNetworking.INSTANCE.sendToServer(new OpenPlaneInventoryPacket());
+                OpenPlaneInventoryPacket.send();
             } else if (dropPayloadKey.consumeClick()) {
 //                for (Upgrade upgrade : planeEntity.upgrades.values()) {
 //                    if (upgrade.canBeDroppedAsPayload()) {

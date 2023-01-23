@@ -6,6 +6,7 @@ import net.minecraft.world.item.Item;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineUpgrade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class SimplePlanesUpgrades {
 //    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(FoldingUpgrade::new));
 //    public static final RegistryObject<UpgradeType> SEATS = UPGRADE_TYPES.register("seats", () -> new UpgradeType(SeatsUpgrade::new));
 //
-//    public static final RegistryObject<UpgradeType> FURNACE_ENGINE = UPGRADE_TYPES.register("furnace_engine", () -> new UpgradeType(FurnaceEngineUpgrade::new, true));
+    public static final UpgradeType FURNACE_ENGINE = Registry.register(SimplePlanesRegistries.UPGRADE_TYPES, new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), new UpgradeType(FurnaceEngineUpgrade::new, true));
 //    public static final RegistryObject<UpgradeType> ELECTRIC_ENGINE = UPGRADE_TYPES.register("electric_engine", () -> new UpgradeType(ElectricEngineUpgrade::new, true));
 //    public static final RegistryObject<UpgradeType> LIQUID_ENGINE = UPGRADE_TYPES.register("liquid_engine", () -> new UpgradeType(LiquidEngineUpgrade::new, true));
 

@@ -46,6 +46,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -71,7 +72,7 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
 
     private int onGroundTicks;
     public final HashMap<ResourceLocation, Upgrade> upgrades = new HashMap<>();
-//    public EngineUpgrade engineUpgrade = null;
+    public EngineUpgrade engineUpgrade = null;
 
     public float rotationRoll;
     public float prevRotationRoll;
@@ -189,7 +190,7 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
     public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registry.DIMENSION_TYPE_REGISTRY, new ResourceLocation(SimplePlanesMod.MODID, "blacklisted_dimensions"));
 
     public boolean isPowered() {
-        return isAlive() && !level.dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() /*|| (engineUpgrade != null && engineUpgrade.isPowered())*/);
+        return isAlive() && !level.dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
     }
 
     @Override
@@ -258,11 +259,10 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
         }
         UpgradeType upgradeType = upgrade.getType();
         upgrades.put(SimplePlanesRegistries.UPGRADE_TYPES.getKey(upgradeType), upgrade);
-//        if (upgradeType.isEngine) {
-//            engineUpgrade = (EngineUpgrade) upgrade;
-//        }
+        if (upgradeType.isEngine) {
+            engineUpgrade = (EngineUpgrade) upgrade;
+        }
         if (!level.isClientSide) {
-//            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), (ServerLevel) level, true));
             UpdateUpgradePacket.send(SimplePlanesRegistries.UPGRADE_TYPES.getKey(upgradeType), true, this);
         }
     }
@@ -853,9 +853,9 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                 upgrade.deserializeNBT(upgradesNBT.getCompound(key));
                 upgrades.put(resourceLocation, upgrade);
-//                if (upgradeType.isEngine) {
-//                    engineUpgrade = (EngineUpgrade) upgrade;
-//                }
+                if (upgradeType.isEngine) {
+                    engineUpgrade = (EngineUpgrade) upgrade;
+                }
             }
         }
     }
@@ -991,9 +991,9 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
     }
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {
-//        if (upgradeType.isEngine && engineUpgrade != null) {
-//            return false;
-//        }
+        if (upgradeType.isEngine && engineUpgrade != null) {
+            return false;
+        }
         return !upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.getKey(upgradeType));
     }
 
@@ -1200,9 +1200,9 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
-//            if (upgradeType.isEngine) {
-//                engineUpgrade = (EngineUpgrade) upgrade;
-//            }
+            if (upgradeType.isEngine) {
+                engineUpgrade = (EngineUpgrade) upgrade;
+            }
         }
 
         upgrades.get(upgradeID).readPacket(buffer);
@@ -1225,9 +1225,9 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
             UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
-//            if (upgradeType.isEngine) {
-//                engineUpgrade = (EngineUpgrade) upgrade;
-//            }
+            if (upgradeType.isEngine) {
+                engineUpgrade = (EngineUpgrade) upgrade;
+            }
             upgrade.readPacket(additionalData);
         }
     }

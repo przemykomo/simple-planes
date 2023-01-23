@@ -18,6 +18,7 @@ public class SimplePlanesNetworking {
         ServerPlayNetworking.registerGlobalReceiver(YawPacket.ID, YawPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(PitchPacket.ID, PitchPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(MoveHeliUpPacket.ID, MoveHeliUpPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(OpenPlaneInventoryPacket.ID, OpenPlaneInventoryPacket::receive);
 
 //
 //        INSTANCE = NetworkRegistry.newSimpleChannel(
