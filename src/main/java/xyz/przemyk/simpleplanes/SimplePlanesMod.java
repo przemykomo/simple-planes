@@ -22,7 +22,7 @@ public class SimplePlanesMod implements ModInitializer {
         SimplePlanesBlocks.init();
         SimplePlanesContainers.init();
 //        SimplePlanesUpgrades.init();
-//        SimplePlanesSounds.init();
+        SimplePlanesSounds.init();
         SimplePlanesItems.init();
         SimplePlanesDataSerializers.init();
         SimplePlanesRecipes.init();

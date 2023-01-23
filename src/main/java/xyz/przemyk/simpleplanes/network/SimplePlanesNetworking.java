@@ -14,6 +14,7 @@ public class SimplePlanesNetworking {
         ServerPlayNetworking.registerGlobalReceiver(ChangeThrottlePacket.ID, ChangeThrottlePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(YawPacket.ID, YawPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(PitchPacket.ID, PitchPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(MoveHeliUpPacket.ID, MoveHeliUpPacket::receive);
 
 //
 //        INSTANCE = NetworkRegistry.newSimpleChannel(

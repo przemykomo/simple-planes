@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.ChangeThrottlePacket;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
@@ -406,7 +407,7 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
         Vec3 oldMotion = getDeltaMovement();
 
         if (level.isClientSide && isPowered() && getThrottle() > 0) {
-//            PlaneSound.tryToPlay(this);
+            PlaneSound.tryToPlay(this);
         }
 
         tempMotionVars.push = 0.00625f * getThrottle();

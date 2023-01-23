@@ -24,8 +24,8 @@ public class SimplePlanesItems {
     public static List<PlaneItem> getPlaneItems() {
         ArrayList<PlaneItem> planeItems = new ArrayList<>(3);
         planeItems.add(PLANE_ITEM);
-//        planeItems.add(LARGE_PLANE_ITEM);
-//        planeItems.add(HELICOPTER_ITEM);
+        planeItems.add(LARGE_PLANE_ITEM);
+        planeItems.add(HELICOPTER_ITEM);
         return planeItems;
     }
 
@@ -50,8 +50,8 @@ public class SimplePlanesItems {
     public static final BlockItem CHARGING_STATION = register("charging_station", new BlockItem(SimplePlanesBlocks.CHARGING_STATION_BLOCK, new Item.Properties().tab(ITEM_GROUP)));
 
     public static final PlaneItem PLANE_ITEM = register("plane", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.PLANE));
-//    public static final PlaneItem LARGE_PLANE_ITEM = register("large_plane", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
-//    public static final PlaneItem HELICOPTER_ITEM = register("helicopter", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.HELICOPTER));
+    public static final PlaneItem LARGE_PLANE_ITEM = register("large_plane", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
+    public static final PlaneItem HELICOPTER_ITEM = register("helicopter", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.HELICOPTER));
 //
 //    public static final ParachuteItem PARACHUTE_ITEM = register("parachute", new ParachuteItem(new Item.Properties().tab(ITEM_GROUP)));
 

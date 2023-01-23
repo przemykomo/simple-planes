@@ -2,8 +2,6 @@ package xyz.przemyk.simpleplanes.client;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -16,13 +14,13 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "metal");
     public static final ModelLayerLocation PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "propeller");
 
-//    public static final ModelLayerLocation LARGE_PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "main");
-//    public static final ModelLayerLocation LARGE_PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "metal");
-//    public static final ModelLayerLocation LARGE_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "propeller");
-//
-//    public static final ModelLayerLocation HELICOPTER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "main");
-//    public static final ModelLayerLocation HELICOPTER_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "metal");
-//    public static final ModelLayerLocation HELICOPTER_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "propeller");
+    public static final ModelLayerLocation LARGE_PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "main");
+    public static final ModelLayerLocation LARGE_PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "metal");
+    public static final ModelLayerLocation LARGE_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "propeller");
+
+    public static final ModelLayerLocation HELICOPTER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "main");
+    public static final ModelLayerLocation HELICOPTER_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "metal");
+    public static final ModelLayerLocation HELICOPTER_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "propeller");
 //
 //    public static final ModelLayerLocation PARACHUTE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "parachute"), "main");
 //
@@ -68,14 +66,14 @@ public class PlanesModelLayers {
         EntityModelLayerRegistry.registerModelLayer(PLANE_LAYER, PlaneModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(PLANE_METAL_LAYER, PlaneMetalModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(PROPELLER_LAYER, PropellerModel::createBodyLayer);
-//
-//        event.registerLayerDefinition(LARGE_PLANE_LAYER, LargePlaneModel::createBodyLayer);
-//        event.registerLayerDefinition(LARGE_PLANE_METAL_LAYER, LargePlaneMetalModel::createBodyLayer);
-//        event.registerLayerDefinition(LARGE_PROPELLER_LAYER, LargePropellerModel::createBodyLayer);
-//
-//        event.registerLayerDefinition(HELICOPTER_LAYER, HelicopterModel::createBodyLayer);
-//        event.registerLayerDefinition(HELICOPTER_METAL_LAYER, HelicopterMetalModel::createBodyLayer);
-//        event.registerLayerDefinition(HELICOPTER_PROPELLER_LAYER, HelicopterPropellerModel::createBodyLayer);
+
+        EntityModelLayerRegistry.registerModelLayer(LARGE_PLANE_LAYER, LargePlaneModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(LARGE_PLANE_METAL_LAYER, LargePlaneMetalModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(LARGE_PROPELLER_LAYER, LargePropellerModel::createBodyLayer);
+
+        EntityModelLayerRegistry.registerModelLayer(HELICOPTER_LAYER, HelicopterModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(HELICOPTER_METAL_LAYER, HelicopterMetalModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(HELICOPTER_PROPELLER_LAYER, HelicopterPropellerModel::createBodyLayer);
 //
 //        event.registerLayerDefinition(PARACHUTE_LAYER, ParachuteModel::createBodyLayer);
 //
@@ -122,8 +120,8 @@ public class PlanesModelLayers {
 
     public static void registerRenderers() {
         EntityRendererRegistry.register(SimplePlanesEntities.PLANE, context -> new PlaneRenderer<>(context, new PlaneModel(context.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PlaneMetalModel(context.bakeLayer(PLANE_METAL_LAYER)), new PropellerModel(context.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_propeller.png")));
-//        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new LargePlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new LargePlaneMetalModel(entityModelSet.bakeLayer(LARGE_PLANE_METAL_LAYER)), new LargePropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PROPELLER_LAYER)), 1.0f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/large_plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_large_propeller.png")));
-//        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new HelicopterModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterMetalModel(entityModelSet.bakeLayer(HELICOPTER_METAL_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/helicopter_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_helicopter_propeller.png")));
+        EntityRendererRegistry.register(SimplePlanesEntities.LARGE_PLANE, context -> new PlaneRenderer<>(context, new LargePlaneModel(context.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new LargePlaneMetalModel(context.bakeLayer(LARGE_PLANE_METAL_LAYER)), new LargePropellerModel(context.bakeLayer(PlanesModelLayers.LARGE_PROPELLER_LAYER)), 1.0f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/large_plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_large_propeller.png")));
+        EntityRendererRegistry.register(SimplePlanesEntities.HELICOPTER, context -> new PlaneRenderer<>(context, new HelicopterModel(context.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterMetalModel(context.bakeLayer(HELICOPTER_METAL_LAYER)), new HelicopterPropellerModel(context.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/helicopter_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_helicopter_propeller.png")));
 //
 //        event.registerEntityRenderer(SimplePlanesEntities.PARACHUTE.get(), context -> new ParachuteRenderer(context, new ParachuteModel(entityModelSet.bakeLayer(PlanesModelLayers.PARACHUTE_LAYER))));
     }

@@ -22,10 +22,7 @@ import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-import xyz.przemyk.simpleplanes.network.ChangeThrottlePacket;
-import xyz.przemyk.simpleplanes.network.PitchPacket;
-import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
-import xyz.przemyk.simpleplanes.network.YawPacket;
+import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
@@ -234,7 +231,7 @@ public class ClientEventHandler implements ClientModInitializer {
                 ChangeThrottlePacket.send(ChangeThrottlePacket.Type.DOWN);
             }
 
-            boolean isMoveHeliUp = moveHeliUpKey.isDown();
+            boolean isMoveHeliUp = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), moveHeliUpKey.key.getValue());
             // fabric doesn't seem to support conflicting key bindings
             boolean isPitchUp = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), pitchUp.key.getValue());
             boolean isPitchDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), pitchDown.key.getValue());
@@ -242,7 +239,7 @@ public class ClientEventHandler implements ClientModInitializer {
             boolean isYawLeft = yawLeft.isDown();
 
             if (isMoveHeliUp != oldMoveHeliUpState) {
-//                SimplePlanesNetworking.INSTANCE.sendToServer(new MoveHeliUpPacket(isMoveHeliUp));
+                MoveHeliUpPacket.send(isMoveHeliUp);
             }
 
             if (isPitchUp != oldPitchUpState || isPitchDown != oldPitchDownState) {
