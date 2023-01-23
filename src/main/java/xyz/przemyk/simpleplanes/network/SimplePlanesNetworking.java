@@ -11,6 +11,9 @@ public class SimplePlanesNetworking {
     public static void registerC2SPackets() {
         ServerPlayNetworking.registerGlobalReceiver(CycleItemsPacket.ID, CycleItemsPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(RotationPacket.ID, RotationPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(ChangeThrottlePacket.ID, ChangeThrottlePacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(YawPacket.ID, YawPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(PitchPacket.ID, PitchPacket::receive);
 
 //
 //        INSTANCE = NetworkRegistry.newSimpleChannel(

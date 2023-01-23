@@ -36,6 +36,7 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
+import xyz.przemyk.simpleplanes.network.ChangeThrottlePacket;
 import xyz.przemyk.simpleplanes.network.RotationPacket;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
@@ -1242,16 +1243,16 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
 
     private static final TempMotionVars TEMP_MOTION_VARS = new TempMotionVars();
 
-//    public void changeThrottle(ChangeThrottlePacket.Type type) {
-//        int throttle = getThrottle();
-//        if (type == ChangeThrottlePacket.Type.UP) {
-//            if (throttle < MAX_THROTTLE || (upgrades.containsKey(SimplePlanesUpgrades.BOOSTER.getId()) && throttle < BoosterUpgrade.MAX_THROTTLE)) {
-//                setThrottle(throttle + 1);
-//            }
-//        } else if (throttle > 0) {
-//            setThrottle(throttle - 1);
-//        }
-//    }
+    public void changeThrottle(ChangeThrottlePacket.Type type) {
+        int throttle = getThrottle();
+        if (type == ChangeThrottlePacket.Type.UP) {
+            if (throttle < MAX_THROTTLE /* || (upgrades.containsKey(SimplePlanesUpgrades.BOOSTER.getId()) && throttle < BoosterUpgrade.MAX_THROTTLE)*/) {
+                setThrottle(throttle + 1);
+            }
+        } else if (throttle > 0) {
+            setThrottle(throttle - 1);
+        }
+    }
 
     public int getThrottle() {
         return entityData.get(THROTTLE);
