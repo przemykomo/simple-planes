@@ -1,11 +1,14 @@
 package xyz.przemyk.simpleplanes.network;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class SimplePlanesNetworking {
 
     public static void registerS2CPackets() {
-        
+        ClientPlayNetworking.registerGlobalReceiver(UpdateUpgradePacket.ID, UpdateUpgradePacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(SUpgradeRemovedPacket.ID, SUpgradeRemovedPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(SpawnPlanePacket.ID, SpawnPlanePacket::receive);
     }
 
     public static void registerC2SPackets() {

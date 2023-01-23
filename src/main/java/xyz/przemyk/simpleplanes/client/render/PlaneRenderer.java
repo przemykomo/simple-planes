@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,9 +89,9 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         vertexConsumer = buffer.getBuffer(planeMetalModel.renderType(metalTexture));
         planeMetalModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         planeMetalModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-//        for (Upgrade upgrade : planeEntity.upgrades.values()) {
-//                upgrade.render(poseStack, buffer, packedLight, partialTicks);
-//        }
+        for (Upgrade upgrade : planeEntity.upgrades.values()) {
+                upgrade.render(poseStack, buffer, packedLight, partialTicks);
+        }
 
         poseStack.popPose();
 

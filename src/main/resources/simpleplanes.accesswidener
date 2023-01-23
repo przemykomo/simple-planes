@@ -13,3 +13,4 @@ accessible method net/minecraft/client/Camera move (DDD)V
 accessible method net/minecraft/client/Camera getMaxZoom (D)D
 accessible field net/minecraft/client/Camera yRot F
 accessible field net/minecraft/client/Camera xRot F
+accessible field net/minecraft/client/renderer/blockentity/BannerRenderer flag Lnet/minecraft/client/model/geom/ModelPart;
