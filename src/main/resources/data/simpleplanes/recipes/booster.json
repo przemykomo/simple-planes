@@ -7,7 +7,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:ingots/iron"
+            "item": "minecraft:iron_ingot"
         },
         "F": {
             "item": "minecraft:flint_and_steel"

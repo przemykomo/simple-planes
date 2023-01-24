@@ -7,19 +7,19 @@
     ],
     "key": {
         "#": {
-            "tag": "forge:gems/lapis"
+            "item": "minecraft:lapis_lazuli"
         },
         "L": {
             "item": "minecraft:light_weighted_pressure_plate"
         },
         "g": {
-            "tag": "forge:rods/blaze"
+            "item": "minecraft:blaze_rod"
         },
         "R": {
-            "tag": "forge:obsidian"
+            "item": "minecraft:obsidian"
         },
         "D": {
-            "tag": "forge:dusts/redstone"
+            "item": "minecraft:redstone"
         }
     },
     "result": {

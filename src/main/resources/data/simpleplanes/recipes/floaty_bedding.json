@@ -7,13 +7,13 @@
     ],
     "key": {
         "S": {
-            "tag": "forge:slimeballs"
+            "item": "minecraft:slime_ball"
         },
         "C": {
             "tag": "minecraft:wool"
         },
         "I": {
-            "tag": "forge:ingots/iron"
+            "item": "minecraft:iron_ingot"
         }
     },
     "result": {

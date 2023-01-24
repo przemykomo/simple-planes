@@ -10,19 +10,19 @@
             "item": "minecraft:iron_axe"
         },
         "i": {
-            "tag": "forge:ingots/iron"
+            "item": "minecraft:iron_ingot"
         },
         "I": {
             "item": "minecraft:iron_pickaxe"
         },
         "O": {
-            "tag": "forge:obsidian"
+            "item": "minecraft:obsidian"
         },
         "G": {
-            "tag": "forge:storage_blocks/gold"
+            "item": "minecraft:gold_block"
         },
         "R": {
-            "tag": "forge:dusts/redstone"
+            "item": "minecraft:redstone"
         },
         "C": {
             "item": "minecraft:crafting_table"
