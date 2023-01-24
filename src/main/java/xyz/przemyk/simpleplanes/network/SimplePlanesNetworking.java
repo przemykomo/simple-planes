@@ -9,6 +9,7 @@ public class SimplePlanesNetworking {
         ClientPlayNetworking.registerGlobalReceiver(UpdateUpgradePacket.ID, UpdateUpgradePacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(SUpgradeRemovedPacket.ID, SUpgradeRemovedPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(SpawnPlanePacket.ID, SpawnPlanePacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(JukeboxPacket.ID, JukeboxPacket::receive);
     }
 
     public static void registerC2SPackets() {

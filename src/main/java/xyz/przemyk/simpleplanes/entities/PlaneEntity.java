@@ -256,6 +256,12 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
             return InteractionResult.SUCCESS;
         }
 
+        if (!itemStack.isEmpty() && player.getVehicle() == this) {
+            for (Upgrade upgrade : upgrades.values()) {
+                upgrade.onItemRightClick(player, itemStack);
+            }
+        }
+
         if (!level.isClientSide) {
             return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.FAIL;
         } else {

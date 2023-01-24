@@ -68,7 +68,7 @@ public class SimplePlanesMod implements ModInitializer {
 
         SimplePlanesUpgrades.registerLargeUpgradeItem(Items.CHEST, SimplePlanesUpgrades.CHEST);
 //        SimplePlanesUpgrades.registerLargeUpgradeItem(SimplePlanesItems.SUPPLY_CRATE, SimplePlanesUpgrades.SUPPLY_CRATE);
-//        SimplePlanesUpgrades.registerLargeUpgradeItem(Items.JUKEBOX, SimplePlanesUpgrades.JUKEBOX);
+        SimplePlanesUpgrades.registerLargeUpgradeItem(Items.JUKEBOX, SimplePlanesUpgrades.JUKEBOX);
 //
 //            IronChestsCompat.registerUpgradeItems();
 //            QuarkCompat.registerUpgradeItems();

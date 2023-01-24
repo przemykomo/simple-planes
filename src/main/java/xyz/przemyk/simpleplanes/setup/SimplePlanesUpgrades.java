@@ -12,6 +12,7 @@ import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.heal.HealingUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.jukebox.JukeboxUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
@@ -66,7 +67,7 @@ public class SimplePlanesUpgrades {
 //    public static final RegistryObject<UpgradeType> PAYLOAD = UPGRADE_TYPES.register("payload", new UpgradeType(PayloadUpgrade::new));
     public static final UpgradeType CHEST = register("chest", new UpgradeType(ChestUpgrade::new));
 //    public static final UpgradeType SUPPLY_CRATE = register("supply_crate", new UpgradeType(SupplyCrateUpgrade::new));
-//    public static final UpgradeType JUKEBOX = register("jukebox", new UpgradeType(JukeboxUpgrade::new));
+    public static final UpgradeType JUKEBOX = register("jukebox", new UpgradeType(JukeboxUpgrade::new));
 
     private static UpgradeType register(String id, UpgradeType upgradeType) {
         return Registry.register(SimplePlanesRegistries.UPGRADE_TYPES, new ResourceLocation(SimplePlanesMod.MODID, id), upgradeType);

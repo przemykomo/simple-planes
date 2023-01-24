@@ -57,10 +57,8 @@ public abstract class Upgrade /*implements INBTSerializable<CompoundTag> */{
 
     /**
      * Called when passenger right clicks with item.
-     *
-     * @param event The right click event
      */
-//    public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {}
+    public void onItemRightClick(Player player, ItemStack itemStack) {}
 
     /**
      * Called every tick by plane entity.
