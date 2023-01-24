@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.items.DescriptionItem;
+import xyz.przemyk.simpleplanes.items.ParachuteItem;
 import xyz.przemyk.simpleplanes.items.PlaneArmorItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
 
@@ -53,8 +54,8 @@ public class SimplePlanesItems {
     public static final PlaneItem PLANE_ITEM = register("plane", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.PLANE));
     public static final PlaneItem LARGE_PLANE_ITEM = register("large_plane", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.LARGE_PLANE));
     public static final PlaneItem HELICOPTER_ITEM = register("helicopter", new PlaneItem(new Item.Properties().tab(ITEM_GROUP), SimplePlanesEntities.HELICOPTER));
-//
-//    public static final ParachuteItem PARACHUTE_ITEM = register("parachute", new ParachuteItem(new Item.Properties().tab(ITEM_GROUP)));
+
+    public static final ParachuteItem PARACHUTE_ITEM = register("parachute", new ParachuteItem(new Item.Properties().tab(ITEM_GROUP)));
 
     private static <T extends Item> T register(String id, T item) {
         return Registry.register(Registry.ITEM, new ResourceLocation(SimplePlanesMod.MODID, id), item);

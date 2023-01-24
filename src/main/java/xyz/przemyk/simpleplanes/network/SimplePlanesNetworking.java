@@ -22,5 +22,6 @@ public class SimplePlanesNetworking {
         ServerPlayNetworking.registerGlobalReceiver(OpenPlaneInventoryPacket.ID, OpenPlaneInventoryPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(OpenInventoryPacket.ID, OpenInventoryPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(CRemoveUpgradePacket.ID, CRemoveUpgradePacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(DropPayloadPacket.ID, DropPayloadPacket::receive);
     }
 }

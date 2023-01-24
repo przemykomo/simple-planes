@@ -41,6 +41,7 @@ import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 
 @Environment(EnvType.CLIENT)
@@ -213,13 +214,13 @@ public class ClientEventHandler implements ClientModInitializer {
             if (mc.screen == null && mc.getOverlay() == null && openPlaneInventoryKey.consumeClick()) {
                 OpenPlaneInventoryPacket.send();
             } else if (dropPayloadKey.consumeClick()) {
-//                for (Upgrade upgrade : planeEntity.upgrades.values()) {
-//                    if (upgrade.canBeDroppedAsPayload()) {
-//                        upgrade.dropAsPayload();
-//                        SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
-//                        break;
-//                    }
-//                }
+                for (Upgrade upgrade : planeEntity.upgrades.values()) {
+                    if (upgrade.canBeDroppedAsPayload()) {
+                        upgrade.dropAsPayload();
+                        DropPayloadPacket.send();
+                        break;
+                    }
+                }
             }
 
             if (throttleUp.consumeClick()) {

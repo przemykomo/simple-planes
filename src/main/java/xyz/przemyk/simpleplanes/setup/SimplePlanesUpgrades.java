@@ -16,6 +16,7 @@ import xyz.przemyk.simpleplanes.upgrades.jukebox.JukeboxUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.supplycrate.SupplyCrateUpgrade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class SimplePlanesUpgrades {
     public static final UpgradeType BANNER = register("banner", new UpgradeType(BannerUpgrade::new));
 //    public static final RegistryObject<UpgradeType> PAYLOAD = UPGRADE_TYPES.register("payload", new UpgradeType(PayloadUpgrade::new));
     public static final UpgradeType CHEST = register("chest", new UpgradeType(ChestUpgrade::new));
-//    public static final UpgradeType SUPPLY_CRATE = register("supply_crate", new UpgradeType(SupplyCrateUpgrade::new));
+    public static final UpgradeType SUPPLY_CRATE = register("supply_crate", new UpgradeType(SupplyCrateUpgrade::new));
     public static final UpgradeType JUKEBOX = register("jukebox", new UpgradeType(JukeboxUpgrade::new));
 
     private static UpgradeType register(String id, UpgradeType upgradeType) {
