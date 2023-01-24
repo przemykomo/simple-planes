@@ -1,5 +1,6 @@
 //package xyz.przemyk.simpleplanes.compat.ironchest;
 //
+//import net.minecraft.world.Container;
 //import net.minecraft.world.entity.player.Inventory;
 //import net.minecraft.world.inventory.Slot;
 //import net.minecraft.world.item.Item;
@@ -82,7 +83,7 @@
 //        };
 //    }
 //
-//    public static void addSlots(String chestType, IItemHandler itemHandler, int rowCount, Inventory playerInventory, Consumer<Slot> addSlotFunction) {
+//    public static void addSlots(String chestType, Container itemHandler, int rowCount, Inventory playerInventory, Consumer<Slot> addSlotFunction) {
 //        if (chestType.equals(DIRT_CHEST_NAME)) {
 //            addSlotFunction.accept(new DirtChestSlot(itemHandler, 0, 84, 44));
 //        } else {

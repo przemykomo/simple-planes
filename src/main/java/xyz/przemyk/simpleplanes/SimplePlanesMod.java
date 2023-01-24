@@ -36,17 +36,17 @@ public class SimplePlanesMod implements ModInitializer {
 //        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 //        ModList.get().getModContainerById("cgm").ifPresent(cgm -> MinecraftForge.EVENT_BUS.register(MrCrayfishGunCompat.class));
 
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.FLOATY_BEDDING.get(), SimplePlanesUpgrades.FLOATY_BEDDING.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.BOOSTER.get(), SimplePlanesUpgrades.BOOSTER.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.HEALING.get(), SimplePlanesUpgrades.HEALING.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.ARMOR.get(), SimplePlanesUpgrades.ARMOR.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.SOLAR_PANEL.get(), SimplePlanesUpgrades.SOLAR_PANEL.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.FOLDING.get(), SimplePlanesUpgrades.FOLDING.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.SEATS.get(), SimplePlanesUpgrades.SEATS.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.SHOOTER.get(), SimplePlanesUpgrades.SHOOTER.get());
+        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.FLOATY_BEDDING, SimplePlanesUpgrades.FLOATY_BEDDING);
+        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.BOOSTER, SimplePlanesUpgrades.BOOSTER);
+        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.HEALING, SimplePlanesUpgrades.HEALING);
+        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.ARMOR, SimplePlanesUpgrades.ARMOR);
+//        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.SOLAR_PANEL, SimplePlanesUpgrades.SOLAR_PANEL);
+        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.FOLDING, SimplePlanesUpgrades.FOLDING);
+        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.SEATS, SimplePlanesUpgrades.SEATS);
+        SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.SHOOTER, SimplePlanesUpgrades.SHOOTER);
         SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.FURNACE_ENGINE, SimplePlanesUpgrades.FURNACE_ENGINE);
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.ELECTRIC_ENGINE.get(), SimplePlanesUpgrades.ELECTRIC_ENGINE.get());
-//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.LIQUID_ENGINE.get(), SimplePlanesUpgrades.LIQUID_ENGINE.get());
+//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.ELECTRIC_ENGINE, SimplePlanesUpgrades.ELECTRIC_ENGINE);
+//            SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.LIQUID_ENGINE, SimplePlanesUpgrades.LIQUID_ENGINE);
 
 
         SimplePlanesUpgrades.registerUpgradeItem(Items.WHITE_BANNER, SimplePlanesUpgrades.BANNER);
@@ -66,9 +66,9 @@ public class SimplePlanesMod implements ModInitializer {
         SimplePlanesUpgrades.registerUpgradeItem(Items.RED_BANNER, SimplePlanesUpgrades.BANNER);
         SimplePlanesUpgrades.registerUpgradeItem(Items.BLACK_BANNER, SimplePlanesUpgrades.BANNER);
 
-//            SimplePlanesUpgrades.registerLargeUpgradeItem(Items.CHEST, SimplePlanesUpgrades.CHEST.get());
-//            SimplePlanesUpgrades.registerLargeUpgradeItem(SimplePlanesItems.SUPPLY_CRATE.get(), SimplePlanesUpgrades.SUPPLY_CRATE.get());
-//            SimplePlanesUpgrades.registerLargeUpgradeItem(Items.JUKEBOX, SimplePlanesUpgrades.JUKEBOX.get());
+        SimplePlanesUpgrades.registerLargeUpgradeItem(Items.CHEST, SimplePlanesUpgrades.CHEST);
+//        SimplePlanesUpgrades.registerLargeUpgradeItem(SimplePlanesItems.SUPPLY_CRATE, SimplePlanesUpgrades.SUPPLY_CRATE);
+//        SimplePlanesUpgrades.registerLargeUpgradeItem(Items.JUKEBOX, SimplePlanesUpgrades.JUKEBOX);
 //
 //            IronChestsCompat.registerUpgradeItems();
 //            QuarkCompat.registerUpgradeItems();

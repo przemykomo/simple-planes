@@ -8,10 +8,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
 import java.util.List;
+import java.util.Optional;
 
 public class LargePlaneEntity extends PlaneEntity {
 
@@ -35,32 +42,33 @@ public class LargePlaneEntity extends PlaneEntity {
         }
     }
 
-//    @Override
-//    public boolean tryToAddUpgrade(Player playerEntity, ItemStack itemStack) {
-//        if (super.tryToAddUpgrade(playerEntity, itemStack)) {
-//            return true;
-//        }
-//        if (!hasLargeUpgrade && getPassengers().size() < 2) {
-//            Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getLargeUpgradeFromItem(itemStack.getItem());
-//            if (upgradeTypeOptional.map(upgradeType -> {
-//                if (canAddUpgrade(upgradeType)) {
-//                    Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
-//                    addUpgrade(playerEntity, itemStack, upgrade);
-//                    return true;
-//                }
-//                return false;
-//            }).orElse(false)) {
-//                return true;
-//            }
+    @Override
+    public boolean tryToAddUpgrade(Player playerEntity, ItemStack itemStack) {
+        if (super.tryToAddUpgrade(playerEntity, itemStack)) {
+            return true;
+        }
+        if (!hasLargeUpgrade && getPassengers().size() < 2) {
+            Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getLargeUpgradeFromItem(itemStack.getItem());
+            if (upgradeTypeOptional.map(upgradeType -> {
+                if (canAddUpgrade(upgradeType)) {
+                    Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
+                    addUpgrade(playerEntity, itemStack, upgrade);
+                    return true;
+                }
+                return false;
+            }).orElse(false)) {
+                return true;
+            }
+            //todo
 //            PayloadEntry payloadEntry = PlanePayloadReloadListener.payloadEntries.get(itemStack.getItem());
 //            if (payloadEntry != null) {
 //                addUpgrade(playerEntity, itemStack, new PayloadUpgrade(this, payloadEntry));
 //                return true;
 //            }
-//        }
-//
-//        return false;
-//    }
+        }
+
+        return false;
+    }
 
     @Override
     protected float getGroundPitch() {
@@ -79,11 +87,11 @@ public class LargePlaneEntity extends PlaneEntity {
         if (passenger.getVehicle() == this || passenger instanceof PlaneEntity) {
             return false;
         }
-//        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+        if (!upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.getKey(SimplePlanesUpgrades.SEATS))) {
             return passengers.size() <= 1 && (passengers.size() == 0 || !hasLargeUpgrade);
-//        } else {
-//            return hasLargeUpgrade ? passengers.size() < 3 : passengers.size() < 4;
-//        }
+        } else {
+            return hasLargeUpgrade ? passengers.size() < 3 : passengers.size() < 4;
+        }
     }
 
     @Override
@@ -135,13 +143,13 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     public boolean hasStorageUpgrade() {
-//        if (hasLargeUpgrade) {
-//            for (Upgrade upgrade : upgrades.values()) {
-//                if (upgrade instanceof LargeUpgrade largeUpgrade) {
-//                    return largeUpgrade.hasStorage();
-//                }
-//            }
-//        }
+        if (hasLargeUpgrade) {
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade instanceof LargeUpgrade largeUpgrade) {
+                    return largeUpgrade.hasStorage();
+                }
+            }
+        }
 
         return false;
     }

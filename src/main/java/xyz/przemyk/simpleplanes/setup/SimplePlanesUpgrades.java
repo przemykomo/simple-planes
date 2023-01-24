@@ -5,8 +5,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.banner.BannerUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.floating.FloatingUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.folding.FoldingUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.heal.HealingUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.seats.SeatsUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,22 +49,26 @@ public class SimplePlanesUpgrades {
         return Optional.empty();
     }
 
-//    public static final RegistryObject<UpgradeType> FLOATY_BEDDING = UPGRADE_TYPES.register("floaty_bedding", () -> new UpgradeType(FloatingUpgrade::new));
-//    public static final RegistryObject<UpgradeType> BOOSTER = UPGRADE_TYPES.register("booster", () -> new UpgradeType(BoosterUpgrade::new));
-//    public static final RegistryObject<UpgradeType> SHOOTER = UPGRADE_TYPES.register("shooter", () -> new UpgradeType(ShooterUpgrade::new));
-//    public static final RegistryObject<UpgradeType> HEALING = UPGRADE_TYPES.register("healing", () -> new UpgradeType(HealingUpgrade::new));
-//    public static final RegistryObject<UpgradeType> ARMOR = UPGRADE_TYPES.register("armor", () -> new UpgradeType(ArmorUpgrade::new));
-//    public static final RegistryObject<UpgradeType> SOLAR_PANEL = UPGRADE_TYPES.register("solar_panel", () -> new UpgradeType(SolarPanelUpgrade::new));
-//    public static final RegistryObject<UpgradeType> FOLDING = UPGRADE_TYPES.register("folding", () -> new UpgradeType(FoldingUpgrade::new));
-//    public static final RegistryObject<UpgradeType> SEATS = UPGRADE_TYPES.register("seats", () -> new UpgradeType(SeatsUpgrade::new));
+    public static final UpgradeType FLOATY_BEDDING = register("floaty_bedding", new UpgradeType(FloatingUpgrade::new));
+    public static final UpgradeType BOOSTER = register("booster", new UpgradeType(BoosterUpgrade::new));
+    public static final UpgradeType SHOOTER = register("shooter", new UpgradeType(ShooterUpgrade::new));
+    public static final UpgradeType HEALING = register("healing", new UpgradeType(HealingUpgrade::new));
+    public static final UpgradeType ARMOR = register("armor", new UpgradeType(ArmorUpgrade::new));
+//    public static final UpgradeType SOLAR_PANEL = register("solar_panel", new UpgradeType(SolarPanelUpgrade::new));
+    public static final UpgradeType FOLDING = register("folding", new UpgradeType(FoldingUpgrade::new));
+    public static final UpgradeType SEATS = register("seats", new UpgradeType(SeatsUpgrade::new));
 //
-    public static final UpgradeType FURNACE_ENGINE = Registry.register(SimplePlanesRegistries.UPGRADE_TYPES, new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), new UpgradeType(FurnaceEngineUpgrade::new, true));
-//    public static final RegistryObject<UpgradeType> ELECTRIC_ENGINE = UPGRADE_TYPES.register("electric_engine", () -> new UpgradeType(ElectricEngineUpgrade::new, true));
-//    public static final RegistryObject<UpgradeType> LIQUID_ENGINE = UPGRADE_TYPES.register("liquid_engine", () -> new UpgradeType(LiquidEngineUpgrade::new, true));
+    public static final UpgradeType FURNACE_ENGINE = register("furnace_engine", new UpgradeType(FurnaceEngineUpgrade::new, true));
+//    public static final RegistryObject<UpgradeType> ELECTRIC_ENGINE = UPGRADE_TYPES.register("electric_engine", new UpgradeType(ElectricEngineUpgrade::new, true));
+//    public static final RegistryObject<UpgradeType> LIQUID_ENGINE = UPGRADE_TYPES.register("liquid_engine", new UpgradeType(LiquidEngineUpgrade::new, true));
 
-    public static final UpgradeType BANNER = Registry.register(SimplePlanesRegistries.UPGRADE_TYPES, new ResourceLocation(SimplePlanesMod.MODID, "banner"), new UpgradeType(BannerUpgrade::new));
-//    public static final RegistryObject<UpgradeType> PAYLOAD = UPGRADE_TYPES.register("payload", () -> new UpgradeType(PayloadUpgrade::new));
-//    public static final RegistryObject<UpgradeType> CHEST = UPGRADE_TYPES.register("chest", () -> new UpgradeType(ChestUpgrade::new));
-//    public static final RegistryObject<UpgradeType> SUPPLY_CRATE = UPGRADE_TYPES.register("supply_crate", () -> new UpgradeType(SupplyCrateUpgrade::new));
-//    public static final RegistryObject<UpgradeType> JUKEBOX = UPGRADE_TYPES.register("jukebox", () -> new UpgradeType(JukeboxUpgrade::new));
+    public static final UpgradeType BANNER = register("banner", new UpgradeType(BannerUpgrade::new));
+//    public static final RegistryObject<UpgradeType> PAYLOAD = UPGRADE_TYPES.register("payload", new UpgradeType(PayloadUpgrade::new));
+    public static final UpgradeType CHEST = register("chest", new UpgradeType(ChestUpgrade::new));
+//    public static final UpgradeType SUPPLY_CRATE = register("supply_crate", new UpgradeType(SupplyCrateUpgrade::new));
+//    public static final UpgradeType JUKEBOX = register("jukebox", new UpgradeType(JukeboxUpgrade::new));
+
+    private static UpgradeType register(String id, UpgradeType upgradeType) {
+        return Registry.register(SimplePlanesRegistries.UPGRADE_TYPES, new ResourceLocation(SimplePlanesMod.MODID, id), upgradeType);
+    }
 }

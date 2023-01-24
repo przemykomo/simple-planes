@@ -169,7 +169,7 @@ public class HelicopterEntity extends LargePlaneEntity {
 //            return false;
 //        }
 //        return super.canAddUpgrade(upgradeType);
-//    }
+//    } todo
 
     @Override
     public double getCameraDistanceMultiplayer() {

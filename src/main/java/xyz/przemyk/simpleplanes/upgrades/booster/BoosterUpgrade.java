@@ -1,6 +1,12 @@
 package xyz.przemyk.simpleplanes.upgrades.booster;
 
-public class BoosterUpgrade/* extends Upgrade */{
+import net.minecraft.network.FriendlyByteBuf;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+
+public class BoosterUpgrade extends Upgrade {
     public static final int MAX_THROTTLE = 10;
 
 //    public static final int FUEL_PER_GUNPOWDER = 20;
@@ -19,19 +25,19 @@ public class BoosterUpgrade/* extends Upgrade */{
 //        fuel = compoundNBT.getInt("fuel");
 //    }
 //
-//    @Override
-//    public void writePacket(FriendlyByteBuf buffer) {
-////        buffer.writeVarInt(fuel);
-//    }
-//
-//    @Override
-//    public void readPacket(FriendlyByteBuf buffer) {
-////        fuel = buffer.readVarInt();
-//    }
-//
-//    public BoosterUpgrade(PlaneEntity planeEntity) {
-//        super(SimplePlanesUpgrades.BOOSTER.get(), planeEntity);
-//    }
+    @Override
+    public void writePacket(FriendlyByteBuf buffer) {
+//        buffer.writeVarInt(fuel);
+    }
+
+    @Override
+    public void readPacket(FriendlyByteBuf buffer) {
+//        fuel = buffer.readVarInt();
+    }
+
+    public BoosterUpgrade(PlaneEntity planeEntity) {
+        super(SimplePlanesUpgrades.BOOSTER, planeEntity);
+    }
 
 //    @Override
 //    public void tick() {
@@ -106,11 +112,11 @@ public class BoosterUpgrade/* extends Upgrade */{
 //                motion.z * speed);
 //    }
 
-//    @Override
-//    public void onRemoved() {
-//        planeEntity.spawnAtLocation(SimplePlanesItems.BOOSTER.get());
-//        if (planeEntity.getThrottle() > PlaneEntity.MAX_THROTTLE) {
-//            planeEntity.setThrottle(PlaneEntity.MAX_THROTTLE);
-//        }
-//    }
+    @Override
+    public void onRemoved() {
+        planeEntity.spawnAtLocation(SimplePlanesItems.BOOSTER);
+        if (planeEntity.getThrottle() > PlaneEntity.MAX_THROTTLE) {
+            planeEntity.setThrottle(PlaneEntity.MAX_THROTTLE);
+        }
+    }
 }

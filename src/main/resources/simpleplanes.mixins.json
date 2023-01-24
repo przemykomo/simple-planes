@@ -4,11 +4,13 @@
     "package": "xyz.przemyk.simpleplanes.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "MixinEnchantmentHelper"
     ],
     "client": [
         "MixinEntityRenderDispatcher",
         "MixinGameRenderer",
-        "MixinLivingEntityRenderer"
+        "MixinLivingEntityRenderer",
+        "MixinMinecraft"
     ],
     "injectors": {
         "defaultRequire": 1

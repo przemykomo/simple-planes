@@ -17,6 +17,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -27,9 +28,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
+import xyz.przemyk.simpleplanes.client.gui.StorageScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -59,7 +62,7 @@ public class ClientEventHandler implements ClientModInitializer {
         SimplePlanesNetworking.registerS2CPackets();
         MenuScreens.register(SimplePlanesContainers.PLANE_WORKBENCH, PlaneWorkbenchScreen::new);
 //        MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
-//        MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
+        MenuScreens.register(SimplePlanesContainers.STORAGE, StorageScreen::new);
         MenuScreens.register(SimplePlanesContainers.PLANE_INVENTORY, PlaneInventoryScreen::new);
 
         PlanesModelLayers.registerRenderers();
@@ -72,19 +75,6 @@ public class ClientEventHandler implements ClientModInitializer {
             ColorProviderRegistry.ITEM.register(PlaneItemColors::getColor, item);
         });
     }
-
-//    public static void planeColor(RegisterColorHandlersEvent.Item event) {
-//        SimplePlanesItems.getPlaneItems().forEach(item -> event.register(PlaneItemColors::getColor, item));
-//    }
-
-//
-//    static {
-//        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-//        eventBus.addListener(ClientEventHandler::planeColor);
-//        eventBus.addListener(ClientEventHandler::reloadTextures);
-//        eventBus.addListener(ClientEventHandler::registerKeyBindings);
-//        eventBus.addListener(ClientEventHandler::registerHUDOverlay);
-//    }
 
     public static void registerKeyBindings() {
         moveHeliUpKey = new KeyMapping("key.move_heli_up.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
@@ -308,15 +298,14 @@ public class ClientEventHandler implements ClientModInitializer {
             }
         }
     }
-//
-//    @SubscribeEvent(priority = EventPriority.HIGH)
-//    public static void planeInventory(ScreenEvent.Opening event) {
-//        final LocalPlayer player = Minecraft.getInstance().player;
-//        if (event.getScreen() instanceof InventoryScreen && player.getVehicle() instanceof LargePlaneEntity largePlaneEntity) {
-//            if (largePlaneEntity.hasStorageUpgrade()) {
-//                event.setCanceled(true);
-//                SimplePlanesNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
-//            }
-//        }
-//    }
+
+    public static void planeInventory(CallbackInfo ci) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player.getVehicle() instanceof LargePlaneEntity largePlaneEntity) {
+            if (largePlaneEntity.hasStorageUpgrade()) {
+                ci.cancel();
+                OpenInventoryPacket.send();
+            }
+        }
+    }
 }

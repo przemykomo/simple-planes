@@ -46,7 +46,10 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
+import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -196,11 +199,11 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
     @Override
     protected boolean canAddPassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-//        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+        if (!upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.getKey(SimplePlanesUpgrades.SEATS))) {
             return passengers.isEmpty();
-//        } else {
-//            return passengers.size() < 3;
-//        }
+        } else {
+            return passengers.size() < 3;
+        }
     }
 
     @Override
@@ -271,19 +274,19 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
     public boolean hurt(DamageSource source, float amount) {
         Entity entity = source.getDirectEntity();
         if (entity == getControllingPassenger() && entity instanceof Player player) {
-//            if (upgrades.get(SimplePlanesUpgrades.SHOOTER.getId()) instanceof ShooterUpgrade shooterUpgrade) {
-//                shooterUpgrade.use(player);
-//            }
+            if (upgrades.get(SimplePlanesRegistries.UPGRADE_TYPES.getKey(SimplePlanesUpgrades.SHOOTER)) instanceof ShooterUpgrade shooterUpgrade) {
+                shooterUpgrade.use(player);
+            }
             return false;
         }
 
         if (getOnGround() && entity instanceof Player) {
             amount *= 3;
         } else {
-//            Upgrade upgrade = upgrades.get(SimplePlanesUpgrades.ARMOR.getId());
-//            if (upgrade instanceof ArmorUpgrade armorUpgrade) {
-//                amount = armorUpgrade.getReducedDamage(amount);
-//            }
+            Upgrade upgrade = upgrades.get(SimplePlanesRegistries.UPGRADE_TYPES.getKey(SimplePlanesUpgrades.ARMOR));
+            if (upgrade instanceof ArmorUpgrade armorUpgrade) {
+                amount = armorUpgrade.getReducedDamage(amount);
+            }
         }
         setTimeSinceHit(20);
         setDamageTaken(getDamageTaken() + 10 * amount);
@@ -882,14 +885,9 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
         return true;
     }
 
-//    @Override
-//    public boolean canBeRiddenUnderFluidType(FluidType type, Entity rider) {
-//        return type == ForgeMod.WATER_TYPE.get() && upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId());
-//    }
-//TODO
     @Override
     public boolean rideableUnderWater() {
-        return super.rideableUnderWater();
+        return upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.getKey(SimplePlanesUpgrades.FLOATY_BEDDING));
     }
 
     @Override
@@ -1036,20 +1034,20 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
     //on dismount
     @Override
     public Vec3 getDismountLocationForPassenger(LivingEntity livingEntity) {
-//        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
-//            if (livingEntity instanceof Player player) {
-//
-//                if (!player.isCreative() && getPassengers().size() == 0 && isAlive()) {
-//                    ItemStack itemStack = getItemStack();
-//
-//                    if (!player.addItem(itemStack)) {
-//                        player.drop(itemStack, false);
-//                    }
-//                    kill();
-//                    return player.position();
-//                }
-//            }
-//        }
+        if (upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.getKey(SimplePlanesUpgrades.FOLDING))) {
+            if (livingEntity instanceof Player player) {
+
+                if (!player.isCreative() && getPassengers().size() == 0 && isAlive()) {
+                    ItemStack itemStack = getItemStack();
+
+                    if (!player.addItem(itemStack)) {
+                        player.drop(itemStack, false);
+                    }
+                    kill();
+                    return player.position();
+                }
+            }
+        }
 
         if (getPassengers().size() == 0) {
             setThrottle((byte) 0);
@@ -1249,7 +1247,7 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
     public void changeThrottle(ChangeThrottlePacket.Type type) {
         int throttle = getThrottle();
         if (type == ChangeThrottlePacket.Type.UP) {
-            if (throttle < MAX_THROTTLE /* || (upgrades.containsKey(SimplePlanesUpgrades.BOOSTER.getId()) && throttle < BoosterUpgrade.MAX_THROTTLE)*/) {
+            if (throttle < MAX_THROTTLE || (upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.getKey(SimplePlanesUpgrades.BOOSTER)) && throttle < BoosterUpgrade.MAX_THROTTLE)) {
                 setThrottle(throttle + 1);
             }
         } else if (throttle > 0) {

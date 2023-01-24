@@ -26,6 +26,7 @@ public class OpenPlaneInventoryPacket {
     public static void send() {
         ClientPlayNetworking.send(ID, PacketByteBufs.empty());
     }
+    @SuppressWarnings("unused")
     public static void receive(MinecraftServer server, ServerPlayer sender, ServerGamePacketListenerImpl serverGamePacketListener, FriendlyByteBuf buffer, PacketSender packetSender) {
         server.execute(() -> {
             if (sender != null) {

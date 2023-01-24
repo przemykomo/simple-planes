@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.items.DescriptionItem;
+import xyz.przemyk.simpleplanes.items.PlaneArmorItem;
 import xyz.przemyk.simpleplanes.items.PlaneItem;
 
 import java.util.ArrayList;
@@ -34,8 +35,8 @@ public class SimplePlanesItems {
     public static final Item FLOATY_BEDDING = register("floaty_bedding", new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final Item BOOSTER = register("booster", new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final Item HEALING = register("healing", new Item(new Item.Properties().tab(ITEM_GROUP)));
-//    public static final Item ARMOR = register("armor", new PlaneArmorItem(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
-    public static final Item SOLAR_PANEL = register("solar_panel", new Item(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
+    public static final Item ARMOR = register("armor", new PlaneArmorItem(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
+//    public static final Item SOLAR_PANEL = register("solar_panel", new Item(new Item.Properties().tab(ITEM_GROUP).stacksTo(1)));
     public static final Item FOLDING = register("folding", new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final Item SUPPLY_CRATE = register("supply_crate", new Item(new Item.Properties().tab(ITEM_GROUP)));
     public static final Item SEATS = register("seats", new Item(new Item.Properties().tab(ITEM_GROUP)));

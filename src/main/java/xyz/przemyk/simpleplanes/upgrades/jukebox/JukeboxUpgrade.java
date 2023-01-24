@@ -15,13 +15,7 @@
 //import net.minecraft.world.item.RecordItem;
 //import net.minecraft.world.level.block.Blocks;
 //import net.minecraft.world.level.block.state.BlockState;
-//import net.minecraftforge.client.model.data.ModelData;
-//import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-//import net.minecraftforge.network.PacketDistributor;
-//import net.minecraftforge.registries.ForgeRegistries;
-//import xyz.przemyk.simpleplanes.client.MovingSound;
 //import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-//import xyz.przemyk.simpleplanes.network.JukeboxPacket;
 //import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 //import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 //import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -32,7 +26,7 @@
 //    private ItemStack record = ItemStack.EMPTY;
 //
 //    public JukeboxUpgrade(PlaneEntity planeEntity) {
-//        super(SimplePlanesUpgrades.JUKEBOX.get(), planeEntity);
+//        super(SimplePlanesUpgrades.JUKEBOX, planeEntity);
 //    }
 //
 //    @Override
