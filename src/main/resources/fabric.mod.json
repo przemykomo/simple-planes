@@ -1,19 +1,19 @@
 {
     "schemaVersion": 1,
     "id": "simpleplanes",
-    "version": "${version}",
+    "version": "5.2.1",
 
-    "name": "Example Mod",
-    "description": "This is an example description! Tell everyone what your mod is about!",
+    "name": "Simple Planes",
+    "description": "Adds upgradeable planes and helicopters.",
     "authors": [
-        "Me!"
+        "SappyInsane"
     ],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+        "homepage": "https://www.curseforge.com/minecraft/mc-mods/simple-planes-fabric",
+        "sources": "https://github.com/przemykomo/simple-planes/tree/fabric"
     },
 
-    "license": "CC0-1.0",
+    "license": "GNU LGPLv3",
     "icon": "assets/modid/icon.png",
 
     "environment": "*",
@@ -36,8 +36,5 @@
         "fabric": "*",
         "minecraft": "~1.19",
         "java": ">=17"
-    },
-    "suggests": {
-        "another-mod": "*"
     }
 }
