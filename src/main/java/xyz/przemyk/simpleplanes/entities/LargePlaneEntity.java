@@ -10,12 +10,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
+import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
+import xyz.przemyk.simpleplanes.upgrades.payload.PayloadUpgrade;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,12 +62,11 @@ public class LargePlaneEntity extends PlaneEntity {
             }).orElse(false)) {
                 return true;
             }
-            //todo
-//            PayloadEntry payloadEntry = PlanePayloadReloadListener.payloadEntries.get(itemStack.getItem());
-//            if (payloadEntry != null) {
-//                addUpgrade(playerEntity, itemStack, new PayloadUpgrade(this, payloadEntry));
-//                return true;
-//            }
+            PayloadEntry payloadEntry = PlanePayloadReloadListener.payloadEntries.get(itemStack.getItem());
+            if (payloadEntry != null) {
+                addUpgrade(playerEntity, itemStack, new PayloadUpgrade(this, payloadEntry));
+                return true;
+            }
         }
 
         return false;

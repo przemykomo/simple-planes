@@ -30,10 +30,8 @@ public class SimplePlanesMod implements ModInitializer {
         SimplePlanesDataSerializers.init();
         SimplePlanesRecipes.init();
         SimplePlanesNetworking.registerC2SPackets();
-//        SimplePlanesDatapack.init();
+        SimplePlanesDatapack.init();
 
-//        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
-//        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 //        ModList.get().getModContainerById("cgm").ifPresent(cgm -> MinecraftForge.EVENT_BUS.register(MrCrayfishGunCompat.class));
 
         SimplePlanesUpgrades.registerUpgradeItem(SimplePlanesItems.FLOATY_BEDDING, SimplePlanesUpgrades.FLOATY_BEDDING);

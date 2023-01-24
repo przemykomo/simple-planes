@@ -9,6 +9,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +43,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public void onItemRightClick(Player player, ItemStack itemStack) {
+    public void onItemRightClick(Player player, ItemStack itemStack, InteractionHand hand) {
         if (!planeEntity.level.isClientSide) {
             if (itemStack.getItem() instanceof RecordItem newRecordItem && newRecordItem != record.getItem()) {
                 ItemStack oldRecord = record;

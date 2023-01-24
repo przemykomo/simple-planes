@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
@@ -58,7 +59,7 @@ public abstract class Upgrade /*implements INBTSerializable<CompoundTag> */{
     /**
      * Called when passenger right clicks with item.
      */
-    public void onItemRightClick(Player player, ItemStack itemStack) {}
+    public void onItemRightClick(Player player, ItemStack itemStack, InteractionHand hand) {}
 
     /**
      * Called every tick by plane entity.

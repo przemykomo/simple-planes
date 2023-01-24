@@ -258,7 +258,7 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
 
         if (!itemStack.isEmpty() && player.getVehicle() == this) {
             for (Upgrade upgrade : upgrades.values()) {
-                upgrade.onItemRightClick(player, itemStack);
+                upgrade.onItemRightClick(player, itemStack, hand);
             }
         }
 
