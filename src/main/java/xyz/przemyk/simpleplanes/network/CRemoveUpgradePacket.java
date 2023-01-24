@@ -1,42 +1,37 @@
-//package xyz.przemyk.simpleplanes.network;
-//
-//import net.minecraft.world.entity.Entity;
-//import net.minecraft.server.level.ServerPlayer;
-//import net.minecraft.network.FriendlyByteBuf;
-//import net.minecraft.resources.ResourceLocation;
-//import net.minecraftforge.network.NetworkEvent;
-//import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
-//import xyz.przemyk.simpleplanes.entities.PlaneEntity;
-//
-//import java.util.function.Supplier;
-//
-//public class CRemoveUpgradePacket {
-//
-//    private final ResourceLocation upgradeID;
-//
-//    public CRemoveUpgradePacket(ResourceLocation upgradeID) {
-//        this.upgradeID = upgradeID;
-//    }
-//
-//    public CRemoveUpgradePacket(FriendlyByteBuf buffer) {
-//        upgradeID = buffer.readResourceLocation();
-//    }
-//
-//    public void toBytes(FriendlyByteBuf buffer) {
-//        buffer.writeResourceLocation(upgradeID);
-//    }
-//
-//    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-//        NetworkEvent.Context ctx = ctxSup.get();
-//        ctx.enqueueWork(() -> {
-//            ServerPlayer sender = ctx.getSender();
-//            if (sender.containerMenu instanceof RemoveUpgradesContainer container) {
-//                Entity entity = sender.level.getEntity(container.planeID);
-//                if (entity instanceof PlaneEntity) {
-//                    ((PlaneEntity) entity).removeUpgrade(upgradeID);
-//                }
-//            }
-//        });
-//        ctx.setPacketHandled(true);
-//    }
-//}
+package xyz.przemyk.simpleplanes.network;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
+import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
+import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+
+public class CRemoveUpgradePacket {
+
+    public static final ResourceLocation ID = new ResourceLocation(SimplePlanesMod.MODID, "remove_upgrade");
+
+    public static void send(ResourceLocation upgradeID) {
+        FriendlyByteBuf buffer = PacketByteBufs.create();
+        buffer.writeResourceLocation(upgradeID);
+        ClientPlayNetworking.send(ID, buffer);
+    }
+
+    public static void receive(MinecraftServer server, ServerPlayer sender, ServerGamePacketListenerImpl serverGamePacketListener, FriendlyByteBuf buffer, PacketSender packetSender) {
+        ResourceLocation upgradeID = buffer.readResourceLocation();
+        server.execute(() -> {
+            if (sender.containerMenu instanceof RemoveUpgradesContainer container) {
+                Entity entity = sender.level.getEntity(container.planeID);
+                if (entity instanceof PlaneEntity) {
+                    ((PlaneEntity) entity).removeUpgrade(upgradeID);
+                }
+            }
+        });
+    }
+}

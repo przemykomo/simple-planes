@@ -3,11 +3,13 @@ package xyz.przemyk.simpleplanes.entities;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -25,7 +27,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -38,6 +42,7 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
+import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesDataSerializers;
@@ -225,8 +230,23 @@ public class PlaneEntity extends Entity /*implements IEntityAdditionalSpawnData*
 
         if (itemStack.getItem() == SimplePlanesItems.WRENCH) {
             if (!level.isClientSide) {
-                //TODO
-//                NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), Component.empty()), buf -> buf.writeVarInt(getId()));
+                player.openMenu(new ExtendedScreenHandlerFactory() {
+                    @Override
+                    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+                        buf.writeVarInt(getId());
+                    }
+
+                    @Override
+                    public Component getDisplayName() {
+                        return Component.empty();
+                    }
+
+                    @org.jetbrains.annotations.Nullable
+                    @Override
+                    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+                        return new RemoveUpgradesContainer(id, getId());
+                    }
+                });
                 return InteractionResult.CONSUME;
             }
             return InteractionResult.SUCCESS;

@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
+import xyz.przemyk.simpleplanes.client.gui.RemoveUpgradesScreen;
 import xyz.przemyk.simpleplanes.client.gui.StorageScreen;
 import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
@@ -61,7 +62,7 @@ public class ClientEventHandler implements ClientModInitializer {
     public void onInitializeClient() {
         SimplePlanesNetworking.registerS2CPackets();
         MenuScreens.register(SimplePlanesContainers.PLANE_WORKBENCH, PlaneWorkbenchScreen::new);
-//        MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), RemoveUpgradesScreen::new);
+        MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL, RemoveUpgradesScreen::new);
         MenuScreens.register(SimplePlanesContainers.STORAGE, StorageScreen::new);
         MenuScreens.register(SimplePlanesContainers.PLANE_INVENTORY, PlaneInventoryScreen::new);
 
