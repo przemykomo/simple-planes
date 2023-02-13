@@ -21,7 +21,7 @@ public class SimplePlanesItems {
 //        register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    public static final CreativeModeTab ITEM_GROUP = FabricItemGroupBuilder.build(new ResourceLocation(SimplePlanesMod.MODID, "simple_planes"), () -> new ItemStack(Items.APPLE));
+    public static final CreativeModeTab ITEM_GROUP = FabricItemGroupBuilder.build(new ResourceLocation(SimplePlanesMod.MODID, "simple_planes"), () -> new ItemStack(SimplePlanesItems.PLANE_ITEM));
 
     public static List<PlaneItem> getPlaneItems() {
         ArrayList<PlaneItem> planeItems = new ArrayList<>(3);
