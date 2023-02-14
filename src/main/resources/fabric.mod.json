@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "simpleplanes",
-    "version": "5.2.1",
+    "version": "5.2.2",
 
     "name": "Simple Planes",
     "description": "Adds upgradeable planes and helicopters.",
@@ -14,7 +14,7 @@
     },
 
     "license": "GNU LGPLv3",
-    "icon": "assets/modid/icon.png",
+    "icon": "assets/simpleplanes/icon.png",
 
     "environment": "*",
     "entrypoints": {
