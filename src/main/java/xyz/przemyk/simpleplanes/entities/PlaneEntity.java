@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -992,7 +993,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public boolean isOnWater() {
-        return level.getBlockState(new BlockPos(position().add(0, 0.4, 0))).getBlock() == Blocks.WATER;
+        return level.getBlockState(new BlockPos(position().add(0, 0.4, 0))).getFluidState().is(FluidTags.WATER);
     }
 
     public boolean canAddUpgrade(UpgradeType upgradeType) {

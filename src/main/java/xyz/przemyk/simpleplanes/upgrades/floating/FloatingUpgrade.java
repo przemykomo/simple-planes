@@ -2,8 +2,8 @@ package xyz.przemyk.simpleplanes.upgrades.floating;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -23,7 +23,7 @@ public class FloatingUpgrade extends Upgrade {
             double f = 1;
             double y = Mth.lerp(1, motion.y, Math.max(motion.y, 0));
             planeEntity.setDeltaMovement(motion.x * f, y, motion.z * f);
-            if (planeEntity.level.getBlockState(new BlockPos(planeEntity.position().add(0, 0.5, 0))).getBlock() == Blocks.WATER) {
+            if (planeEntity.level.getBlockState(new BlockPos(planeEntity.position().add(0, 0.5, 0))).getFluidState().is(FluidTags.WATER)) {
                 planeEntity.setDeltaMovement(planeEntity.getDeltaMovement().add(0, 0.04, 0));
             }
         }
