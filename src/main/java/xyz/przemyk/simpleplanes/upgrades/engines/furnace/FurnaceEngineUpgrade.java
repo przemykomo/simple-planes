@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
@@ -16,7 +15,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
-import xyz.przemyk.simpleplanes.client.ClientUtil;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.container.FuelSlot;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -143,8 +141,10 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
             int i2 = scaledHeight - 16 - 3;
             if (side == HumanoidArm.LEFT) {
                 guiGraphics.renderItem(fuelStack, i - 91 - 26, i2);
+                guiGraphics.renderItemDecorations(mc.font, fuelStack, i - 91 - 26, i2);
             } else {
                 guiGraphics.renderItem(fuelStack, i + 91 + 3, i2);
+                guiGraphics.renderItemDecorations(mc.font, fuelStack, i + 91 + 3, i2);
             }
         }
     }
