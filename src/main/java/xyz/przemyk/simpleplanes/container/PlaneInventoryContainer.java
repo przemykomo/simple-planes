@@ -15,6 +15,7 @@ public class PlaneInventoryContainer extends AbstractContainerMenu {
 
     public PlaneEntity planeEntity;
 
+    @SuppressWarnings("PatternVariableHidesField")
     public PlaneInventoryContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
         super(SimplePlanesContainers.PLANE_INVENTORY.get(), id);
         if (Minecraft.getInstance().level.getEntity(buffer.readVarInt()) instanceof PlaneEntity planeEntity) {

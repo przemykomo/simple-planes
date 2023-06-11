@@ -48,8 +48,8 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         super(SimplePlanesContainers.PLANE_WORKBENCH.get(), id);
         this.player = playerInventory.player;
         this.itemHandler = itemHandler;
-        this.usabilityTest = ContainerLevelAccess.create(player.level, blockPos);
-        this.recipeList = player.level.getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE.get());
+        this.usabilityTest = ContainerLevelAccess.create(player.level(), blockPos);
+        this.recipeList = player.level().getRecipeManager().getAllRecipesFor(SimplePlanesRecipes.PLANE_WORKBENCH_RECIPE_TYPE.get());
         this.selectedRecipe = selectedRecipe;
 
         addSlot(new SlotItemHandler(itemHandler, 0, 28, 47));
@@ -74,8 +74,9 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         int prevSelectedRecipe = selectedRecipe.get();
         ItemStack ingredient = itemHandler.getStackInSlot(0);
         ItemStack material = itemHandler.getStackInSlot(1);
+
         switch (type) {
-            case CRAFTING_LEFT:
+            case CRAFTING_LEFT -> {
                 do {
                     if (selectedRecipe.get() == 0) {
                         selectedRecipe.set(recipeList.size() - 1);
@@ -83,8 +84,8 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
                         selectedRecipe.set(selectedRecipe.get() - 1);
                     }
                 } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
-                break;
-            case CRAFTING_RIGHT:
+            }
+            case CRAFTING_RIGHT -> {
                 do {
                     if (selectedRecipe.get() == recipeList.size() - 1) {
                         selectedRecipe.set(0);
@@ -92,13 +93,14 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
                         selectedRecipe.set(selectedRecipe.get() + 1);
                     }
                 } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
+            }
         }
 
         updateCraftingResult();
     }
 
     public void onCrafting() {
-        if (!player.level.isClientSide) {
+        if (!player.level().isClientSide) {
             PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
             itemHandler.extractItem(0, recipe.ingredientAmount(), false);
             itemHandler.extractItem(1, recipe.materialAmount(), false);
@@ -108,7 +110,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
     @SuppressWarnings("deprecation")
     protected void updateCraftingResult() {
-        if (!this.player.level.isClientSide) {
+        if (!this.player.level().isClientSide) {
             ServerPlayer serverPlayerEntity = (ServerPlayer) this.player;
             ItemStack result = ItemStack.EMPTY;
             ItemStack ingredientStack = itemHandler.getStackInSlot(0);
@@ -151,7 +153,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
             originalItemStack = inputItemStack.copy();
 
             if (index == 2) { // test for result slot
-                inputItemStack.getItem().onCraftedBy(inputItemStack, playerIn.level, playerIn);
+                inputItemStack.getItem().onCraftedBy(inputItemStack, playerIn.level(), playerIn);
 
                 // move result to the player inventory
                 if (!moveItemStackTo(inputItemStack, 3, 39, true)) {

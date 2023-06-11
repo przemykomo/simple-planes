@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.jukebox;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -47,7 +47,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
 
     @Override
     public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-        if (!planeEntity.level.isClientSide) {
+        if (!planeEntity.level().isClientSide) {
             Player player = event.getEntity();
             ItemStack itemStack = player.getItemInHand(event.getHand());
             if (itemStack.getItem() instanceof RecordItem newRecordItem && newRecordItem != record.getItem()) {
@@ -76,7 +76,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
             matrixStack.translate(0, 0, 0.1);
         }
 
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = Blocks.JUKEBOX.defaultBlockState();
@@ -94,7 +94,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
     public void onRemoved() {
         planeEntity.spawnAtLocation(Items.JUKEBOX);
         planeEntity.spawnAtLocation(record);
-        if (planeEntity.level.isClientSide) {
+        if (planeEntity.level().isClientSide) {
             MovingSound.remove(planeEntity);
         }
     }

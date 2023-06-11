@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -20,11 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.Nullable;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-
-import java.util.List;
 
 public class ParachuteEntity extends Entity {
 
@@ -51,27 +49,29 @@ public class ParachuteEntity extends Entity {
         return entityData.get(HAS_STORAGE_CRATE);
     }
 
-    @Nullable
     @Override
-    public Entity getControllingPassenger() {
-        List<Entity> list = getPassengers();
-        return list.isEmpty() ? null : list.get(0);
+    public LivingEntity getControllingPassenger() {
+        if (getFirstPassenger() instanceof LivingEntity entity) {
+            return entity;
+        }
+
+        return null;
     }
 
     @Override
     public void tick() {
         Entity passenger = getControllingPassenger();
         // Can't use onGround since it detects plane collisions too.
-        if ((passenger == null && !hasStorageCrate()) || !level.getBlockState(new BlockPos(getX(), getY() - 0.1, getZ())).getMaterial().isReplaceable()) {
+        if ((passenger == null && !hasStorageCrate()) || !level().getBlockState(new BlockPos((int) getX(), (int) getY() - 1, (int) getZ())).canBeReplaced()) {
             kill();
             spawnAtLocation(SimplePlanesItems.PARACHUTE_ITEM.get());
-            if (hasStorageCrate() && !level.isClientSide) {
+            if (hasStorageCrate() && !level().isClientSide) {
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(getBlockX(), getBlockY(), getBlockZ());
                 for (int i = 0; i < 50; i++) {
-                    BlockState blockState = level.getBlockState(mutableBlockPos);
-                    if (blockState.getMaterial().isReplaceable()) {
-                        level.setBlock(mutableBlockPos, Blocks.BARREL.defaultBlockState(), 3);
-                        if (level.getBlockEntity(mutableBlockPos) instanceof BarrelBlockEntity barrelBlockEntity) {
+                    BlockState blockState = level().getBlockState(mutableBlockPos);
+                    if (blockState.canBeReplaced()) {
+                        level().setBlock(mutableBlockPos, Blocks.BARREL.defaultBlockState(), 3);
+                        if (level().getBlockEntity(mutableBlockPos) instanceof BarrelBlockEntity barrelBlockEntity) {
                             for (int s = 0; s < 27; s++) {
                                 ItemStack itemStack = itemStackHandler.getStackInSlot(s);
                                 if (!itemStack.isEmpty()) {
@@ -135,7 +135,7 @@ public class ParachuteEntity extends Entity {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

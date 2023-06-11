@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.payload;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -58,7 +58,7 @@ public class PayloadUpgrade extends LargeUpgrade {
                 matrixStack.translate(0, 0, 0.1);
             }
 
-            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+            matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
             matrixStack.translate(-0.4, -1, 0.3);
             matrixStack.scale(0.82f, 0.82f, 0.82f);
             BlockState state = payloadEntry.renderBlock().defaultBlockState();
@@ -115,11 +115,11 @@ public class PayloadUpgrade extends LargeUpgrade {
     @Override
     public void dropAsPayload() {
         if (payloadEntry != null) {
-            Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level);
+            Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level());
             entity.load(payloadEntry.compoundTag());
             entity.setPos(planeEntity.position());
             entity.setDeltaMovement(planeEntity.getDeltaMovement());
-            planeEntity.level.addFreshEntity(entity);
+            planeEntity.level().addFreshEntity(entity);
         }
         remove();
     }

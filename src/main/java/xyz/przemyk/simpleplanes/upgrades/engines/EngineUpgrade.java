@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.engines;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.HumanoidArm;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -19,5 +19,5 @@ public abstract class EngineUpgrade extends Upgrade {
     }
 
     public abstract boolean isPowered();
-    public abstract void renderPowerHUD(PoseStack matrixStack, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks);
+    public abstract void renderPowerHUD(GuiGraphics guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks);
 }

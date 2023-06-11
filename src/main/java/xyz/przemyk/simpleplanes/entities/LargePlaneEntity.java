@@ -1,6 +1,5 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
@@ -10,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
 import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
@@ -35,9 +35,9 @@ public class LargePlaneEntity extends PlaneEntity {
     public void tick() {
         super.tick();
 
-        List<Entity> list = level.getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
+        List<Entity> list = level().getEntities(this, getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
         for (Entity entity : list) {
-            if (!level.isClientSide && !(getControllingPassenger() instanceof Player) &&
+            if (!level().isClientSide && !(getControllingPassenger() instanceof Player) &&
                 !entity.hasPassenger(this) &&
                 !entity.isPassenger() && entity instanceof LivingEntity && !(entity instanceof Player)) {
                 entity.startRiding(this);
@@ -96,14 +96,14 @@ public class LargePlaneEntity extends PlaneEntity {
     }
 
     @Override
-    public void positionRider(Entity passenger) {
+    public void positionRider(Entity passenger, Entity.MoveFunction moveFunction) {
         positionRiderGeneric(passenger);
         int index = getPassengers().indexOf(passenger);
 
         if (index == 0) {
 //            passenger.setPos(passenger.getX(), getY() + getPassengersRidingOffset() + getEntityYOffset(passenger), passenger.getZ());
             Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 1));
-            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+            moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else {
             if (hasLargeUpgrade) {
                 index++;
@@ -111,15 +111,15 @@ public class LargePlaneEntity extends PlaneEntity {
             switch (index) {
                 case 1 -> {
                     Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), 0));
-                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                    moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 2 -> {
                     Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -1));
-                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                    moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 3 -> {
                     Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -1.8f));
-                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                    moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
             }
         }

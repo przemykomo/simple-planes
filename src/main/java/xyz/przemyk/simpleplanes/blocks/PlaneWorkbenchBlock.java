@@ -20,8 +20,6 @@ import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public class PlaneWorkbenchBlock extends Block implements EntityBlock {
 
     public static final Component CONTAINER_NAME = Component.translatable(SimplePlanesMod.MODID + ".container.plane_workbench");

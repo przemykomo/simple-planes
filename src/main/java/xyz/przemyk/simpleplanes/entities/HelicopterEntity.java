@@ -1,7 +1,5 @@
 package xyz.przemyk.simpleplanes.entities;
 
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -11,6 +9,8 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -61,7 +61,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         if (getHealth() <= 0) {
             setXRot(-2);
             setDeltaMovement(getDeltaMovement().add(0, -0.04, 0));
-        } else if (!onGround) {
+        } else if (!onGround()) {
             if (tempMotionVars.moveForward > 0) {
                 setXRot(Math.max(getXRot() - 1, -20));
             } else if (tempMotionVars.moveForward < 0 && entityData.get(MOVE_UP)) {
@@ -90,17 +90,12 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected float getGroundPitch() {
-        return 0;
-    }
-
-    @Override
     public int getFuelCost() {
         return SimplePlanesConfig.HELICOPTER_FUEL_COST.get();
     }
 
     @Override
-    protected Quaternion tickRotateMotion(TempMotionVars tempMotionVars, Quaternion q, Vec3 motion) {
+    protected Quaternionf tickRotateMotion(TempMotionVars tempMotionVars, Quaternionf q, Vec3 motion) {
         return q;
     }
 
@@ -113,24 +108,24 @@ public class HelicopterEntity extends LargePlaneEntity {
 
         if (!entityData.get(MOVE_UP)) {
             setYRot(getYRot() - tempMotionVars.moveStrafing * 2);
-            if (tempMotionVars.moveForward > 0 && !onGround) {
+            if (tempMotionVars.moveForward > 0 && !onGround()) {
                 rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 30);
             } else {
                 rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, 0);
             }
-        } else if (!onGround) {
+        } else if (!onGround()) {
             rotationRoll = MathUtil.lerpAngle(0.1f, rotationRoll, tempMotionVars.moveStrafing * 50);
         }
     }
 
     @Override
-    public void positionRider(Entity passenger) {
+    public void positionRider(Entity passenger, Entity.MoveFunction moveFunction) {
         positionRiderGeneric(passenger);
         int index = getPassengers().indexOf(passenger);
 
         if (index == 0) {
             Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 0.5f));
-            passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+            moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else {
             if (hasLargeUpgrade) {
                 index++;
@@ -138,15 +133,15 @@ public class HelicopterEntity extends LargePlaneEntity {
             switch (index) {
                 case 1 -> {
                     Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -0.5f));
-                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                    moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 2 -> {
                     Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset() - 0.4f), 0));
-                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                    moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 3 -> {
                     Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) - 0.4f, 0));
-                    passenger.setPos(getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
+                    moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
             }
         }

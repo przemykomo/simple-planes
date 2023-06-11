@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
+import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.client.ClientUtil;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.container.FuelSlot;
@@ -115,13 +117,13 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderPowerHUD(PoseStack matrixStack, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
+    public void renderPowerHUD(GuiGraphics guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
         Minecraft mc = Minecraft.getInstance();
         if (side == HumanoidArm.LEFT) {
-            ClientUtil.blit(matrixStack, -90, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
+            guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
         } else {
-            ClientUtil.blit(matrixStack, -90, i + 91, scaledHeight - 40, 0, 44, 22, 40);
+            guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i + 91, scaledHeight - 40, 0, 44, 22, 40);
         }
 
         if (burnTime > 0) {
@@ -129,10 +131,10 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
             int burnLeftScaled = burnTime * 13 / burnTimeTotal2;
             if (side == HumanoidArm.LEFT) {
                 // render on left side
-                ClientUtil.blit(matrixStack, -90, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+                guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
             } else {
                 // render on right side
-                ClientUtil.blit(matrixStack, -90, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+                guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
             }
         }
 
@@ -140,9 +142,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
         if (!fuelStack.isEmpty()) {
             int i2 = scaledHeight - 16 - 3;
             if (side == HumanoidArm.LEFT) {
-                ClientUtil.renderHotbarItem(matrixStack, i - 91 - 26, i2, partialTicks, fuelStack, mc);
+                guiGraphics.renderItem(fuelStack, i - 91 - 26, i2);
             } else {
-                ClientUtil.renderHotbarItem(matrixStack, i + 91 + 3, i2, partialTicks, fuelStack, mc);
+                guiGraphics.renderItem(fuelStack, i + 91 + 3, i2);
             }
         }
     }
@@ -153,12 +155,12 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderScreenBg(PoseStack poseStack, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
-        screen.blit(poseStack, screen.getGuiLeft() + 151, screen.getGuiTop() + 44, 208, 0, 18, 35);
+    public void renderScreenBg(GuiGraphics guiGraphics, int x, int y, float partialTicks, PlaneInventoryScreen screen) {
+        guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 151, screen.getGuiTop() + 44, 208, 0, 18, 35);
 
         if (burnTime > 0) {
             int burnLeftScaled = burnTime * 13 / (burnTimeTotal == 0 ? 200 : burnTimeTotal);
-            screen.blit(poseStack, screen.getGuiLeft() + 152, screen.getGuiTop() + 57 - burnLeftScaled, 208, 47 - burnLeftScaled, 14, burnLeftScaled + 1);
+            guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 152, screen.getGuiTop() + 57 - burnLeftScaled, 208, 47 - burnLeftScaled, 14, burnLeftScaled + 1);
         }
     }
 }

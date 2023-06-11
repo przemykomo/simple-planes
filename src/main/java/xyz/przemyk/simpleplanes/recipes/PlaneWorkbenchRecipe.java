@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.recipes;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -17,11 +18,6 @@ public record PlaneWorkbenchRecipe(ResourceLocation id,
 
     public boolean canCraft(ItemStack ingredientStack, ItemStack materialStack) {
         return ingredientStack.getCount() >= ingredientAmount && materialStack.getCount() >= materialAmount && ingredient.test(ingredientStack);
-    }
-
-    @Override
-    public ItemStack getResultItem() {
-        return result;
     }
 
     @Override
@@ -45,12 +41,17 @@ public record PlaneWorkbenchRecipe(ResourceLocation id,
     }
 
     @Override
-    public ItemStack assemble(Container p_77572_1_) {
+    public ItemStack assemble(Container p_44001_, RegistryAccess p_267165_) {
         return null;
     }
 
     @Override
     public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) {
         return false;
+    }
+
+    @Override
+    public ItemStack getResultItem(RegistryAccess p_267052_) {
+        return null;
     }
 }

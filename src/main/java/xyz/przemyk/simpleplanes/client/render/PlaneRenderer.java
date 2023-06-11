@@ -2,8 +2,7 @@ package xyz.przemyk.simpleplanes.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,6 +19,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.joml.Quaternionf;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -56,9 +56,9 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         poseStack.translate(0.0D, 0.375D, 0.0D);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
 
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
 
-        Quaternion q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
+        Quaternionf q = MathUtil.lerpQ(partialTicks, planeEntity.getQ_Prev(), planeEntity.getQ_Client());
         poseStack.mulPose(q);
         EntityType<?> entityType = planeEntity.getType();
         if (entityType == SimplePlanesEntities.PLANE.get()) {
@@ -74,7 +74,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         if (timeSinceHitWithPartial > 0.0F) {
             float angle = Mth.clamp(timeSinceHitWithPartial / 10.0F, -30, 30);
             timeSinceHitWithPartial = planeEntity.tickCount + partialTicks;
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(timeSinceHitWithPartial) * angle));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(timeSinceHitWithPartial) * angle));
         }
 
         poseStack.translate(0, -1.1, 0);
@@ -112,7 +112,7 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         ResourceLocation texture;
         try {
-            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(ForgeRegistries.BLOCKS.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).get(0).getSprite().getName();
+            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(ForgeRegistries.BLOCKS.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).get(0).getSprite().contents().name();
             texture = new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
         } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;

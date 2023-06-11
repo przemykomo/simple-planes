@@ -38,9 +38,9 @@ public class SolarPanelUpgrade extends Upgrade {
     @Override
     public void tick() {
         PlaneEntity entity = getPlaneEntity();
-        Level world = entity.getLevel();
+        Level world = entity.level();
         if (canSeeSun(world, entity.getOnPos().above())) {
-            float brightness = MAX_PER_TICK * getSunBrightness(entity.getLevel(), 1.0F);
+            float brightness = MAX_PER_TICK * getSunBrightness(entity.level(), 1.0F);
             if (entity.engineUpgrade instanceof ElectricEngineUpgrade engine) {
                 engine.energyStorage.receiveEnergy((int) brightness, false);
             }

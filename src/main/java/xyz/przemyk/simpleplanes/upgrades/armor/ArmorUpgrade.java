@@ -6,15 +6,16 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -30,18 +31,16 @@ public class ArmorUpgrade extends Upgrade {
         super(SimplePlanesUpgrades.ARMOR.get(), planeEntity);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onApply(ItemStack itemStack, Player playerEntity) {
         ListTag listtag = itemStack.getEnchantmentTags();
 
         for(int i = 0; i < listtag.size(); ++i) {
             CompoundTag compoundtag = listtag.getCompound(i);
-            Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(compoundtag)).ifPresent((enchantment) -> {
-                if (enchantment == Enchantments.ALL_DAMAGE_PROTECTION) {
-                    protectionLevel = EnchantmentHelper.getEnchantmentLevel(compoundtag);
-                }
-            });
+            Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(EnchantmentHelper.getEnchantmentId(compoundtag));
+            if (enchantment == Enchantments.ALL_DAMAGE_PROTECTION) {
+                protectionLevel = EnchantmentHelper.getEnchantmentLevel(compoundtag);
+            }
         }
     }
 

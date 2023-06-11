@@ -46,11 +46,6 @@ public class PlaneSound extends AbstractTickableSoundInstance {
     }
 
     @Override
-    public float getVolume() {
-        return super.getVolume();
-    }
-
-    @Override
     public void tick() {
         x = plane.getX();
         y = plane.getY();

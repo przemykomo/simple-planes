@@ -2,15 +2,11 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
-import xyz.przemyk.simpleplanes.compat.MrCrayfishGunCompat;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
 import xyz.przemyk.simpleplanes.compat.quark.QuarkCompat;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
@@ -18,8 +14,8 @@ import xyz.przemyk.simpleplanes.setup.*;
 
 @Mod(SimplePlanesMod.MODID)
 public class SimplePlanesMod {
+
     public static final String MODID = "simpleplanes";
-    public static final DamageSource DAMAGE_SOURCE_PLANE_CRASH = new DamageSource("plain_crash").bypassArmor();
 
     public SimplePlanesMod() {
         SimplePlanesConfig.init();
@@ -29,14 +25,13 @@ public class SimplePlanesMod {
         SimplePlanesUpgrades.init();
         SimplePlanesSounds.init();
         SimplePlanesItems.init();
-        SimplePlanesDataSerializers.init();
         SimplePlanesRecipes.init();
         SimplePlanesNetworking.init();
         SimplePlanesDatapack.init();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        ModList.get().getModContainerById("cgm").ifPresent(cgm -> MinecraftForge.EVENT_BUS.register(MrCrayfishGunCompat.class));
+//        ModList.get().getModContainerById("cgm").ifPresent(cgm -> MinecraftForge.EVENT_BUS.register(MrCrayfishGunCompat.class));
     }
 
     public static ResourceLocation texture(String filename) {

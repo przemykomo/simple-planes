@@ -2,7 +2,7 @@ package xyz.przemyk.simpleplanes.upgrades.folding;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -38,7 +38,7 @@ public class FoldingUpgrade extends Upgrade {
             matrixStack.scale(0.75f, 0.75f, 0.75f);
         }
 
-        matrixStack.mulPose(Vector3f.XP.rotationDegrees(-90));
+        matrixStack.mulPose(Axis.XP.rotationDegrees(-90));
         VertexConsumer vertexconsumer = Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION.buffer(buffer, RenderType::entityCutoutNoCull);
         UpgradesModels.SHULKER_FOLDING.getLid().render(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.popPose();

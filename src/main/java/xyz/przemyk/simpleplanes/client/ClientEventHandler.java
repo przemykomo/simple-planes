@@ -1,9 +1,7 @@
 package xyz.przemyk.simpleplanes.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
@@ -11,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -30,6 +27,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
@@ -98,7 +97,7 @@ public class ClientEventHandler {
     }
 
     public static void registerHUDOverlay(RegisterGuiOverlaysEvent event) {
-        event.registerAboveAll("plane_hud", (gui, matrixStack, partialTicks, screenWidth, screenHeight) -> {
+        event.registerAboveAll("plane_hud", (gui, guiGraphics, partialTicks, screenWidth, screenHeight) -> {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.gui instanceof ForgeGui forgeGui) {
@@ -106,13 +105,9 @@ public class ClientEventHandler {
                 int scaledHeight = mc.getWindow().getGuiScaledHeight();
 
                 if (mc.player.getVehicle() instanceof PlaneEntity planeEntity) {
-                    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                    RenderSystem.setShaderTexture(0, HUD_TEXTURE);
-
                     int left_align = scaledWidth / 2 + 91;
 
-                    int health = (int) Math.ceil(planeEntity.getHealth());
+                    int health = planeEntity.getHealth();
                     float healthMax = planeEntity.getMaxHealth();
                     int hearts = (int) (healthMax);
 
@@ -133,26 +128,26 @@ public class ClientEventHandler {
                             int x = left_align - i * 16 - 16;
                             int vOffset = 35;
                             if (i + heart + 10 < health)
-                                ClientUtil.blit(matrixStack, 0, x, top, GOLD, vOffset, 16, 9);
+                                guiGraphics.blit(HUD_TEXTURE, x, top, GOLD, vOffset, 16, 9);
                             else if (i + heart < health)
-                                ClientUtil.blit(matrixStack, 0, x, top, FULL, vOffset, 16, 9);
+                                guiGraphics.blit(HUD_TEXTURE, x, top, FULL, vOffset, 16, 9);
                             else
-                                ClientUtil.blit(matrixStack, 0, x, top, EMPTY, vOffset, 16, 9);
+                                guiGraphics.blit(HUD_TEXTURE, x, top, EMPTY, vOffset, 16, 9);
                         }
                         forgeGui.rightHeight += 10;
                     }
 
-                    ClientUtil.blit(matrixStack, -90, scaledWidth - 24, scaledHeight - 42, 0, 84, 22, 40);
+                    guiGraphics.blit(HUD_TEXTURE, scaledWidth - 24, scaledHeight - 42, 0, 84, 22, 40);
                     int throttle = planeEntity.getThrottle();
                     if (throttle > 0) {
                         int throttleScaled = throttle * 28 / BoosterUpgrade.MAX_THROTTLE;
-                        ClientUtil.blit(matrixStack, -90, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled);
+                        guiGraphics.blit(HUD_TEXTURE, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled);
                     }
 
                     if (planeEntity.engineUpgrade != null) {
                         ItemStack offhandStack = mc.player.getOffhandItem();
                         HumanoidArm primaryHand = mc.player.getMainArm();
-                        planeEntity.engineUpgrade.renderPowerHUD(matrixStack, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, partialTicks);
+                        planeEntity.engineUpgrade.renderPowerHUD(guiGraphics, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, partialTicks);
                     }
                 }
             }
@@ -176,12 +171,12 @@ public class ClientEventHandler {
             matrixStack.pushPose();
 
             matrixStack.translate(0, 0.375, 0);
-            Quaternion quaternion = MathUtil.lerpQ(event.getPartialTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
-            quaternion.set(quaternion.i(), -quaternion.j(), -quaternion.k(), quaternion.r());
+            Quaternionf quaternion = MathUtil.lerpQ(event.getPartialTick(), planeEntity.getQ_Prev(), planeEntity.getQ_Client());
+            quaternion.set(quaternion.x(), -quaternion.y(), -quaternion.z(), quaternion.w());
             matrixStack.mulPose(quaternion);
             float rotationYaw = MathUtil.lerpAngle(event.getPartialTick(), entity.yRotO, entity.getYRot());
 
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotationYaw));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(rotationYaw));
             matrixStack.translate(0, -0.375, 0);
 
             if (MathUtil.degreesDifferenceAbs(planeEntity.rotationRoll, 0) > 90) { //TODO: Do I actually need this?
@@ -293,23 +288,23 @@ public class ClientEventHandler {
 
                 double partialTicks = event.getPartialTick();
 
-                Quaternion qPrev = planeEntity.getQ_Prev();
-                Quaternion qNow = planeEntity.getQ_Client();
+                Quaternionf qPrev = planeEntity.getQ_Prev();
+                Quaternionf qNow = planeEntity.getQ_Client();
 
                 Vector3f eyePrev = new Vector3f(0, Player.DEFAULT_EYE_HEIGHT + heightDiff, 0);
-                Vector3f eyeNow = eyePrev.copy();
-                eyePrev.transform(qPrev);
-                eyeNow.transform(qNow);
+                Vector3f eyeNow = new Vector3f(eyePrev);
+                eyePrev.rotate(qPrev);
+                eyeNow.rotate(qNow);
                 camera.setPosition(new Vec3(Mth.lerp(partialTicks, player.xo - eyePrev.x(), player.getX() - eyeNow.x()),
                         Mth.lerp(partialTicks, player.yo + eyePrev.y(), player.getY() + eyeNow.y()) + 0.375,
                         Mth.lerp(partialTicks, player.zo + eyePrev.z(), player.getZ() + eyeNow.z())));
 
-                qPrev.mul(Vector3f.YP.rotationDegrees(player.yRotO));
-                qPrev.mul(Vector3f.XP.rotationDegrees(event.getPitch()));
+                qPrev.mul(Axis.YP.rotationDegrees(player.yRotO));
+                qPrev.mul(Axis.XP.rotationDegrees(event.getPitch()));
                 MathUtil.EulerAngles eulerAnglesPrev = MathUtil.toEulerAngles(qPrev);
 
-                qNow.mul(Vector3f.YP.rotationDegrees(player.getYRot()));
-                qNow.mul(Vector3f.XP.rotationDegrees(event.getPitch()));
+                qNow.mul(Axis.YP.rotationDegrees(player.getYRot()));
+                qNow.mul(Axis.XP.rotationDegrees(event.getPitch()));
                 MathUtil.EulerAngles eulerAnglesNow = MathUtil.toEulerAngles(qNow);
 
                 event.setPitch(-(float) MathUtil.lerpAngle(partialTicks, eulerAnglesPrev.pitch, eulerAnglesNow.pitch));

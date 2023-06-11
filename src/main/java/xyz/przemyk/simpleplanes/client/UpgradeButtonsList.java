@@ -1,12 +1,12 @@
 package xyz.przemyk.simpleplanes.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.CRemoveUpgradePacket;
@@ -25,8 +25,8 @@ public class UpgradeButtonsList extends AbstractSelectionList<UpgradeButtonsList
     }
 
     @Override
-    protected void renderDecorations(PoseStack matrixStack, int mouseX, int mouseY) {
-        minecraft.font.draw(matrixStack, TITLE, 4, 4, 0xFFFFFF);
+    protected void renderDecorations(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.drawString(minecraft.font, TITLE, 4, 4, 0xFFFFFF);
     }
 
     @Override
@@ -37,17 +37,17 @@ public class UpgradeButtonsList extends AbstractSelectionList<UpgradeButtonsList
         private final Button button;
 
         public ButtonEntry(int x, int y, int width, int height, Component title, PlaneEntity planeEntity, ResourceLocation resourceLocation, UpgradeButtonsList list) {
-            this.button = new Button(x + 4, y, width - 8, height, title, b -> {
+            this.button = Button.builder(title, b -> {
                 planeEntity.removeUpgrade(resourceLocation);
                 SimplePlanesNetworking.INSTANCE.sendToServer(new CRemoveUpgradePacket(resourceLocation));
                 list.removeEntry(this);
-            });
+            }).pos(x + 4, y).size(width - 8, height).build();
         }
 
         @Override
-        public void render(PoseStack matrixStack, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks) {
-            button.y = top;
-            button.render(matrixStack, mouseX, mouseY, partialTicks);
+        public void render(GuiGraphics guiGraphics, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks) {
+            button.setY(top);
+            button.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
 
         @Override

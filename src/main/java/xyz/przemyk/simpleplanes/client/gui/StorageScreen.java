@@ -1,12 +1,10 @@
 package xyz.przemyk.simpleplanes.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
 import xyz.przemyk.simpleplanes.container.StorageContainer;
 
@@ -36,19 +34,16 @@ public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(matrixStack);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        renderTooltip(matrixStack, mouseX, mouseY);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, texture);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        blit(matrixStack, x, y, 0.0F, 0.0F, imageWidth, imageHeight, 256, textureYSize);
+        guiGraphics.blit(texture, x, y, 0.0F, 0.0F, imageWidth, imageHeight, 256, textureYSize);
     }
 }

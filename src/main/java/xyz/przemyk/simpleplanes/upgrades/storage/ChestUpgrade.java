@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.storage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -100,9 +100,9 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
             matrixStack.translate(0, -0.1, -1.4);
         }
 
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(180));
 
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, -1.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
 

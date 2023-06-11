@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.liquid;
 
-import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -47,7 +47,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void tick() {
-        if (!planeEntity.level.isClientSide) {
+        if (!planeEntity.level().isClientSide) {
             if (burnTime > 0) {
                 burnTime -= planeEntity.getFuelCost();
                 updateClient();
@@ -138,7 +138,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderPowerHUD(PoseStack matrixStack, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
+    public void renderPowerHUD(GuiGraphics guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         //TODO
     }
 
@@ -149,16 +149,16 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void renderScreen(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
+    public void renderScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
         if (planeInventoryScreen.isHovering(153, 7 + 18 + 2, 16, 32, mouseX, mouseY)) {
             FluidStack fluidStack = fluidTank.getFluid();
-            planeInventoryScreen.renderTooltip(poseStack, Component.translatable(SimplePlanesMod.MODID + ".gui.fluid", fluidStack.getDisplayName(), fluidStack.getAmount()), mouseX, mouseY);
+            guiGraphics.renderTooltip(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.fluid", fluidStack.getDisplayName(), fluidStack.getAmount()), mouseX, mouseY);
         }
     }
 
     @Override
-    public void renderScreenBg(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen screen) {
-        screen.blit(poseStack, screen.getGuiLeft() + 151, screen.getGuiTop() + 7, 176, 72, 18, 72);
+    public void renderScreenBg(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen screen) {
+        guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 151, screen.getGuiTop() + 7, 176, 72, 18, 72);
         FluidStack fluidStack = fluidTank.getFluid();
         int height = 36;
         int width = 18;
@@ -166,9 +166,9 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
         int fluidHeight = amount * (height - 4) / fluidTank.getCapacity();
 
         if (!fluidStack.isEmpty()) {
-            ClientUtil.renderLiquidEngineFluid(poseStack, screen, fluidStack, height, width, fluidHeight);
+            ClientUtil.renderLiquidEngineFluid(guiGraphics, screen, fluidStack, height, width, fluidHeight);
         }
-        screen.blit(poseStack, screen.getGuiLeft() + 154, screen.getGuiTop() + 28, 194, 72, 12, 30);
+        guiGraphics.blit(PlaneInventoryScreen.GUI, screen.getGuiLeft() + 154, screen.getGuiTop() + 28, 194, 72, 12, 30);
     }
 
 }

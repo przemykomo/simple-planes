@@ -1,54 +1,30 @@
 package xyz.przemyk.simpleplanes.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
+import org.joml.Matrix4f;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 
 public class ClientUtil {
-    public static void renderHotbarItem(PoseStack matrixStack, int x, int y, float partialTicks, ItemStack stack, Minecraft mc) {
-        ItemRenderer itemRenderer = mc.getItemRenderer();
-        if (!stack.isEmpty()) {
-            float f = (float) stack.getUseDuration() - partialTicks;
-            if (f > 0.0F) {
-                matrixStack.pushPose();
-                float f1 = 1.0F + f / 5.0F;
-                matrixStack.translate((float) (x + 8), (float) (y + 12), 0.0F);
-                matrixStack.scale(1.0F / f1, (f1 + 1.0F) / 2.0F, 1.0F);
-                matrixStack.translate((float) (-(x + 8)), (float) (-(y + 12)), 0.0F);
-            }
 
-            itemRenderer.renderAndDecorateItem(stack, x, y);
-            if (f > 0.0F) {
-                matrixStack.popPose();
-            }
-
-            itemRenderer.renderGuiItemDecorations(mc.font, stack, x, y);
-        }
-    }
-
-    public static void blit(PoseStack matrixStack, int blitOffset, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight) {
-        GuiComponent.blit(matrixStack, x, y, blitOffset, (float) uOffset, (float) vOffset, uWidth, vHeight, 256, 256);
-    }
-
-    public static void renderTiledTextureAtlas(PoseStack poseStack, AbstractContainerScreen<?> screen, TextureAtlasSprite sprite, int x, int y, int width, int height, int depth) {
-        RenderSystem.setShaderTexture(0, sprite.atlas().location());
+    public static void renderTiledTextureAtlas(GuiGraphics guiGraphics, AbstractContainerScreen<?> screen, TextureAtlasSprite sprite, int x, int y, int width, int height, int depth) {
+        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
         builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         float u1 = sprite.getU0();
         float v1 = sprite.getV0();
-        int spriteHeight = sprite.getHeight();
-        int spriteWidth = sprite.getWidth();
+        int spriteHeight = sprite.contents().height();
+        int spriteWidth = sprite.contents().width();
         int startX = x + screen.getGuiLeft();
         int startY = y + screen.getGuiTop();
 
@@ -60,7 +36,7 @@ public class ClientUtil {
             // we need to draw the quads per width too
             int x2 = startX;
             int widthLeft = width;
-            Matrix4f matrix = poseStack.last().pose();
+            Matrix4f matrix = guiGraphics.pose().last().pose();
             // tile horizontally
             do {
                 int renderWidth = Math.min(spriteWidth, widthLeft);
@@ -72,7 +48,7 @@ public class ClientUtil {
             } while(widthLeft > 0);
 
             startY += renderHeight;
-        } while(height > 0);
+        } while (height > 0);
 
         // finish drawing sprites
 //        builder.end();
@@ -112,11 +88,11 @@ public class ClientUtil {
         RenderSystem.setShaderColor(r, g, b, a);
     }
 
-    public static void renderLiquidEngineFluid(PoseStack poseStack, PlaneInventoryScreen screen, FluidStack fluidStack, int height, int width, int fluidHeight) {
+    public static void renderLiquidEngineFluid(GuiGraphics guiGraphics, PlaneInventoryScreen screen, FluidStack fluidStack, int height, int width, int fluidHeight) {
         TextureAtlasSprite fluidSprite = screen.getMinecraft().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(IClientFluidTypeExtensions.of(fluidStack.getFluid()).getStillTexture(fluidStack));
-        setColorRGBA(IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack));
-        renderTiledTextureAtlas(poseStack, screen, fluidSprite, 151 + 2, 7 + 18 + height - 2 - fluidHeight, width - 4, fluidHeight, 100);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShaderTexture(0, PlaneInventoryScreen.GUI);
+//        setColorRGBA(IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack));
+        renderTiledTextureAtlas(guiGraphics, screen, fluidSprite, 151 + 2, 7 + 18 + height - 2 - fluidHeight, width - 4, fluidHeight, 100);
+//        RenderSystem.setShaderColor(1, 1, 1, 1);
+//        RenderSystem.setShaderTexture(0, PlaneInventoryScreen.GUI);
     }
 }

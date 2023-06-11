@@ -38,7 +38,7 @@
     "name.simpleplanes.seats": "Seats",
     "name.simpleplanes.solar_panel": "Solar Panel",
 
-    "itemGroup.simpleplanes": "Simple Planes",
+    "simpleplanes.planes_tab": "Simple Planes",
     "simpleplanes.container.plane_workbench": "Plane Workbench",
     "death.attack.plane_crash": "%1$s died in a plane crash",
     "plane.onboard": "Press %2$s to Boost | Press %1$s to Dismount",

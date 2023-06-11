@@ -1,6 +1,7 @@
 package xyz.przemyk.simpleplanes.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -30,13 +31,13 @@ public class RemoveUpgradesScreen extends AbstractContainerScreen<RemoveUpgrades
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {}
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {}
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {}
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {}
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        buttonsList.render(matrixStack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        buttonsList.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 }

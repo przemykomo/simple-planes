@@ -2,6 +2,7 @@ package xyz.przemyk.simpleplanes.upgrades.banner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -18,7 +19,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -35,11 +35,11 @@ public class BannerModel {
 
             EntityType<?> entityType = planeEntity.getType();
             if (entityType == SimplePlanesEntities.HELICOPTER.get()) {
-                matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
+                matrixStackIn.mulPose(Axis.YP.rotationDegrees(90));
                 matrixStackIn.translate(-4, -1.25, 0.025);
             } else {
-                matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(98));
-                matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
+                matrixStackIn.mulPose(Axis.XP.rotationDegrees(98));
+                matrixStackIn.mulPose(Axis.YP.rotationDegrees(90));
                 matrixStackIn.translate(1, 3.62, 0.05);
                 if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
                     matrixStackIn.translate(0.395, 1.92, 0);

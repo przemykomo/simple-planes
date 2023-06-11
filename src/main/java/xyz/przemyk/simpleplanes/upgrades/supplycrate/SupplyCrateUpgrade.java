@@ -1,7 +1,7 @@
 package xyz.przemyk.simpleplanes.upgrades.supplycrate;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -74,7 +74,7 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
             matrixStack.translate(0, 0, 0.1);
         }
 
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
         matrixStack.translate(-0.4, -1, 0.3);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
         BlockState state = Blocks.BARREL.defaultBlockState();
@@ -138,10 +138,10 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
 
     @Override
     public void dropAsPayload() {
-        ParachuteEntity parachuteEntity = new ParachuteEntity(planeEntity.level, itemStackHandler);
+        ParachuteEntity parachuteEntity = new ParachuteEntity(planeEntity.level(), itemStackHandler);
         parachuteEntity.setPos(planeEntity.position());
         parachuteEntity.setDeltaMovement(planeEntity.getDeltaMovement());
-        planeEntity.level.addFreshEntity(parachuteEntity);
+        planeEntity.level().addFreshEntity(parachuteEntity);
         remove();
     }
 }

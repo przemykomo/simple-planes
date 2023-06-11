@@ -23,7 +23,7 @@ public class PlaneCraftingResultSlot extends SlotItemHandler {
 
     @Override
     public void onTake(Player thePlayer, ItemStack stack) {
-        stack.onCraftedBy(player.level, player, 1);
+        stack.onCraftedBy(player.level(), player, 1);
         container.onCrafting();
     }
 }

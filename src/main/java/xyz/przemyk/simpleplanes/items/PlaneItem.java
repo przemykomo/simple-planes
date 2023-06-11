@@ -1,7 +1,5 @@
 package xyz.przemyk.simpleplanes.items;
 
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +10,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -24,15 +21,12 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class PlaneItem extends Item {
 
@@ -117,20 +111,6 @@ public class PlaneItem extends Item {
             } else {
                 return InteractionResultHolder.pass(itemstack);
             }
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void fillItemCategory(CreativeModeTab itemGroup, NonNullList<ItemStack> itemStacks) {
-        if (allowedIn(itemGroup)) {
-            Registry.BLOCK.getTagOrEmpty(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).forEach(blockHolder -> {
-                ItemStack itemStack = new ItemStack(this);
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putString("material", ForgeRegistries.BLOCKS.getKey(blockHolder.value()).toString());
-                itemStack.addTagElement("EntityTag", itemTag);
-                itemStacks.add(itemStack);
-            });
         }
     }
 }

@@ -1,8 +1,8 @@
 package xyz.przemyk.simpleplanes.misc;
 
 import net.minecraft.util.Mth;
-import com.mojang.math.Quaternion;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
 
 public class MathUtil {
 
@@ -66,16 +66,16 @@ public class MathUtil {
         return vec.scale(size / vec.length());
     }
 
-    public static EulerAngles toEulerAngles(Quaternion q) {
+    public static EulerAngles toEulerAngles(Quaternionf q) {
         EulerAngles angles = new EulerAngles();
 
         // roll (x-axis rotation)
-        double sinr_cosp = 2 * (q.r() * q.k() + q.i() * q.j());
-        double cosr_cosp = 1 - 2 * (q.k() * q.k() + q.i() * q.i());
+        double sinr_cosp = 2 * (q.w() * q.z() + q.x() * q.y());
+        double cosr_cosp = 1 - 2 * (q.z() * q.z() + q.x() * q.x());
         angles.roll = Math.toDegrees(Math.atan2(sinr_cosp, cosr_cosp));
 
         // pitch (z-axis rotation)
-        double sinp = 2 * (q.r() * q.i() - q.j() * q.k());
+        double sinp = 2 * (q.w() * q.x() - q.y() * q.z());
         if (Math.abs(sinp) >= 0.999) {
             angles.pitch = -Math.toDegrees(Math.signum(sinp) * Math.PI / 2); // use 90 degrees if out of range
         } else {
@@ -83,8 +83,8 @@ public class MathUtil {
         }
 
         // yaw (y-axis rotation)
-        double siny_cosp = 2 * (q.r() * q.j() + q.k() * q.i());
-        double cosy_cosp = 1 - 2 * (q.i() * q.i() + q.j() * q.j());
+        double siny_cosp = 2 * (q.w() * q.y() + q.z() * q.x());
+        double cosy_cosp = 1 - 2 * (q.x() * q.x() + q.y() * q.y());
         angles.yaw = Math.toDegrees(Math.atan2(siny_cosp, cosy_cosp));
 
         return angles;
@@ -98,26 +98,26 @@ public class MathUtil {
         return number * (1.5F - f * number * number);
     }
 
-    public static Quaternion normalizeQuaternion(Quaternion q) {
-        float f = q.i() * q.i() + q.j() * q.j() + q.k() * q.k() + q.r() * q.r();
-        float x = q.i();
-        float y = q.j();
-        float z = q.k();
-        float w = q.r();
+    public static Quaternionf normalizeQuaternionf(Quaternionf q) {
+        float f = q.x() * q.x() + q.y() * q.y() + q.z() * q.z() + q.w() * q.w();
+        float x = q.x();
+        float y = q.y();
+        float z = q.z();
+        float w = q.w();
         if (f > 1.0E-6F) {
             float f1 = fastInvSqrt(f);
             x *= f1;
             y *= f1;
             z *= f1;
             w *= f1;
-            return new Quaternion(x, y, z, w);
+            return new Quaternionf(x, y, z, w);
         } else {
-            return new Quaternion(0, 0, 0, 0);
+            return new Quaternionf(0, 0, 0, 0);
         }
 
     }
 
-    public static Quaternion toQuaternion(double yaw, double pitch, double roll) { // yaw (Z), pitch (Y), roll (X)
+    public static Quaternionf toQuaternionf(double yaw, double pitch, double roll) { // yaw (Z), pitch (Y), roll (X)
         // Abbreviations for the various angular functions
         yaw = Math.toRadians(yaw);
         pitch = -Math.toRadians(pitch);
@@ -135,24 +135,24 @@ public class MathUtil {
         float x = (float) (cr * sp * cy + sr * cp * sy);
         float y = (float) (cr * cp * sy - sr * sp * cy);
 
-        return new Quaternion(x, y, z, w);
+        return new Quaternionf(x, y, z, w);
     }
 
-    public static Quaternion lerpQ(float perc, Quaternion start, Quaternion end) {
-        // Only unit quaternions are valid rotations.
+    public static Quaternionf lerpQ(float perc, Quaternionf start, Quaternionf end) {
+        // Only unit quaternionfs are valid rotations.
         // Normalize to avoid undefined behavior.
-        start = normalizeQuaternion(start);
-        end = normalizeQuaternion(end);
+        start = normalizeQuaternionf(start);
+        end = normalizeQuaternionf(end);
 
         // Compute the cosine of the angle between the two vectors.
-        double dot = start.i() * end.i() + start.j() * end.j() + start.k() * end.k() + start.r() * end.r();
+        double dot = start.x() * end.x() + start.y() * end.y() + start.z() * end.z() + start.w() * end.w();
 
         // If the dot product is negative, slerp won't take
         // the shorter path. Note that v1 and -v1 are equivalent when
         // the negation is applied to all four components. Fix by
-        // reversing one quaternion.
+        // reversing one quaternionf.
         if (dot < 0.0f) {
-            end = new Quaternion(-end.i(), -end.j(), -end.k(), -end.r());
+            end = new Quaternionf(-end.x(), -end.y(), -end.z(), -end.w());
             dot = -dot;
         }
 
@@ -161,13 +161,13 @@ public class MathUtil {
             // If the inputs are too close for comfort, linearly interpolate
             // and normalize the result.
 
-            Quaternion quaternion = new Quaternion(
-                start.i() * (1 - perc) + end.i() * perc,
-                start.j() * (1 - perc) + end.j() * perc,
-                start.k() * (1 - perc) + end.k() * perc,
-                start.r() * (1 - perc) + end.r() * perc
+            Quaternionf quaternionf = new Quaternionf(
+                start.x() * (1 - perc) + end.x() * perc,
+                start.y() * (1 - perc) + end.y() * perc,
+                start.z() * (1 - perc) + end.z() * perc,
+                start.w() * (1 - perc) + end.w() * perc
             );
-            return normalizeQuaternion(quaternion);
+            return normalizeQuaternionf(quaternionf);
         }
 
         // Since dot is in range [0, DOT_THRESHOLD], acos is safe
@@ -179,13 +179,13 @@ public class MathUtil {
         float s0 = (float) (Math.cos(theta) - dot * sin_theta / sin_theta_0);  // == sin(theta_0 - theta) / sin(theta_0)
         float s1 = (float) (sin_theta / sin_theta_0);
 
-        Quaternion quaternion = new Quaternion(
-            start.i() * (s0) + end.i() * s1,
-            start.j() * (s0) + end.j() * s1,
-            start.k() * (s0) + end.k() * s1,
-            start.r() * (s0) + end.r() * s1
+        Quaternionf quaternionf = new Quaternionf(
+            start.x() * (s0) + end.x() * s1,
+            start.y() * (s0) + end.y() * s1,
+            start.z() * (s0) + end.z() * s1,
+            start.w() * (s0) + end.w() * s1
         );
-        return normalizeQuaternion(quaternion);
+        return normalizeQuaternionf(quaternionf);
     }
 
     public static class EulerAngles {
