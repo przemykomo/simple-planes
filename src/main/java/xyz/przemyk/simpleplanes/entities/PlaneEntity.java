@@ -116,7 +116,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, Level worldIn, Block material) {
         super(entityTypeIn, worldIn);
         networkUpdateInterval = entityTypeIn.updateInterval();
-        maxUpStep = 0.9999f;
+        setMaxUpStep(0.9999f);
         setMaterial(material);
         setMaxSpeed(1f);
     }
