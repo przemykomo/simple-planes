@@ -895,6 +895,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public boolean canBeRiddenUnderFluidType(FluidType type, Entity rider) {
+        if (type == ForgeMod.EMPTY_TYPE.get()) {
+            return true;
+        }
+
         return type == ForgeMod.WATER_TYPE.get() && upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId());
     }
 

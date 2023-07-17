@@ -12,7 +12,7 @@ Adds upgradeable planes and helicopters.
 [[dependencies.simpleplanes]]
     modId="forge"
     mandatory=true
-    versionRange="[47.0.1,)"
+    versionRange="[47.1.28,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.simpleplanes]]
