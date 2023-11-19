@@ -92,10 +92,14 @@ public class JukeboxUpgrade extends LargeUpgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(Items.JUKEBOX);
         planeEntity.spawnAtLocation(record);
         if (planeEntity.level().isClientSide) {
             MovingSound.remove(planeEntity);
         }
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return Items.JUKEBOX.getDefaultInstance();
     }
 }

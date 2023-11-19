@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -53,7 +52,7 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
-    public void onApply(ItemStack itemStack, Player playerEntity) {
+    public void onApply(ItemStack itemStack) {
         if (itemStack.getItem() instanceof BannerItem) {
             banner = itemStack.copy();
             banner.setCount(1);
@@ -72,7 +71,7 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
-    public void onRemoved() {
-        planeEntity.spawnAtLocation(banner);
+    public ItemStack getItemStack() {
+        return banner;
     }
 }

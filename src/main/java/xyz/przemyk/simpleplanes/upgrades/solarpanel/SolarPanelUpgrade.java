@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
@@ -61,18 +62,14 @@ public class SolarPanelUpgrade extends Upgrade {
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
-
-    }
+    public void writePacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
-
-    }
+    public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void onRemoved() {
-        planeEntity.spawnAtLocation(SimplePlanesItems.SOLAR_PANEL.get().getDefaultInstance());
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.SOLAR_PANEL.get().getDefaultInstance();
     }
 
     private static boolean canSeeSun(@Nullable Level level, BlockPos pos) {

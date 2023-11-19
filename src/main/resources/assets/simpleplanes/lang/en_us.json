@@ -37,6 +37,8 @@
     "name.simpleplanes.supply_crate": "Supply Crate",
     "name.simpleplanes.seats": "Seats",
     "name.simpleplanes.solar_panel": "Solar Panel",
+    "name.simpleplanes.chest": "Chest",
+    "name.simpleplanes.payload": "Payload",
 
     "simpleplanes.planes_tab": "Simple Planes",
     "simpleplanes.container.plane_workbench": "Plane Workbench",
@@ -111,5 +113,6 @@
     "key.plane_inventory_open.desc": "Open Plane Inventory",
     "key.move_heli_up.desc": "Move Helicopter Up",
     "key.plane_yaw_right.desc": "Plane Yaw Right",
-    "key.plane_yaw_left.desc": "Plane Yaw Left"
+    "key.plane_yaw_left.desc": "Plane Yaw Left",
+    "simpleplanes.add_upgrades": "Add Upgrades"
 }

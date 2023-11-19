@@ -2,11 +2,11 @@ package xyz.przemyk.simpleplanes.upgrades.heal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -43,7 +43,7 @@ public class HealingUpgrade extends Upgrade {
     public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, float partialTicks) {}
 
     @Override
-    public void onApply(ItemStack itemStack, Player playerEntity) {
+    public void onApply(ItemStack itemStack) {
         int health = planeEntity.getHealth();
         int m = planeEntity.getMaxHealth() * 2;
         if (health < m) {
@@ -60,5 +60,7 @@ public class HealingUpgrade extends Upgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void onRemoved() {}
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.HEALING.get().getDefaultInstance();
+    }
 }

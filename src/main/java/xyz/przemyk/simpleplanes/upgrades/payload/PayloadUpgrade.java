@@ -103,8 +103,8 @@ public class PayloadUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public void onRemoved() {
-        planeEntity.spawnAtLocation(payloadEntry.item());
+    public ItemStack getItemStack() {
+        return payloadEntry.item().getDefaultInstance();
     }
 
     @Override

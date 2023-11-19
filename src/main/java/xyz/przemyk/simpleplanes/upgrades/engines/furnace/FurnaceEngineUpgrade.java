@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.client.ClientEventHandler;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
-import xyz.przemyk.simpleplanes.container.FuelSlot;
+import xyz.przemyk.simpleplanes.container.slots.FuelSlot;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -110,8 +110,12 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(SimplePlanesItems.FURNACE_ENGINE.get());
         planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.FURNACE_ENGINE.get().getDefaultInstance();
     }
 
     @Override

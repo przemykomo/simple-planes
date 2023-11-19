@@ -100,7 +100,11 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
                 planeEntity.spawnAtLocation(itemStack);
             }
         }
-        planeEntity.spawnAtLocation(SimplePlanesItems.SUPPLY_CRATE.get());
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.SUPPLY_CRATE.get().getDefaultInstance();
     }
 
     @Override

@@ -2,9 +2,14 @@ package xyz.przemyk.simpleplanes.upgrades.shooter;
 
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.StructureTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.*;
@@ -25,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
@@ -102,6 +108,18 @@ public class ShooterUpgrade extends Upgrade {
                 arrowEntity.pickup = AbstractArrow.Pickup.ALLOWED;
             }
             level.addFreshEntity(arrowEntity);
+        } else if (item == Items.ENDER_EYE && level instanceof ServerLevel serverLevel) {
+            BlockPos blockpos = serverLevel.findNearestMapStructure(StructureTags.EYE_OF_ENDER_LOCATED, new BlockPos((int) x, (int) y, (int) z), 100, false);
+            if (blockpos != null) {
+                EyeOfEnder eyeOfEnder = new EyeOfEnder(level, x, y, z);
+                eyeOfEnder.setItem(itemStack);
+                eyeOfEnder.signalTo(blockpos);
+                level.addFreshEntity(eyeOfEnder);
+                level.playSound(null, x, y, z, SoundEvents.ENDER_EYE_LAUNCH, SoundSource.NEUTRAL, 0.5f, 0.4f / random.nextFloat() * 0.4f + 0.8f);
+                if (!player.isCreative()) {
+                    itemStackHandler.extractItem(0, 1, false);
+                }
+            }
         } /*else {
             ModList.get().getModContainerById("cgm").ifPresent(cgm -> MrCrayfishGunCompat.shooterBehaviour(item, itemStackHandler, level, player, motion, x, y, z));
         } */
@@ -145,8 +163,12 @@ public class ShooterUpgrade extends Upgrade {
 
     @Override
     public void onRemoved() {
-        planeEntity.spawnAtLocation(Items.DISPENSER);
         planeEntity.spawnAtLocation(itemStackHandler.getStackInSlot(0));
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.SHOOTER.get().getDefaultInstance();
     }
 
     @Override

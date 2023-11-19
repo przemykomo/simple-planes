@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -108,8 +109,8 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void onRemoved() {
-        planeEntity.spawnAtLocation(SimplePlanesItems.ELECTRIC_ENGINE.get());
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.ELECTRIC_ENGINE.get().getDefaultInstance();
     }
 
     @Override

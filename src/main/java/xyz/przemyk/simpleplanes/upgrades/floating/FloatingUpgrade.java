@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -36,7 +37,7 @@ public class FloatingUpgrade extends Upgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void onRemoved() {
-        planeEntity.spawnAtLocation(SimplePlanesItems.FLOATY_BEDDING.get());
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.FLOATY_BEDDING.get().getDefaultInstance();
     }
 }

@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 public class PlaneItem extends Item {
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
-    private final Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType;
+    public final Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType;
 
     public PlaneItem(Properties properties, Supplier<? extends EntityType<? extends PlaneEntity>> planeEntityType) {
         super(properties.stacksTo(1));

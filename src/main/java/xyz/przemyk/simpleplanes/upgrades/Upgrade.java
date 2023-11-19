@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +20,7 @@ import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
 import java.util.function.Function;
 
@@ -104,7 +104,7 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     @Override
     public void deserializeNBT(CompoundTag nbt) {}
 
-    public void onApply(ItemStack itemStack, Player playerEntity) {}
+    public void onApply(ItemStack itemStack) {}
 
     /**
      * Called on the server.
@@ -119,7 +119,9 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     /**
      * Called when upgrade is removed using wrench.
      */
-    public abstract void onRemoved();
+    public void onRemoved() {}
+
+    public abstract ItemStack getItemStack();
 
     public boolean canBeDroppedAsPayload() {
         return false;

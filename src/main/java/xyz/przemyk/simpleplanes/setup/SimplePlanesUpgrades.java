@@ -29,8 +29,8 @@ import java.util.Optional;
 
 public class SimplePlanesUpgrades {
     private static final DeferredRegister<UpgradeType> UPGRADE_TYPES = DeferredRegister.create(SimplePlanesRegistries.UPGRADE_TYPES_NAME, SimplePlanesMod.MODID);
-    private static final Map<Item, UpgradeType> ITEM_UPGRADE_MAP = new HashMap<>();
-    private static final Map<Item, UpgradeType> LARGE_ITEM_UPGRADE_MAP = new HashMap<>();
+    public static final Map<Item, UpgradeType> ITEM_UPGRADE_MAP = new HashMap<>();
+    public static final Map<Item, UpgradeType> LARGE_ITEM_UPGRADE_MAP = new HashMap<>();
 
     public static void init() {
         UPGRADE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());

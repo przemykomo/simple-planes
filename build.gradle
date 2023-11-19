@@ -1,21 +1,10 @@
-//file:noinspection GroovyAssignabilityCheck
-//file:noinspection SpellCheckingInspection
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
-    }
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 version = "${minecraft_version}-${simpleplanes_version}"
 group = 'xyz.przemyk.simpleplanes'
@@ -101,29 +90,21 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.neoforged:forge:${minecraft_version}-${forge_version}"
 
 //    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
 //    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-//
+
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
-    // at runtime, use the full JEI jar for Forge
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-
-//    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-//    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
     runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
 //    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:4325670')
 //    implementation fg.deobf('curse.maven:framework-549225:4287474')
-//
-//    implementation fg.deobf('curse.maven:immersive-engineering-231951:3963698')
-//    implementation fg.deobf('curse.maven:the-one-probe-245211:3965693')
-//
-//    implementation fg.deobf('curse.maven:autoreglib-250363:3857246')
-//    implementation fg.deobf('curse.maven:quark-243121:3961436')
+
+    implementation fg.deobf('curse.maven:immersive-engineering-231951:4782978')
 }
 
 jar {

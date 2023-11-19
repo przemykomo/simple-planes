@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
@@ -54,6 +55,10 @@ public class SeatsUpgrade extends Upgrade {
     @Override
     public void onRemoved() {
         planeEntity.ejectPassengers();
-        planeEntity.spawnAtLocation(SimplePlanesItems.SEATS.get());
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.SEATS.get().getDefaultInstance();
     }
 }

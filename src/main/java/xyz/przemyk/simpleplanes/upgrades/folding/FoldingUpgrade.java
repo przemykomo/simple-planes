@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -51,7 +52,7 @@ public class FoldingUpgrade extends Upgrade {
     public void readPacket(FriendlyByteBuf buffer) {}
 
     @Override
-    public void onRemoved() {
-        planeEntity.spawnAtLocation(SimplePlanesItems.FOLDING.get());
+    public ItemStack getItemStack() {
+        return SimplePlanesItems.FOLDING.get().getDefaultInstance();
     }
 }

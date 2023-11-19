@@ -52,7 +52,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
-import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
+import xyz.przemyk.simpleplanes.container.ModifyUpgradesContainer;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
@@ -207,7 +207,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(SimplePlanesMod.MODID, "blacklisted_dimensions"));
 
     public boolean isPowered() {
-        return isAlive() && !level().dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
+        return isAlive() && !level().dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered())) && planksMaterial != Blocks.AIR;
     }
 
     @Override
@@ -239,7 +239,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         if (itemStack.getItem() == SimplePlanesItems.WRENCH.get()) {
             if (!level().isClientSide) {
-                NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new RemoveUpgradesContainer(id, getId()), Component.empty()), buf -> buf.writeVarInt(getId()));
+                NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new ModifyUpgradesContainer(id, player.getInventory(), getId()), Component.empty()), buf -> buf.writeVarInt(getId()));
                 return InteractionResult.CONSUME;
             }
             return InteractionResult.SUCCESS;
@@ -269,10 +269,22 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     protected void addUpgrade(Player playerEntity, ItemStack itemStack, Upgrade upgrade) {
-        upgrade.onApply(itemStack, playerEntity);
+        upgrade.onApply(itemStack);
         if (!playerEntity.isCreative()) {
             itemStack.shrink(1);
         }
+        UpgradeType upgradeType = upgrade.getType();
+        upgrades.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), upgrade);
+        if (upgradeType.isEngine) {
+            engineUpgrade = (EngineUpgrade) upgrade;
+        }
+        if (!level().isClientSide) {
+            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), (ServerLevel) level(), true));
+        }
+    }
+
+    public void addUpgradeInWorkbench(ItemStack itemStack, Upgrade upgrade) {
+        upgrade.onApply(itemStack);
         UpgradeType upgradeType = upgrade.getType();
         upgrades.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), upgrade);
         if (upgradeType.isEngine) {
@@ -386,7 +398,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             tickUpgrades();
             return;
         }
-        markHurt();
+        markHurt(); //TODO: this might be the cause of high network usage
 
         TempMotionVars tempMotionVars = getMotionVars();
         if (isNoGravity()) {

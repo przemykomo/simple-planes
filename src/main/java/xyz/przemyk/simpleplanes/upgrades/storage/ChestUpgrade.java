@@ -88,7 +88,11 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
                 planeEntity.spawnAtLocation(itemStack);
             }
         }
-        planeEntity.spawnAtLocation(chestType);
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return chestType.getDefaultInstance();
     }
 
     @Override
@@ -130,7 +134,7 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     }
 
     @Override
-    public void onApply(ItemStack itemStack, Player playerEntity) {
+    public void onApply(ItemStack itemStack) {
         chestType = itemStack.getItem();
         itemStackHandler.setSize(IronChestsCompat.getSize(ForgeRegistries.ITEMS.getKey(chestType).toString()));
     }

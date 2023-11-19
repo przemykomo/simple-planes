@@ -1,12 +1,10 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
-import xyz.przemyk.simpleplanes.container.RemoveUpgradesContainer;
-import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.container.ModifyUpgradesContainer;
 
 import java.util.function.Supplier;
 
@@ -30,11 +28,11 @@ public class CRemoveUpgradePacket {
         NetworkEvent.Context ctx = ctxSup.get();
         ctx.enqueueWork(() -> {
             ServerPlayer sender = ctx.getSender();
-            if (sender.containerMenu instanceof RemoveUpgradesContainer container) {
-                Entity entity = sender.level().getEntity(container.planeID);
-                if (entity instanceof PlaneEntity) {
-                    ((PlaneEntity) entity).removeUpgrade(upgradeID);
-                }
+            if (sender.containerMenu instanceof ModifyUpgradesContainer container) {
+//                Entity entity = sender.level().getEntity(container.planeID);
+//                if (entity instanceof PlaneEntity) {
+//                    ((PlaneEntity) entity).removeUpgrade(upgradeID);
+//                }
             }
         });
         ctx.setPacketHandled(true);

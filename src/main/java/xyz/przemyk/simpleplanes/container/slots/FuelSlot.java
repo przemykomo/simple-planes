@@ -1,4 +1,4 @@
-package xyz.przemyk.simpleplanes.container;
+package xyz.przemyk.simpleplanes.container.slots;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;

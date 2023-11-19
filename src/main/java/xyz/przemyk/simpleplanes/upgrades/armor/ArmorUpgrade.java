@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -32,7 +31,7 @@ public class ArmorUpgrade extends Upgrade {
     }
 
     @Override
-    public void onApply(ItemStack itemStack, Player playerEntity) {
+    public void onApply(ItemStack itemStack) {
         ListTag listtag = itemStack.getEnchantmentTags();
 
         for(int i = 0; i < listtag.size(); ++i) {
@@ -74,12 +73,12 @@ public class ArmorUpgrade extends Upgrade {
     }
 
     @Override
-    public void onRemoved() {
+    public ItemStack getItemStack() {
         ItemStack itemStack = SimplePlanesItems.ARMOR.get().getDefaultInstance();
         if (protectionLevel > 0) {
             itemStack.enchant(Enchantments.ALL_DAMAGE_PROTECTION, protectionLevel);
         }
-        planeEntity.spawnAtLocation(itemStack);
+        return itemStack;
     }
 
     public float getReducedDamage(float amount) {
