@@ -42,7 +42,7 @@ public record PlaneWorkbenchRecipe(ResourceLocation id,
 
     @Override
     public ItemStack assemble(Container p_44001_, RegistryAccess p_267165_) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -52,6 +52,6 @@ public record PlaneWorkbenchRecipe(ResourceLocation id,
 
     @Override
     public ItemStack getResultItem(RegistryAccess p_267052_) {
-        return null;
+        return ItemStack.EMPTY;
     }
 }
