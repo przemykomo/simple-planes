@@ -128,33 +128,44 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
         AtomicBoolean success = new AtomicBoolean(false);
 
         if (!previousStack.isEmpty()) {
-            SimplePlanesUpgrades.getUpgradeFromItem(previousStack.getItem()).ifPresent(upgradeType -> {
+            Item item = previousStack.getItem();
+            UpgradeType upgradeType = SimplePlanesUpgrades.getUpgradeFromItem(item)
+                    .orElse(SimplePlanesUpgrades.getLargeUpgradeFromItem(item).orElse(null));
+            if (upgradeType == null) {
+                PayloadEntry payloadEntry = PlanePayloadReloadListener.payloadEntries.get(item);
+                if (payloadEntry != null) {
+                    upgradeType = SimplePlanesUpgrades.PAYLOAD.get();
+                }
+            }
+            if (upgradeType != null) {
                 ResourceLocation resourceLocation = SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType);
                 Upgrade upgrade = planeEntity.upgrades.get(resourceLocation);
-                if (ItemStack.isSameItemSameTags(previousStack, upgrade.getItemStack())) {
-                    ItemStack itemStack = ItemStack.EMPTY;
-                    for (int i = 0; i < 6; i++) {
-                        if (i == slot) {
-                            continue;
+                if (upgrade != null) {
+                    if (ItemStack.isSameItemSameTags(previousStack, upgrade.getItemStack())) {
+                        ItemStack itemStack = ItemStack.EMPTY;
+                        for (int i = 0; i < 6; i++) {
+                            if (i == slot) {
+                                continue;
+                            }
+                            itemStack = itemHandler.getStackInSlot(i);
+                            if (ItemStack.isSameItem(previousStack, itemStack)) {
+                                break;
+                            } else {
+                                itemStack = ItemStack.EMPTY;
+                            }
                         }
-                        itemStack = itemHandler.getStackInSlot(i);
-                        if (ItemStack.isSameItem(previousStack, itemStack)) {
-                            break;
+                        if (!itemStack.isEmpty()) {
+                            if (!ItemStack.isSameItemSameTags(previousStack, itemStack)) {
+                                planeEntity.removeUpgrade(resourceLocation);
+                                tryUpgradeFromItem(itemStack, success);
+                            }
                         } else {
-                            itemStack = ItemStack.EMPTY;
-                        }
-                    }
-                    if (!itemStack.isEmpty()) {
-                        if (!ItemStack.isSameItemSameTags(previousStack, itemStack)) {
                             planeEntity.removeUpgrade(resourceLocation);
-                            tryUpgradeFromItem(itemStack, success);
                         }
-                    } else {
-                        planeEntity.removeUpgrade(resourceLocation);
                     }
                 }
                 success.set(true);
-            });
+            };
         }
 
         if (!newStack.isEmpty()) {

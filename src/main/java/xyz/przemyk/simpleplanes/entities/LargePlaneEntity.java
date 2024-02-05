@@ -89,7 +89,7 @@ public class LargePlaneEntity extends PlaneEntity {
             return false;
         }
         if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
-            return passengers.size() <= 1 && (passengers.size() == 0 || !hasLargeUpgrade);
+            return passengers.size() <= 1 && (passengers.isEmpty() || !hasLargeUpgrade);
         } else {
             return hasLargeUpgrade ? passengers.size() < 3 : passengers.size() < 4;
         }

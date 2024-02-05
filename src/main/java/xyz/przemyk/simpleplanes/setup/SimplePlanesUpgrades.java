@@ -45,17 +45,11 @@ public class SimplePlanesUpgrades {
     }
 
     public static Optional<UpgradeType> getUpgradeFromItem(Item item) {
-        if (ITEM_UPGRADE_MAP.containsKey(item)) {
-            return Optional.of(ITEM_UPGRADE_MAP.get(item));
-        }
-        return Optional.empty();
+        return Optional.ofNullable(ITEM_UPGRADE_MAP.get(item));
     }
 
     public static Optional<UpgradeType> getLargeUpgradeFromItem(Item item) {
-        if (LARGE_ITEM_UPGRADE_MAP.containsKey(item)) {
-            return Optional.of(LARGE_ITEM_UPGRADE_MAP.get(item));
-        }
-        return Optional.empty();
+        return Optional.ofNullable(LARGE_ITEM_UPGRADE_MAP.get(item));
     }
 
     public static final RegistryObject<UpgradeType> FLOATY_BEDDING = UPGRADE_TYPES.register("floaty_bedding", () -> new UpgradeType(FloatingUpgrade::new));

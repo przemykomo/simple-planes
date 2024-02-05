@@ -207,7 +207,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(SimplePlanesMod.MODID, "blacklisted_dimensions"));
 
     public boolean isPowered() {
-        return isAlive() && !level().dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered())) && planksMaterial != Blocks.AIR;
+        return isAlive() && !level().dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
     }
 
     @Override
