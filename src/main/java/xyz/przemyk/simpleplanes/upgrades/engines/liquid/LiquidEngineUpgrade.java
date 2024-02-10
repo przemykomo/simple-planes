@@ -40,7 +40,8 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     public final LazyOptional<FluidTank> fluidTankLazyOptional = LazyOptional.of(() -> fluidTank);
 
     public int burnTime;
-
+    public int fuelBurned;
+    
     public LiquidEngineUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.LIQUID_ENGINE.get(), planeEntity);
     }
@@ -51,10 +52,11 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
             if (burnTime > 0) {
                 burnTime -= planeEntity.getFuelCost();
                 updateClient();
-            } else if (planeEntity.getThrottle() > 0 && !fluidTank.isEmpty()) {
-                burnTime = PlaneLiquidFuelReloadListener.fuelMap.getOrDefault(fluidTank.getFluid().getFluid().getFluidType(), 0);
+            } else if (planeEntity.getThrottle() > 0 && !fluidTank.isEmpty() && PlaneLiquidFuelReloadListener.fuelMap.getOrDefault(fluidTank.getFluid().getFluid().getFluidType(), 0) > 0) {
+                fuelBurned = -burnTime / PlaneLiquidFuelReloadListener.fuelMap.getOrDefault(fluidTank.getFluid().getFluid().getFluidType(), 0) + 1;
+                burnTime = fuelBurned * PlaneLiquidFuelReloadListener.fuelMap.getOrDefault(fluidTank.getFluid().getFluid().getFluidType(), 0);
                 if (burnTime > 0) {
-                    fluidTank.drain(1, IFluidHandler.FluidAction.EXECUTE);
+                    fluidTank.drain(fuelBurned, IFluidHandler.FluidAction.EXECUTE);
                     updateClient();
                 }
             }
