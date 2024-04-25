@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
+import org.apache.logging.log4j.LogManager;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
@@ -73,7 +74,12 @@ public class ParachuteEntity extends Entity {
                         level().setBlock(mutableBlockPos, Blocks.BARREL.defaultBlockState(), 3);
                         if (level().getBlockEntity(mutableBlockPos) instanceof BarrelBlockEntity barrelBlockEntity) {
                             for (int s = 0; s < 27; s++) {
-                                ItemStack itemStack = itemStackHandler.getStackInSlot(s);
+                                ItemStack itemStack;
+                                try {
+                                 itemStack = itemStackHandler.getStackInSlot(s);
+                                } catch (Exception e) {
+                                    itemStack = ItemStack.EMPTY;
+                                }
                                 if (!itemStack.isEmpty()) {
                                     barrelBlockEntity.setItem(s, itemStack);
                                 }
