@@ -73,7 +73,12 @@ public class ParachuteEntity extends Entity {
                         level().setBlock(mutableBlockPos, Blocks.BARREL.defaultBlockState(), 3);
                         if (level().getBlockEntity(mutableBlockPos) instanceof BarrelBlockEntity barrelBlockEntity) {
                             for (int s = 0; s < 27; s++) {
-                                ItemStack itemStack = itemStackHandler.getStackInSlot(s);
+                                ItemStack itemStack;
+                                try {
+                                 itemStack = itemStackHandler.getStackInSlot(s);
+                                } catch (Exception e) {
+                                    itemStack = ItemStack.EMPTY;
+                                }
                                 if (!itemStack.isEmpty()) {
                                     barrelBlockEntity.setItem(s, itemStack);
                                 }
