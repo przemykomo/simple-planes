@@ -34,6 +34,9 @@ public class FoldingUpgrade extends Upgrade {
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             matrixStack.translate(0, 0.44375, 7.6125);
             matrixStack.scale(0.9375f, 0.9375f, 0.9375f);
+        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
+            matrixStack.translate(0, -0.61875f, -4.375f); //TODO
+            matrixStack.scale(0.9375f, 0.9375f, 0.9375f);
         } else {
             matrixStack.translate(0, -0.234375, 4.853125);
             matrixStack.scale(0.75f, 0.75f, 0.75f);

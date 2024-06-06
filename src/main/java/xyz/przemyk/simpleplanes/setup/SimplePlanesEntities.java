@@ -23,6 +23,7 @@ public class SimplePlanesEntities {
 
     public static final RegistryObject<EntityType<PlaneEntity>> PLANE = ENTITIES.register("plane", () -> createEntityType(PlaneEntity::new, EntityDimensions.scalable(2.5F, 1.8F)));
     public static final RegistryObject<EntityType<LargePlaneEntity>> LARGE_PLANE = ENTITIES.register("large_plane", () -> createEntityType(LargePlaneEntity::new, EntityDimensions.scalable(3F, 2.3F)));
+    public static final RegistryObject<EntityType<CargoPlaneEntity>> CARGO_PLANE = ENTITIES.register("cargo_plane", () -> createEntityType(CargoPlaneEntity::new, EntityDimensions.scalable(3F, 2.3F)));
     public static final RegistryObject<EntityType<HelicopterEntity>> HELICOPTER = ENTITIES.register("helicopter", () -> createEntityType(HelicopterEntity::new, EntityDimensions.scalable(2.5F, 2.2F)));
 
     public static final RegistryObject<EntityType<ParachuteEntity>> PARACHUTE = ENTITIES.register("parachute", () -> createEntityType(ParachuteEntity::new, EntityDimensions.scalable(1.0F, 1.0F)));

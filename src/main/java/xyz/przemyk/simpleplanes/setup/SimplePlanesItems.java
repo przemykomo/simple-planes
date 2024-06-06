@@ -38,6 +38,7 @@ public class SimplePlanesItems {
         ArrayList<PlaneItem> planeItems = new ArrayList<>(3);
         planeItems.add(PLANE_ITEM.get());
         planeItems.add(LARGE_PLANE_ITEM.get());
+        planeItems.add(CARGO_PLANE_ITEM.get());
         planeItems.add(HELICOPTER_ITEM.get());
         return planeItems;
     }
@@ -64,6 +65,7 @@ public class SimplePlanesItems {
 
     public static final RegistryObject<PlaneItem> PLANE_ITEM = ITEMS.register("plane", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.PLANE));
     public static final RegistryObject<PlaneItem> LARGE_PLANE_ITEM = ITEMS.register("large_plane", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.LARGE_PLANE));
+    public static final RegistryObject<PlaneItem> CARGO_PLANE_ITEM = ITEMS.register("cargo_plane", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.CARGO_PLANE));
     public static final RegistryObject<PlaneItem> HELICOPTER_ITEM = ITEMS.register("helicopter", () -> new PlaneItem(new Item.Properties(), SimplePlanesEntities.HELICOPTER));
 
     public static final RegistryObject<ParachuteItem> PARACHUTE_ITEM = ITEMS.register("parachute", () -> new ParachuteItem(new Item.Properties()));
@@ -93,6 +95,7 @@ public class SimplePlanesItems {
                 ForgeRegistries.BLOCKS.tags().getTag(PlaneWorkbenchContainer.PLANE_MATERIALS_TAG).forEach(block -> {
                     ItemStack planeStack = new ItemStack(PLANE_ITEM.get());
                     ItemStack largePlaneStack = new ItemStack(LARGE_PLANE_ITEM.get());
+                    ItemStack cargoPlaneStack = new ItemStack(CARGO_PLANE_ITEM.get());
                     ItemStack heliStack = new ItemStack(HELICOPTER_ITEM.get());
 
                     CompoundTag itemTag = new CompoundTag();
@@ -100,10 +103,12 @@ public class SimplePlanesItems {
 
                     planeStack.addTagElement("EntityTag", itemTag);
                     largePlaneStack.addTagElement("EntityTag", itemTag);
+                    cargoPlaneStack.addTagElement("EntityTag", itemTag);
                     heliStack.addTagElement("EntityTag", itemTag);
 
                     output.accept(planeStack);
                     output.accept(largePlaneStack);
+                    output.accept(cargoPlaneStack);
                     output.accept(heliStack);
                 });
             }).build());

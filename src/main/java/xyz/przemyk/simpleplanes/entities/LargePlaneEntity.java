@@ -27,8 +27,8 @@ public class LargePlaneEntity extends PlaneEntity {
 
     public boolean hasLargeUpgrade = false;
 
-    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityTypeIn, Level worldIn) {
-        super(entityTypeIn, worldIn);
+    public LargePlaneEntity(EntityType<? extends LargePlaneEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Override

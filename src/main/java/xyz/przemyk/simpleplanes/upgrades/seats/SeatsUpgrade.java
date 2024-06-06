@@ -23,6 +23,7 @@ public class SeatsUpgrade extends Upgrade {
 
     public static final ResourceLocation TEXTURE = SimplePlanesMod.texture("seats.png");
     public static final ResourceLocation LARGE_TEXTURE = SimplePlanesMod.texture("seats_large.png");
+    public static final ResourceLocation CARGO_TEXTURE = SimplePlanesMod.texture("cargo_plane_metal.png");
     public static final ResourceLocation HELI_TEXTURE = SimplePlanesMod.texture("seats_heli.png");
 
     public SeatsUpgrade(PlaneEntity planeEntity) {
@@ -39,6 +40,9 @@ public class SeatsUpgrade extends Upgrade {
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(LARGE_TEXTURE), false, false);
             UpgradesModels.LARGE_SEATS.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(CARGO_TEXTURE), false, false);
+            UpgradesModels.CARGO_SEATS.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
         } else {
             VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(HELI_TEXTURE), false, false);
             UpgradesModels.HELI_SEATS.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);

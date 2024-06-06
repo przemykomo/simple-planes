@@ -23,6 +23,7 @@ import org.joml.Quaternionf;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 import java.util.HashMap;
@@ -65,6 +66,8 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             poseStack.translate(0, -0.5, -0.5);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             poseStack.translate(0, -0.3, -1);
+        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
+            poseStack.translate(0, -0.8, -1);
         } else {
             poseStack.translate(0, 0, 0.9);
         }
@@ -79,11 +82,11 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         poseStack.translate(0, -1.1, 0);
 
-        VertexConsumer vertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
+        VertexConsumer materialVertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeEntityModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        planeEntityModel.renderToBuffer(poseStack, materialVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
-        vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
+        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
         propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
         propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -92,6 +95,10 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
         planeMetalModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
+        }
+
+        if (entityType == SimplePlanesEntities.CARGO_PLANE.get() && !planeEntity.upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+            UpgradesModels.WOODEN_CARGO_SEATS.renderToBuffer(poseStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
 
         poseStack.popPose();

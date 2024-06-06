@@ -58,6 +58,9 @@ public class SolarPanelUpgrade extends Upgrade {
         } else if(entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
             VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.itemEntityTranslucentCull(modelEntry.largeTexture()), false, false);
             modelEntry.large().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+        } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.cargoTexture()), false, false);
+            modelEntry.cargo().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
 
