@@ -17,14 +17,12 @@ import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.client.render.models.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
-import xyz.przemyk.simpleplanes.upgrades.armor.ArmorModel;
-import xyz.przemyk.simpleplanes.upgrades.armor.ArmorWindowModel;
-import xyz.przemyk.simpleplanes.upgrades.armor.HeliArmorModel;
-import xyz.przemyk.simpleplanes.upgrades.armor.LargeArmorModel;
+import xyz.przemyk.simpleplanes.upgrades.armor.*;
 import xyz.przemyk.simpleplanes.upgrades.booster.BoosterModel;
 import xyz.przemyk.simpleplanes.upgrades.booster.CargoBoosterModel;
 import xyz.przemyk.simpleplanes.upgrades.booster.HeliBoosterModel;
 import xyz.przemyk.simpleplanes.upgrades.booster.LargeBoosterModel;
+import xyz.przemyk.simpleplanes.upgrades.engines.electric.CargoElectricEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.electric.ElectricEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.electric.HeliElectricEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.electric.LargeElectricEngineModel;
@@ -32,6 +30,7 @@ import xyz.przemyk.simpleplanes.upgrades.engines.furnace.CargoFurnaceEngineModel
 import xyz.przemyk.simpleplanes.upgrades.engines.furnace.FurnaceEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.furnace.HeliFurnaceEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.furnace.LargeFurnaceEngineModel;
+import xyz.przemyk.simpleplanes.upgrades.engines.liquid.CargoLiquidEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.liquid.HeliLiquidEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.liquid.LargeLiquidEngineModel;
 import xyz.przemyk.simpleplanes.upgrades.engines.liquid.LiquidEngineModel;
@@ -72,10 +71,12 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "main");
     public static final ModelLayerLocation LARGE_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "large");
     public static final ModelLayerLocation HELI_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "heli");
+    public static final ModelLayerLocation CARGO_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "cargo");
 
     public static final ModelLayerLocation LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "main");
     public static final ModelLayerLocation LARGE_LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "large");
     public static final ModelLayerLocation HELI_LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "heli");
+    public static final ModelLayerLocation CARGO_LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "cargo");
 
     public static final ModelLayerLocation BOOSTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "booster"), "main");
     public static final ModelLayerLocation LARGE_BOOSTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "booster"), "large");
@@ -94,6 +95,7 @@ public class PlanesModelLayers {
     public static final ModelLayerLocation ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "main");
     public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "large");
     public static final ModelLayerLocation HELI_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "heli");
+    public static final ModelLayerLocation CARGO_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "cargo");
     public static final ModelLayerLocation ARMOR_WINDOW = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "window");
 
     public static final ModelLayerLocation SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "main");
@@ -139,10 +141,12 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(ELECTRIC_ENGINE, ElectricEngineModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_ELECTRIC_ENGINE, LargeElectricEngineModel::createBodyLayer);
         event.registerLayerDefinition(HELI_ELECTRIC_ENGINE, HeliElectricEngineModel::createBodyLayer);
+        event.registerLayerDefinition(CARGO_ELECTRIC_ENGINE, CargoElectricEngineModel::createBodyLayer);
 
         event.registerLayerDefinition(LIQUID_ENGINE, LiquidEngineModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_LIQUID_ENGINE, LargeLiquidEngineModel::createBodyLayer);
         event.registerLayerDefinition(HELI_LIQUID_ENGINE, HeliLiquidEngineModel::createBodyLayer);
+        event.registerLayerDefinition(CARGO_LIQUID_ENGINE, CargoLiquidEngineModel::createBodyLayer);
 
         event.registerLayerDefinition(BOOSTER, BoosterModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_BOOSTER, LargeBoosterModel::createBodyLayer);
@@ -161,6 +165,7 @@ public class PlanesModelLayers {
         event.registerLayerDefinition(ARMOR, ArmorModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_ARMOR, LargeArmorModel::createBodyLayer);
         event.registerLayerDefinition(HELI_ARMOR, HeliArmorModel::createBodyLayer);
+        event.registerLayerDefinition(CARGO_ARMOR, CargoArmorModel::createBodyLayer);
         event.registerLayerDefinition(ARMOR_WINDOW, ArmorWindowModel::createBodyLayer);
 
         event.registerLayerDefinition(SOLAR_PANEL, SolarPanelModel::createBodyLayer);
@@ -203,13 +208,13 @@ public class PlanesModelLayers {
                 new ElectricEngineModel(entityModelSet.bakeLayer(ELECTRIC_ENGINE)), SimplePlanesMod.texture("electric_engine.png"),
                 new LargeElectricEngineModel(entityModelSet.bakeLayer(LARGE_ELECTRIC_ENGINE)), SimplePlanesMod.texture("electric_engine_large.png"),
                 new HeliElectricEngineModel(entityModelSet.bakeLayer(HELI_ELECTRIC_ENGINE)), SimplePlanesMod.texture("electric_engine_heli.png"),
-                null, null));
+                new CargoElectricEngineModel(entityModelSet.bakeLayer(CARGO_ELECTRIC_ENGINE)), SimplePlanesMod.texture("electric_engine_cargo.png")));
 
         UpgradesModels.MODEL_ENTRIES.put(SimplePlanesUpgrades.LIQUID_ENGINE.get(), new UpgradesModels.ModelEntry(
                 new LiquidEngineModel(entityModelSet.bakeLayer(LIQUID_ENGINE)), SimplePlanesMod.texture("liquid_engine.png"),
                 new LargeLiquidEngineModel(entityModelSet.bakeLayer(LARGE_LIQUID_ENGINE)), SimplePlanesMod.texture("liquid_engine_large.png"),
                 new HeliLiquidEngineModel(entityModelSet.bakeLayer(HELI_LIQUID_ENGINE)), SimplePlanesMod.texture("liquid_engine_heli.png"),
-                null, null));
+                new CargoLiquidEngineModel(entityModelSet.bakeLayer(CARGO_LIQUID_ENGINE)), SimplePlanesMod.texture("liquid_engine_cargo.png")));
 
         UpgradesModels.MODEL_ENTRIES.put(SimplePlanesUpgrades.BOOSTER.get(), new UpgradesModels.ModelEntry(
                 new BoosterModel(entityModelSet.bakeLayer(BOOSTER)), SimplePlanesMod.texture("booster.png"),
@@ -233,7 +238,7 @@ public class PlanesModelLayers {
                 new ArmorModel(entityModelSet.bakeLayer(ARMOR)), SimplePlanesMod.texture("armor.png"),
                 new LargeArmorModel(entityModelSet.bakeLayer(LARGE_ARMOR)), SimplePlanesMod.texture("armor_large.png"),
                 new HeliArmorModel(entityModelSet.bakeLayer(HELI_ARMOR)), SimplePlanesMod.texture("armor_heli.png"),
-                null, null));
+                new CargoArmorModel(entityModelSet.bakeLayer(CARGO_ARMOR)), SimplePlanesMod.texture("armor_cargo.png")));
 
         UpgradesModels.MODEL_ENTRIES.put(SimplePlanesUpgrades.SOLAR_PANEL.get(), new UpgradesModels.ModelEntry(
                 new SolarPanelModel(entityModelSet.bakeLayer(SOLAR_PANEL)), SimplePlanesMod.texture("solar_panel.png"),
