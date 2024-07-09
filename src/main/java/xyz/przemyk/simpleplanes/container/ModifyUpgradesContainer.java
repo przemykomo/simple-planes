@@ -15,11 +15,13 @@ import org.jetbrains.annotations.NotNull;
 import xyz.przemyk.simpleplanes.container.slots.PlaneUpgradeSlot;
 import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
 import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
+import xyz.przemyk.simpleplanes.entities.CargoPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.payload.PayloadUpgrade;
@@ -195,13 +197,16 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
             }
         }
         if (upgradeType != null && planeEntity.canAddUpgrade(upgradeType)) {
-            if (payloadEntry != null) {
+            if (payloadEntry != null && !(planeEntity instanceof CargoPlaneEntity)) {
                 planeEntity.addUpgradeInWorkbench(newStack, new PayloadUpgrade(planeEntity, payloadEntry));
+                success.set(true);
             } else {
-                planeEntity.addUpgradeInWorkbench(newStack, upgradeType.instanceSupplier.apply(planeEntity));
+                Upgrade upgrade = upgradeType.instanceSupplier.apply(planeEntity);
+                if (!(planeEntity instanceof CargoPlaneEntity && upgrade instanceof LargeUpgrade)) {
+                    planeEntity.addUpgradeInWorkbench(newStack, upgrade);
+                    success.set(true);
+                }
             }
-
-            success.set(true);
         }
     }
 

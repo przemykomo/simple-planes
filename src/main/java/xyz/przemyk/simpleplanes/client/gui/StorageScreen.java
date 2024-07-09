@@ -30,15 +30,9 @@ public class StorageScreen extends AbstractContainerScreen<StorageContainer> {
     @Override
     protected void init() {
         super.init();
-        if (leftPos < 0) {
-            leftPos = 0;
-        }
-        if (topPos < 0) {
-            topPos = 0;
-        }
         addRenderableWidget(new ImageButton(leftPos + 3, topPos + 54, 10, 15, 208, 49, 15, GUI,
                 button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CyclePlaneInventoryPacket(CyclePlaneInventoryPacket.Type.LEFT))));
-        addRenderableWidget(new ImageButton(leftPos + 171, topPos + 54, 10, 15, 218, 49, 15, GUI,
+        addRenderableWidget(new ImageButton(leftPos + imageWidth - 13, topPos + 54, 10, 15, 218, 49, 15, GUI,
                 button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CyclePlaneInventoryPacket(CyclePlaneInventoryPacket.Type.RIGHT))));
 
     }

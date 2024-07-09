@@ -78,7 +78,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-//    maven { name = "Progwml6 maven"; url = "https://dvs1.progwml6.com/files/maven/" } //JEI & Iron chest
+    maven { name = "Progwml6 maven"; url = "https://dvs1.progwml6.com/files/maven/" } //JEI & Iron chest
 //    maven { name = "blamejared";     url = "https://maven.blamejared.com" }           // Patchouli
 //    maven { name = "ModMaven";       url = "https://modmaven.dev" }               // JEI fallback
     maven {
@@ -100,7 +100,7 @@ dependencies {
 //    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
 //    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
-//    runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
+    runtimeOnly fg.deobf("com.progwml6.ironchest:ironchest:${ironchest_version}")
 
 //    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:4325670')
 //    implementation fg.deobf('curse.maven:framework-549225:4287474')

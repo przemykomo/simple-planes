@@ -1071,7 +1071,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
             if (livingEntity instanceof Player player) {
 
-                if (!player.isCreative() && getPassengers().size() == 0 && isAlive()) {
+                if (!player.isCreative() && getPassengers().isEmpty() && isAlive()) {
                     ItemStack itemStack = getItemStack();
 
                     if (!player.addItem(itemStack)) {
@@ -1083,7 +1083,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             }
         }
 
-        if (getPassengers().size() == 0) {
+        if (getPassengers().isEmpty()) {
             setThrottle((byte) 0);
             setPitchUp((byte) 0);
             setYawRight((byte) 0);

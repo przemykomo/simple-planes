@@ -116,11 +116,6 @@ public class CargoPlaneEntity extends PlaneEntity {
         }
     }
 
-    @Override
-    public void addUpgradeInWorkbench(ItemStack itemStack, Upgrade upgrade) {
-        super.addUpgradeInWorkbench(itemStack, upgrade); //TODO
-    }
-
     public void readNewCargoUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf packetBuffer) {
         UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(upgradeID);
         Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
