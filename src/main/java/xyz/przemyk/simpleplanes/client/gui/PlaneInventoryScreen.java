@@ -1,12 +1,15 @@
 package xyz.przemyk.simpleplanes.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
+import xyz.przemyk.simpleplanes.network.CyclePlaneInventoryPacket;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
 public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventoryContainer> {
@@ -15,6 +18,13 @@ public class PlaneInventoryScreen extends AbstractContainerScreen<PlaneInventory
 
     public PlaneInventoryScreen(PlaneInventoryContainer screenContainer, Inventory inventory, Component title) {
         super(screenContainer, inventory, title);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        addRenderableWidget(new ImageButton(leftPos + 8, topPos + 54, 10, 15, 208, 49, 15, GUI,
+                button -> SimplePlanesNetworking.INSTANCE.sendToServer(new CyclePlaneInventoryPacket(CyclePlaneInventoryPacket.Type.LEFT))));
     }
 
     @Override

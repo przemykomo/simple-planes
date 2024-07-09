@@ -24,7 +24,7 @@ public class OpenInventoryPacket {
                 for (Upgrade upgrade : plane.upgrades.values()) {
                     if (upgrade instanceof LargeUpgrade largeUpgrade) {
                         if (largeUpgrade.hasStorage()) {
-                            largeUpgrade.openStorageGui(player);
+//                            largeUpgrade.openStorageGui(player);
                             break;
                         }
                     }

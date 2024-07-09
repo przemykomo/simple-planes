@@ -53,12 +53,14 @@ import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.PlaneSound;
 import xyz.przemyk.simpleplanes.container.ModifyUpgradesContainer;
+import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 import xyz.przemyk.simpleplanes.upgrades.armor.ArmorUpgrade;
@@ -1318,6 +1320,23 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public void setYawRight(byte yawRight) {
         entityData.set(YAW_RIGHT, yawRight);
+    }
+
+    public void openContainer(ServerPlayer player, int containerID) {
+        if (containerID == 0) {
+            NetworkHooks.openScreen(player, new SimpleMenuProvider((id, inventory, playerIn) ->
+                    new PlaneInventoryContainer(id, inventory, this), getName()), buffer -> buffer.writeVarInt(getId()));
+        } else {
+            int id = 0;
+            for (Upgrade upgrade : upgrades.values()) {
+                if (upgrade instanceof LargeUpgrade largeUpgrade && largeUpgrade.hasStorage()) { //TODO: move it out of LargeUpgrade?
+                    id++;
+                    if (containerID == id) {
+                        largeUpgrade.openStorageGui(player, id);
+                    }
+                }
+            }
+        }
     }
 
     protected static class TempMotionVars {

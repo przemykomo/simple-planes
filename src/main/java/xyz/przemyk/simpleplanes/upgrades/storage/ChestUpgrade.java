@@ -11,11 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +37,7 @@ import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
+public class ChestUpgrade extends LargeUpgrade {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(27);
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
@@ -116,16 +113,6 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     }
 
     @Override
-    public Component getDisplayName() {
-        return Component.translatable(SimplePlanesMod.MODID + ":chest");
-    }
-
-    @Override
-    public AbstractContainerMenu createMenu(int id, Inventory playerInventoryIn, Player playerEntity) {
-        return new StorageContainer(id, playerInventoryIn, itemStackHandler, ForgeRegistries.ITEMS.getKey(chestType).toString());
-    }
-
-    @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemHandlerLazyOptional.cast();
@@ -145,7 +132,13 @@ public class ChestUpgrade extends LargeUpgrade implements MenuProvider {
     }
 
     @Override
-    public void openStorageGui(ServerPlayer player) {
-        NetworkHooks.openScreen(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(chestType).toString()));
+    public void openStorageGui(ServerPlayer player, int cycleableContainerID) {
+        NetworkHooks.openScreen(player, new SimpleMenuProvider(
+                (id, playerInventory, playerIn) -> new StorageContainer(id, playerInventory, itemStackHandler, ForgeRegistries.ITEMS.getKey(chestType).toString(), cycleableContainerID),
+                Component.translatable(SimplePlanesMod.MODID + ":chest")
+        ), buffer -> {
+            buffer.writeUtf(ForgeRegistries.ITEMS.getKey(chestType).toString());
+            buffer.writeByte(cycleableContainerID);
+        });
     }
 }

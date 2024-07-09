@@ -11,7 +11,7 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 
-public class PlaneInventoryContainer extends AbstractContainerMenu {
+public class PlaneInventoryContainer extends AbstractContainerMenu implements CycleableContainer {
 
     public PlaneEntity planeEntity;
 
@@ -56,5 +56,10 @@ public class PlaneInventoryContainer extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return player.getVehicle() instanceof PlaneEntity;
+    }
+
+    @Override
+    public int cycleableContainerID() {
+        return 0;
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +39,7 @@ import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
+public class SupplyCrateUpgrade extends LargeUpgrade {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(27);
     public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
@@ -113,16 +114,6 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
     }
 
     @Override
-    public Component getDisplayName() {
-        return Component.translatable(SimplePlanesMod.MODID + ":supply_crate");
-    }
-
-    @Override
-    public AbstractContainerMenu createMenu(int id, Inventory playerInventoryIn, Player playerEntity) {
-        return new StorageContainer(id, playerInventoryIn, itemStackHandler, ForgeRegistries.ITEMS.getKey(Items.BARREL).toString());
-    }
-
-    @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemHandlerLazyOptional.cast();
@@ -131,8 +122,14 @@ public class SupplyCrateUpgrade extends LargeUpgrade implements MenuProvider {
     }
 
     @Override
-    public void openStorageGui(ServerPlayer player) {
-        NetworkHooks.openScreen(player, this, buffer -> buffer.writeUtf(ForgeRegistries.ITEMS.getKey(Items.BARREL).toString()));
+    public void openStorageGui(ServerPlayer player, int cycleableContainerID) {
+        NetworkHooks.openScreen(player, new SimpleMenuProvider(
+                (id, playerInventory, playerIn) -> new StorageContainer(id, playerInventory, itemStackHandler, ForgeRegistries.ITEMS.getKey(Items.BARREL).toString(), cycleableContainerID),
+                Component.translatable(SimplePlanesMod.MODID + ":supply_crate")
+        ), buffer -> {
+            buffer.writeUtf(ForgeRegistries.ITEMS.getKey(Items.BARREL).toString());
+            buffer.writeByte(cycleableContainerID);
+        });
     }
 
     @Override

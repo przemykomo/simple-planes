@@ -25,5 +25,5 @@ public abstract class LargeUpgrade extends Upgrade {
         return false;
     }
 
-    public void openStorageGui(ServerPlayer player) {}
+    public void openStorageGui(ServerPlayer player, int cycleableContainerID) {}
 }

@@ -13,26 +13,28 @@ import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 
-public class StorageContainer extends AbstractContainerMenu {
+public class StorageContainer extends AbstractContainerMenu implements CycleableContainer {
 
     public final int rowCount;
     public final int size;
     public final String chestType;
+    public final int cycleableContainerID;
 
     public StorageContainer(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, buffer.readUtf(32767));
+        this(id, playerInventory, buffer.readUtf(32767), buffer.readByte());
     }
 
-    private StorageContainer(int id, Inventory playerInventory, String chestType) {
-        this(id, playerInventory, new ItemStackHandler(IronChestsCompat.getSize(chestType)), chestType);
+    private StorageContainer(int id, Inventory playerInventory, String chestType, int cycleableContainerID) {
+        this(id, playerInventory, new ItemStackHandler(IronChestsCompat.getSize(chestType)), chestType, cycleableContainerID);
     }
 
-    public StorageContainer(int id, Inventory playerInventory, IItemHandler itemHandler, String chestType) {
+    public StorageContainer(int id, Inventory playerInventory, IItemHandler itemHandler, String chestType, int cycleableContainerID) {
         super(SimplePlanesContainers.STORAGE.get(), id);
         rowCount = IronChestsCompat.getRowCount(chestType);
         IronChestsCompat.addSlots(chestType, itemHandler, rowCount, playerInventory, this::addSlot);
         size = itemHandler.getSlots();
         this.chestType = chestType;
+        this.cycleableContainerID = cycleableContainerID;
     }
 
     @Override
@@ -68,5 +70,10 @@ public class StorageContainer extends AbstractContainerMenu {
         }
 
         return itemstack;
+    }
+
+    @Override
+    public int cycleableContainerID() {
+        return cycleableContainerID;
     }
 }

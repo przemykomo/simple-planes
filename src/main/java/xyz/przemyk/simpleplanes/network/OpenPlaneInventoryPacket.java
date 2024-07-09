@@ -25,8 +25,7 @@ public class OpenPlaneInventoryPacket {
             if (sender != null) {
                 Entity entity = sender.getVehicle();
                 if (entity instanceof PlaneEntity planeEntity) {
-                    NetworkHooks.openScreen(sender, new SimpleMenuProvider((id, inventory, player) ->
-                            new PlaneInventoryContainer(id, inventory, planeEntity), planeEntity.getName()), buffer -> buffer.writeVarInt(planeEntity.getId()));
+                    planeEntity.openContainer(sender, 0);
                 }
             }
         });

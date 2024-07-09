@@ -139,5 +139,14 @@ public class SimplePlanesNetworking {
                 YawPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER)
         );
+
+        INSTANCE.registerMessage(
+                ++id,
+                CyclePlaneInventoryPacket.class,
+                CyclePlaneInventoryPacket::toBytes,
+                CyclePlaneInventoryPacket::new,
+                CyclePlaneInventoryPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        );
     }
 }
