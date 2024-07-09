@@ -224,13 +224,7 @@ public class ClientEventHandler {
                 if (mc.screen == null && mc.getOverlay() == null && openPlaneInventoryKey.consumeClick()) {
                     SimplePlanesNetworking.INSTANCE.sendToServer(new OpenPlaneInventoryPacket());
                 } else if (dropPayloadKey.consumeClick()) {
-                    for (Upgrade upgrade : planeEntity.upgrades.values()) {
-                        if (upgrade.canBeDroppedAsPayload()) {
-                            upgrade.dropAsPayload();
-                            SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
-                            break;
-                        }
-                    }
+                    planeEntity.dropPayload();
                 }
 
                 if (throttleUp.consumeClick()) {

@@ -23,12 +23,7 @@ public class DropPayloadPacket {
             if (sender != null) {
                 Entity entity = sender.getVehicle();
                 if (entity instanceof PlaneEntity planeEntity) {
-                    for (Upgrade upgrade : planeEntity.upgrades.values()) {
-                        if (upgrade.canBeDroppedAsPayload()) {
-                            upgrade.dropAsPayload();
-                            break;
-                        }
-                    }
+                    planeEntity.dropPayload();
                 }
             }
         });

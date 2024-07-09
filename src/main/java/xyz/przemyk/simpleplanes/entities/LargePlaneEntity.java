@@ -12,6 +12,8 @@ import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
 import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
+import xyz.przemyk.simpleplanes.network.DropPayloadPacket;
+import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -152,6 +154,17 @@ public class LargePlaneEntity extends PlaneEntity {
         }
 
         return false;
+    }
+
+    @Override
+    public void dropPayload() {
+        for (Upgrade upgrade : upgrades.values()) {
+            if (upgrade.canBeDroppedAsPayload()) {
+                upgrade.dropAsPayload();
+                SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
+                break;
+            }
+        }
     }
 
     @Override

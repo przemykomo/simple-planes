@@ -1339,6 +1339,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
+    public void dropPayload() {}
+
     protected static class TempMotionVars {
         public float moveForward; //TODO: move to HelicopterEntity?
         public double turnThreshold;

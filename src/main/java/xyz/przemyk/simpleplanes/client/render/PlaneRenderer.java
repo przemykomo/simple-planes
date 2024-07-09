@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Quaternionf;
+import xyz.przemyk.simpleplanes.entities.CargoPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -97,8 +98,18 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
 
-        if (entityType == SimplePlanesEntities.CARGO_PLANE.get() && !planeEntity.upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
-            UpgradesModels.WOODEN_CARGO_SEATS.renderToBuffer(poseStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        if (planeEntity instanceof CargoPlaneEntity cargoPlaneEntity) {
+            if (!planeEntity.upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+                UpgradesModels.WOODEN_CARGO_SEATS.renderToBuffer(poseStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            }
+
+            for (int i = 0; i < cargoPlaneEntity.largeUpgrades.size(); i++) {
+                poseStack.pushPose();
+                //noinspection IntegerDivisionInFloatingPointContext
+                poseStack.translate(i % 2 - 0.5, 0.3125, i / 2 + 0.5);
+                cargoPlaneEntity.largeUpgrades.get(i).render(poseStack, buffer, packedLight, partialTicks);
+                poseStack.popPose();
+            }
         }
 
         poseStack.popPose();

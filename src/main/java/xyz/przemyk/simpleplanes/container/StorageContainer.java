@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
+import xyz.przemyk.simpleplanes.entities.CargoPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 
@@ -41,7 +42,9 @@ public class StorageContainer extends AbstractContainerMenu implements Cycleable
     public boolean stillValid(Player playerIn) {
         Entity entity = playerIn.getVehicle();
         if (entity instanceof LargePlaneEntity largePlaneEntity && entity.isAlive()) {
-            return largePlaneEntity.hasStorageUpgrade();
+            return largePlaneEntity.hasStorageUpgrade(); //TODO
+        } else if (entity instanceof CargoPlaneEntity) {
+            return entity.isAlive();
         }
 
         return false;
