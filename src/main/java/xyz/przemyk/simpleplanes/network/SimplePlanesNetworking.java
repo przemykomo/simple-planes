@@ -157,5 +157,14 @@ public class SimplePlanesNetworking {
                 NewCargoUpgradePacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
+
+        INSTANCE.registerMessage(
+                ++id,
+                CargoUpgradeRemovedPacket.class,
+                CargoUpgradeRemovedPacket::toBytes,
+                CargoUpgradeRemovedPacket::new,
+                CargoUpgradeRemovedPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
     }
 }

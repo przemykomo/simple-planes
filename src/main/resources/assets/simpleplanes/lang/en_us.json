@@ -115,5 +115,6 @@
     "key.move_heli_up.desc": "Move Helicopter Up",
     "key.plane_yaw_right.desc": "Plane Yaw Right",
     "key.plane_yaw_left.desc": "Plane Yaw Left",
-    "simpleplanes.add_upgrades": "Add Upgrades"
+    "simpleplanes.add_upgrades": "Add Upgrades",
+    "simpleplanes.add_cargo": "Add Cargo"
 }

@@ -21,10 +21,7 @@ import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
 import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
 import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
-import xyz.przemyk.simpleplanes.network.DropPayloadPacket;
-import xyz.przemyk.simpleplanes.network.NewCargoUpgradePacket;
-import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
-import xyz.przemyk.simpleplanes.network.UpdateUpgradePacket;
+import xyz.przemyk.simpleplanes.network.*;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
@@ -91,7 +88,8 @@ public class CargoPlaneEntity extends PlaneEntity {
     @Override
     public boolean canAddUpgrade(UpgradeType upgradeType) {
         // Disabling jukebox for now since it sends a packet which is unsupported for multiple upgrades of the same type
-        return upgradeType != SimplePlanesUpgrades.JUKEBOX.get() && super.canAddUpgrade(upgradeType);
+        return upgradeType != SimplePlanesUpgrades.JUKEBOX.get() &&
+                upgradeType != SimplePlanesUpgrades.SHOOTER.get() && super.canAddUpgrade(upgradeType);
     }
 
     @Override
@@ -114,6 +112,12 @@ public class CargoPlaneEntity extends PlaneEntity {
                 SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), (ServerLevel) level(), true));
             }
         }
+    }
+
+    public void addCargoUpgradeIntWorkbench(ItemStack itemStack, LargeUpgrade largeUpgrade) {
+        largeUpgrade.onApply(itemStack);
+        largeUpgrades.add(largeUpgrade);
+        SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new NewCargoUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(largeUpgrade.getType()), getId(), largeUpgrade));
     }
 
     public void readNewCargoUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf packetBuffer) {
@@ -141,9 +145,14 @@ public class CargoPlaneEntity extends PlaneEntity {
         }
     }
 
-    @Override
-    public void removeUpgrade(ResourceLocation upgradeID) {
-        super.removeUpgrade(upgradeID);
+    public void removeCargoUpgrade(int index) {
+        LargeUpgrade upgrade = largeUpgrades.remove(index);
+        upgrade.onRemoved();
+        upgrade.removed = true;
+
+        if (!level().isClientSide) {
+            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new CargoUpgradeRemovedPacket((byte) index, getId()));
+        }
     }
 
     @Override

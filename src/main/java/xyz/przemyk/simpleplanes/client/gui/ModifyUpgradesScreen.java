@@ -15,6 +15,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.ModifyUpgradesContainer;
+import xyz.przemyk.simpleplanes.entities.CargoPlaneEntity;
 
 import javax.annotation.Nullable;
 
@@ -22,11 +23,12 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
 
     public static final ResourceLocation GUI = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/modify_upgrades.png");
     public static final Component UPGRADES_TOOLTIP = Component.translatable(SimplePlanesMod.MODID + ".add_upgrades");
+    public static final Component CARGO_TOOLTIP = Component.translatable(SimplePlanesMod.MODID + ".add_cargo");
 
     public ModifyUpgradesScreen(ModifyUpgradesContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
-//        imageHeight = 184;
-//        inventoryLabelY = imageHeight - 94;
+        imageHeight = 184;
+        inventoryLabelY = imageHeight - 94;
     }
 
     @Override
@@ -35,9 +37,11 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
-        if (hoveredSlot != null) {
-            if (hoveredSlot.index < 6 && hoveredSlot.getItem().isEmpty()) {
+        if (hoveredSlot != null && hoveredSlot.getItem().isEmpty()) {
+            if (hoveredSlot.index < 6) {
                 guiGraphics.renderTooltip(font, font.split(UPGRADES_TOOLTIP, 115), mouseX, mouseY);
+            } else if (hoveredSlot.index < 12) {
+                guiGraphics.renderTooltip(font, font.split(CARGO_TOOLTIP, 115), mouseX, mouseY);
             }
         }
     }
@@ -55,6 +59,9 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
 
         if (menu.planeEntity != null) {
             renderEntityInInventory(guiGraphics, leftPos + 115, topPos + 50, 11, new Quaternionf().rotateXYZ(0.3f, (minecraft.level.getGameTime() + partialTicks) / 20f, (float) Math.PI), null, menu.planeEntity);
+            if (menu.planeEntity instanceof CargoPlaneEntity) {
+                guiGraphics.blit(GUI, i + 61, j + 74, 61, 101, 108, 18);
+            }
         }
 
         if (menu.errorSlot != -1) {
@@ -77,9 +84,7 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
         }
 
         entityrenderdispatcher.setRenderShadow(false);
-        RenderSystem.runAsFancy(() -> {
-            entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), guiGraphics.bufferSource(), 15728880);
-        });
+        RenderSystem.runAsFancy(() -> entityrenderdispatcher.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, guiGraphics.pose(), guiGraphics.bufferSource(), 15728880));
         guiGraphics.flush();
         entityrenderdispatcher.setRenderShadow(true);
         guiGraphics.pose().popPose();
