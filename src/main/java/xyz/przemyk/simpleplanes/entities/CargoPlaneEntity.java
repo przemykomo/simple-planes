@@ -38,7 +38,7 @@ import java.util.Optional;
 
 public class CargoPlaneEntity extends PlaneEntity {
 
-    public List<LargeUpgrade> largeUpgrades = new ArrayList<>(6);
+    public List<LargeUpgrade> largeUpgrades = new ArrayList<>(8);
 
     public CargoPlaneEntity(EntityType<? extends CargoPlaneEntity> entityType, Level level) {
         super(entityType, level);
@@ -63,7 +63,7 @@ public class CargoPlaneEntity extends PlaneEntity {
         if (super.tryToAddUpgrade(playerEntity, itemStack)) {
             return true;
         }
-        if (largeUpgrades.size() < 6) {
+        if (largeUpgrades.size() < 8) {
             Optional<UpgradeType> upgradeTypeOptional = SimplePlanesUpgrades.getLargeUpgradeFromItem(itemStack.getItem());
             if (upgradeTypeOptional.map(upgradeType -> {
                 if (canAddUpgrade(upgradeType)) {

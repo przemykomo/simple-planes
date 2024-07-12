@@ -61,12 +61,14 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
             this.planeEntity = planeEntity;
 
             if (planeEntity instanceof CargoPlaneEntity) {
-                addSlot(new PlaneCargoSlot(itemHandler, 6, 62, 75));
-                addSlot(new PlaneCargoSlot(itemHandler, 7, 80, 75));
-                addSlot(new PlaneCargoSlot(itemHandler, 8, 98, 75));
-                addSlot(new PlaneCargoSlot(itemHandler, 9, 116, 75));
-                addSlot(new PlaneCargoSlot(itemHandler, 10, 134, 75));
-                addSlot(new PlaneCargoSlot(itemHandler, 11, 152, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 6, 26, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 7, 44, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 8, 62, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 9, 80, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 10, 98, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 11, 116, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 12, 134, 75));
+                addSlot(new PlaneCargoSlot(itemHandler, 13, 152, 75));
             }
 
             int i = 0;
@@ -266,7 +268,7 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
     private class MyItemStackHandler extends ItemStackHandler {
 
         public MyItemStackHandler() {
-            super(12);
+            super(14);
         }
 
         @Override

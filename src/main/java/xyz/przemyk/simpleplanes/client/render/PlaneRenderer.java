@@ -25,7 +25,9 @@ import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
+import xyz.przemyk.simpleplanes.upgrades.storage.ChestUpgrade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,10 +106,22 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
             }
 
             for (int i = 0; i < cargoPlaneEntity.largeUpgrades.size(); i++) {
+                LargeUpgrade upgrade = cargoPlaneEntity.largeUpgrades.get(i);
                 poseStack.pushPose();
-                //noinspection IntegerDivisionInFloatingPointContext
-                poseStack.translate(i % 2 - 0.5, 0.3125, i / 2 + 0.5);
-                cargoPlaneEntity.largeUpgrades.get(i).render(poseStack, buffer, packedLight, partialTicks);
+                if (i < 6) {
+                    //noinspection IntegerDivisionInFloatingPointContext
+                    poseStack.translate(i % 2 - 0.5, 0.3125, i / 2 + 0.5);
+                } else {
+                    if (upgrade instanceof ChestUpgrade) {
+                        poseStack.translate(0, -0.1, 0);
+                    }
+                    if (i == 6) {
+                        poseStack.translate(2.875, 1.05, 2.1375);
+                    } else {
+                        poseStack.translate(-2.875, 1.05, 2.1375);
+                    }
+                }
+                upgrade.render(poseStack, buffer, packedLight, partialTicks);
                 poseStack.popPose();
             }
         }

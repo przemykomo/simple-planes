@@ -40,7 +40,7 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
         if (hoveredSlot != null && hoveredSlot.getItem().isEmpty()) {
             if (hoveredSlot.index < 6) {
                 guiGraphics.renderTooltip(font, font.split(UPGRADES_TOOLTIP, 115), mouseX, mouseY);
-            } else if (hoveredSlot.index < 12) {
+            } else if (hoveredSlot.index < 14) {
                 guiGraphics.renderTooltip(font, font.split(CARGO_TOOLTIP, 115), mouseX, mouseY);
             }
         }
@@ -58,9 +58,11 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
         guiGraphics.blit(GUI, i, j, 0, 0, this.imageWidth, this.imageHeight);
 
         if (menu.planeEntity != null) {
-            renderEntityInInventory(guiGraphics, leftPos + 115, topPos + 50, 11, new Quaternionf().rotateXYZ(0.3f, (minecraft.level.getGameTime() + partialTicks) / 20f, (float) Math.PI), null, menu.planeEntity);
+            guiGraphics.enableScissor(i + 62, j + 8, i + 168, j + 69);
+            renderEntityInInventory(guiGraphics, leftPos + 115, topPos + 50, menu.planeEntity instanceof CargoPlaneEntity ? 6 : 11, new Quaternionf().rotateXYZ(0.3f, (minecraft.level.getGameTime() + partialTicks) / 20f, (float) Math.PI), null, menu.planeEntity);
+            guiGraphics.disableScissor();
             if (menu.planeEntity instanceof CargoPlaneEntity) {
-                guiGraphics.blit(GUI, i + 61, j + 74, 61, 101, 108, 18);
+                guiGraphics.blit(GUI, i + 25, j + 74, 25, 101, 144, 18);
             }
         }
 

@@ -104,7 +104,7 @@ public class ChestUpgrade extends LargeUpgrade {
         matrixStack.mulPose(Axis.YP.rotationDegrees(180));
 
         matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
-        matrixStack.translate(-0.4, -1, -1.3);
+        matrixStack.translate(-0.4, -1, -1.24);
         matrixStack.scale(0.82f, 0.82f, 0.82f);
 
         BlockState state = chestType instanceof BlockItem ? ((BlockItem) chestType).getBlock().defaultBlockState() : Blocks.CHEST.defaultBlockState();
