@@ -104,6 +104,8 @@ dependencies {
 
 //    implementation fg.deobf('curse.maven:mrcrayfishs-gun-mod-289479:4325670')
 //    implementation fg.deobf('curse.maven:framework-549225:4287474')
+    implementation fg.deobf('curse.maven:cofh-core-69162:5374122')
+    implementation fg.deobf('curse.maven:archers-paradox-353399:4970684')
 
 //    implementation "curse.maven:immersive-engineering-231951:4782978"
 }

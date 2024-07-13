@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -80,32 +81,15 @@ public class ShooterUpgrade extends Upgrade {
             if (!player.isCreative()) {
                 itemStackHandler.extractItem(0, 1, false);
             }
-        } else if (item == Items.ARROW) {
-            Arrow arrowEntity = new Arrow(level, x, y, z);
-            arrowEntity.setOwner(player);
+        } else if (item instanceof ArrowItem arrowItem) {
+            AbstractArrow arrowEntity = arrowItem.createArrow(level, itemStack, player);
+//            Arrow arrowEntity = new Arrow(level, x, y, z);
+//            arrowEntity.setOwner(player);
             arrowEntity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
-            if (!player.isCreative()) {
+            if (player.isCreative()) {
+                arrowEntity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+            } else {
                 itemStackHandler.extractItem(0, 1, false);
-                arrowEntity.pickup = AbstractArrow.Pickup.ALLOWED;
-            }
-            level.addFreshEntity(arrowEntity);
-        } else if (item == Items.TIPPED_ARROW) {
-            Arrow arrowEntity = new Arrow(level, x, y, z);
-            arrowEntity.setOwner(player);
-            arrowEntity.setEffectsFromItem(itemStack);
-            arrowEntity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
-            if (!player.isCreative()) {
-                itemStackHandler.extractItem(0, 1, false);
-                arrowEntity.pickup = AbstractArrow.Pickup.ALLOWED;
-            }
-            level.addFreshEntity(arrowEntity);
-        } else if (item == Items.SPECTRAL_ARROW) {
-            SpectralArrow arrowEntity = new SpectralArrow(level, x, y, z);
-            arrowEntity.setOwner(player);
-            arrowEntity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
-            if (!player.isCreative()) {
-                itemStackHandler.extractItem(0, 1, false);
-                arrowEntity.pickup = AbstractArrow.Pickup.ALLOWED;
             }
             level.addFreshEntity(arrowEntity);
         } else if (item == Items.ENDER_EYE && level instanceof ServerLevel serverLevel) {
@@ -122,7 +106,7 @@ public class ShooterUpgrade extends Upgrade {
             }
         } /*else {
             ModList.get().getModContainerById("cgm").ifPresent(cgm -> MrCrayfishGunCompat.shooterBehaviour(item, itemStackHandler, level, player, motion, x, y, z));
-        } */
+        }*/
     }
 
     @Override
