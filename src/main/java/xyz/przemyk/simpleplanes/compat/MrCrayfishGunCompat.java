@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.compat;
 
+import com.mrcrayfish.framework.api.network.LevelLocation;
 import com.mrcrayfish.guns.Config;
 import com.mrcrayfish.guns.common.Gun;
 import com.mrcrayfish.guns.common.ProjectileManager;
@@ -85,8 +86,7 @@ public class MrCrayfishGunCompat {
                     double radius = Config.SERVER.gunShotMaxDistance.get();
                     boolean muzzle = gun.getDisplay().getFlash() != null;
                     S2CMessageGunSound messageSound = new S2CMessageGunSound(fireSound, SoundSource.PLAYERS, (float) posX, (float) posY, (float) posZ, volume, pitch, player.getId(), muzzle, false);
-                    PacketDistributor.TargetPoint targetPoint = new PacketDistributor.TargetPoint(posX, posY, posZ, radius, player.level.dimension());
-                    PacketHandler.getPlayChannel().send(PacketDistributor.NEAR.with(() -> targetPoint), messageSound);
+                    PacketHandler.getPlayChannel().sendToNearbyPlayers(() -> LevelLocation.create(level, posX, posY, posZ, radius), messageSound);
                 }
             }
 
