@@ -43,6 +43,8 @@ public class BannerModel {
                 matrixStackIn.translate(1, 3.62, 0.05);
                 if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
                     matrixStackIn.translate(0.395, 1.92, 0);
+                } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
+                    matrixStackIn.translate(-1, 8.0625, 0);
                 }
             }
 
@@ -52,7 +54,7 @@ public class BannerModel {
             final float tickCountWithPartial = partialTicks + planeEntity.tickCount;
             float r = (0.05F * Mth.cos(tickCountWithPartial / 5)) * (float) 180;
 //            r += bannerUpgrade.prevRotation - MathUtil.lerpAngle(partialTicks, planeEntity.yRotO, planeEntity.getYRot());
-            r += MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
+            r += (float) MathUtil.lerpAngle(partialTicks, MathUtil.wrapSubtractDegrees(bannerUpgrade.rotation, bannerUpgrade.prevRotation), 0);
             List<Pair<Holder<BannerPattern>, DyeColor>> list = BANNER_BLOCK_ENTITY.getPatterns();
             BlockEntityRenderer<BannerBlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(BANNER_BLOCK_ENTITY);
             if (renderer instanceof BannerRenderer bannerRenderer) {
