@@ -16,6 +16,7 @@ import xyz.przemyk.simpleplanes.network.DropPayloadPacket;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -161,7 +162,12 @@ public class LargePlaneEntity extends PlaneEntity {
         for (Upgrade upgrade : upgrades.values()) {
             if (upgrade.canBeDroppedAsPayload()) {
                 upgrade.dropAsPayload();
-                SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
+                if (upgrade.removed) {
+                    upgrades.remove(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType()));
+                }
+                if (level().isClientSide) {
+                    SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
+                }
                 break;
             }
         }
