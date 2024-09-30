@@ -1,36 +1,37 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.HelicopterEntity;
 
-import java.util.function.Supplier;
+public record MoveHeliUpPacket(boolean up) implements CustomPacketPayload {
 
-public class MoveHeliUpPacket {
+    public static final CustomPacketPayload.Type<MoveHeliUpPacket> TYPE =
+        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "heli_up"));
 
-    private final boolean up;
+    public static final StreamCodec<ByteBuf, MoveHeliUpPacket> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.BOOL,
+        MoveHeliUpPacket::up,
+        MoveHeliUpPacket::new
+    );
 
-    public MoveHeliUpPacket(boolean up) {
-        this.up = up;
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public MoveHeliUpPacket(FriendlyByteBuf buffer) {
-        up = buffer.readBoolean();
-    }
-
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeBoolean(up);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer sender = ctx.getSender();
-            if (sender != null && sender.getVehicle() instanceof HelicopterEntity helicopterEntity && helicopterEntity.getControllingPassenger() == sender) {
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
+            if (player.getVehicle() instanceof HelicopterEntity helicopterEntity && helicopterEntity.getControllingPassenger() == player) {
                 helicopterEntity.setMoveUp(up);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

@@ -1,18 +1,16 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.electric;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
+import net.neoforged.neoforge.capabilities.BaseCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.client.ClientEventHandler;
+import xyz.przemyk.simpleplanes.client.ModBusClientEventHandler;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.EnergyStorageWithSet;
@@ -20,15 +18,11 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class ElectricEngineUpgrade extends EngineUpgrade {
 
     public static final int CAPACITY = 1_500_000;
 
     public final EnergyStorageWithSet energyStorage = new EnergyStorageWithSet(CAPACITY);
-    public final LazyOptional<EnergyStorage> energyStorageLazyOptional = LazyOptional.of(() -> energyStorage);
 
     public ElectricEngineUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.ELECTRIC_ENGINE.get(), planeEntity);
@@ -52,9 +46,9 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
     public void renderPowerHUD(GuiGraphics guiGraphics, HumanoidArm side, int scaledWidth, int scaledHeight, float partialTicks) {
         int i = scaledWidth / 2;
         if (side == HumanoidArm.LEFT) {
-            guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
+            guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29, scaledHeight - 22, 38, 44, 22, 21);
         } else {
-            guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i + 91, scaledHeight - 22, 38, 44, 22, 21);
+            guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i + 91, scaledHeight - 22, 38, 44, 22, 21);
         }
 
         int energy = energyStorage.getEnergyStored();
@@ -62,21 +56,15 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
         if (energy > 0) {
             int energyScaled = energy * 15 / CAPACITY;
             if (side == HumanoidArm.LEFT) {
-                guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
             } else {
-                guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
+                guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i + 91 + 3, scaledHeight - 22 + 16 - energyScaled, 60, 57 - energyScaled, 16, energyScaled + 2);
             }
         }
     }
 
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        energyStorageLazyOptional.invalidate();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putInt("energy", energyStorage.getEnergyStored());
         return compoundNBT;
@@ -89,23 +77,23 @@ public class ElectricEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
+    public void writePacket(RegistryFriendlyByteBuf buffer) {
         buffer.writeVarInt(energyStorage.getEnergyStored());
     }
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
+    public void readPacket(RegistryFriendlyByteBuf buffer) {
         energyStorage.setEnergy(buffer.readVarInt());
     }
 
-    @Nonnull
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ENERGY) {
-            updateClient(); //Probably should be in the energy storage class, but if it works here then whatever
-            return energyStorageLazyOptional.cast();
+    public <T> T getCap(BaseCapability<T, ?> cap) {
+        if (cap == Capabilities.EnergyStorage.ENTITY) {
+            return (T) energyStorage;
         }
-        return super.getCapability(cap, side);
+
+        return super.getCap(cap);
     }
 
     @Override

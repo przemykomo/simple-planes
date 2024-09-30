@@ -3,9 +3,9 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
@@ -15,8 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.connection.ConnectionType;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
 import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
@@ -103,13 +103,15 @@ public class CargoPlaneEntity extends PlaneEntity {
 
             if (upgrade instanceof LargeUpgrade largeUpgrade) {
                 largeUpgrades.add(largeUpgrade);
-                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new NewCargoUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), upgrade));
+                PacketDistributor.sendToPlayersTrackingEntity(this,
+                    new NewCargoUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), getId(), largeUpgrade));
             } else {
-                upgrades.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), upgrade);
+                upgrades.put(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), upgrade);
                 if (upgradeType.isEngine) {
                     engineUpgrade = (EngineUpgrade) upgrade;
                 }
-                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), (ServerLevel) level(), true));
+                PacketDistributor.sendToPlayersTrackingEntity(this,
+                    new UpdateUpgradePacket(true, SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), getId(), (ServerLevel) level()));
             }
         }
     }
@@ -117,16 +119,17 @@ public class CargoPlaneEntity extends PlaneEntity {
     public void addCargoUpgradeIntWorkbench(ItemStack itemStack, LargeUpgrade largeUpgrade) {
         largeUpgrade.onApply(itemStack);
         largeUpgrades.add(largeUpgrade);
-        SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new NewCargoUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(largeUpgrade.getType()), getId(), largeUpgrade));
+        PacketDistributor.sendToPlayersTrackingEntity(this,
+            new NewCargoUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPE.getKey(largeUpgrade.getType()), getId(), largeUpgrade));
     }
 
     public void readNewCargoUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf packetBuffer) {
-        UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(upgradeID);
+        UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
         Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
         if (upgrade instanceof LargeUpgrade largeUpgrade) {
             largeUpgrades.add(largeUpgrade);
         }
-        upgrade.readPacket(packetBuffer);
+        upgrade.readPacket(new RegistryFriendlyByteBuf(packetBuffer, registryAccess(), ConnectionType.NEOFORGE));
     }
 
     @Override
@@ -138,7 +141,7 @@ public class CargoPlaneEntity extends PlaneEntity {
                     largeUpgrades.remove(upgrade);
                 }
                 if (level().isClientSide) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
+                    PacketDistributor.sendToServer(new DropPayloadPacket());
                 }
                 break;
             }
@@ -151,7 +154,7 @@ public class CargoPlaneEntity extends PlaneEntity {
         upgrade.removed = true;
 
         if (!level().isClientSide) {
-            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new CargoUpgradeRemovedPacket((byte) index, getId()));
+            PacketDistributor.sendToPlayersTrackingEntity(this, new CargoUpgradeRemovedPacket((byte) index, getId()));
         }
     }
 
@@ -173,7 +176,7 @@ public class CargoPlaneEntity extends PlaneEntity {
     @Override
     protected boolean canAddPassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+        if (!upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.SEATS.get()))) {
             return passengers.size() < 2;
         } else {
             return passengers.size() < 6;
@@ -187,17 +190,17 @@ public class CargoPlaneEntity extends PlaneEntity {
 
         Vector3f pos = switch (index) {
             case 0 ->
-                    transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) + 1.0f, 1.5f));
+                    transformPos(new Vector3f(0, getPassengersRidingOffset() + 1.0f, 1.5f));
             case 1 ->
-                    transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) + 1.0f - 0.125f, -12.0f));
+                    transformPos(new Vector3f(0, getPassengersRidingOffset() + 1.0f - 0.125f, -12.0f));
             case 2 ->
-                    transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) + 1.0f - 0.625f, 2.875f));
+                    transformPos(new Vector3f(0, getPassengersRidingOffset() + 1.0f - 0.625f, 2.875f));
             case 3 ->
-                    transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) + 1.0f - 0.625f, 3.75f));
+                    transformPos(new Vector3f(0, getPassengersRidingOffset() + 1.0f - 0.625f, 3.75f));
             case 4 ->
-                    transformPos(new Vector3f(0.6f, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) + 1.0f - 0.625f, -6.25f));
+                    transformPos(new Vector3f(0.6f, getPassengersRidingOffset() + 1.0f - 0.625f, -6.25f));
             default ->
-                    transformPos(new Vector3f(-0.6f, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) + 1.0f - 0.625f, -6.25f));
+                    transformPos(new Vector3f(-0.6f, getPassengersRidingOffset() + 1.0f - 0.625f, -6.25f));
         };
 
         moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
@@ -214,9 +217,9 @@ public class CargoPlaneEntity extends PlaneEntity {
     }
 
     @Override
-    public void openContainer(ServerPlayer player, int containerID) {
+    public void openContainer(Player player, int containerID) {
         if (containerID == 0) {
-            NetworkHooks.openScreen(player, new SimpleMenuProvider((id, inventory, playerIn) ->
+            player.openMenu(new SimpleMenuProvider((id, inventory, playerIn) ->
                     new PlaneInventoryContainer(id, inventory, this), getName()), buffer -> buffer.writeVarInt(getId()));
         } else {
             int id = 0;
@@ -240,7 +243,7 @@ public class CargoPlaneEntity extends PlaneEntity {
             largeUpgrades.clear();
             for (int i = 0; i < listTag.size(); i++) {
                 CompoundTag compoundTag = listTag.getCompound(i);
-                UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(new ResourceLocation(compoundTag.getString("id")));
+                UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(ResourceLocation.parse(compoundTag.getString("id")));
                 if (upgradeType != null) {
                     Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                     if (upgrade instanceof LargeUpgrade largeUpgrade) {
@@ -259,7 +262,7 @@ public class CargoPlaneEntity extends PlaneEntity {
         ListTag listTag = new ListTag();
         for (LargeUpgrade upgrade : largeUpgrades) {
             CompoundTag compoundTag = new CompoundTag();
-            compoundTag.putString("id", SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType()).toString());
+            compoundTag.putString("id", SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()).toString());
             compoundTag.put("nbt", upgrade.serializeNBT());
             listTag.add(compoundTag);
         }
@@ -267,24 +270,24 @@ public class CargoPlaneEntity extends PlaneEntity {
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf buffer) {
+    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
         super.writeSpawnData(buffer);
 
         buffer.writeVarInt(largeUpgrades.size());
         for (LargeUpgrade upgrade : largeUpgrades) {
-            ResourceLocation upgradeID = SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType());
+            ResourceLocation upgradeID = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType());
             buffer.writeResourceLocation(upgradeID);
             upgrade.writePacket(buffer);
         }
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf additionalData) {
+    public void readSpawnData(RegistryFriendlyByteBuf additionalData) {
         super.readSpawnData(additionalData);
         int largeUpgradesSize = additionalData.readVarInt();
         for (int i = 0; i < largeUpgradesSize; i++) {
             ResourceLocation upgradeID = additionalData.readResourceLocation();
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             largeUpgrades.add((LargeUpgrade) upgrade);
             upgrade.readPacket(additionalData);

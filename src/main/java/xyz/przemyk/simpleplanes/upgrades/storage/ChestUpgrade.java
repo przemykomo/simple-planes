@@ -5,27 +5,29 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.capabilities.BaseCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
 import xyz.przemyk.simpleplanes.container.StorageContainer;
@@ -34,13 +36,11 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class ChestUpgrade extends LargeUpgrade {
 
+    private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Item>> ITEM_STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.ITEM);
+
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(27);
-    public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
     public Item chestType = Items.CHEST;
 
     public ChestUpgrade(PlaneEntity planeEntity) {
@@ -48,33 +48,27 @@ public class ChestUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        itemHandlerLazyOptional.invalidate();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = itemStackHandler.serializeNBT();
-        nbt.putString("ChestType", ForgeRegistries.ITEMS.getKey(chestType).toString());
+    public Tag serializeNBT() {
+        CompoundTag nbt = itemStackHandler.serializeNBT(planeEntity.registryAccess());
+        nbt.putString("ChestType", BuiltInRegistries.ITEM.getKey(chestType).toString());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        itemStackHandler.deserializeNBT(nbt);
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString("ChestType")));
+        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt);
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString("ChestType")));
         chestType = item == null ? Items.CHEST : item;
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
-        buffer.writeRegistryId(ForgeRegistries.ITEMS, chestType);
+    public void writePacket(RegistryFriendlyByteBuf buffer) {
+        ITEM_STREAM_CODEC.encode(buffer, Holder.direct(chestType));
     }
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
-        chestType = buffer.readRegistryIdSafe(Item.class);
+    public void readPacket(RegistryFriendlyByteBuf buffer) {
+        chestType = ITEM_STREAM_CODEC.decode(buffer).value();
     }
 
     @Override
@@ -112,18 +106,19 @@ public class ChestUpgrade extends LargeUpgrade {
         matrixStack.popPose();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return itemHandlerLazyOptional.cast();
+    public <T> T getCap(BaseCapability<T, ?> cap) {
+        if (cap == Capabilities.ItemHandler.ENTITY) {
+            return (T) itemStackHandler;
         }
-        return super.getCapability(cap, side);
+        return super.getCap(cap);
     }
 
     @Override
     public void onApply(ItemStack itemStack) {
         chestType = itemStack.getItem();
-        itemStackHandler.setSize(IronChestsCompat.getSize(ForgeRegistries.ITEMS.getKey(chestType).toString()));
+        itemStackHandler.setSize(IronChestsCompat.getSize(BuiltInRegistries.ITEM.getKey(chestType).toString()));
     }
 
     @Override
@@ -132,12 +127,12 @@ public class ChestUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public void openStorageGui(ServerPlayer player, int cycleableContainerID) {
-        NetworkHooks.openScreen(player, new SimpleMenuProvider(
-                (id, playerInventory, playerIn) -> new StorageContainer(id, playerInventory, itemStackHandler, ForgeRegistries.ITEMS.getKey(chestType).toString(), cycleableContainerID),
+    public void openStorageGui(Player player, int cycleableContainerID) {
+        player.openMenu(new SimpleMenuProvider(
+                (id, playerInventory, playerIn) -> new StorageContainer(id, playerInventory, itemStackHandler, BuiltInRegistries.ITEM.getKey(chestType).toString(), cycleableContainerID),
                 Component.translatable(SimplePlanesMod.MODID + ":chest")
         ), buffer -> {
-            buffer.writeUtf(ForgeRegistries.ITEMS.getKey(chestType).toString());
+            buffer.writeUtf(BuiltInRegistries.ITEM.getKey(chestType).toString());
             buffer.writeByte(cycleableContainerID);
         });
     }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,9 +37,9 @@ public class PlanePayloadReloadListener extends SimpleJsonResourceReloadListener
         for (Map.Entry<ResourceLocation, JsonElement> entry : map.entrySet()) {
             try {
                 JsonObject jsonObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
-                Item item = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(new ResourceLocation(jsonObject.get("item").getAsString())), "missing item");
-                Block renderBlock = Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((jsonObject.get("block").getAsString()))), "missing block");
-                EntityType<?> dropSpawnEntity = Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(jsonObject.get("entity").getAsString())), "missing entity");
+                Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.get(ResourceLocation.parse(jsonObject.get("item").getAsString())), "missing item");
+                Block renderBlock = Objects.requireNonNull(BuiltInRegistries.BLOCK.get(ResourceLocation.parse((jsonObject.get("block").getAsString()))), "missing block");
+                EntityType<?> dropSpawnEntity = Objects.requireNonNull(BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(jsonObject.get("entity").getAsString())), "missing entity");
                 CompoundTag compoundTag;
                 if (jsonObject.has("entity_nbt")) {
                     String tag = GsonHelper.convertToString(jsonObject.get("entity_nbt"), "entity_nbt");

@@ -4,39 +4,42 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesComponents;
 
 import java.util.HashMap;
 
 public class PlaneItemColors {
     public static final HashMap<Block, Integer> cachedColors = new HashMap<>();
-    public static final int DEFAULT_COLOR = 0xB28F55;
+    public static final int DEFAULT_COLOR = 0xFFB28F55;
 
     public static void clearCache() {
         cachedColors.clear();
     }
 
     public static int getColor(ItemStack itemStack, int tintIndex) {
-        CompoundTag entityTag = itemStack.getTagElement("EntityTag");
+        CompoundTag entityTag = itemStack.get(SimplePlanesComponents.ENTITY_TAG);
         if (tintIndex != 0) {
             return -1;
         }
 
         if (entityTag != null && entityTag.contains("material")) {
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
+            Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(entityTag.getString("material")));
             if (block != null) {
                 if (cachedColors.containsKey(block)) {
                     return cachedColors.get(block);
                 }
 
                 try {
-                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(ForgeRegistries.BLOCKS.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).get(0).getSprite();
+                    TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager()
+                        .getModel(new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(block), "inventory"))
+                        .getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).getFirst().getSprite();
 
                     int g = 0;
                     int b = 0;
@@ -64,6 +67,8 @@ public class PlaneItemColors {
                     if (redo < 0) {
                         redo = 0xffffff - redo;
                     }
+
+                    redo |= 0xff000000;
 
                     cachedColors.put(block, redo);
                     return redo;

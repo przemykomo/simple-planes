@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades.booster;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
@@ -11,10 +11,10 @@ public class BoosterUpgrade extends Upgrade {
     public static final int MAX_THROTTLE = 10;
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {}
+    public void writePacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {}
+    public void readPacket(RegistryFriendlyByteBuf buffer) {}
 
     public BoosterUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.BOOSTER.get(), planeEntity);

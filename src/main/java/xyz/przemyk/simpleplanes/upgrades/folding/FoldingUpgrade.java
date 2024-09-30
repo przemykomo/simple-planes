@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
@@ -44,15 +44,15 @@ public class FoldingUpgrade extends Upgrade {
 
         matrixStack.mulPose(Axis.XP.rotationDegrees(-90));
         VertexConsumer vertexconsumer = Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION.buffer(buffer, RenderType::entityCutoutNoCull);
-        UpgradesModels.SHULKER_FOLDING.getLid().render(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        UpgradesModels.SHULKER_FOLDING.getLid().render(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         matrixStack.popPose();
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {}
+    public void writePacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {}
+    public void readPacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
     public ItemStack getItemStack() {

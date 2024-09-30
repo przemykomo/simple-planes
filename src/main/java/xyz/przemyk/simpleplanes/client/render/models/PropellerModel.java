@@ -32,8 +32,8 @@ public class PropellerModel extends EntityModel<PlaneEntity> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        IronPropeller.render(poseStack, buffer, packedLight, packedOverlay);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        IronPropeller.render(poseStack, vertexConsumer, packedLight, packedOverlay);
     }
 
     @Override

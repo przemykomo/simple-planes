@@ -196,7 +196,7 @@ public class CargoFurnaceEngineModel extends EntityModel<PlaneEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		FurnaceEngine.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+		FurnaceEngine.render(poseStack, vertexConsumer, packedLight, packedOverlay);
 	}
 }

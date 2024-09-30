@@ -1,35 +1,35 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.joml.Quaternionf;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 
-import java.util.function.Supplier;
+public record RotationPacket(Quaternionf quaternion) implements CustomPacketPayload {
 
-public class RotationPacket {
+    public static final CustomPacketPayload.Type<RotationPacket> TYPE =
+        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "rotation"));
 
-    private final Quaternionf quaternion;
+    public static final StreamCodec<ByteBuf, RotationPacket> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.QUATERNIONF,
+        RotationPacket::quaternion,
+        RotationPacket::new
+    );
 
-    public RotationPacket(Quaternionf quaternion) {
-        this.quaternion = quaternion;
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public RotationPacket(FriendlyByteBuf buffer) {
-        this.quaternion = buffer.readQuaternion();
-    }
-
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeQuaternion(quaternion);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer sender = ctx.getSender();
-            if (sender != null && sender.getVehicle() instanceof PlaneEntity planeEntity) {
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player().getVehicle() instanceof PlaneEntity planeEntity) {
                 planeEntity.setQ(quaternion);
                 MathUtil.EulerAngles eulerAngles = MathUtil.toEulerAngles(quaternion);
                 planeEntity.setYRot((float) eulerAngles.yaw);
@@ -38,6 +38,5 @@ public class RotationPacket {
                 planeEntity.setQ_Client(quaternion);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

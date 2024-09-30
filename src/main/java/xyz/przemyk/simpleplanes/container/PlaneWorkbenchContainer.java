@@ -1,8 +1,10 @@
 package xyz.przemyk.simpleplanes.container;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,13 +16,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.network.CycleItemsPacket;
 import xyz.przemyk.simpleplanes.recipes.PlaneWorkbenchRecipe;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesBlocks;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesComponents;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRecipes;
 
@@ -28,7 +30,7 @@ import java.util.List;
 
 public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
-    public static final ResourceLocation PLANE_MATERIALS = new ResourceLocation(SimplePlanesMod.MODID, "plane_materials");
+    public static final ResourceLocation PLANE_MATERIALS = ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane_materials");
     public static final TagKey<Block> PLANE_MATERIALS_TAG = BlockTags.create(PLANE_MATERIALS);
 
     private final ItemStackHandler itemHandler;
@@ -38,7 +40,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
     private final DataSlot selectedRecipe;
 
     private final CompoundTag resultItemTag = new CompoundTag();
-    private final List<PlaneWorkbenchRecipe> recipeList;
+    private final List<RecipeHolder<PlaneWorkbenchRecipe>> recipeList;
 
     public PlaneWorkbenchContainer(int id, Inventory playerInventory) {
         this(id, playerInventory, BlockPos.ZERO, new ItemStackHandler(2), DataSlot.standalone());
@@ -70,12 +72,12 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
         updateCraftingResult();
     }
 
-    public void cycleItems(CycleItemsPacket.Type type) {
+    public void cycleItems(CycleItemsPacket.Direction direction) {
         int prevSelectedRecipe = selectedRecipe.get();
         ItemStack ingredient = itemHandler.getStackInSlot(0);
         ItemStack material = itemHandler.getStackInSlot(1);
 
-        switch (type) {
+        switch (direction) {
             case CRAFTING_LEFT -> {
                 do {
                     if (selectedRecipe.get() == 0) {
@@ -83,7 +85,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
                     } else {
                         selectedRecipe.set(selectedRecipe.get() - 1);
                     }
-                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
+                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).value().canCraft(ingredient, material));
             }
             case CRAFTING_RIGHT -> {
                 do {
@@ -92,7 +94,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
                     } else {
                         selectedRecipe.set(selectedRecipe.get() + 1);
                     }
-                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).canCraft(ingredient, material));
+                } while (selectedRecipe.get() != prevSelectedRecipe && !recipeList.get(selectedRecipe.get()).value().canCraft(ingredient, material));
             }
         }
 
@@ -101,7 +103,7 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
 
     public void onCrafting() {
         if (!player.level().isClientSide) {
-            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
+            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get()).value();
             itemHandler.extractItem(0, recipe.ingredientAmount(), false);
             itemHandler.extractItem(1, recipe.materialAmount(), false);
             updateCraftingResult();
@@ -117,15 +119,15 @@ public class PlaneWorkbenchContainer extends AbstractContainerMenu {
             ItemStack materialStack = itemHandler.getStackInSlot(1);
             Item materialItem = materialStack.getItem();
 
-            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get());
+            PlaneWorkbenchRecipe recipe = recipeList.get(selectedRecipe.get()).value();
 
             if (recipe.canCraft(ingredientStack, materialStack) && materialItem instanceof BlockItem blockItem &&
                 blockItem.getBlock().builtInRegistryHolder().is(PLANE_MATERIALS_TAG)) {
 
                 result = recipe.result().copy();
                 Block block = blockItem.getBlock();
-                resultItemTag.putString("material", ForgeRegistries.BLOCKS.getKey(block).toString());
-                result.addTagElement("EntityTag", resultItemTag);
+                resultItemTag.putString("material", BuiltInRegistries.BLOCK.getKey(block).toString());
+                result.set(SimplePlanesComponents.ENTITY_TAG, resultItemTag);
             }
 
             resultItemHandler.setStackInSlot(0, result);

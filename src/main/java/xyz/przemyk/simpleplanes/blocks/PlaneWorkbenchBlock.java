@@ -2,9 +2,7 @@ package xyz.przemyk.simpleplanes.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +12,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.PlaneWorkbenchContainer;
 
@@ -28,16 +25,16 @@ public class PlaneWorkbenchBlock extends Block implements EntityBlock {
         super(properties);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos blockPos, Player playerIn, InteractionHand handIn, BlockHitResult hit) {
-        if (level.isClientSide) {
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+        if (pLevel.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
-            PlaneWorkbenchBlockEntity planeWorkbenchBlockEntity = (PlaneWorkbenchBlockEntity) level.getBlockEntity(blockPos);
+            PlaneWorkbenchBlockEntity planeWorkbenchBlockEntity = (PlaneWorkbenchBlockEntity) pLevel.getBlockEntity(pPos);
             if (planeWorkbenchBlockEntity != null) {
-                NetworkHooks.openScreen((ServerPlayer) playerIn, new SimpleMenuProvider((id, inventory, player) ->
-                        new PlaneWorkbenchContainer(id, inventory, blockPos, planeWorkbenchBlockEntity.itemStackHandler, planeWorkbenchBlockEntity.selectedRecipe), CONTAINER_NAME));
+                SimpleMenuProvider menu = new SimpleMenuProvider((id, inventory, player) ->
+                    new PlaneWorkbenchContainer(id, inventory, pPos, planeWorkbenchBlockEntity.itemStackHandler, planeWorkbenchBlockEntity.selectedRecipe), CONTAINER_NAME);
+                pPlayer.openMenu(menu);
             }
             return InteractionResult.CONSUME;
         }
@@ -49,7 +46,6 @@ public class PlaneWorkbenchBlock extends Block implements EntityBlock {
         return new PlaneWorkbenchBlockEntity(blockPos, blockState);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onRemove(BlockState state, Level level, BlockPos blockPos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {

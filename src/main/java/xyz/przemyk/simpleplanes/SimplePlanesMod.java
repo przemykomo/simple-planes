@@ -2,11 +2,12 @@ package xyz.przemyk.simpleplanes;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import xyz.przemyk.simpleplanes.client.ClientEventHandler;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import xyz.przemyk.simpleplanes.compat.ironchest.IronChestsCompat;
 import xyz.przemyk.simpleplanes.compat.quark.QuarkCompat;
 import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
@@ -17,25 +18,26 @@ public class SimplePlanesMod {
 
     public static final String MODID = "simpleplanes";
 
-    public SimplePlanesMod() {
-        SimplePlanesConfig.init();
-        SimplePlanesEntities.init();
-        SimplePlanesBlocks.init();
-        SimplePlanesContainers.init();
-        SimplePlanesUpgrades.init();
-        SimplePlanesSounds.init();
-        SimplePlanesItems.init();
-        SimplePlanesRecipes.init();
-        SimplePlanesNetworking.init();
+    public SimplePlanesMod(IEventBus bus, ModContainer modContainer) {
+        SimplePlanesConfig.init(modContainer);
+        SimplePlanesEntities.init(bus);
+        SimplePlanesBlocks.init(bus);
+        SimplePlanesContainers.init(bus);
+        SimplePlanesUpgrades.init(bus);
+        SimplePlanesSounds.init(bus);
+        SimplePlanesItems.init(bus);
+        SimplePlanesRecipes.init(bus);
         SimplePlanesDatapack.init();
+        SimplePlanesComponents.init(bus);
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        bus.addListener(this::commonSetup);
+        bus.addListener(this::registerCapabilities);
+        bus.addListener(SimplePlanesNetworking::register);
 //        ModList.get().getModContainerById("cgm").ifPresent(cgm -> MinecraftForge.EVENT_BUS.register(MrCrayfishGunCompat.class));
     }
 
     public static ResourceLocation texture(String filename) {
-        return new ResourceLocation(MODID, "textures/plane_upgrades/" + filename);
+        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/plane_upgrades/" + filename);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -78,7 +80,35 @@ public class SimplePlanesMod {
         });
     }
 
-    private void clientSetup(FMLClientSetupEvent event) {
-        ClientEventHandler.clientSetup();
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+            Capabilities.EnergyStorage.BLOCK,
+            SimplePlanesBlocks.CHARGING_STATION_TILE.get(),
+            (blockEntity, side) -> blockEntity.energyStorage
+        );
+
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            SimplePlanesBlocks.PLANE_WORKBENCH_TILE.get(),
+            (blockEntity, side) -> blockEntity.itemStackHandler
+        );
+
+        event.registerEntity(
+            Capabilities.ItemHandler.ENTITY,
+            SimplePlanesEntities.PLANE.get(),
+            (entity, ctx) -> entity.getCap(Capabilities.ItemHandler.ENTITY)
+        );
+
+        event.registerEntity(
+            Capabilities.FluidHandler.ENTITY,
+            SimplePlanesEntities.PLANE.get(),
+            (entity, ctx) -> entity.getCap(Capabilities.FluidHandler.ENTITY)
+        );
+
+        event.registerEntity(
+            Capabilities.EnergyStorage.ENTITY,
+            SimplePlanesEntities.PLANE.get(),
+            (entity, ctx) -> entity.getCap(Capabilities.EnergyStorage.ENTITY)
+        );
     }
 }

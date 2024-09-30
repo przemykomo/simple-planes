@@ -26,9 +26,9 @@ public class HelicopterEntity extends LargePlaneEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(MOVE_UP, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(MOVE_UP, false);
     }
 
     @Override
@@ -44,14 +44,14 @@ public class HelicopterEntity extends LargePlaneEntity {
     @Override
     protected Vector3f getTickPush(TempMotionVars tempMotionVars) {
         if (tempMotionVars.moveForward < 0 && isPowered() && !entityData.get(MOVE_UP)) {
-            tempMotionVars.push *= 0.2;
+            tempMotionVars.push *= 0.2F;
         }
         if (tempMotionVars.moveForward > 0 && isPowered() && !entityData.get(MOVE_UP)) {
-            tempMotionVars.push *= 1.5;
+            tempMotionVars.push *= 1.5F;
         }
 
         if (isPowered() && entityData.get(MOVE_UP) && tempMotionVars.moveForward >= 0) {
-            tempMotionVars.push += 0.01 * getThrottle();
+            tempMotionVars.push += 0.01F * getThrottle();
         }
         return transformPos(new Vector3f(0, tempMotionVars.push, 0));
     }
@@ -124,7 +124,7 @@ public class HelicopterEntity extends LargePlaneEntity {
         int index = getPassengers().indexOf(passenger);
 
         if (index == 0) {
-            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 0.5f));
+            Vector3f pos = transformPos(new Vector3f(0, getPassengersRidingOffset() + getEntityYOffset(passenger), 0.5f));
             moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else {
             if (hasLargeUpgrade) {
@@ -132,27 +132,19 @@ public class HelicopterEntity extends LargePlaneEntity {
             }
             switch (index) {
                 case 1 -> {
-                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -0.5f));
+                    Vector3f pos = transformPos(new Vector3f(0, getPassengersRidingOffset() + getEntityYOffset(passenger), -0.5f));
                     moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 2 -> {
-                    Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset() - 0.4f), 0));
+                    Vector3f pos = transformPos(new Vector3f(-1, getPassengersRidingOffset() + getEntityYOffset(passenger), 0));
                     moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 3 -> {
-                    Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()) - 0.4f, 0));
+                    Vector3f pos = transformPos(new Vector3f(1, getPassengersRidingOffset() + getEntityYOffset(passenger), 0));
                     moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
             }
         }
-    }
-
-    @Override
-    public double getEntityYOffset(Entity passenger) {
-        if (passenger instanceof Villager) {
-            return ((Villager) passenger).isBaby() ? -0.1 : -0.35D;
-        }
-        return passenger.getMyRidingOffset();
     }
 
     @Override

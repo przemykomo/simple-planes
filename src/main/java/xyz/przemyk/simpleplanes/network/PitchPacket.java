@@ -1,36 +1,37 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import java.util.function.Supplier;
+public record PitchPacket(byte pitchUp) implements CustomPacketPayload {
 
-public class PitchPacket {
+    public static final CustomPacketPayload.Type<PitchPacket> TYPE =
+        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "pitch"));
 
-    private final byte pitchUp;
+    public static final StreamCodec<ByteBuf, PitchPacket> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.BYTE,
+        PitchPacket::pitchUp,
+        PitchPacket::new
+    );
 
-    public PitchPacket(byte pitchUp) {
-        this.pitchUp = pitchUp;
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public PitchPacket(FriendlyByteBuf buffer) {
-        this.pitchUp = buffer.readByte();
-    }
-
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeByte(pitchUp);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer sender = ctx.getSender();
-            if (sender != null && sender.getVehicle() instanceof PlaneEntity planeEntity && planeEntity.getControllingPassenger() == sender) {
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player sender = context.player();
+            if (sender.getVehicle() instanceof PlaneEntity planeEntity && planeEntity.getControllingPassenger() == sender) {
                 planeEntity.setPitchUp(pitchUp);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

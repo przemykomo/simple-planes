@@ -1,16 +1,13 @@
 package xyz.przemyk.simpleplanes.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.joml.Matrix4f;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 
@@ -18,8 +15,7 @@ public class ClientUtil {
 
     public static void renderTiledTextureAtlas(GuiGraphics guiGraphics, AbstractContainerScreen<?> screen, TextureAtlasSprite sprite, int x, int y, int width, int height, int depth) {
         RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-        BufferBuilder builder = Tesselator.getInstance().getBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         float u1 = sprite.getU0();
         float v1 = sprite.getV0();
@@ -53,14 +49,17 @@ public class ClientUtil {
         // finish drawing sprites
 //        builder.end();
 //        BufferUploader.end(builder);
-        Tesselator.getInstance().end();
+        MeshData meshData = builder.build();
+        if (meshData != null) {
+            BufferUploader.drawWithShader(meshData);
+        }
     }
 
     private static void buildSquare(Matrix4f matrix, BufferBuilder builder, int x1, int x2, int y1, int y2, int z, float u1, float u2, float v1, float v2) {
-        builder.vertex(matrix, x1, y2, z).uv(u1, v2).endVertex();
-        builder.vertex(matrix, x2, y2, z).uv(u2, v2).endVertex();
-        builder.vertex(matrix, x2, y1, z).uv(u2, v1).endVertex();
-        builder.vertex(matrix, x1, y1, z).uv(u1, v1).endVertex();
+        builder.addVertex(matrix, x1, y2, z).setUv(u1, v2);
+        builder.addVertex(matrix, x2, y2, z).setUv(u2, v2);
+        builder.addVertex(matrix, x2, y1, z).setUv(u2, v1);
+        builder.addVertex(matrix, x1, y1, z).setUv(u1, v1);
     }
 
     public static int alpha(int c) {

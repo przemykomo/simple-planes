@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.upgrades;
 
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
@@ -25,5 +25,5 @@ public abstract class LargeUpgrade extends Upgrade {
         return false;
     }
 
-    public void openStorageGui(ServerPlayer player, int cycleableContainerID) {}
+    public void openStorageGui(Player player, int cycleableContainerID) {}
 }

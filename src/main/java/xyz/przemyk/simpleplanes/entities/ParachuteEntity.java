@@ -3,8 +3,6 @@ package xyz.przemyk.simpleplanes.entities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,8 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 
@@ -118,8 +115,8 @@ public class ParachuteEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(HAS_STORAGE_CRATE, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        pBuilder.define(HAS_STORAGE_CRATE, false);
     }
 
     @Override
@@ -127,7 +124,7 @@ public class ParachuteEntity extends Entity {
         entityData.set(HAS_STORAGE_CRATE, compoundTag.getBoolean("has_storage_crate"));
         if (hasStorageCrate()) {
             itemStackHandler = new ItemStackHandler();
-            itemStackHandler.deserializeNBT(compoundTag.getCompound("items"));
+            itemStackHandler.deserializeNBT(level().registryAccess(), compoundTag.getCompound("items"));
         }
     }
 
@@ -135,12 +132,7 @@ public class ParachuteEntity extends Entity {
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
         compoundTag.putBoolean("has_storage_crate", hasStorageCrate());
         if (hasStorageCrate()) {
-            compoundTag.put("items", itemStackHandler.serializeNBT());
+            compoundTag.put("items", itemStackHandler.serializeNBT(level().registryAccess()));
         }
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

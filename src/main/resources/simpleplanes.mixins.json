@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "package": "xyz.przemyk.simpleplanes.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [],
+    "client": [
+        "CameraMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

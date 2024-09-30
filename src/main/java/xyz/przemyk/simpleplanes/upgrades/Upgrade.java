@@ -7,15 +7,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.capabilities.CapabilityProvider;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.capabilities.BaseCapability;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -23,8 +23,7 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 
 import java.util.function.Function;
 
-@SuppressWarnings("UnstableApiUsage")
-public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INBTSerializable<CompoundTag> {
+public abstract class Upgrade {
 
     private final UpgradeType type;
     protected final PlaneEntity planeEntity;
@@ -36,7 +35,6 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     }
 
     public Upgrade(UpgradeType type, PlaneEntity planeEntity) {
-        super(Upgrade.class);
         this.type = type;
         this.planeEntity = planeEntity;
     }
@@ -54,7 +52,6 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
      */
     public void remove() {
         removed = true;
-        invalidateCaps();
     }
 
     public final UpgradeType getType() {
@@ -84,26 +81,24 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
         EntityType<?> entityType = planeEntity.getType();
         UpgradesModels.ModelEntry modelEntry = UpgradesModels.MODEL_ENTRIES.get(getType());
         if (entityType == SimplePlanesEntities.PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.normalTexture()), false, false);
-            modelEntry.normal().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.normalTexture()), false);
+            modelEntry.normal().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.largeTexture()), false, false);
-            modelEntry.large().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.largeTexture()), false);
+            modelEntry.large().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.cargoTexture()), false, false);
-            modelEntry.cargo().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.cargoTexture()), false);
+            modelEntry.cargo().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         } else {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.heliTexture()), false, false);
-            modelEntry.heli().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.heliTexture()), false);
+            modelEntry.heli().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
     }
 
-    @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         return new CompoundTag();
     }
 
-    @Override
     public void deserializeNBT(CompoundTag nbt) {}
 
     public void onApply(ItemStack itemStack) {}
@@ -111,12 +106,12 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     /**
      * Called on the server.
      */
-    public abstract void writePacket(FriendlyByteBuf buffer);
+    public abstract void writePacket(RegistryFriendlyByteBuf buffer);
 
     /**
      * Called on the client.
      */
-    public abstract void readPacket(FriendlyByteBuf buffer);
+    public abstract void readPacket(RegistryFriendlyByteBuf buffer);
 
     /**
      * Called when upgrade is removed using wrench.
@@ -136,4 +131,8 @@ public abstract class Upgrade extends CapabilityProvider<Upgrade> implements INB
     public void renderScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {}
 
     public void renderScreenBg(GuiGraphics guiGraphics, int x, int y, float partialTicks, PlaneInventoryScreen screen) {}
+
+    public <T> T getCap(BaseCapability<T, ?> cap) {
+        return null;
+    }
 }

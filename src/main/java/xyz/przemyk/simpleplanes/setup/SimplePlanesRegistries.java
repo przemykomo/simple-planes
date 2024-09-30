@@ -1,25 +1,25 @@
 package xyz.przemyk.simpleplanes.setup;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.NewRegistryEvent;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
 
-import java.util.function.Supplier;
-
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = SimplePlanesMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class SimplePlanesRegistries {
 
-    public static final ResourceLocation UPGRADE_TYPES_NAME = new ResourceLocation(SimplePlanesMod.MODID, "upgrade_types");
-    public static Supplier<IForgeRegistry<UpgradeType>> UPGRADE_TYPES;
+    public static final ResourceKey<Registry<UpgradeType>> UPGRADE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "upgrade_types"));
+    public static final Registry<UpgradeType> UPGRADE_TYPE = new RegistryBuilder<>(UPGRADE_TYPE_REGISTRY_KEY)
+        .sync(true).create();
 
     @SubscribeEvent
-    public static void registerRegistries(final NewRegistryEvent event) {
-        UPGRADE_TYPES = event.create(new RegistryBuilder<UpgradeType>().setName(UPGRADE_TYPES_NAME));
+    public static void registerRegistries(NewRegistryEvent event) {
+        event.register(UPGRADE_TYPE);
     }
 }

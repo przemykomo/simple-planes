@@ -1,170 +1,95 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
-
-import java.util.Optional;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class SimplePlanesNetworking {
 
-    private static final String PROTOCOL_VERSION = "10";
-    public static SimpleChannel INSTANCE;
+    public static void register(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("11");
 
-    public static void init() {
-        INSTANCE = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(SimplePlanesMod.MODID, "main"),
-                () -> PROTOCOL_VERSION,
-                PROTOCOL_VERSION::equals,
-                PROTOCOL_VERSION::equals
+        registrar.playToServer(
+            RotationPacket.TYPE,
+            RotationPacket.STREAM_CODEC,
+            RotationPacket::handle
         );
 
-        int id = -1;
-
-        INSTANCE.registerMessage(
-                ++id,
-                RotationPacket.class,
-                RotationPacket::toBytes,
-                RotationPacket::new,
-                RotationPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToServer(
+            MoveHeliUpPacket.TYPE,
+            MoveHeliUpPacket.STREAM_CODEC,
+            MoveHeliUpPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                MoveHeliUpPacket.class,
-                MoveHeliUpPacket::toBytes,
-                MoveHeliUpPacket::new,
-                MoveHeliUpPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToClient(
+            UpdateUpgradePacket.TYPE,
+            UpdateUpgradePacket.STREAM_CODEC,
+            UpdateUpgradePacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                OpenInventoryPacket.class,
-                OpenInventoryPacket::toBytes,
-                OpenInventoryPacket::new,
-                OpenInventoryPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToServer(
+            OpenPlaneInventoryPacket.TYPE,
+            OpenPlaneInventoryPacket.STREAM_CODEC,
+            OpenPlaneInventoryPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                UpdateUpgradePacket.class,
-                UpdateUpgradePacket::toBytes,
-                UpdateUpgradePacket::new,
-                UpdateUpgradePacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        registrar.playToServer(
+            CycleItemsPacket.TYPE,
+            CycleItemsPacket.STREAM_CODEC,
+            CycleItemsPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                OpenPlaneInventoryPacket.class,
-                OpenPlaneInventoryPacket::toBytes,
-                OpenPlaneInventoryPacket::new,
-                OpenPlaneInventoryPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToClient(
+            SUpgradeRemovedPacket.TYPE,
+            SUpgradeRemovedPacket.STREAM_CODEC,
+            SUpgradeRemovedPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                CycleItemsPacket.class,
-                CycleItemsPacket::toBytes,
-                CycleItemsPacket::new,
-                CycleItemsPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToServer(
+            DropPayloadPacket.TYPE,
+            DropPayloadPacket.STREAM_CODEC,
+            DropPayloadPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                CRemoveUpgradePacket.class,
-                CRemoveUpgradePacket::toBytes,
-                CRemoveUpgradePacket::new,
-                CRemoveUpgradePacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToClient(
+            JukeboxPacket.TYPE,
+            JukeboxPacket.STREAM_CODEC,
+            JukeboxPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                SUpgradeRemovedPacket.class,
-                SUpgradeRemovedPacket::toBytes,
-                SUpgradeRemovedPacket::new,
-                SUpgradeRemovedPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        registrar.playToServer(
+            ChangeThrottlePacket.TYPE,
+            ChangeThrottlePacket.STREAM_CODEC,
+            ChangeThrottlePacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                DropPayloadPacket.class,
-                DropPayloadPacket::toBytes,
-                DropPayloadPacket::new,
-                DropPayloadPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToServer(
+            PitchPacket.TYPE,
+            PitchPacket.STREAM_CODEC,
+            PitchPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                JukeboxPacket.class,
-                JukeboxPacket::toBytes,
-                JukeboxPacket::new,
-                JukeboxPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        registrar.playToServer(
+            YawPacket.TYPE,
+            YawPacket.STREAM_CODEC,
+            YawPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                ChangeThrottlePacket.class,
-                ChangeThrottlePacket::toBytes,
-                ChangeThrottlePacket::new,
-                ChangeThrottlePacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToServer(
+            CyclePlaneInventoryPacket.TYPE,
+            CyclePlaneInventoryPacket.STREAM_CODEC,
+            CyclePlaneInventoryPacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                PitchPacket.class,
-                PitchPacket::toBytes,
-                PitchPacket::new,
-                PitchPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
+        registrar.playToClient(
+            NewCargoUpgradePacket.TYPE,
+            NewCargoUpgradePacket.STREAM_CODEC,
+            NewCargoUpgradePacket::handle
         );
 
-        INSTANCE.registerMessage(
-                ++id,
-                YawPacket.class,
-                YawPacket::toBytes,
-                YawPacket::new,
-                YawPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
-        );
-
-        INSTANCE.registerMessage(
-                ++id,
-                CyclePlaneInventoryPacket.class,
-                CyclePlaneInventoryPacket::toBytes,
-                CyclePlaneInventoryPacket::new,
-                CyclePlaneInventoryPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
-        );
-
-        INSTANCE.registerMessage(
-                ++id,
-                NewCargoUpgradePacket.class,
-                NewCargoUpgradePacket::toBytes,
-                NewCargoUpgradePacket::new,
-                NewCargoUpgradePacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
-        );
-
-        INSTANCE.registerMessage(
-                ++id,
-                CargoUpgradeRemovedPacket.class,
-                CargoUpgradeRemovedPacket::toBytes,
-                CargoUpgradeRemovedPacket::new,
-                CargoUpgradeRemovedPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        registrar.playToClient(
+            CargoUpgradeRemovedPacket.TYPE,
+            CargoUpgradeRemovedPacket.STREAM_CODEC,
+            CargoUpgradeRemovedPacket::handle
         );
     }
 }

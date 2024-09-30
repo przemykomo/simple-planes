@@ -6,49 +6,26 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.neoforged.neoforge.client.event.ViewportEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
-import xyz.przemyk.simpleplanes.SimplePlanesMod;
-import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
-import xyz.przemyk.simpleplanes.client.gui.PlaneWorkbenchScreen;
-import xyz.przemyk.simpleplanes.client.gui.ModifyUpgradesScreen;
-import xyz.przemyk.simpleplanes.client.gui.StorageScreen;
-import xyz.przemyk.simpleplanes.client.render.PlaneItemColors;
-import xyz.przemyk.simpleplanes.entities.LargePlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesContainers;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-import xyz.przemyk.simpleplanes.upgrades.Upgrade;
-import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
-
-    public static final ResourceLocation HUD_TEXTURE = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/plane_hud.png");
 
     public static KeyMapping moveHeliUpKey;
     public static KeyMapping openPlaneInventoryKey;
@@ -59,108 +36,6 @@ public class ClientEventHandler {
     public static KeyMapping pitchDown;
     public static KeyMapping yawRight;
     public static KeyMapping yawLeft;
-
-    static {
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        eventBus.addListener(ClientEventHandler::planeColor);
-        eventBus.addListener(ClientEventHandler::reloadTextures);
-        eventBus.addListener(ClientEventHandler::registerKeyBindings);
-        eventBus.addListener(ClientEventHandler::registerHUDOverlay);
-    }
-
-    public static void clientSetup() {
-        MenuScreens.register(SimplePlanesContainers.PLANE_WORKBENCH.get(), PlaneWorkbenchScreen::new);
-        MenuScreens.register(SimplePlanesContainers.UPGRADES_REMOVAL.get(), ModifyUpgradesScreen::new);
-        MenuScreens.register(SimplePlanesContainers.STORAGE.get(), StorageScreen::new);
-        MenuScreens.register(SimplePlanesContainers.PLANE_INVENTORY.get(), PlaneInventoryScreen::new);
-    }
-
-    public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
-        moveHeliUpKey = new KeyMapping("key.move_heli_up.desc", GLFW.GLFW_KEY_SPACE, "key.simpleplanes.category");
-        openPlaneInventoryKey = new KeyMapping("key.plane_inventory_open.desc", GLFW.GLFW_KEY_X, "key.simpleplanes.category");
-        dropPayloadKey = new KeyMapping("key.plane_drop_payload.desc", GLFW.GLFW_KEY_C, "key.simpleplanes.category");
-        throttleUp = new KeyMapping("key.plane_throttle_up.desc", GLFW.GLFW_KEY_UP, "key.simpleplanes.category");
-        throttleDown = new KeyMapping("key.plane_throttle_down.desc", GLFW.GLFW_KEY_DOWN, "key.simpleplanes.category");
-        pitchUp = new KeyMapping("key.plane_pitch_up.desc", GLFW.GLFW_KEY_W, "key.simpleplanes.category");
-        pitchDown = new KeyMapping("key.plane_pitch_down.desc", GLFW.GLFW_KEY_S, "key.simpleplanes.category");
-        yawRight = new KeyMapping("key.plane_yaw_right.desc", GLFW.GLFW_KEY_RIGHT, "key.simpleplanes.category");
-        yawLeft = new KeyMapping("key.plane_yaw_left.desc", GLFW.GLFW_KEY_LEFT, "key.simpleplanes.category");
-        event.register(moveHeliUpKey);
-        event.register(openPlaneInventoryKey);
-        event.register(dropPayloadKey);
-        event.register(throttleUp);
-        event.register(throttleDown);
-        event.register(pitchUp);
-        event.register(pitchDown);
-        event.register(yawRight);
-        event.register(yawLeft);
-    }
-
-    public static void registerHUDOverlay(RegisterGuiOverlaysEvent event) {
-        event.registerAboveAll("plane_hud", (gui, guiGraphics, partialTicks, screenWidth, screenHeight) -> {
-            Minecraft mc = Minecraft.getInstance();
-
-            if (mc.gui instanceof ForgeGui forgeGui) {
-                int scaledWidth = mc.getWindow().getGuiScaledWidth();
-                int scaledHeight = mc.getWindow().getGuiScaledHeight();
-
-                if (mc.player.getVehicle() instanceof PlaneEntity planeEntity) {
-                    int left_align = scaledWidth / 2 + 91;
-
-                    int health = planeEntity.getHealth();
-                    float healthMax = planeEntity.getMaxHealth();
-                    int hearts = (int) (healthMax);
-
-                    if (hearts > 10) hearts = 10;
-
-                    final int FULL = 0;
-                    final int EMPTY = 16;
-                    final int GOLD = 32;
-                    int max_row_size = 5;
-
-                    for (int heart = 0; hearts > 0; heart += max_row_size) {
-                        int top = scaledHeight - forgeGui.rightHeight;
-
-                        int rowCount = Math.min(hearts, max_row_size);
-                        hearts -= rowCount;
-
-                        for (int i = 0; i < rowCount; ++i) {
-                            int x = left_align - i * 16 - 16;
-                            int vOffset = 35;
-                            if (i + heart + 10 < health)
-                                guiGraphics.blit(HUD_TEXTURE, x, top, GOLD, vOffset, 16, 9);
-                            else if (i + heart < health)
-                                guiGraphics.blit(HUD_TEXTURE, x, top, FULL, vOffset, 16, 9);
-                            else
-                                guiGraphics.blit(HUD_TEXTURE, x, top, EMPTY, vOffset, 16, 9);
-                        }
-                        forgeGui.rightHeight += 10;
-                    }
-
-                    guiGraphics.blit(HUD_TEXTURE, scaledWidth - 24, scaledHeight - 42, 0, 84, 22, 40);
-                    int throttle = planeEntity.getThrottle();
-                    if (throttle > 0) {
-                        int throttleScaled = throttle * 28 / BoosterUpgrade.MAX_THROTTLE;
-                        guiGraphics.blit(HUD_TEXTURE, scaledWidth - 24 + 10, scaledHeight - 42 + 6 + 28 - throttleScaled, 22, 90 + 28 - throttleScaled, 2, throttleScaled);
-                    }
-
-                    if (planeEntity.engineUpgrade != null) {
-                        ItemStack offhandStack = mc.player.getOffhandItem();
-                        HumanoidArm primaryHand = mc.player.getMainArm();
-                        planeEntity.engineUpgrade.renderPowerHUD(guiGraphics, (primaryHand == HumanoidArm.LEFT || offhandStack.isEmpty()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT, scaledWidth, scaledHeight, partialTicks);
-                    }
-                }
-            }
-        });
-    }
-
-    public static void planeColor(RegisterColorHandlersEvent.Item event) {
-        SimplePlanesItems.getPlaneItems().forEach(item -> event.register(PlaneItemColors::getColor, item));
-    }
-
-    public static void reloadTextures(TextureStitchEvent.Post event) {
-        PlaneItemColors.clearCache();
-    }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPre(RenderLivingEvent.Pre<LivingEntity, ?> event) {
@@ -212,25 +87,25 @@ public class ClientEventHandler {
     private static boolean oldYawLeftState = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onClientPlayerTick(PlayerTickEvent event) {
-        final Player player = event.player;
-        if ((event.phase == Phase.END) && (player instanceof LocalPlayer)) {
+    public static void onClientPlayerTick(PlayerTickEvent.Post event) {
+        final Player player = event.getEntity();
+        if (player instanceof LocalPlayer) {
             if (player.getVehicle() instanceof PlaneEntity planeEntity) {
                 Minecraft mc = Minecraft.getInstance();
-                if (mc.options.cameraType != CameraType.FIRST_PERSON) {
+                if (mc.options.getCameraType() != CameraType.FIRST_PERSON) {
                     planeEntity.applyYawToEntity(player);
                 }
 
                 if (mc.screen == null && mc.getOverlay() == null && openPlaneInventoryKey.consumeClick()) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new OpenPlaneInventoryPacket());
+                    PacketDistributor.sendToServer(new OpenPlaneInventoryPacket());
                 } else if (dropPayloadKey.consumeClick()) {
                     planeEntity.dropPayload();
                 }
 
                 if (throttleUp.consumeClick()) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Type.UP));
+                    PacketDistributor.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Direction.UP));
                 } else if (throttleDown.consumeClick()) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Type.DOWN));
+                    PacketDistributor.sendToServer(new ChangeThrottlePacket(ChangeThrottlePacket.Direction.DOWN));
                 }
 
                 boolean isMoveHeliUp = moveHeliUpKey.isDown();
@@ -240,15 +115,15 @@ public class ClientEventHandler {
                 boolean isYawLeft = yawLeft.isDown();
 
                 if (isMoveHeliUp != oldMoveHeliUpState) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new MoveHeliUpPacket(isMoveHeliUp));
+                    PacketDistributor.sendToServer(new MoveHeliUpPacket(isMoveHeliUp));
                 }
 
                 if (isPitchUp != oldPitchUpState || isPitchDown != oldPitchDownState) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new PitchPacket((byte) Boolean.compare(isPitchUp, isPitchDown)));
+                    PacketDistributor.sendToServer(new PitchPacket((byte) Boolean.compare(isPitchUp, isPitchDown)));
                 }
 
                 if (isYawRight != oldYawRightState || isYawLeft != oldYawLeftState) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new YawPacket((byte) Boolean.compare(isYawRight, isYawLeft)));
+                    PacketDistributor.sendToServer(new YawPacket((byte) Boolean.compare(isYawRight, isYawLeft)));
                 }
 
                 oldMoveHeliUpState = isMoveHeliUp;
@@ -272,26 +147,11 @@ public class ClientEventHandler {
         Camera camera = event.getCamera();
         Entity player = camera.getEntity();
         if (player.getVehicle() instanceof PlaneEntity planeEntity) {
-            if (camera.isDetached()) {
-                camera.move(-camera.getMaxZoom(4.0D * (planeEntity.getCameraDistanceMultiplayer() - 1.0)), 0.0D, 0.0D);
-            } else {
-                float heightDiff = 0;
-                if (planeEntity instanceof LargePlaneEntity) {
-                    heightDiff = -0.1f;
-                }
-
+            if (!camera.isDetached()) {
                 double partialTicks = event.getPartialTick();
 
                 Quaternionf qPrev = planeEntity.getQ_Prev();
                 Quaternionf qNow = planeEntity.getQ_Client();
-
-                Vector3f eyePrev = new Vector3f(0, Player.DEFAULT_EYE_HEIGHT + heightDiff, 0);
-                Vector3f eyeNow = new Vector3f(eyePrev);
-                eyePrev.rotate(qPrev);
-                eyeNow.rotate(qNow);
-                camera.setPosition(new Vec3(Mth.lerp(partialTicks, player.xo - eyePrev.x(), player.getX() - eyeNow.x()),
-                        Mth.lerp(partialTicks, player.yo + eyePrev.y(), player.getY() + eyeNow.y()) + 0.375,
-                        Mth.lerp(partialTicks, player.zo + eyePrev.z(), player.getZ() + eyeNow.z())));
 
                 qPrev.mul(Axis.YP.rotationDegrees(player.yRotO));
                 qPrev.mul(Axis.XP.rotationDegrees(event.getPitch()));
@@ -308,14 +168,10 @@ public class ClientEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void planeInventory(ScreenEvent.Opening event) {
-        final LocalPlayer player = Minecraft.getInstance().player;
-        if (event.getScreen() instanceof InventoryScreen && player.getVehicle() instanceof LargePlaneEntity largePlaneEntity) {
-            if (largePlaneEntity.hasStorageUpgrade()) {
-                event.setCanceled(true);
-                SimplePlanesNetworking.INSTANCE.sendToServer(new OpenInventoryPacket());
-            }
+    @SubscribeEvent
+    public static void onCalculateDetachedCameraDistance(CalculateDetachedCameraDistanceEvent event) {
+        if (event.getCamera().getEntity().getVehicle() instanceof PlaneEntity planeEntity) {
+            event.setDistance((float) (4.0 * planeEntity.getCameraDistanceMultiplayer()));
         }
     }
 }

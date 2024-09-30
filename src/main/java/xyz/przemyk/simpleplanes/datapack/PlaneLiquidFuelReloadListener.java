@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.material.Fluid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +22,7 @@ public class PlaneLiquidFuelReloadListener extends SimpleJsonResourceReloadListe
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static final Map<FluidType, Integer> fuelMap = new HashMap<>();
+    public static final Map<Fluid, Integer> fuelMap = new HashMap<>();
 
     public PlaneLiquidFuelReloadListener() {
         super(GSON, "plane_liquid_fuels");
@@ -34,7 +34,7 @@ public class PlaneLiquidFuelReloadListener extends SimpleJsonResourceReloadListe
         for (Map.Entry<ResourceLocation, JsonElement> entry : map.entrySet()) {
             try {
                 JsonObject jsonObject = GsonHelper.convertToJsonObject(entry.getValue(), "top element");
-                FluidType fluidType = ForgeRegistries.FLUID_TYPES.get().getValue(new ResourceLocation(jsonObject.get("fluid").getAsString()));
+                Fluid fluidType = BuiltInRegistries.FLUID.get(ResourceLocation.parse(jsonObject.get("fluid").getAsString()));
                 if (fluidType == null) {
                     continue;
                 }

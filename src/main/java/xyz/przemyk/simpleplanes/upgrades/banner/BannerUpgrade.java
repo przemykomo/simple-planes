@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,17 +32,17 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         CompoundTag compoundNBT = new CompoundTag();
-        compoundNBT.put("banner", banner.serializeNBT());
+        compoundNBT.put("banner", banner.save(planeEntity.registryAccess()));
         return compoundNBT;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        final Tag banner = nbt.get("banner");
-        if (banner instanceof CompoundTag) {
-            this.banner = ItemStack.of((CompoundTag) banner);
+        final Tag tag = nbt.get("banner");
+        if (tag instanceof CompoundTag compoundTag) {
+            this.banner = ItemStack.parseOptional(planeEntity.registryAccess(), compoundTag);
         }
     }
 
@@ -61,13 +61,13 @@ public class BannerUpgrade extends Upgrade {
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
-        buffer.writeItem(banner);
+    public void writePacket(RegistryFriendlyByteBuf buffer) {
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, banner);
     }
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
-        banner = buffer.readItem();
+    public void readPacket(RegistryFriendlyByteBuf buffer) {
+        banner = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
     }
 
     @Override

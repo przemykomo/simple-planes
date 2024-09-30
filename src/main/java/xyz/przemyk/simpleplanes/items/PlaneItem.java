@@ -1,5 +1,7 @@
 package xyz.przemyk.simpleplanes.items;
 
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,11 +21,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesComponents;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -39,26 +40,25 @@ public class PlaneItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        CompoundTag entityTag = stack.getTagElement("EntityTag");
+    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        CompoundTag entityTag = pStack.get(SimplePlanesComponents.ENTITY_TAG);
 
         if (entityTag != null) {
             if (entityTag.contains("material")) {
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(entityTag.getString("material")));
+                Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(entityTag.getString("material")));
                 if (block != null) {
-                    tooltip.add(Component.translatable(SimplePlanesMod.MODID + ".material").append(block.getName()));
+                    pTooltipComponents.add(Component.translatable(SimplePlanesMod.MODID + ".material").append(block.getName()));
                 }
             }
             if (entityTag.contains("upgrades")) {
                 CompoundTag upgradesNBT = entityTag.getCompound("upgrades");
                 for (String key : upgradesNBT.getAllKeys()) {
                     CompoundTag upgradeNbt = upgradesNBT.getCompound(key);
-                    ResourceLocation resourceLocation = new ResourceLocation(key);
+                    ResourceLocation resourceLocation = ResourceLocation.parse(key);
                     if (upgradeNbt.contains("desc")) {
-                        tooltip.add(Component.literal(upgradeNbt.getString("desc")));
+                        pTooltipComponents.add(Component.literal(upgradeNbt.getString("desc")));
                     } else {
-                        tooltip.add(Component.translatable("name." + resourceLocation.toString().replace(":", ".")));
+                        pTooltipComponents.add(Component.translatable("name." + resourceLocation.toString().replace(":", ".")));
                     }
                 }
             }
@@ -91,8 +91,11 @@ public class PlaneItem extends Item {
                 planeEntity.setPos(hitResult.getLocation().x(), hitResult.getLocation().y(), hitResult.getLocation().z());
                 planeEntity.setYRot(playerIn.getYRot());
                 planeEntity.yRotO = playerIn.yRotO;
-                planeEntity.setCustomName(itemstack.getHoverName());
-                CompoundTag entityTag = itemstack.getTagElement("EntityTag");
+                Component name = itemstack.get(DataComponents.CUSTOM_NAME);
+                if (name != null) {
+                    planeEntity.setCustomName(name);
+                }
+                CompoundTag entityTag = itemstack.get(SimplePlanesComponents.ENTITY_TAG);
                 if (entityTag != null) {
                     planeEntity.readAdditionalSaveData(entityTag);
                 }

@@ -39,9 +39,9 @@ public class ShooterModel extends EntityModel<PlaneEntity> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        Shooter.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        Shooter.render(poseStack, vertexConsumer, packedLight, packedOverlay);
+        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay);
     }
 
     @Override

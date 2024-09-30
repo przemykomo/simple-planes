@@ -1,5 +1,6 @@
 package xyz.przemyk.simpleplanes.items;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -22,10 +23,10 @@ public class PlaneArmorItem extends Item {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (enchantment == Enchantments.ALL_DAMAGE_PROTECTION) {
+    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+        if (enchantment == Enchantments.PROTECTION) {
             return true;
         }
-        return super.canApplyAtEnchantingTable(stack, enchantment);
+        return super.supportsEnchantment(stack, enchantment);
     }
 }

@@ -136,10 +136,10 @@ public class CargoPropellerModel extends EntityModel<PlaneEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		IronPropeller2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		IronPropeller3.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		IronPropeller4.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		IronPropeller5.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+		IronPropeller2.render(poseStack, vertexConsumer, packedLight, packedOverlay);
+		IronPropeller3.render(poseStack, vertexConsumer, packedLight, packedOverlay);
+		IronPropeller4.render(poseStack, vertexConsumer, packedLight, packedOverlay);
+		IronPropeller5.render(poseStack, vertexConsumer, packedLight, packedOverlay);
 	}
 }

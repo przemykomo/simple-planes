@@ -2,19 +2,18 @@ package xyz.przemyk.simpleplanes.upgrades.engines.furnace;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
-import xyz.przemyk.simpleplanes.client.ClientEventHandler;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.neoforge.capabilities.BaseCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import xyz.przemyk.simpleplanes.client.ModBusClientEventHandler;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.container.slots.FuelSlot;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -22,14 +21,11 @@ import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler();
-    public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
     public int burnTime;
     public int burnTimeTotal;
 
@@ -44,7 +40,7 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
             updateClient();
         } else if (planeEntity.getThrottle() > 0) {
             ItemStack itemStack = itemStackHandler.getStackInSlot(0);
-            int itemBurnTime = ForgeHooks.getBurnTime(itemStack, null);
+            int itemBurnTime = itemStack.getBurnTime(RecipeType.SMELTING);
             if (itemBurnTime > 0) {
                 burnTimeTotal = itemBurnTime;
                 burnTime = itemBurnTime;
@@ -64,15 +60,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        itemHandlerLazyOptional.invalidate();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         CompoundTag compound = new CompoundTag();
-        compound.put("item", itemStackHandler.serializeNBT());
+        compound.put("item", itemStackHandler.serializeNBT(planeEntity.registryAccess()));
         compound.putInt("burnTime", burnTime);
         compound.putInt("burnTimeTotal", burnTimeTotal);
         return compound;
@@ -80,32 +70,33 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void deserializeNBT(CompoundTag compound) {
-        itemStackHandler.deserializeNBT(compound.getCompound("item"));
+        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compound.getCompound("item"));
         burnTime = compound.getInt("burnTime");
         burnTimeTotal = compound.getInt("burnTimeTotal");
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
-        buffer.writeItem(itemStackHandler.getStackInSlot(0));
+    public void writePacket(RegistryFriendlyByteBuf buffer) {
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, itemStackHandler.getStackInSlot(0));
         buffer.writeVarInt(burnTime);
         buffer.writeVarInt(burnTimeTotal);
     }
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
-        itemStackHandler.setStackInSlot(0, buffer.readItem());
+    public void readPacket(RegistryFriendlyByteBuf buffer) {
+        itemStackHandler.setStackInSlot(0, ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
         burnTime = buffer.readVarInt();
         burnTimeTotal = buffer.readVarInt();
     }
 
-    @Nonnull
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return itemHandlerLazyOptional.cast();
+    public <T> T getCap(BaseCapability<T, ?> cap) {
+        if (cap == Capabilities.ItemHandler.ENTITY) {
+            return (T) itemStackHandler;
         }
-        return super.getCapability(cap, side);
+
+        return super.getCap(cap);
     }
 
     @Override
@@ -123,9 +114,9 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
         int i = scaledWidth / 2;
         Minecraft mc = Minecraft.getInstance();
         if (side == HumanoidArm.LEFT) {
-            guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
+            guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29, scaledHeight - 40, 0, 44, 22, 40);
         } else {
-            guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i + 91, scaledHeight - 40, 0, 44, 22, 40);
+            guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i + 91, scaledHeight - 40, 0, 44, 22, 40);
         }
 
         if (burnTime > 0) {
@@ -133,10 +124,10 @@ public class FurnaceEngineUpgrade extends EngineUpgrade {
             int burnLeftScaled = burnTime * 13 / burnTimeTotal2;
             if (side == HumanoidArm.LEFT) {
                 // render on left side
-                guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+                guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i - 91 - 29 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
             } else {
                 // render on right side
-                guiGraphics.blit(ClientEventHandler.HUD_TEXTURE, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
+                guiGraphics.blit(ModBusClientEventHandler.HUD_TEXTURE, i + 91 + 4, scaledHeight - 40 + 16 - burnLeftScaled, 22, 56 - burnLeftScaled, 14, burnLeftScaled + 1);
             }
         }
 

@@ -6,10 +6,10 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.render.ParachuteRenderer;
 import xyz.przemyk.simpleplanes.client.render.PlaneRenderer;
@@ -43,73 +43,73 @@ import xyz.przemyk.simpleplanes.upgrades.solarpanel.CargoSolarPanelModel;
 import xyz.przemyk.simpleplanes.upgrades.solarpanel.LargeSolarPanelModel;
 import xyz.przemyk.simpleplanes.upgrades.solarpanel.SolarPanelModel;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class PlanesModelLayers {
-    public static final ModelLayerLocation PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "main");
-    public static final ModelLayerLocation PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "metal");
-    public static final ModelLayerLocation PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "plane"), "propeller");
+    public static final ModelLayerLocation PLANE_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane"), "main");
+    public static final ModelLayerLocation PLANE_METAL_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane"), "metal");
+    public static final ModelLayerLocation PROPELLER_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "plane"), "propeller");
 
-    public static final ModelLayerLocation LARGE_PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "main");
-    public static final ModelLayerLocation LARGE_PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "metal");
-    public static final ModelLayerLocation LARGE_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "large_plane"), "propeller");
+    public static final ModelLayerLocation LARGE_PLANE_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "large_plane"), "main");
+    public static final ModelLayerLocation LARGE_PLANE_METAL_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "large_plane"), "metal");
+    public static final ModelLayerLocation LARGE_PROPELLER_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "large_plane"), "propeller");
 
-    public static final ModelLayerLocation CARGO_PLANE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "cargo_plane"), "main");
-    public static final ModelLayerLocation CARGO_PLANE_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "cargo_plane"), "metal");
-    public static final ModelLayerLocation CARGO_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "cargo_plane"), "propeller");
+    public static final ModelLayerLocation CARGO_PLANE_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "cargo_plane"), "main");
+    public static final ModelLayerLocation CARGO_PLANE_METAL_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "cargo_plane"), "metal");
+    public static final ModelLayerLocation CARGO_PROPELLER_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "cargo_plane"), "propeller");
 
-    public static final ModelLayerLocation HELICOPTER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "main");
-    public static final ModelLayerLocation HELICOPTER_METAL_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "metal");
-    public static final ModelLayerLocation HELICOPTER_PROPELLER_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "helicopter"), "propeller");
+    public static final ModelLayerLocation HELICOPTER_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "helicopter"), "main");
+    public static final ModelLayerLocation HELICOPTER_METAL_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "helicopter"), "metal");
+    public static final ModelLayerLocation HELICOPTER_PROPELLER_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "helicopter"), "propeller");
 
-    public static final ModelLayerLocation PARACHUTE_LAYER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "parachute"), "main");
+    public static final ModelLayerLocation PARACHUTE_LAYER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "parachute"), "main");
 
-    public static final ModelLayerLocation FURNACE_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), "main");
-    public static final ModelLayerLocation LARGE_FURNACE_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), "large");
-    public static final ModelLayerLocation HELI_FURNACE_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), "heli");
-    public static final ModelLayerLocation CARGO_FURNACE_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "furnace_engine"), "cargo");
+    public static final ModelLayerLocation FURNACE_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "furnace_engine"), "main");
+    public static final ModelLayerLocation LARGE_FURNACE_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "furnace_engine"), "large");
+    public static final ModelLayerLocation HELI_FURNACE_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "furnace_engine"), "heli");
+    public static final ModelLayerLocation CARGO_FURNACE_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "furnace_engine"), "cargo");
 
-    public static final ModelLayerLocation ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "main");
-    public static final ModelLayerLocation LARGE_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "large");
-    public static final ModelLayerLocation HELI_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "heli");
-    public static final ModelLayerLocation CARGO_ELECTRIC_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "electric_engine"), "cargo");
+    public static final ModelLayerLocation ELECTRIC_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "electric_engine"), "main");
+    public static final ModelLayerLocation LARGE_ELECTRIC_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "electric_engine"), "large");
+    public static final ModelLayerLocation HELI_ELECTRIC_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "electric_engine"), "heli");
+    public static final ModelLayerLocation CARGO_ELECTRIC_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "electric_engine"), "cargo");
 
-    public static final ModelLayerLocation LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "main");
-    public static final ModelLayerLocation LARGE_LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "large");
-    public static final ModelLayerLocation HELI_LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "heli");
-    public static final ModelLayerLocation CARGO_LIQUID_ENGINE = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "liquid_engine"), "cargo");
+    public static final ModelLayerLocation LIQUID_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "liquid_engine"), "main");
+    public static final ModelLayerLocation LARGE_LIQUID_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "liquid_engine"), "large");
+    public static final ModelLayerLocation HELI_LIQUID_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "liquid_engine"), "heli");
+    public static final ModelLayerLocation CARGO_LIQUID_ENGINE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "liquid_engine"), "cargo");
 
-    public static final ModelLayerLocation BOOSTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "booster"), "main");
-    public static final ModelLayerLocation LARGE_BOOSTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "booster"), "large");
-    public static final ModelLayerLocation HELI_BOOSTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "booster"), "heli");
-    public static final ModelLayerLocation CARGO_BOOSTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "booster"), "cargo");
+    public static final ModelLayerLocation BOOSTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "booster"), "main");
+    public static final ModelLayerLocation LARGE_BOOSTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "booster"), "large");
+    public static final ModelLayerLocation HELI_BOOSTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "booster"), "heli");
+    public static final ModelLayerLocation CARGO_BOOSTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "booster"), "cargo");
 
-    public static final ModelLayerLocation SHOOTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "shooter"), "main");
-    public static final ModelLayerLocation LARGE_SHOOTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "shooter"), "large");
-    public static final ModelLayerLocation HELI_SHOOTER = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "shooter"), "heli");
+    public static final ModelLayerLocation SHOOTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "shooter"), "main");
+    public static final ModelLayerLocation LARGE_SHOOTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "shooter"), "large");
+    public static final ModelLayerLocation HELI_SHOOTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "shooter"), "heli");
 
-    public static final ModelLayerLocation FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "floating"), "main");
-    public static final ModelLayerLocation LARGE_FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "floating"), "large");
-    public static final ModelLayerLocation CARGO_FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "floating"), "cargo");
-    public static final ModelLayerLocation HELI_FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "floating"), "heli");
+    public static final ModelLayerLocation FLOATING = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "floating"), "main");
+    public static final ModelLayerLocation LARGE_FLOATING = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "floating"), "large");
+    public static final ModelLayerLocation CARGO_FLOATING = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "floating"), "cargo");
+    public static final ModelLayerLocation HELI_FLOATING = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "floating"), "heli");
 
-    public static final ModelLayerLocation ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "main");
-    public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "large");
-    public static final ModelLayerLocation HELI_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "heli");
-    public static final ModelLayerLocation CARGO_ARMOR = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "cargo");
-    public static final ModelLayerLocation ARMOR_WINDOW = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "armor"), "window");
+    public static final ModelLayerLocation ARMOR = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "armor"), "main");
+    public static final ModelLayerLocation LARGE_ARMOR = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "armor"), "large");
+    public static final ModelLayerLocation HELI_ARMOR = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "armor"), "heli");
+    public static final ModelLayerLocation CARGO_ARMOR = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "armor"), "cargo");
+    public static final ModelLayerLocation ARMOR_WINDOW = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "armor"), "window");
 
-    public static final ModelLayerLocation SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "main");
-    public static final ModelLayerLocation LARGE_SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "large");
-    public static final ModelLayerLocation CARGO_SOLAR_PANEL = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "solar_panel"), "cargo");
+    public static final ModelLayerLocation SOLAR_PANEL = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "solar_panel"), "main");
+    public static final ModelLayerLocation LARGE_SOLAR_PANEL = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "solar_panel"), "large");
+    public static final ModelLayerLocation CARGO_SOLAR_PANEL = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "solar_panel"), "cargo");
 
-    public static final ModelLayerLocation SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "main");
-    public static final ModelLayerLocation LARGE_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "large");
-    public static final ModelLayerLocation CARGO_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "cargo");
-    public static final ModelLayerLocation HELI_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "heli");
-    public static final ModelLayerLocation WOODEN_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "wooden");
-    public static final ModelLayerLocation WOODEN_HELI_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "wooden_heli");
-    public static final ModelLayerLocation WOODEN_CARGO_SEATS = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "seats"), "wooden_cargo");
-    public static final ModelLayerLocation WOODEN_CARGO_FLOATING = new ModelLayerLocation(new ResourceLocation(SimplePlanesMod.MODID, "floating"), "wooden_cargo");
+    public static final ModelLayerLocation SEATS = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "seats"), "main");
+    public static final ModelLayerLocation LARGE_SEATS = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "seats"), "large");
+    public static final ModelLayerLocation CARGO_SEATS = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "seats"), "cargo");
+    public static final ModelLayerLocation HELI_SEATS = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "seats"), "heli");
+    public static final ModelLayerLocation WOODEN_SEATS = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "seats"), "wooden");
+    public static final ModelLayerLocation WOODEN_HELI_SEATS = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "seats"), "wooden_heli");
+    public static final ModelLayerLocation WOODEN_CARGO_SEATS = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "seats"), "wooden_cargo");
+    public static final ModelLayerLocation WOODEN_CARGO_FLOATING = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "floating"), "wooden_cargo");
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -185,10 +185,10 @@ public class PlanesModelLayers {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         EntityModelSet entityModelSet = Minecraft.getInstance().getEntityModels();
-        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PlaneMetalModel(entityModelSet.bakeLayer(PLANE_METAL_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_propeller.png")));
-        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new LargePlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new LargePlaneMetalModel(entityModelSet.bakeLayer(LARGE_PLANE_METAL_LAYER)), new LargePropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PROPELLER_LAYER)), 1.0f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/large_plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_large_propeller.png")));
-        event.registerEntityRenderer(SimplePlanesEntities.CARGO_PLANE.get(), context -> new PlaneRenderer<>(context, new CargoPlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.CARGO_PLANE_LAYER)), new CargoPlaneMetalModel(entityModelSet.bakeLayer(CARGO_PLANE_METAL_LAYER)), new CargoPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.CARGO_PROPELLER_LAYER)), 1.0f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/cargo_plane_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_cargo_propeller.png")));
-        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new HelicopterModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterMetalModel(entityModelSet.bakeLayer(HELICOPTER_METAL_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f, new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/helicopter_metal.png"), new ResourceLocation(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_helicopter_propeller.png")));
+        event.registerEntityRenderer(SimplePlanesEntities.PLANE.get(), context -> new PlaneRenderer<>(context, new PlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.PLANE_LAYER)), new PlaneMetalModel(entityModelSet.bakeLayer(PLANE_METAL_LAYER)), new PropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.PROPELLER_LAYER)), 0.6f, ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/plane_metal.png"), ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_propeller.png")));
+        event.registerEntityRenderer(SimplePlanesEntities.LARGE_PLANE.get(), context -> new PlaneRenderer<>(context, new LargePlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PLANE_LAYER)), new LargePlaneMetalModel(entityModelSet.bakeLayer(LARGE_PLANE_METAL_LAYER)), new LargePropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.LARGE_PROPELLER_LAYER)), 1.0f, ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/large_plane_metal.png"), ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_large_propeller.png")));
+        event.registerEntityRenderer(SimplePlanesEntities.CARGO_PLANE.get(), context -> new PlaneRenderer<>(context, new CargoPlaneModel(entityModelSet.bakeLayer(PlanesModelLayers.CARGO_PLANE_LAYER)), new CargoPlaneMetalModel(entityModelSet.bakeLayer(CARGO_PLANE_METAL_LAYER)), new CargoPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.CARGO_PROPELLER_LAYER)), 1.0f, ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/cargo_plane_metal.png"), ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_cargo_propeller.png")));
+        event.registerEntityRenderer(SimplePlanesEntities.HELICOPTER.get(), context -> new PlaneRenderer<>(context, new HelicopterModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_LAYER)), new HelicopterMetalModel(entityModelSet.bakeLayer(HELICOPTER_METAL_LAYER)), new HelicopterPropellerModel(entityModelSet.bakeLayer(PlanesModelLayers.HELICOPTER_PROPELLER_LAYER)), 0.6f, ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/helicopter_metal.png"), ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/plane_upgrades/iron_helicopter_propeller.png")));
 
         event.registerEntityRenderer(SimplePlanesEntities.PARACHUTE.get(), context -> new ParachuteRenderer(context, new ParachuteModel(entityModelSet.bakeLayer(PlanesModelLayers.PARACHUTE_LAYER))));
     }

@@ -5,24 +5,23 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import xyz.przemyk.simpleplanes.client.MovingSound;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.network.JukeboxPacket;
-import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
@@ -36,13 +35,13 @@ public class JukeboxUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        return record.save(new CompoundTag());
+    public Tag serializeNBT() {
+        return record.save(planeEntity.registryAccess());
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        record = ItemStack.of(nbt);
+        record = ItemStack.parseOptional(planeEntity.registryAccess(), nbt);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
         if (!planeEntity.level().isClientSide) {
             Player player = event.getEntity();
             ItemStack itemStack = player.getItemInHand(event.getHand());
-            if (itemStack.getItem() instanceof RecordItem newRecordItem && newRecordItem != record.getItem()) {
+            if (!itemStack.is(record.getItem())) {
                 ItemStack oldRecord = record;
                 record = itemStack.copy();
                 if (!player.isCreative()) {
@@ -60,7 +59,7 @@ public class JukeboxUpgrade extends LargeUpgrade {
                     player.addItem(oldRecord);
                 }
                 player.awardStat(Stats.PLAY_RECORD);
-                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> planeEntity), new JukeboxPacket(planeEntity.getId(), ForgeRegistries.ITEMS.getKey(newRecordItem)));
+                PacketDistributor.sendToPlayersTrackingEntity(planeEntity, new JukeboxPacket(BuiltInRegistries.ITEM.getKey(itemStack.getItem()), planeEntity.getId()));
             }
         }
     }
@@ -85,10 +84,10 @@ public class JukeboxUpgrade extends LargeUpgrade {
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {}
+    public void writePacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {}
+    public void readPacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
     public void onRemoved() {

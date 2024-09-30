@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -41,15 +41,15 @@ public class FloatingUpgrade extends Upgrade {
         super.render(matrixStack, buffer, packedLight, partialTicks);
 
         if (planeEntity.getType() == SimplePlanesEntities.CARGO_PLANE.get()) {
-            UpgradesModels.WOODEN_CARGO_FLOATING.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            UpgradesModels.WOODEN_CARGO_FLOATING.renderToBuffer(matrixStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY);
         }
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {}
+    public void writePacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {}
+    public void readPacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
     public ItemStack getItemStack() {

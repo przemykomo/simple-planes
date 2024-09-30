@@ -12,18 +12,19 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
 import xyz.przemyk.simpleplanes.entities.CargoPlaneEntity;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
+import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
@@ -87,22 +88,22 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         VertexConsumer materialVertexConsumer = buffer.getBuffer(planeEntityModel.renderType(getMaterialTexture(planeEntity)));
         planeEntityModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeEntityModel.renderToBuffer(poseStack, materialVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        planeEntityModel.renderToBuffer(poseStack, materialVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
-        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false, planeEntity.isNoGravity());
+        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, planeEntityModel.renderType(propellerTexture), false);
         propellerModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        propellerModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
         vertexConsumer = buffer.getBuffer(planeMetalModel.renderType(metalTexture));
         planeMetalModel.setupAnim(planeEntity, partialTicks, 0, 0, 0, 0);
-        planeMetalModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        planeMetalModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         for (Upgrade upgrade : planeEntity.upgrades.values()) {
                 upgrade.render(poseStack, buffer, packedLight, partialTicks);
         }
 
         if (planeEntity instanceof CargoPlaneEntity cargoPlaneEntity) {
-            if (!planeEntity.upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
-                UpgradesModels.WOODEN_CARGO_SEATS.renderToBuffer(poseStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            if (!planeEntity.upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.SEATS.get()))) {
+                UpgradesModels.WOODEN_CARGO_SEATS.renderToBuffer(poseStack, buffer.getBuffer(UpgradesModels.SEATS.renderType(PlaneRenderer.getMaterialTexture(planeEntity))), packedLight, OverlayTexture.NO_OVERLAY);
             }
 
             for (int i = 0; i < cargoPlaneEntity.largeUpgrades.size(); i++) {
@@ -144,8 +145,8 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
 
         ResourceLocation texture;
         try {
-            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(ForgeRegistries.BLOCKS.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).get(0).getSprite().contents().name();
-            texture = new ResourceLocation(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
+            ResourceLocation sprite = Minecraft.getInstance().getModelManager().getModel(new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(block), "inventory")).getQuads(null, Direction.SOUTH, RandomSource.create(), ModelData.EMPTY, null).getFirst().getSprite().contents().name();
+            texture = ResourceLocation.fromNamespaceAndPath(sprite.getNamespace(), "textures/" + sprite.getPath() + ".png");
         } catch (IndexOutOfBoundsException | NullPointerException exception) {
             texture = FALLBACK_TEXTURE;
         }
@@ -155,5 +156,5 @@ public class PlaneRenderer<T extends PlaneEntity> extends EntityRenderer<T> {
     }
 
     public static final Map<Block, ResourceLocation> cachedTextures = new HashMap<>();
-    public static final ResourceLocation FALLBACK_TEXTURE = new ResourceLocation("minecraft", "textures/block/oak_planks.png");
+    public static final ResourceLocation FALLBACK_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/block/oak_planks.png");
 }

@@ -20,12 +20,12 @@ public class ChargingStationBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new ChargingStationTile(blockPos, blockState);
+        return new ChargingStationBlockEntity(blockPos, blockState);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return (level1, blockPos, blockState1, blockEntity) -> ChargingStationTile.tick((ChargingStationTile) blockEntity);
+        return (level1, blockPos, blockState1, blockEntity) -> ChargingStationBlockEntity.tick((ChargingStationBlockEntity) blockEntity);
     }
 }

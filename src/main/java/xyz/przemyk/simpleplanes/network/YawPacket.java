@@ -1,36 +1,37 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import java.util.function.Supplier;
+public record YawPacket(byte yawRight) implements CustomPacketPayload {
 
-public class YawPacket {
+    public static final CustomPacketPayload.Type<YawPacket> TYPE =
+        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "yaw"));
 
-    private final byte yawRight;
+    public static final StreamCodec<ByteBuf, YawPacket> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.BYTE,
+        YawPacket::yawRight,
+        YawPacket::new
+    );
 
-    public YawPacket(byte yawRight) {
-        this.yawRight = yawRight;
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public YawPacket(FriendlyByteBuf buffer) {
-        this.yawRight = buffer.readByte();
-    }
-
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeByte(yawRight);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer sender = ctx.getSender();
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player sender = context.player();
             if (sender != null && sender.getVehicle() instanceof PlaneEntity planeEntity && planeEntity.getControllingPassenger() == sender) {
                 planeEntity.setYawRight(yawRight);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

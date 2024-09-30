@@ -1,6 +1,6 @@
 package xyz.przemyk.simpleplanes.misc;
 
-import net.minecraftforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.EnergyStorage;
 
 public class EnergyStorageWithSet extends EnergyStorage {
 

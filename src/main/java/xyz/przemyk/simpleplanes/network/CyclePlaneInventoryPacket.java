@@ -1,41 +1,47 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.container.CycleableContainer;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import java.util.function.Supplier;
+public record CyclePlaneInventoryPacket(Direction direction) implements CustomPacketPayload {
 
-public class CyclePlaneInventoryPacket {
+    public static final CustomPacketPayload.Type<CyclePlaneInventoryPacket> TYPE =
+        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "cycle_inventory"));
 
-    private final Type type;
+    public static final StreamCodec<ByteBuf, CyclePlaneInventoryPacket> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public CyclePlaneInventoryPacket decode(ByteBuf pBuffer) {
+            return new CyclePlaneInventoryPacket(Direction.values()[pBuffer.readByte()]);
+        }
 
-    public CyclePlaneInventoryPacket(Type type) {
-        this.type = type;
+        @Override
+        public void encode(ByteBuf pBuffer, CyclePlaneInventoryPacket pValue) {
+            pBuffer.writeByte(pValue.direction.ordinal());
+        }
+    };
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public CyclePlaneInventoryPacket(FriendlyByteBuf buffer) {
-        this.type = Type.values()[buffer.readByte()];
-    }
-
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeByte(type.ordinal());
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer sender = ctx.getSender();
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player sender = context.player();
             if (sender.containerMenu instanceof CycleableContainer container && sender.getVehicle() instanceof PlaneEntity planeEntity) {
-                planeEntity.openContainer(sender, type == Type.LEFT ? container.cycleableContainerID() + 1 : container.cycleableContainerID() - 1);
+                planeEntity.openContainer(sender, direction == Direction.LEFT ? container.cycleableContainerID() + 1 : container.cycleableContainerID() - 1);
             }
         });
-        ctx.setPacketHandled(true);
     }
 
-    public enum Type {
+    public enum Direction {
         LEFT,
         RIGHT
     }

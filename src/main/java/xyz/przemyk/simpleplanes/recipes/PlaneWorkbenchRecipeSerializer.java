@@ -1,42 +1,51 @@
 package xyz.przemyk.simpleplanes.recipes;
 
-import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-
-import javax.annotation.Nullable;
 
 public class PlaneWorkbenchRecipeSerializer implements RecipeSerializer<PlaneWorkbenchRecipe> {
 
-    @Override
-    public PlaneWorkbenchRecipe fromJson(ResourceLocation id, JsonObject json) {
-        Ingredient ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "ingredient"));
-        int ingredientAmount = GsonHelper.getAsInt(json, "ingredient_amount");
-        int materialAmount = GsonHelper.getAsInt(json, "material_amount");
-        ItemStack result = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "result")).getDefaultInstance();
-        return new PlaneWorkbenchRecipe(id, ingredient, ingredientAmount, materialAmount, result);
-    }
+    public static final MapCodec<PlaneWorkbenchRecipe> CODEC = RecordCodecBuilder.mapCodec(
+        kind -> kind.group(
+                Ingredient.CODEC.fieldOf("ingredient").forGetter(PlaneWorkbenchRecipe::ingredient),
+                Codec.INT.fieldOf("ingredient_amount").forGetter(PlaneWorkbenchRecipe::ingredientAmount),
+                Codec.INT.fieldOf("material_amount").forGetter(PlaneWorkbenchRecipe::materialAmount),
+                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(recipe -> recipe.getResultItem(null))
+            ).apply(kind, PlaneWorkbenchRecipe::new)
+    );
 
-    @Nullable
-    @Override
-    public PlaneWorkbenchRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
-        Ingredient ingredient = Ingredient.fromNetwork(buffer);
+    public static final StreamCodec<RegistryFriendlyByteBuf, PlaneWorkbenchRecipe> STREAM_CODEC = StreamCodec.of(
+        PlaneWorkbenchRecipeSerializer::toNetwork, PlaneWorkbenchRecipeSerializer::fromNetwork
+    );
+
+    public static PlaneWorkbenchRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
+        Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
         int ingredientAmount = buffer.readVarInt();
         int materialAmount = buffer.readVarInt();
-        ItemStack result = buffer.readItem();
-        return new PlaneWorkbenchRecipe(id, ingredient, ingredientAmount, materialAmount, result);
+        ItemStack result = ItemStack.STREAM_CODEC.decode(buffer);
+        return new PlaneWorkbenchRecipe(ingredient, ingredientAmount, materialAmount, result);
+    }
+
+    public static void toNetwork(RegistryFriendlyByteBuf buffer, PlaneWorkbenchRecipe recipe) {
+        Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient());
+        buffer.writeVarInt(recipe.ingredientAmount());
+        buffer.writeVarInt(recipe.materialAmount());
+        ItemStack.STREAM_CODEC.encode(buffer, recipe.result());
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, PlaneWorkbenchRecipe recipe) {
-        recipe.ingredient().toNetwork(buffer);
-        buffer.writeVarInt(recipe.ingredientAmount());
-        buffer.writeVarInt(recipe.materialAmount());
-        buffer.writeItem(recipe.result());
+    public MapCodec<PlaneWorkbenchRecipe> codec() {
+        return CODEC;
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, PlaneWorkbenchRecipe> streamCodec() {
+        return STREAM_CODEC;
     }
 }

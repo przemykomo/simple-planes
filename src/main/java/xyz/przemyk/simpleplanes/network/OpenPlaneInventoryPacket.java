@@ -1,34 +1,35 @@
 package xyz.przemyk.simpleplanes.network;
 
-import net.minecraft.network.FriendlyByteBuf;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
-import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import java.util.function.Supplier;
+public record OpenPlaneInventoryPacket() implements CustomPacketPayload {
 
-@SuppressWarnings("unused")
-public class OpenPlaneInventoryPacket {
+    public static final CustomPacketPayload.Type<OpenPlaneInventoryPacket> TYPE =
+        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "open_inv"));
 
-    public OpenPlaneInventoryPacket() {}
-    public OpenPlaneInventoryPacket(FriendlyByteBuf buffer) {}
-    public void toBytes(FriendlyByteBuf buffer) {}
+    public static final StreamCodec<ByteBuf, OpenPlaneInventoryPacket> STREAM_CODEC = StreamCodec.unit(new OpenPlaneInventoryPacket());
 
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer sender = ctx.getSender();
-            if (sender != null) {
-                Entity entity = sender.getVehicle();
-                if (entity instanceof PlaneEntity planeEntity) {
-                    planeEntity.openContainer(sender, 0);
-                }
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
+            Entity entity = player.getVehicle();
+            if (entity instanceof PlaneEntity planeEntity) {
+                planeEntity.openContainer((ServerPlayer) player, 0);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

@@ -9,11 +9,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.datapack.PayloadEntry;
 import xyz.przemyk.simpleplanes.datapack.PlanePayloadReloadListener;
 import xyz.przemyk.simpleplanes.network.DropPayloadPacket;
-import xyz.przemyk.simpleplanes.network.SimplePlanesNetworking;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
@@ -91,7 +91,7 @@ public class LargePlaneEntity extends PlaneEntity {
         if (passenger.getVehicle() == this || passenger instanceof PlaneEntity) {
             return false;
         }
-        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+        if (!upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.SEATS.get()))) {
             return passengers.size() <= 1 && (passengers.isEmpty() || !hasLargeUpgrade);
         } else {
             return hasLargeUpgrade ? passengers.size() < 3 : passengers.size() < 4;
@@ -104,8 +104,7 @@ public class LargePlaneEntity extends PlaneEntity {
         int index = getPassengers().indexOf(passenger);
 
         if (index == 0) {
-//            passenger.setPos(passenger.getX(), getY() + getPassengersRidingOffset() + getEntityYOffset(passenger), passenger.getZ());
-            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 1));
+            Vector3f pos = transformPos(new Vector3f(0, getPassengersRidingOffset() + getEntityYOffset(passenger), 1));
             moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else {
             if (hasLargeUpgrade) {
@@ -113,26 +112,26 @@ public class LargePlaneEntity extends PlaneEntity {
             }
             switch (index) {
                 case 1 -> {
-                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), 0));
+                    Vector3f pos = transformPos(new Vector3f(0, getPassengersRidingOffset() + getEntityYOffset(passenger), 0));
                     moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 2 -> {
-                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -1));
+                    Vector3f pos = transformPos(new Vector3f(0, getPassengersRidingOffset() + getEntityYOffset(passenger), -1));
                     moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
                 case 3 -> {
-                    Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + getEntityYOffset(passenger)), -1.8f));
+                    Vector3f pos = transformPos(new Vector3f(0, getPassengersRidingOffset() + getEntityYOffset(passenger), -1.8f));
                     moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
                 }
             }
         }
     }
 
-    public double getEntityYOffset(Entity passenger) {
+    public float getEntityYOffset(Entity passenger) {
         if (passenger instanceof Villager) {
-            return ((Villager) passenger).isBaby() ? -0.1 : -0.3D;
+            return ((Villager) passenger).isBaby() ? -0.1f : -0.3f;
         }
-        return passenger.getMyRidingOffset();
+        return -0.4f;
     }
 
     @Override
@@ -163,10 +162,10 @@ public class LargePlaneEntity extends PlaneEntity {
             if (upgrade.canBeDroppedAsPayload()) {
                 upgrade.dropAsPayload();
                 if (upgrade.removed) {
-                    upgrades.remove(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType()));
+                    upgrades.remove(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()));
                 }
                 if (level().isClientSide) {
-                    SimplePlanesNetworking.INSTANCE.sendToServer(new DropPayloadPacket());
+                    PacketDistributor.sendToServer(new DropPayloadPacket());
                 }
                 break;
             }

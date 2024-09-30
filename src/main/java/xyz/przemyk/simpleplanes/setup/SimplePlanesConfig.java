@@ -1,25 +1,25 @@
 package xyz.przemyk.simpleplanes.setup;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class SimplePlanesConfig {
 
-    public static ForgeConfigSpec.BooleanValue THIEF;
-    public static ForgeConfigSpec.IntValue TURN_THRESHOLD;
-    public static ForgeConfigSpec.IntValue PLANE_FUEL_COST;
-    public static ForgeConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
-    public static ForgeConfigSpec.IntValue CARGO_PLANE_FUEL_COST;
-    public static ForgeConfigSpec.IntValue HELICOPTER_FUEL_COST;
-    public static ForgeConfigSpec.IntValue LIQUID_ENGINE_CAPACITY;
-    public static ForgeConfigSpec.DoubleValue PLANE_CAMERA_DISTANCE_MULTIPLIER;
-    public static ForgeConfigSpec.DoubleValue LARGE_PLANE_CAMERA_DISTANCE_MULTIPLIER;
-    public static ForgeConfigSpec.DoubleValue CARGO_PLANE_CAMERA_DISTANCE_MULTIPLIER;
-    public static ForgeConfigSpec.DoubleValue HELI_CAMERA_DISTANCE_MULTIPLIER;
+    public static ModConfigSpec.BooleanValue THIEF;
+    public static ModConfigSpec.IntValue TURN_THRESHOLD;
+    public static ModConfigSpec.IntValue PLANE_FUEL_COST;
+    public static ModConfigSpec.IntValue LARGE_PLANE_FUEL_COST;
+    public static ModConfigSpec.IntValue CARGO_PLANE_FUEL_COST;
+    public static ModConfigSpec.IntValue HELICOPTER_FUEL_COST;
+    public static ModConfigSpec.IntValue LIQUID_ENGINE_CAPACITY;
+    public static ModConfigSpec.DoubleValue PLANE_CAMERA_DISTANCE_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue LARGE_PLANE_CAMERA_DISTANCE_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue CARGO_PLANE_CAMERA_DISTANCE_MULTIPLIER;
+    public static ModConfigSpec.DoubleValue HELI_CAMERA_DISTANCE_MULTIPLIER;
 
-    public static void init() {
-        ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+    public static void init(ModContainer modContainer) {
+        ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 
         COMMON_BUILDER.comment("Planes settings").push("general");
 
@@ -46,9 +46,9 @@ public class SimplePlanesConfig {
                 .defineInRange("liquid_engine_capacity", 4000, 1, Integer.MAX_VALUE);
 
         COMMON_BUILDER.pop();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
+        modContainer.registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
 
-        ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+        ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
         CLIENT_BUILDER.comment("Planes client settings").push("general_client");
         PLANE_CAMERA_DISTANCE_MULTIPLIER = CLIENT_BUILDER
                 .comment("Third person camera zoom on a plane").defineInRange("plane_camera_distance_multiplier", 1.0, 1.0, 2.0);
@@ -59,6 +59,6 @@ public class SimplePlanesConfig {
         HELI_CAMERA_DISTANCE_MULTIPLIER = CLIENT_BUILDER
                 .comment("Third person camera zoom on a helicopter").defineInRange("heli_camera_distance_multiplier", 1.2, 1.0, 2.0);
         CLIENT_BUILDER.pop();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
+        modContainer.registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
     }
 }

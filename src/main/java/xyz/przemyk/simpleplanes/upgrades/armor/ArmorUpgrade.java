@@ -6,15 +6,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraftforge.registries.ForgeRegistries;
 import xyz.przemyk.simpleplanes.client.render.UpgradesModels;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesEntities;
@@ -32,15 +30,9 @@ public class ArmorUpgrade extends Upgrade {
 
     @Override
     public void onApply(ItemStack itemStack) {
-        ListTag listtag = itemStack.getEnchantmentTags();
-
-        for(int i = 0; i < listtag.size(); ++i) {
-            CompoundTag compoundtag = listtag.getCompound(i);
-            Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(EnchantmentHelper.getEnchantmentId(compoundtag));
-            if (enchantment == Enchantments.ALL_DAMAGE_PROTECTION) {
-                protectionLevel = EnchantmentHelper.getEnchantmentLevel(compoundtag);
-            }
-        }
+        planeEntity.level().registryAccess().registry(Registries.ENCHANTMENT).flatMap(registry -> registry.getHolder(Enchantments.PROTECTION)).ifPresent(enchant -> {
+            protectionLevel = itemStack.getEnchantmentLevel(enchant);
+        });
     }
 
     @Override
@@ -48,30 +40,30 @@ public class ArmorUpgrade extends Upgrade {
         EntityType<?> entityType = planeEntity.getType();
         UpgradesModels.ModelEntry modelEntry = UpgradesModels.MODEL_ENTRIES.get(getType());
         if (entityType == SimplePlanesEntities.PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.normalTexture()), false, protectionLevel > 0);
-            modelEntry.normal().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.normalTexture()), protectionLevel > 0);
+            modelEntry.normal().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
-            vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.itemEntityTranslucentCull(modelEntry.normalTexture()), false, false);
-            UpgradesModels.ARMOR_WINDOW.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.itemEntityTranslucentCull(modelEntry.normalTexture()), false);
+            UpgradesModels.ARMOR_WINDOW.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         } else if (entityType == SimplePlanesEntities.LARGE_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.largeTexture()), false, protectionLevel > 0);
-            modelEntry.large().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.largeTexture()), protectionLevel > 0);
+            modelEntry.large().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         } else if (entityType == SimplePlanesEntities.CARGO_PLANE.get()) {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.cargoTexture()), false, protectionLevel > 0);
-            modelEntry.cargo().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.cargoTexture()), protectionLevel > 0);
+            modelEntry.cargo().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         } else {
-            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.heliTexture()), false, protectionLevel > 0);
-            modelEntry.heli().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            VertexConsumer vertexconsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(modelEntry.heliTexture()), protectionLevel > 0);
+            modelEntry.heli().renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
+    public void writePacket(RegistryFriendlyByteBuf buffer) {
         buffer.writeByte(protectionLevel);
     }
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
+    public void readPacket(RegistryFriendlyByteBuf buffer) {
         protectionLevel = buffer.readByte();
     }
 
@@ -79,7 +71,9 @@ public class ArmorUpgrade extends Upgrade {
     public ItemStack getItemStack() {
         ItemStack itemStack = SimplePlanesItems.ARMOR.get().getDefaultInstance();
         if (protectionLevel > 0) {
-            itemStack.enchant(Enchantments.ALL_DAMAGE_PROTECTION, protectionLevel);
+            planeEntity.level().registryAccess().registry(Registries.ENCHANTMENT).flatMap(registry -> registry.getHolder(Enchantments.PROTECTION)).ifPresent(enchant -> {
+                itemStack.enchant(enchant, protectionLevel);
+            });
         }
         return itemStack;
     }
@@ -93,7 +87,7 @@ public class ArmorUpgrade extends Upgrade {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putByte("protection", (byte) protectionLevel);
         return compoundTag;

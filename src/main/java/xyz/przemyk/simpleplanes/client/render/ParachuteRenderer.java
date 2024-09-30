@@ -10,13 +10,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import xyz.przemyk.simpleplanes.client.render.models.ParachuteModel;
 import xyz.przemyk.simpleplanes.entities.ParachuteEntity;
 
 public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/block/white_wool.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/block/white_wool.png");
 
     private final ParachuteModel parachuteModel;
 
@@ -48,7 +48,7 @@ public class ParachuteRenderer extends EntityRenderer<ParachuteEntity> {
         }
 
         VertexConsumer vertexConsumer = buffer.getBuffer(parachuteModel.renderType(getTextureLocation(parachuteEntity)));
-        parachuteModel.renderToBuffer(poseStack, vertexConsumer, packetLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+        parachuteModel.renderToBuffer(poseStack, vertexConsumer, packetLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(parachuteEntity, entityYaw, partialTicks, poseStack, buffer, packetLight);
     }

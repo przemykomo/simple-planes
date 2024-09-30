@@ -1,15 +1,15 @@
 package xyz.przemyk.simpleplanes.entities;
 
 import com.mojang.math.Axis;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -40,14 +40,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.capabilities.BaseCapability;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.connection.ConnectionType;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
@@ -56,10 +54,7 @@ import xyz.przemyk.simpleplanes.container.ModifyUpgradesContainer;
 import xyz.przemyk.simpleplanes.container.PlaneInventoryContainer;
 import xyz.przemyk.simpleplanes.misc.MathUtil;
 import xyz.przemyk.simpleplanes.network.*;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesConfig;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesRegistries;
-import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
+import xyz.przemyk.simpleplanes.setup.*;
 import xyz.przemyk.simpleplanes.upgrades.LargeUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.Upgrade;
 import xyz.przemyk.simpleplanes.upgrades.UpgradeType;
@@ -68,7 +63,6 @@ import xyz.przemyk.simpleplanes.upgrades.booster.BoosterUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.engines.EngineUpgrade;
 import xyz.przemyk.simpleplanes.upgrades.shooter.ShooterUpgrade;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -76,7 +70,7 @@ import static net.minecraft.util.Mth.wrapDegrees;
 import static xyz.przemyk.simpleplanes.misc.MathUtil.*;
 
 @SuppressWarnings({"deprecation"})
-public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
+public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     public static final EntityDataAccessor<Integer> MAX_HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> HEALTH = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> MAX_SPEED = SynchedEntityData.defineId(PlaneEntity.class, EntityDataSerializers.FLOAT);
@@ -118,7 +112,6 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public PlaneEntity(EntityType<? extends PlaneEntity> entityTypeIn, Level worldIn, Block material) {
         super(entityTypeIn, worldIn);
         networkUpdateInterval = entityTypeIn.updateInterval();
-        setMaxUpStep(0.9999f);
         setMaterial(material);
         setMaxSpeed(1f);
     }
@@ -129,17 +122,17 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(MAX_HEALTH, 10);
-        entityData.define(HEALTH, 10);
-        entityData.define(Q, new Quaternionf());
-        entityData.define(MAX_SPEED, 0.25f);
-        entityData.define(MATERIAL, ForgeRegistries.BLOCKS.getKey(Blocks.OAK_PLANKS).toString());
-        entityData.define(TIME_SINCE_HIT, 0);
-        entityData.define(DAMAGE_TAKEN, 0f);
-        entityData.define(THROTTLE, 0);
-        entityData.define(PITCH_UP, (byte) 0);
-        entityData.define(YAW_RIGHT, (byte) 0);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        pBuilder.define(MAX_HEALTH, 10);
+        pBuilder.define(HEALTH, 10);
+        pBuilder.define(Q, new Quaternionf());
+        pBuilder.define(MAX_SPEED, 0.25f);
+        pBuilder.define(MATERIAL, BuiltInRegistries.BLOCK.getKey(Blocks.OAK_PLANKS).toString());
+        pBuilder.define(TIME_SINCE_HIT, 0);
+        pBuilder.define(DAMAGE_TAKEN, 0f);
+        pBuilder.define(THROTTLE, 0);
+        pBuilder.define(PITCH_UP, (byte) 0);
+        pBuilder.define(YAW_RIGHT, (byte) 0);
     }
 
     public float getMaxSpeed() {
@@ -197,16 +190,16 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     public void setMaterial(String material) {
         entityData.set(MATERIAL, material);
-        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(material));
+        Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(material));
         planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
     }
 
     public void setMaterial(Block material) {
-        entityData.set(MATERIAL, ForgeRegistries.BLOCKS.getKey(material).toString());
+        entityData.set(MATERIAL, BuiltInRegistries.BLOCK.getKey(material).toString());
         planksMaterial = material;
     }
 
-    public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(SimplePlanesMod.MODID, "blacklisted_dimensions"));
+    public static final TagKey<DimensionType> BLACKLISTED_DIMENSIONS_TAG = TagKey.create(Registries.DIMENSION_TYPE, ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "blacklisted_dimensions"));
 
     public boolean isPowered() {
         return isAlive() && !level().dimensionTypeRegistration().is(BLACKLISTED_DIMENSIONS_TAG) && (isCreative() || (engineUpgrade != null && engineUpgrade.isPowered()));
@@ -215,7 +208,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     @Override
     protected boolean canAddPassenger(Entity passenger) {
         List<Entity> passengers = getPassengers();
-        if (!upgrades.containsKey(SimplePlanesUpgrades.SEATS.getId())) {
+        if (!upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.SEATS.get()))) {
             return passengers.isEmpty();
         } else {
             return passengers.size() < 3;
@@ -241,7 +234,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         if (itemStack.getItem() == SimplePlanesItems.WRENCH.get()) {
             if (!level().isClientSide) {
-                NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, inv, p) -> new ModifyUpgradesContainer(id, player.getInventory(), getId()), Component.empty()), buf -> buf.writeVarInt(getId()));
+                player.openMenu(new SimpleMenuProvider((id, inv, p) -> new ModifyUpgradesContainer(id, player.getInventory(), getId()),
+                    Component.empty()), buf -> buf.writeVarInt(getId()));
                 return InteractionResult.CONSUME;
             }
             return InteractionResult.SUCCESS;
@@ -276,24 +270,26 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             itemStack.shrink(1);
         }
         UpgradeType upgradeType = upgrade.getType();
-        upgrades.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), upgrade);
+        upgrades.put(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), upgrade);
         if (upgradeType.isEngine) {
             engineUpgrade = (EngineUpgrade) upgrade;
         }
         if (!level().isClientSide) {
-            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), (ServerLevel) level(), true));
+            PacketDistributor.sendToPlayersTrackingEntity(this,
+                new UpdateUpgradePacket(true, SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), getId(), (ServerLevel) level()));
         }
     }
 
-    public void addUpgradeInWorkbench(ItemStack itemStack, Upgrade upgrade) {
+    public void addUpgradeUsingWrench(ItemStack itemStack, Upgrade upgrade) {
         upgrade.onApply(itemStack);
         UpgradeType upgradeType = upgrade.getType();
-        upgrades.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), upgrade);
+        upgrades.put(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), upgrade);
         if (upgradeType.isEngine) {
             engineUpgrade = (EngineUpgrade) upgrade;
         }
         if (!level().isClientSide) {
-            SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType), getId(), (ServerLevel) level(), true));
+            PacketDistributor.sendToPlayersTrackingEntity(this,
+                new UpdateUpgradePacket(true, SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType), getId(), (ServerLevel) level()));
         }
     }
 
@@ -301,7 +297,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     public boolean hurt(DamageSource source, float amount) {
         Entity entity = source.getDirectEntity();
         if (entity == getControllingPassenger() && entity instanceof Player player) {
-            if (upgrades.get(SimplePlanesUpgrades.SHOOTER.getId()) instanceof ShooterUpgrade shooterUpgrade) {
+            if (upgrades.get(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.SHOOTER.get())) instanceof ShooterUpgrade shooterUpgrade) {
                 shooterUpgrade.use(player);
             }
             return false;
@@ -310,7 +306,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (getOnGround() && entity instanceof Player) {
             amount *= 3;
         } else {
-            Upgrade upgrade = upgrades.get(SimplePlanesUpgrades.ARMOR.getId());
+            Upgrade upgrade = upgrades.get(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.ARMOR.get()));
             if (upgrade instanceof ArmorUpgrade armorUpgrade) {
                 amount = armorUpgrade.getReducedDamage(amount);
             }
@@ -381,7 +377,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             propellerRotationOld = propellerRotationNew;
             if (isPowered()) {
                 int throttle = getThrottle();
-                propellerRotationNew += throttle * 0.1;
+                propellerRotationNew += (float) (throttle * 0.1);
             }
         }
 
@@ -511,7 +507,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (level().isClientSide && isControlledByLocalInstance()) {
             setQ_Client(q);
 
-            SimplePlanesNetworking.INSTANCE.sendToServer(new RotationPacket(getQ()));
+            PacketDistributor.sendToServer(new RotationPacket(getQ()));
         } else {
             ServerPlayer player = (ServerPlayer) getPlayer();
             if (player != null) {
@@ -556,7 +552,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             if (tickCount % networkUpdateInterval == 0) {
                 upgrades.forEach((rl, upgrade) -> {
                     if (upgrade.updateClient) {
-                        SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new UpdateUpgradePacket(rl, getId(), (ServerLevel) level()));
+                        PacketDistributor.sendToPlayersTrackingEntity(this,
+                            new UpdateUpgradePacket(false, rl, getId(), (ServerLevel) level()));
                         upgrade.updateClient = false;
                     }
                 });
@@ -587,7 +584,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         int diff = 3;
 
         deltaRotationTicks = Math.min(10, Math.max((int) Math.abs(deltaRotationLeft) * 5, deltaRotationTicks));
-        deltaRotationLeft *= 0.7;
+        deltaRotationLeft *= 0.7F;
         deltaRotationLeft += d;
         deltaRotationLeft = wrapDegrees(deltaRotationLeft);
         deltaRotation = Math.min(Math.abs(deltaRotationLeft), diff) * Math.signum(deltaRotationLeft);
@@ -872,8 +869,8 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     private void deserializeUpgrades(CompoundTag upgradesNBT) {
         for (String key : upgradesNBT.getAllKeys()) {
-            ResourceLocation resourceLocation = new ResourceLocation(key);
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(resourceLocation);
+            ResourceLocation resourceLocation = ResourceLocation.parse(key);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(resourceLocation);
             if (upgradeType != null) {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
                 upgrade.deserializeNBT(upgradesNBT.getCompound(key));
@@ -897,7 +894,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     private CompoundTag getUpgradesNBT() {
         CompoundTag upgradesNBT = new CompoundTag();
         for (Upgrade upgrade : upgrades.values()) {
-            upgradesNBT.put(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType()).toString(), upgrade.serializeNBT());
+            upgradesNBT.put(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType()).toString(), upgrade.serializeNBT());
         }
         return upgradesNBT;
     }
@@ -909,11 +906,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public boolean canBeRiddenUnderFluidType(FluidType type, Entity rider) {
-        if (type == ForgeMod.EMPTY_TYPE.get()) {
+        if (type == NeoForgeMod.EMPTY_TYPE.value()) {
             return true;
         }
 
-        return type == ForgeMod.WATER_TYPE.get() && upgrades.containsKey(SimplePlanesUpgrades.FLOATY_BEDDING.getId());
+        return type == NeoForgeMod.WATER_TYPE.value()
+            && upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.FLOATY_BEDDING.get()));
     }
 
     @Override
@@ -922,15 +920,10 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
-
-    @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
         if (MATERIAL.equals(key) && level().isClientSide()) {
-            Block block = ForgeRegistries.BLOCKS.getValue((new ResourceLocation(entityData.get(MATERIAL))));
+            Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(entityData.get(MATERIAL)));
             planksMaterial = block == null ? Blocks.OAK_PLANKS : block;
         } else if (Q.equals(key) && level().isClientSide() && !isControlledByLocalInstance()) {
             if (firstTick) {
@@ -943,12 +936,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         }
     }
 
-    @Override
-    public double getPassengersRidingOffset() {
-        return 0.5;
+//    @Override
+    public float getPassengersRidingOffset() {
+        return 0.5f;
     }
 
-    public static final TagKey<Block> FIREPROOF_MATERIALS_TAG = BlockTags.create(new ResourceLocation(SimplePlanesMod.MODID, "fireproof_materials"));
+    public static final TagKey<Block> FIREPROOF_MATERIALS_TAG = BlockTags.create(
+        ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "fireproof_materials"));
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
@@ -1026,7 +1020,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         if (upgradeType.isEngine && engineUpgrade != null) {
             return false;
         }
-        return !upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType));
+        return !upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType));
     }
 
     @Override
@@ -1035,13 +1029,13 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
 
         int index = getPassengers().indexOf(passenger);
         if (index == 0) {
-            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), 0));
+            Vector3f pos = transformPos(new Vector3f(0, (float) (getPassengersRidingOffset()), 0));
             moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else if (index == 1) {
-            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1.3f));
+            Vector3f pos = transformPos(new Vector3f(-1, (float) (getPassengersRidingOffset()), -1.3f));
             moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         } else if (index == 2) {
-            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset() + passenger.getMyRidingOffset()), -1.3f));
+            Vector3f pos = transformPos(new Vector3f(1, (float) (getPassengersRidingOffset()), -1.3f));
             moveFunction.accept(passenger, getX() + pos.x(), getY() + pos.y(), getZ() + pos.z());
         }
     }
@@ -1068,7 +1062,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     //on dismount
     @Override
     public Vec3 getDismountLocationForPassenger(LivingEntity livingEntity) {
-        if (upgrades.containsKey(SimplePlanesUpgrades.FOLDING.getId())) {
+        if (upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.FOLDING.get()))) {
             if (livingEntity instanceof Player player) {
 
                 if (!player.isCreative() && getPassengers().isEmpty() && isAlive()) {
@@ -1098,7 +1092,7 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         addAdditionalSaveData(compound);
         compound.putInt("health", entityData.get(MAX_HEALTH));
         compound.putBoolean("Used", true);
-        itemStack.addTagElement("EntityTag", compound);
+        itemStack.set(SimplePlanesComponents.ENTITY_TAG, compound);
         return itemStack;
     }
 
@@ -1215,14 +1209,12 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     public void writeUpdateUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf buffer) {
-        buffer.writeVarInt(getId());
-        buffer.writeResourceLocation(upgradeID);
-        upgrades.get(upgradeID).writePacket(buffer);
+        upgrades.get(upgradeID).writePacket(new RegistryFriendlyByteBuf(buffer, level().registryAccess(), ConnectionType.NEOFORGE));
     }
 
-    public void readUpdateUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf buffer, boolean newUpgrade) {
+    public void readUpdateUpgradePacket(ResourceLocation upgradeID, ByteBuf buffer, boolean newUpgrade) {
         if (newUpgrade) {
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
             if (upgradeType.isEngine) {
@@ -1230,40 +1222,36 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             }
         }
 
-        upgrades.get(upgradeID).readPacket(buffer);
+        upgrades.get(upgradeID).readPacket(new RegistryFriendlyByteBuf(buffer, registryAccess(), ConnectionType.NEOFORGE));
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (upgrades != null) {
-            for (Upgrade upgrade : upgrades.values()) {
-                LazyOptional<T> lazyOptional = upgrade.getCapability(cap, side);
-                if (lazyOptional.isPresent()) {
-                    return lazyOptional;
-                }
+    public <T> T getCap(BaseCapability<T, ?> cap) {
+        for (Upgrade upgrade : upgrades.values()) {
+            T instance = upgrade.getCap(cap);
+            if (instance != null) {
+                return instance;
             }
         }
-        return super.getCapability(cap, side);
+        return null;
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf buffer) {
+    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
         Collection<Upgrade> upgrades = this.upgrades.values();
         buffer.writeVarInt(upgrades.size());
         for (Upgrade upgrade : upgrades) {
-            ResourceLocation upgradeID = SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgrade.getType());
+            ResourceLocation upgradeID = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgrade.getType());
             buffer.writeResourceLocation(upgradeID);
             upgrade.writePacket(buffer);
         }
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf additionalData) {
+    public void readSpawnData(RegistryFriendlyByteBuf additionalData) {
         int upgradesSize = additionalData.readVarInt();
         for (int i = 0; i < upgradesSize; i++) {
             ResourceLocation upgradeID = additionalData.readResourceLocation();
-            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPES.get().getValue(upgradeID);
+            UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
             Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
             upgrades.put(upgradeID, upgrade);
             if (upgradeType.isEngine) {
@@ -1280,17 +1268,19 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
             upgrade.remove();
 
             if (!level().isClientSide) {
-                SimplePlanesNetworking.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new SUpgradeRemovedPacket(upgradeID, getId()));
+                PacketDistributor.sendToPlayersTrackingEntity(this, new SUpgradeRemovedPacket(upgradeID, getId()));
             }
         }
     }
 
     private static final TempMotionVars TEMP_MOTION_VARS = new TempMotionVars();
 
-    public void changeThrottle(ChangeThrottlePacket.Type type) {
+    public void changeThrottle(ChangeThrottlePacket.Direction type) {
         int throttle = getThrottle();
-        if (type == ChangeThrottlePacket.Type.UP) {
-            if (throttle < MAX_THROTTLE || (upgrades.containsKey(SimplePlanesUpgrades.BOOSTER.getId()) && throttle < BoosterUpgrade.MAX_THROTTLE)) {
+        if (type == ChangeThrottlePacket.Direction.UP) {
+            if (throttle < MAX_THROTTLE
+                ||(upgrades.containsKey(SimplePlanesRegistries.UPGRADE_TYPE.getKey(SimplePlanesUpgrades.BOOSTER.get()))
+                && throttle < BoosterUpgrade.MAX_THROTTLE)) {
                 setThrottle(throttle + 1);
             }
         } else if (throttle > 0) {
@@ -1322,14 +1312,14 @@ public class PlaneEntity extends Entity implements IEntityAdditionalSpawnData {
         entityData.set(YAW_RIGHT, yawRight);
     }
 
-    public void openContainer(ServerPlayer player, int containerID) {
+    public void openContainer(Player player, int containerID) {
         if (containerID == 0) {
-            NetworkHooks.openScreen(player, new SimpleMenuProvider((id, inventory, playerIn) ->
+            player.openMenu(new SimpleMenuProvider((id, inventory, playerIn) ->
                     new PlaneInventoryContainer(id, inventory, this), getName()), buffer -> buffer.writeVarInt(getId()));
         } else {
             int id = 0;
             for (Upgrade upgrade : upgrades.values()) {
-                if (upgrade instanceof LargeUpgrade largeUpgrade && largeUpgrade.hasStorage()) { //TODO: move it out of LargeUpgrade?
+                if (upgrade instanceof LargeUpgrade largeUpgrade && largeUpgrade.hasStorage()) {
                     id++;
                     if (containerID == id) {
                         largeUpgrade.openStorageGui(player, id);

@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgradesContainer> {
 
-    public static final ResourceLocation GUI = new ResourceLocation(SimplePlanesMod.MODID, "textures/gui/modify_upgrades.png");
+    public static final ResourceLocation GUI = ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "textures/gui/modify_upgrades.png");
     public static final Component UPGRADES_TOOLTIP = Component.translatable(SimplePlanesMod.MODID + ".add_upgrades");
     public static final Component CARGO_TOOLTIP = Component.translatable(SimplePlanesMod.MODID + ".add_cargo");
 
@@ -33,7 +33,7 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(guiGraphics);
+        renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
@@ -76,7 +76,7 @@ public class ModifyUpgradesScreen extends AbstractContainerScreen<ModifyUpgrades
     public static void renderEntityInInventory(GuiGraphics guiGraphics, int x, int y, int scale, Quaternionf quaternionf, @Nullable Quaternionf quaternionf1, Entity entity) {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(x, y, 50.0D);
-        guiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
+        guiGraphics.pose().mulPose((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
         guiGraphics.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();

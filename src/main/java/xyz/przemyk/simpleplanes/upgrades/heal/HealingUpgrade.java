@@ -2,9 +2,10 @@ package xyz.przemyk.simpleplanes.upgrades.heal;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesItems;
 import xyz.przemyk.simpleplanes.setup.SimplePlanesUpgrades;
@@ -19,7 +20,7 @@ public class HealingUpgrade extends Upgrade {
     private int cooldown = 10;
 
     @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putInt("cooldown", cooldown);
         return compoundNBT;
@@ -54,10 +55,10 @@ public class HealingUpgrade extends Upgrade {
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {}
+    public void writePacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {}
+    public void readPacket(RegistryFriendlyByteBuf buffer) {}
 
     @Override
     public ItemStack getItemStack() {

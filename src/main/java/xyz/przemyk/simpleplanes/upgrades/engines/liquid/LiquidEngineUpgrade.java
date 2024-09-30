@@ -1,24 +1,21 @@
 package xyz.przemyk.simpleplanes.upgrades.engines.liquid;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.capabilities.BaseCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.client.ClientUtil;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
@@ -35,9 +32,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(2);
     public final FluidTank fluidTank = new FluidTank(SimplePlanesConfig.LIQUID_ENGINE_CAPACITY.get(), fluidStack ->
-            PlaneLiquidFuelReloadListener.fuelMap.containsKey(fluidStack.getFluid().getFluidType()));
-    public final LazyOptional<ItemStackHandler> itemHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
-    public final LazyOptional<FluidTank> fluidTankLazyOptional = LazyOptional.of(() -> fluidTank);
+            PlaneLiquidFuelReloadListener.fuelMap.containsKey(fluidStack.getFluid()));
 
     public int burnTime;
 
@@ -52,7 +47,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
                 burnTime -= planeEntity.getFuelCost();
                 updateClient();
             } else if (planeEntity.getThrottle() > 0 && !fluidTank.isEmpty()) {
-                burnTime = PlaneLiquidFuelReloadListener.fuelMap.getOrDefault(fluidTank.getFluid().getFluid().getFluidType(), 0);
+                burnTime = PlaneLiquidFuelReloadListener.fuelMap.getOrDefault(fluidTank.getFluid().getFluid(), 0);
                 if (burnTime > 0) {
                     fluidTank.drain(1, IFluidHandler.FluidAction.EXECUTE);
                     updateClient();
@@ -61,17 +56,18 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
 
             if (itemStackHandler.getStackInSlot(1).isEmpty()) {
                 ItemStack itemStack = itemStackHandler.getStackInSlot(0);
-                itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(fluidHandlerItem -> {
-                    FluidStack itemFluidStack = fluidHandlerItem.getFluidInTank(0);
+                IFluidHandler fluidHandler = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
+                if (fluidHandler != null) {
+                    FluidStack itemFluidStack = fluidHandler.getFluidInTank(0);
                     if (itemFluidStack.isEmpty()) {
-                        fluidTank.drain(fluidHandlerItem.fill(fluidTank.drain(fluidHandlerItem.getTankCapacity(0), IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                        fluidTank.drain(fluidHandler.fill(fluidTank.drain(fluidHandler.getTankCapacity(0), IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
                     } else {
-                        fluidHandlerItem.drain(fluidTank.fill(fluidHandlerItem.drain(fluidTank.getSpace(), IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+                        fluidHandler.drain(fluidTank.fill(fluidHandler.drain(fluidTank.getSpace(), IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
                     }
                     itemStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                    itemStackHandler.setStackInSlot(1, fluidHandlerItem.getContainer());
+                    itemStackHandler.setStackInSlot(1, itemStack.getCraftingRemainingItem());
                     updateClient();
-                });
+                }
             }
         }
     }
@@ -93,52 +89,41 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     }
 
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        itemHandlerLazyOptional.invalidate();
-        fluidTankLazyOptional.invalidate();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         CompoundTag compoundTag = new CompoundTag();
-        compoundTag.put("items", itemStackHandler.serializeNBT());
-        compoundTag.put("fluid", fluidTank.writeToNBT(new CompoundTag()));
+        compoundTag.put("items", itemStackHandler.serializeNBT(planeEntity.registryAccess()));
+        compoundTag.put("fluid", fluidTank.writeToNBT(planeEntity.registryAccess(), new CompoundTag()));
         compoundTag.putInt("burnTime", burnTime);
         return compoundTag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        itemStackHandler.deserializeNBT(nbt.getCompound("items"));
-        fluidTank.readFromNBT(nbt.getCompound("fluid"));
+        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), nbt.getCompound("items"));
+        fluidTank.readFromNBT(planeEntity.registryAccess(), nbt.getCompound("fluid"));
         burnTime = nbt.getInt("burnTime");
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
-//        buffer.writeItem(itemStackHandler.getStackInSlot(0));
-//        buffer.writeItem(itemStackHandler.getStackInSlot(1));
-        buffer.writeFluidStack(fluidTank.getFluid());
+    public void writePacket(RegistryFriendlyByteBuf buffer) {
+        FluidStack.OPTIONAL_STREAM_CODEC.encode(buffer, fluidTank.getFluid());
         buffer.writeVarInt(burnTime);
     }
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
-//        itemStackHandler.setStackInSlot(0, buffer.readItem());
-//        itemStackHandler.setStackInSlot(1, buffer.readItem());
-        fluidTank.setFluid(buffer.readFluidStack());
+    public void readPacket(RegistryFriendlyByteBuf buffer) {
+        fluidTank.setFluid(FluidStack.OPTIONAL_STREAM_CODEC.decode(buffer));
         burnTime = buffer.readVarInt();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return itemHandlerLazyOptional.cast();
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            return fluidTankLazyOptional.cast();
+    public <T> T getCap(BaseCapability<T, ?> cap) {
+        if (cap == Capabilities.FluidHandler.ENTITY) {
+            return (T) fluidTank;
         }
-        return super.getCapability(cap, side);
+
+        return super.getCap(cap);
     }
 
     @Override
@@ -156,7 +141,7 @@ public class LiquidEngineUpgrade extends EngineUpgrade {
     public void renderScreen(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, PlaneInventoryScreen planeInventoryScreen) {
         if (planeInventoryScreen.isHovering(153, 7 + 18 + 2, 16, 32, mouseX, mouseY)) {
             FluidStack fluidStack = fluidTank.getFluid();
-            guiGraphics.renderTooltip(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.fluid", fluidStack.getDisplayName(), fluidStack.getAmount()), mouseX, mouseY);
+            guiGraphics.renderTooltip(planeInventoryScreen.getMinecraft().font, Component.translatable(SimplePlanesMod.MODID + ".gui.fluid", fluidStack.getHoverName(), fluidStack.getAmount()), mouseX, mouseY);
         }
     }
 

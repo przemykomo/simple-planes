@@ -3,9 +3,9 @@ package xyz.przemyk.simpleplanes.upgrades.shooter;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -21,13 +21,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.neoforge.capabilities.BaseCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import org.joml.Vector3f;
 import xyz.przemyk.simpleplanes.client.gui.PlaneInventoryScreen;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
@@ -40,7 +37,6 @@ import java.util.function.Function;
 public class ShooterUpgrade extends Upgrade {
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler();
-    public final LazyOptional<ItemStackHandler> itemStackHandlerLazyOptional = LazyOptional.of(() -> itemStackHandler);
 
     public ShooterUpgrade(PlaneEntity planeEntity) {
         super(SimplePlanesUpgrades.SHOOTER.get(), planeEntity);
@@ -74,7 +70,7 @@ public class ShooterUpgrade extends Upgrade {
             double d4 = random.nextGaussian() * 0.05D;
             double d5 = random.nextGaussian() * 0.05D + 2 * motion.z;
             Fireball fireBallEntity = Util
-                .make(new SmallFireball(level, player, d3, d4, d5), (p_229425_1_) -> p_229425_1_.setItem(itemStack));
+                .make(new SmallFireball(level, player, new Vec3(d3, d4, d5)), (p_229425_1_) -> p_229425_1_.setItem(itemStack));
             fireBallEntity.setPos(x, y, z);
             fireBallEntity.setDeltaMovement(motion.scale(2));
             level.addFreshEntity(fireBallEntity);
@@ -82,7 +78,7 @@ public class ShooterUpgrade extends Upgrade {
                 itemStackHandler.extractItem(0, 1, false);
             }
         } else if (item instanceof ArrowItem arrowItem) {
-            AbstractArrow arrowEntity = arrowItem.createArrow(level, itemStack, player);
+            AbstractArrow arrowEntity = arrowItem.createArrow(level, itemStack, player, null);
 //            Arrow arrowEntity = new Arrow(level, x, y, z);
 //            arrowEntity.setOwner(player);
             arrowEntity.setDeltaMovement(motion.scale(Math.max(motion.length() * 1.5, 3) / motion.length()));
@@ -110,39 +106,35 @@ public class ShooterUpgrade extends Upgrade {
     }
 
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        itemStackHandlerLazyOptional.invalidate();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
+    public Tag serializeNBT() {
         CompoundTag compoundTag = new CompoundTag();
-        compoundTag.put("item", itemStackHandler.serializeNBT());
+        compoundTag.put("item", itemStackHandler.serializeNBT(planeEntity.registryAccess()));
         return compoundTag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag compoundTag) {
-        itemStackHandler.deserializeNBT(compoundTag.getCompound("item"));
+        itemStackHandler.deserializeNBT(planeEntity.registryAccess(), compoundTag.getCompound("item"));
     }
 
     @Override
-    public void writePacket(FriendlyByteBuf buffer) {
-        buffer.writeItem(itemStackHandler.getStackInSlot(0));
+    public void writePacket(RegistryFriendlyByteBuf buffer) {
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, itemStackHandler.getStackInSlot(0));
     }
 
     @Override
-    public void readPacket(FriendlyByteBuf buffer) {
-        itemStackHandler.setStackInSlot(0, buffer.readItem());
+    public void readPacket(RegistryFriendlyByteBuf buffer) {
+        itemStackHandler.setStackInSlot(0, ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return itemStackHandlerLazyOptional.cast();
+    public <T> T getCap(BaseCapability<T, ?> cap) {
+        if (cap == Capabilities.ItemHandler.ENTITY) {
+            return (T) itemStackHandler;
         }
-        return super.getCapability(cap, side);
+
+        return super.getCap(cap);
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import xyz.przemyk.simpleplanes.container.slots.PlaneCargoSlot;
 import xyz.przemyk.simpleplanes.container.slots.PlaneUpgradeSlot;
@@ -103,7 +103,7 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
     }
 
     public void itemsChanged(ItemStack previousStack, ItemStack newStack, int slot) {
-        if (planeEntity.level().isClientSide || internalItemsChange || ItemStack.isSameItemSameTags(previousStack, newStack)) {
+        if (planeEntity.level().isClientSide || internalItemsChange || ItemStack.isSameItemSameComponents(previousStack, newStack)) {
             return;
         }
 
@@ -121,10 +121,10 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
                     }
                 }
                 if (upgradeType != null) {
-                    ResourceLocation resourceLocation = SimplePlanesRegistries.UPGRADE_TYPES.get().getKey(upgradeType);
+                    ResourceLocation resourceLocation = SimplePlanesRegistries.UPGRADE_TYPE.getKey(upgradeType);
                     Upgrade upgrade = planeEntity.upgrades.get(resourceLocation);
                     if (upgrade != null) {
-                        if (ItemStack.isSameItemSameTags(previousStack, upgrade.getItemStack())) {
+                        if (ItemStack.isSameItemSameComponents(previousStack, upgrade.getItemStack())) {
                             ItemStack itemStack = ItemStack.EMPTY;
                             for (int i = 0; i < 6; i++) {
                                 if (i == slot) {
@@ -138,7 +138,7 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
                                 }
                             }
                             if (!itemStack.isEmpty()) {
-                                if (!ItemStack.isSameItemSameTags(previousStack, itemStack)) {
+                                if (!ItemStack.isSameItemSameComponents(previousStack, itemStack)) {
                                     planeEntity.removeUpgrade(resourceLocation);
                                     tryUpgradeFromItem(itemStack, success);
                                 }
@@ -208,12 +208,12 @@ public class ModifyUpgradesContainer extends AbstractContainerMenu {
         }
         if (upgradeType != null && planeEntity.canAddUpgrade(upgradeType)) {
             if (payloadEntry != null && !(planeEntity instanceof CargoPlaneEntity)) {
-                planeEntity.addUpgradeInWorkbench(newStack, new PayloadUpgrade(planeEntity, payloadEntry));
+                planeEntity.addUpgradeUsingWrench(newStack, new PayloadUpgrade(planeEntity, payloadEntry));
                 success.set(true);
             } else {
                 Upgrade upgrade = upgradeType.instanceSupplier.apply(planeEntity);
                 if (!(planeEntity instanceof CargoPlaneEntity && upgrade instanceof LargeUpgrade)) {
-                    planeEntity.addUpgradeInWorkbench(newStack, upgrade);
+                    planeEntity.addUpgradeUsingWrench(newStack, upgrade);
                     success.set(true);
                 }
             }

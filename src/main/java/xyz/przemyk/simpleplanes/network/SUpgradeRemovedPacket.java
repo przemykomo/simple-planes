@@ -1,40 +1,38 @@
 package xyz.przemyk.simpleplanes.network;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-import java.util.function.Supplier;
+public record SUpgradeRemovedPacket(ResourceLocation upgradeID, int planeEntityID) implements CustomPacketPayload {
 
-public class SUpgradeRemovedPacket {
+    public static final CustomPacketPayload.Type<SUpgradeRemovedPacket> TYPE =
+        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "upgrade_removed"));
 
-    private final ResourceLocation upgradeID;
-    private final int planeEntityID;
+    public static final StreamCodec<ByteBuf, SUpgradeRemovedPacket> STREAM_CODEC = StreamCodec.composite(
+        ResourceLocation.STREAM_CODEC,
+        SUpgradeRemovedPacket::upgradeID,
+        ByteBufCodecs.VAR_INT,
+        SUpgradeRemovedPacket::planeEntityID,
+        SUpgradeRemovedPacket::new
+    );
 
-    public SUpgradeRemovedPacket(ResourceLocation upgradeID, int planeEntityID) {
-        this.upgradeID = upgradeID;
-        this.planeEntityID = planeEntityID;
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public SUpgradeRemovedPacket(FriendlyByteBuf buffer) {
-        upgradeID = buffer.readResourceLocation();
-        planeEntityID = buffer.readVarInt();
-    }
-
-    public void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(upgradeID);
-        buffer.writeVarInt(planeEntityID);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctxSup) {
-        NetworkEvent.Context ctx = ctxSup.get();
-        ctx.enqueueWork(() -> {
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
             ClientLevel clientWorld = Minecraft.getInstance().level;
             ((PlaneEntity) clientWorld.getEntity(planeEntityID)).removeUpgrade(upgradeID);
         });
-        ctx.setPacketHandled(true);
     }
 }

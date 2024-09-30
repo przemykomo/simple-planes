@@ -27,7 +27,7 @@ public class ParachuteItem extends Item {
                 player.startRiding(parachuteEntity, true);
                 level.addFreshEntity(parachuteEntity);
             }
-            player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0f, 1.0f);
+            player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1.0f, 1.0f);
             player.awardStat(Stats.ITEM_USED.get(this));
             if (!player.getAbilities().instabuild) {
                 itemStack.shrink(1);
