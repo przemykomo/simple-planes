@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import xyz.przemyk.simpleplanes.SimplePlanesMod;
 import xyz.przemyk.simpleplanes.entities.PlaneEntity;
 
-public class DropPayloadPacket implements CustomPacketPayload {
+public record DropPayloadPacket() implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<DropPayloadPacket> TYPE =
         new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SimplePlanesMod.MODID, "drop_payload"));

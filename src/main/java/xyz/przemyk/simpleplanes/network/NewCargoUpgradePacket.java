@@ -19,7 +19,7 @@ public class NewCargoUpgradePacket implements CustomPacketPayload {
     private final ResourceLocation upgradeID;
     private final int planeEntityID;
     private Upgrade upgrade;
-    private FriendlyByteBuf buffer;
+    private ByteBuf buffer;
 
     public NewCargoUpgradePacket(ResourceLocation upgradeID, int planeEntityID) {
         this.upgradeID = upgradeID;
@@ -31,7 +31,7 @@ public class NewCargoUpgradePacket implements CustomPacketPayload {
         this.upgrade = upgrade;
     }
 
-    public NewCargoUpgradePacket(ResourceLocation upgradeID, int planeEntityID, FriendlyByteBuf buffer) {
+    public NewCargoUpgradePacket(ResourceLocation upgradeID, int planeEntityID, ByteBuf buffer) {
         this(upgradeID, planeEntityID);
         this.buffer = buffer;
     }
@@ -45,8 +45,10 @@ public class NewCargoUpgradePacket implements CustomPacketPayload {
             FriendlyByteBuf buffer = new FriendlyByteBuf(pBuffer);
             ResourceLocation upgradeID = buffer.readResourceLocation();
             int planeEntityID = buffer.readVarInt();
+            ByteBuf cloned = pBuffer.copy();
+            pBuffer.clear();
 
-            return new NewCargoUpgradePacket(upgradeID, planeEntityID, buffer);
+            return new NewCargoUpgradePacket(upgradeID, planeEntityID, cloned);
         }
 
         @Override

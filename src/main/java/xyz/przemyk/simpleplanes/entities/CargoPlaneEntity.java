@@ -1,8 +1,8 @@
 package xyz.przemyk.simpleplanes.entities;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -123,7 +123,7 @@ public class CargoPlaneEntity extends PlaneEntity {
             new NewCargoUpgradePacket(SimplePlanesRegistries.UPGRADE_TYPE.getKey(largeUpgrade.getType()), getId(), largeUpgrade));
     }
 
-    public void readNewCargoUpgradePacket(ResourceLocation upgradeID, FriendlyByteBuf packetBuffer) {
+    public void readNewCargoUpgradePacket(ResourceLocation upgradeID, ByteBuf packetBuffer) {
         UpgradeType upgradeType = SimplePlanesRegistries.UPGRADE_TYPE.get(upgradeID);
         Upgrade upgrade = upgradeType.instanceSupplier.apply(this);
         if (upgrade instanceof LargeUpgrade largeUpgrade) {

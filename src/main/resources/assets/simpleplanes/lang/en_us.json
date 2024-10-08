@@ -98,6 +98,7 @@
     "entity.simpleplanes.plane": "Plane",
     "entity.simpleplanes.large_plane": "Large Plane",
     "entity.simpleplanes.helicopter": "Helicopter",
+    "entity.simpleplanes.cargo_plane": "Cargo Plane",
     "entity.simpleplanes.parachute": "Parachute",
 
     "simpleplanes.gui.energy": "Energy: %s FE",
