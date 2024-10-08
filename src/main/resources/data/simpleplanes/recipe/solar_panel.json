@@ -7,13 +7,13 @@
     ],
     "key": {
         "Q": {
-            "tag": "forge:gems/quartz"
+            "tag": "c:gems/quartz"
         },
         "G": {
-            "tag": "forge:glass/colorless"
+            "tag": "c:glass_blocks/colorless"
         },
         "W": {
-            "tag": "forge:gems/lapis"
+            "tag": "c:gems/lapis"
         },
         "D": {
             "item": "minecraft:daylight_detector"

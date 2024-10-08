@@ -10,7 +10,7 @@
             "tag": "minecraft:wool"
         },
         "s": {
-            "tag": "forge:string"
+            "tag": "c:strings"
         }
     },
     "result": {

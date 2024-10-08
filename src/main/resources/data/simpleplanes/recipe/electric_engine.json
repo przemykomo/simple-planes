@@ -7,16 +7,16 @@
     ],
     "key": {
         "#": {
-            "tag": "forge:ingots/copper"
+            "tag": "c:ingots/copper"
         },
         "/": {
-            "tag": "forge:rods/blaze"
+            "tag": "c:rods/blaze"
         },
         "G": {
             "item": "simpleplanes:propeller"
         },
         "R": {
-            "tag": "forge:storage_blocks/redstone"
+            "tag": "c:storage_blocks/redstone"
         }
     },
     "result": {

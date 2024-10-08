@@ -7,13 +7,13 @@
     ],
     "key": {
         "i": {
-            "tag": "forge:ingots/iron"
+            "tag": "c:ingots/iron"
         },
         "R": {
             "item": "simpleplanes:propeller"
         },
         "Y": {
-            "tag": "forge:dusts/redstone"
+            "tag": "c:dusts/redstone"
         },
         "B": {
             "item": "minecraft:blast_furnace"

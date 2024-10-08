@@ -10,7 +10,7 @@
             "item": "minecraft:shulker_shell"
         },
         "d": {
-            "tag": "forge:gems/diamond"
+            "tag": "c:gems/diamond"
         },
         "p": {
             "item": "minecraft:piston"

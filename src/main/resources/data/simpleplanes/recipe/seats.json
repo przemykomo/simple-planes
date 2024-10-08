@@ -6,7 +6,7 @@
     ],
     "key": {
         "S": {
-            "tag": "forge:slimeballs"
+            "tag": "c:slimeballs"
         },
         "C": {
             "tag": "minecraft:planks"
