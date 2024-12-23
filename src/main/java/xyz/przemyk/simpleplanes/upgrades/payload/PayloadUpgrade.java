@@ -107,6 +107,9 @@ public class PayloadUpgrade extends LargeUpgrade {
         if (payloadEntry != null) {
             Entity entity = payloadEntry.dropSpawnEntity().create(planeEntity.level());
             entity.load(payloadEntry.compoundTag());
+            if(entity instanceof PrimedTnt) {
+                ((PrimedTnt) entity).setFuse(60); // make the tnt not explode instantly so it doesnt kill the plane
+            }
             entity.setPos(planeEntity.position());
             entity.setDeltaMovement(planeEntity.getDeltaMovement());
             planeEntity.level().addFreshEntity(entity);
