@@ -2,5 +2,5 @@
     "item": "minecraft:tnt",
     "block": "minecraft:tnt",
     "entity": "minecraft:tnt",
-    "entity_nbt": "{Fuse: 80s}"
+    "entity_nbt": "{fuse: 80s}"
 }
