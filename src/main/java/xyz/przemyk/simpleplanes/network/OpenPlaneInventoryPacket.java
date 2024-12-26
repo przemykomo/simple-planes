@@ -28,7 +28,7 @@ public record OpenPlaneInventoryPacket() implements CustomPacketPayload {
             Player player = context.player();
             Entity entity = player.getVehicle();
             if (entity instanceof PlaneEntity planeEntity) {
-                planeEntity.openContainer((ServerPlayer) player, 0);
+                planeEntity.openContainer(player, 0);
             }
         });
     }
