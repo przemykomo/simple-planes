@@ -1,6 +1,0 @@
-{
-    "item": "minecraft:tnt",
-    "block": "minecraft:tnt",
-    "entity": "minecraft:tnt",
-    "entity_nbt": "{fuse: 80s}"
-}

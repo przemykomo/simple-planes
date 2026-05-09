@@ -1,0 +1,13 @@
+{
+  "itemGroup.simpleplanes": "Example Mod Tab",
+  "block.simpleplanes.example_block": "Example Block",
+  "item.simpleplanes.example_item": "Example Item",
+
+  "simpleplanes.configuration.title": "Simple Planes Configs",
+  "simpleplanes.configuration.section.simpleplanes.common.toml": "Simple Planes Configs",
+  "simpleplanes.configuration.section.simpleplanes.common.toml.title": "Simple Planes Configs",
+  "simpleplanes.configuration.items": "Item List",
+  "simpleplanes.configuration.logDirtBlock": "Log Dirt Block",
+  "simpleplanes.configuration.magicNumberIntroduction": "Magic Number Text",
+  "simpleplanes.configuration.magicNumber": "Magic Number"
+}

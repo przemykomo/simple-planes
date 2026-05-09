@@ -1,0 +1,19 @@
+// 26.1-snapshot-1	2026-02-27T16:11:20.809406674	vanilla/Model Definitions - simpleplanes
+8b1fbe82943baadfcff9527330edf2cc1529862b assets/simpleplanes/items/armor.json
+06256f96e55deea9e9d3f288aa3a311329d62cbd assets/simpleplanes/items/booster.json
+733ed8d6f5e6738fa716a0b9fd34387abd1e6b27 assets/simpleplanes/items/floaty_bedding.json
+b3ad243cc9d4103c30c6bfb4d7c3a7c00969b820 assets/simpleplanes/items/folding.json
+30d9b0227a4682953f45a2d8e53c9e7bf3445992 assets/simpleplanes/items/healing.json
+a2a97284975efa7cb500173bd8235b3b7d781b13 assets/simpleplanes/items/propeller.json
+c95b41547aefb77cb33ace1298f4e6f54efec24c assets/simpleplanes/items/shooter.json
+b3247095cd14a309df87ff2220910e782a5ef7f5 assets/simpleplanes/items/solar_panel.json
+0ed68418b349261aa4c60fceede19221b31d6ae9 assets/simpleplanes/items/wrench.json
+b913ed62be276cc2ca18e837e03588b1e285ca98 assets/simpleplanes/models/item/armor.json
+16d172ca32e403a67cd351aaa0ba596622861ede assets/simpleplanes/models/item/booster.json
+52dac347b480ef993d5b49389cc955b1217d3c45 assets/simpleplanes/models/item/floaty_bedding.json
+cf291cf0f7da4e2d6ea75d10d4b55dd6e2f4495c assets/simpleplanes/models/item/folding.json
+8876fead3e3ef942a0ff6b0f32a59ddb573e8b89 assets/simpleplanes/models/item/healing.json
+f2a1e03b533e0b2e32fbf79aa631ccb6c2147668 assets/simpleplanes/models/item/propeller.json
+e12820390130c779d2a1b9a02c3209faf8e53882 assets/simpleplanes/models/item/shooter.json
+001d2435b3caaec103686d9f2c934e9253f057cc assets/simpleplanes/models/item/solar_panel.json
+a46895a2721e408b18a450999f742ef80a26d29e assets/simpleplanes/models/item/wrench.json
