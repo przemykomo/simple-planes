@@ -13,6 +13,7 @@ public class SimplePlanesConfig {
     public static ModConfigSpec.IntValue CARGO_PLANE_FUEL_COST;
     public static ModConfigSpec.IntValue HELICOPTER_FUEL_COST;
     public static ModConfigSpec.IntValue LIQUID_ENGINE_CAPACITY;
+    public static ModConfigSpec.IntValue PLANE_EXPLOSION_TYPE;
     public static ModConfigSpec.DoubleValue PLANE_CAMERA_DISTANCE_MULTIPLIER;
     public static ModConfigSpec.DoubleValue LARGE_PLANE_CAMERA_DISTANCE_MULTIPLIER;
     public static ModConfigSpec.DoubleValue CARGO_PLANE_CAMERA_DISTANCE_MULTIPLIER;
@@ -44,6 +45,9 @@ public class SimplePlanesConfig {
         LIQUID_ENGINE_CAPACITY = COMMON_BUILDER
                 .comment("Capacity of the liquid engine")
                 .defineInRange("liquid_engine_capacity", 4000, 1, Integer.MAX_VALUE);
+        PLANE_EXPLOSION_TYPE = COMMON_BUILDER
+                .comment("Explosion type on plane crashes. 0 for NONE, 1 for TNT (default), 2 for BLOCK, 3 for ENTITY, 4 for MOB.")
+                .defineInRange("plane_explosion_type", 1, 0, 4);
 
         COMMON_BUILDER.pop();
         modContainer.registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());

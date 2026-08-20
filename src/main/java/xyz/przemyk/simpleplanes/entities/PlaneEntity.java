@@ -341,6 +341,8 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
     }
 
     private void explode() {
+        int explosion_type = SimplePlanesConfig.PLANE_EXPLOSION_TYPE.get();
+        Level.ExplosionInteraction explode_interaction = Level.ExplosionInteraction.values()[explosion_type];
         ((ServerLevel) level()).sendParticles(ParticleTypes.SMOKE,
                 getX(),
                 getY(),
@@ -351,7 +353,7 @@ public class PlaneEntity extends Entity implements IEntityWithComplexSpawn {
                 getY(),
                 getZ(),
                 10, 1, 1, 1, 1);
-        level().explode(this, getX(), getY(), getZ(), 4.0F, Level.ExplosionInteraction.TNT);
+        level().explode(this, getX(), getY(), getZ(), 4.0F, explode_interaction);
     }
 
     protected void dropItem() {
